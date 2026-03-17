@@ -1,10 +1,15 @@
 import type { VNode } from "./index";
 
 const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
-const nodeProto = Node.prototype;
-const nodeInsertBefore = nodeProto.insertBefore;
-const nodeSetTextContent = getDescriptor(nodeProto, "textContent").set!;
-const nodeRemoveChild = nodeProto.removeChild;
+let nodeInsertBefore: typeof Node.prototype.insertBefore;
+let nodeSetTextContent: (v: string) => void;
+let nodeRemoveChild: typeof Node.prototype.removeChild;
+if (typeof Node !== "undefined") {
+  const nodeProto = Node.prototype;
+  nodeInsertBefore = nodeProto.insertBefore;
+  nodeSetTextContent = getDescriptor(nodeProto, "textContent").set!;
+  nodeRemoveChild = nodeProto.removeChild;
+}
 
 // -----------------------------------------------------------------------------
 // Multi NODE

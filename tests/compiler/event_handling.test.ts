@@ -575,5 +575,16 @@ describe("t-on", () => {
       button.click();
       expect(steps).toEqual(["btnClicked", "divClicked"]);
     });
+
+    test("non-bubbling events cannot be synthesized", () => {
+      const template = `<div t-on-mouseenter.synthetic="onMouseEnter"></div>`;
+
+      const owner = {
+        onMouseEnter() {},
+      };
+      const node = mountToFixture(template, owner);
+      const div = <HTMLElement>node;
+      div.dispatchEvent(new MouseEvent("mouseenter"));
+    });
   });
 });

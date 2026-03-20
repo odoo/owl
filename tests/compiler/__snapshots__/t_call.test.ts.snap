@@ -840,7 +840,7 @@ exports[`t-call (template calling) t-call with attributes and t-call-context 1`]
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx['obj'];
-    return callTemplate(\`sub\`, this, app, Object.assign({}, ctx1, {'v1': ctx['val1'], 'v2': ctx['val2']}), node, key + \`__1\`);
+    return callTemplate(\`sub\`, this, app, Object.assign({this: ctx1}, {'v1': ctx['val1'], 'v2': ctx['val2']}), node, key + \`__1\`);
   }
 }"
 `;
@@ -856,8 +856,8 @@ exports[`t-call (template calling) t-call with attributes and t-call-context 2`]
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['v1']);
     const b3 = safeOutput(ctx['v2']);
-    const b4 = safeOutput(ctx['v3']);
-    const b5 = safeOutput(ctx['v4']);
+    const b4 = safeOutput(ctx['this'].v3);
+    const b5 = safeOutput(ctx['this'].v4);
     return block1([], [b2, b3, b4, b5]);
   }
 }"
@@ -1150,7 +1150,7 @@ exports[`t-call (template calling) t-call-context 1`] = `
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx['obj'];
-    return callTemplate(\`sub\`, this, app, Object.assign({}, ctx1, {this: ctx1, __owl__: this.__owl__}), node, key + \`__1\`);
+    return callTemplate(\`sub\`, this, app, {this: ctx1}, node, key + \`__1\`);
   }
 }"
 `;
@@ -1164,7 +1164,7 @@ exports[`t-call (template calling) t-call-context 2`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['value']);
+    const b2 = safeOutput(ctx['this'].value);
     return block1([], [b2]);
   }
 }"
@@ -1185,7 +1185,7 @@ exports[`t-call (template calling) t-call-context and value in body 1`] = `
   return function template(ctx, node, key = "") {
     const lazyBlock1 = callBody1.bind(this, ctx);
     const ctx1 = ctx['obj'];
-    return callTemplate(\`sub\`, this, app, Object.assign({}, ctx1, {this: ctx1, __owl__: this.__owl__}, {[zero]: lazyBlock1}), node, key + \`__1\`);
+    return callTemplate(\`sub\`, this, app, Object.assign({this: ctx1}, {[zero]: lazyBlock1}), node, key + \`__1\`);
   }
 }"
 `;
@@ -1199,8 +1199,8 @@ exports[`t-call (template calling) t-call-context and value in body 2`] = `
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['value1']);
-    const b3 = safeOutput(ctx['value2']);
+    const b2 = safeOutput(ctx['this'].value1);
+    const b3 = safeOutput(ctx['this'].value2);
     return block1([], [b2, b3]);
   }
 }"

@@ -479,7 +479,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-out="value"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="this.value"/></span>`);
     context.addTemplate("main", `<t t-call="sub" t-call-context="obj"/>`);
 
     expect(context.renderToString("main", { obj: { value: 123 } })).toBe("<span>123</span>");
@@ -487,7 +487,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context and value in body", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-out="value1"/><t t-out="value2"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="this.value1"/><t t-out="this.value2"/></span>`);
     context.addTemplate(
       "main",
       `
@@ -532,7 +532,7 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     context.addTemplate(
       "sub",
-      `<span><t t-out="v1"/><t t-out="v2"/><t t-out="v3"/><t t-out="v4"/></span>`
+      `<span><t t-out="v1"/><t t-out="v2"/><t t-out="this.v3"/><t t-out="this.v4"/></span>`
     );
     context.addTemplate("main", `<t t-call="sub" t-call-context="obj" v1="val1" v2="val2"/>`);
 

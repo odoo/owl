@@ -978,11 +978,10 @@ export class CodeGenerator {
     if (ast.context) {
       const dynCtxVar = generateId("ctx");
       this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
-      if (ast.attrs) {
-        ctxExpr = `Object.assign({}, ${dynCtxVar}${attrs.length ? ", " + ctxString : ""})`;
+      if (attrs.length) {
+        ctxExpr = `Object.assign({this: ${dynCtxVar}}, ${ctxString})`;
       } else {
-        const thisCtx = `{this: ${dynCtxVar}, __owl__: this.__owl__}`;
-        ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
+        ctxExpr = `{this: ${dynCtxVar}}`;
       }
     } else {
       if (attrs.length === 0) {

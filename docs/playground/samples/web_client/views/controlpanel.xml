@@ -1,0 +1,5 @@
+<templates>
+    <t t-name="demo.ControlPanel">
+        <div>Hello from ControlPanel!</div>
+    </t>
+</templates>

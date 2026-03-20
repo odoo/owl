@@ -1,0 +1,6 @@
+<templates>
+  <t t-name="hibou.Hibou">
+    <div class="desktop">
+    </div>
+  </t>
+</templates>

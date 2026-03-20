@@ -1,0 +1,38 @@
+.product-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    width: 300px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px;
+
+    > span {
+        font-size: 32px;
+    }
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        > div:first-child {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        > div:nth-child(2) {
+            font-size: 13px;
+            color: #666;
+        }
+
+        > div:last-child {
+            font-size: 15px;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+    }
+}

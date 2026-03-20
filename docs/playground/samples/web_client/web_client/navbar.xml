@@ -1,0 +1,9 @@
+<templates>
+    <t t-name="demo.Navbar">
+        <div class="navbar">
+            <t t-foreach="this.menuPlugin.menus()" t-as="menu" t-key="menu.id">
+                <span class="navbar-menu" t-out="menu.title" t-att-class="{ active: this.menuPlugin.activeMenuId() === menu.id }" t-on-click="() => this.menuPlugin.setMenu(menu.id)"/>
+            </t>
+        </div>
+    </t>
+</templates>

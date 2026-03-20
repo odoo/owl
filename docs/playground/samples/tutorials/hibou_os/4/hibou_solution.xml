@@ -1,0 +1,16 @@
+<templates>
+  <t t-name="hibou.Hibou">
+    <div class="desktop">
+      <div class="desktop-area">
+        <Window title="'Hello'">
+          <p>Welcome to Hibou OS!</p>
+        </Window>
+        <Window t-if="this.showClock()" title="'Clock'" onClose="() => this.showClock.set(false)"
+                x="200" y="120">
+          <p>Hello from Clock!</p>
+        </Window>
+      </div>
+      <Taskbar onClockClick="() => this.showClock.set(true)"/>
+    </div>
+  </t>
+</templates>

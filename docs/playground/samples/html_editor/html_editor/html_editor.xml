@@ -1,0 +1,25 @@
+<templates>
+  <t t-name="demo.HtmlEditor">
+    <div class="html-editor">
+      <div class="toolbar">
+        <button t-on-click="() => this.execCommand('bold')" title="Bold"><b>B</b></button>
+        <button t-on-click="() => this.execCommand('italic')" title="Italic"><i>I</i></button>
+        <button t-on-click="() => this.execCommand('underline')" title="Underline"><u>U</u></button>
+        <span class="separator"/>
+        <button t-on-click="() => this.execCommand('formatBlock', 'h1')" title="Heading 1">H1</button>
+        <button t-on-click="() => this.execCommand('formatBlock', 'h2')" title="Heading 2">H2</button>
+        <button t-on-click="() => this.execCommand('formatBlock', 'p')" title="Paragraph">P</button>
+        <span class="separator"/>
+        <button t-on-click="() => this.execCommand('insertUnorderedList')" title="Bullet list">• List</button>
+        <button t-on-click="() => this.execCommand('insertOrderedList')" title="Numbered list">1. List</button>
+        <span class="separator"/>
+        <button t-on-click="this.insertLink" title="Insert link">🔗</button>
+      </div>
+      <div class="editor-content" contenteditable="true" t-ref="this.editorRef" t-on-input="this.updateHtml"/>
+      <details class="html-output">
+        <summary>HTML Output</summary>
+        <pre t-out="this.props.html.value"/>
+      </details>
+    </div>
+  </t>
+</templates>

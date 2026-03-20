@@ -1,59 +1,514 @@
 <templates>
-  <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="props.style">
-    <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
-        <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
-            <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
-                <t t-esc="tab"/>
-            </a>
-        </t>
+  <div t-name="CodeEditor" class="editor-area">
+    <div class="editor-pane" t-att-class="{active: this.code.activePane() === 'primary'}" t-att-style="this.primaryPaneStyle()" t-on-mousedown="() => this.setActivePane('primary')">
+      <div class="editor-tab-bar">
+        <span class="editor-tab"><t t-out="this.code.primaryFile()"/></span>
+        <a class="markdown-toggle-btn" t-if="this.isPrimaryMarkdownFile()" t-on-click.stop="() => this.toggleMarkdownPreview('primary')" t-att-title="this.isPrimaryMarkdownPreview() ? 'Edit' : 'Preview'">
+          <span t-if="this.isPrimaryMarkdownPreview()" class="edit-icon"/>
+          <span t-else="" class="preview-icon"/>
+        </a>
+        <a class="editor-split-btn" t-att-class="{active: this.code.splitMode()}" t-on-mousedown.stop="this.toggleSplit" title="Toggle split editor"><span class="split-icon"/></a>
+      </div>
+      <div class="editor-pane-content">
+        <div class="code-editor" t-ref="this.primaryEditorNode" t-att-hidden="this.isPrimaryMarkdownPreview()"/>
+        <div class="markdown-preview" t-ref="this.primaryMarkdownPreview" t-att-hidden="!this.isPrimaryMarkdownPreview()" t-att-style="'font-size: ' + this.settings.fontSize() + 'px'"/>
+      </div>
     </div>
-    <div class="code-editor" t-ref="editor"></div>
+    <div class="editor-split-separator" t-if="this.code.splitMode()" t-on-mousedown="this.onSplitSeparatorMouseDown"/>
+    <div class="editor-pane" t-if="this.code.splitMode()" t-att-class="{active: this.code.activePane() === 'secondary'}" t-att-style="this.secondaryPaneStyle()" t-on-mousedown="() => this.setActivePane('secondary')">
+      <div class="editor-tab-bar">
+        <span class="editor-tab"><t t-out="this.code.secondaryFile()"/></span>
+        <a class="markdown-toggle-btn" t-if="this.isSecondaryMarkdownFile()" t-on-click.stop="() => this.toggleMarkdownPreview('secondary')" t-att-title="this.isSecondaryMarkdownPreview() ? 'Edit' : 'Preview'">
+          <span t-if="this.isSecondaryMarkdownPreview()" class="edit-icon"/>
+          <span t-else="" class="preview-icon"/>
+        </a>
+        <a class="editor-close-btn" t-on-click.stop="this.toggleSplit" title="Close split view">✕</a>
+      </div>
+      <div class="editor-pane-content">
+        <div class="code-editor" t-ref="this.secondaryEditorNode" t-att-hidden="this.isSecondaryMarkdownPreview()"/>
+        <div class="markdown-preview" t-ref="this.secondaryMarkdownPreview" t-att-hidden="!this.isSecondaryMarkdownPreview()" t-att-style="'font-size: ' + this.settings.fontSize() + 'px'"/>
+      </div>
+    </div>
+  </div>
+
+  <div t-name="TutorialBar" class="tutorial-bar">
+    <div class="tutorial-bar-left">
+      <a class="btn tutorial-nav-btn" t-att-class="{disabled: !this.project.canGoToPrevStep()}" t-on-click="this.prevStep" title="Previous step">◀</a>
+      <select class="tutorial-step-select" t-on-change="this.onStepChange">
+        <t t-foreach="this.steps" t-as="step" t-key="step_index">
+          <option t-att-value="step_index" t-att-selected="step_index === this.currentStep - 1"><t t-out="step_index + 1"/>. <t t-out="step.title"/></option>
+        </t>
+      </select>
+      <a class="btn tutorial-nav-btn" t-att-class="{disabled: !this.project.canGoToNextStep()}" t-on-click="this.nextStep" title="Next step">▶</a>
+    </div>
+    <div class="tutorial-bar-right">
+      <a class="btn tutorial-action-btn" t-att-class="{disabled: !this.isStepDirty}" t-on-click="this.resetStep" title="Reset to initial code for this step">Reset</a>
+      <a t-if="this.hasSolution" class="btn tutorial-action-btn" t-att-class="{disabled: this.matchesSolution}" t-on-click="this.solveStep" title="Show solution for this step">Solve</a>
+    </div>
+  </div>
+
+  <div t-name="ConfirmDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>Confirm</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-message"><t t-out="this.props.message"/></div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn" t-att-class="this.props.confirmClass" t-on-click="this.confirm"><t t-out="this.props.confirmLabel"/></button>
+    </div>
+  </div>
+
+  <div t-name="NewProjectDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>New Project</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <input type="text" t-ref="this.nameRef" placeholder="My Project" t-on-keydown="this.onKeydown"/>
+    </div>
+    <div class="dialog-row">
+      <label>Preset</label>
+      <select t-ref="this.templateRef">
+        <t t-foreach="this.props.templates" t-as="tmpl" t-key="tmpl_index">
+          <option t-att-value="tmpl.description"><t t-out="tmpl.description"/></option>
+        </t>
+      </select>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-on-click="this.confirm">Create</button>
+    </div>
+  </div>
+
+  <div t-name="SettingsDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>Settings</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="settings-row">
+      <label>Font size</label>
+      <div class="settings-control">
+        <input type="range" min="10" max="20" step="1" t-att-value="this.settings.fontSize()" t-on-input="this.onFontSizeChange"/>
+        <span class="settings-value"><t t-out="this.settings.fontSize()"/>px</span>
+      </div>
+    </div>
+    <div class="settings-row">
+      <label>Theme</label>
+      <div class="settings-control">
+        <label class="theme-toggle-label">
+          <input type="checkbox" t-att-checked="this.settings.darkMode()" t-on-change="this.onDarkModeChange"/>
+          <span t-if="this.settings.darkMode()">Dark</span>
+          <span t-else="">Light</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+<div t-name="NewFileDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>New File</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <div class="dialog-input-wrapper">
+        <t t-if="this.props.folder"><span class="dialog-input-prefix" t-out="this.props.folder + '/'"/></t>
+        <input type="text" t-ref="this.nameRef" t-model="this.fileName" placeholder="my_file" t-on-keydown="this.onKeydown"/>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <label>Type</label>
+      <select t-ref="this.typeRef">
+        <option value="js">JavaScript (.js)</option>
+        <option value="xml">XML (.xml)</option>
+        <option value="css">CSS (.css)</option>
+        <option value="md">Markdown (.md)</option>
+      </select>
+    </div>
+    <div class="dialog-error" t-if="this.error()"><t t-out="this.error()"/></div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-att-disabled="!this.fileName()" t-on-click="this.confirm">Create</button>
+    </div>
+  </div>
+
+  <div t-name="NewFolderDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>New Folder</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <input type="text" t-ref="this.nameRef" placeholder="my_folder" t-on-keydown="this.onKeydown"/>
+    </div>
+    <div class="dialog-error" t-if="this.error()"><t t-out="this.error()"/></div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-on-click="this.confirm">Create</button>
+    </div>
+  </div>
+
+  <div t-name="NewComponentDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>New Component</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <div class="dialog-input-wrapper">
+        <t t-if="this.props.folder"><span class="dialog-input-prefix" t-out="this.props.folder + '/'"/></t>
+        <input type="text" t-ref="this.nameRef" placeholder="ProductCard" t-on-keydown="this.onKeydown"/>
+      </div>
+    </div>
+    <div class="dialog-error" t-if="this.error()"><t t-out="this.error()"/></div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-on-click="this.confirm">Create</button>
+    </div>
+  </div>
+
+  <div t-name="FileDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>Edit File</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <input type="text" t-ref="this.nameRef" t-att-value="this.baseName()"/>
+    </div>
+    <div class="dialog-row">
+      <label>Type</label>
+      <select t-ref="this.typeRef">
+        <option value="js" t-att-selected="this.currentType() === 'js'">JavaScript (.js)</option>
+        <option value="xml" t-att-selected="this.currentType() === 'xml'">XML (.xml)</option>
+        <option value="css" t-att-selected="this.currentType() === 'css'">CSS (.css)</option>
+        <option value="md" t-att-selected="this.currentType() === 'md'">Markdown (.md)</option>
+      </select>
+    </div>
+    <div class="dialog-error" t-if="this.error()"><t t-out="this.error()"/></div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn danger" t-if="this.props.canDelete" t-on-click="this.delete">Delete</button>
+      <span class="dialog-spacer"/>
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-on-click="this.confirm">Save</button>
+    </div>
+  </div>
+
+  <div t-name="ProjectDialog" class="settings-dialog">
+    <div class="settings-header">
+      <span>Edit Project</span>
+      <button type="button" class="settings-close" t-on-click="this.close">&#x2715;</button>
+    </div>
+    <div class="dialog-row">
+      <label>Name</label>
+      <input type="text" t-ref="this.nameRef" t-att-value="this.props.name" t-on-keydown="this.onKeydown"/>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="dialog-btn danger" t-if="this.props.canDelete" t-on-click="this.delete">Delete</button>
+      <span class="dialog-spacer"/>
+      <button type="button" class="dialog-btn" t-on-click="this.close">Cancel</button>
+      <button type="button" class="dialog-btn primary" t-on-click="this.confirm">Save</button>
+    </div>
+  </div>
+
+  <div t-name="ProjectManager" class="project-manager">
+    <div class="project-manager-header">
+      <a class="btn project-manager-btn" t-on-click="this.openNewProjectDialog">+ New Project</a>
+    </div>
+    <div class="project-manager-content">
+      <div class="project-manager-section" t-if="this.activeProjects().length > 0">
+        <h4 class="section-title">Active Projects</h4>
+        <table class="projects-table">
+          <tbody>
+            <t t-foreach="this.activeProjects()" t-as="proj" t-key="proj.id">
+              <tr class="project-row" t-att-class="{active: proj.isActive, dirty: proj.isDirty}" t-on-click="() => this.activateProject(proj)">
+                <td class="project-name-cell">
+                  <span class="project-name-text">
+                    <t t-out="this.getProjectDisplayName(proj)"/>
+                    <span class="dirty-indicator" t-if="proj.isDirty"> ●</span>
+                  </span>
+                </td>
+                <td class="project-desc-cell">
+                  <input type="text" class="project-desc-input" t-att-value="proj.description" placeholder="Add description..." t-on-input="(ev) => this.updateDescription(proj, ev.target.value)" t-on-click.stop=""/>
+                </td>
+                <td class="project-actions-cell">
+                  <div class="project-actions" t-on-click.stop="">
+                    <a class="card-btn primary" t-if="proj.isDirty" t-on-click="() => this.saveProject(proj)">Save</a>
+                    <a class="card-btn primary disabled" t-if="!proj.isDirty">Saved</a>
+                    <a class="card-btn" t-on-click="() => this.archiveProject(proj)">Archive</a>
+                  </div>
+                </td>
+              </tr>
+            </t>
+          </tbody>
+        </table>
+      </div>
+      <div class="project-manager-section" t-if="this.archivedProjects().length > 0">
+        <h4 class="section-title">Archived Projects (Local Storage)</h4>
+        <table class="projects-table">
+          <tbody>
+            <t t-foreach="this.archivedProjects()" t-as="proj" t-key="proj.id">
+              <tr class="project-row archived" t-on-click="() => this.activateProject(proj)">
+                <td class="project-name-cell">
+                  <span class="project-name-text"><t t-out="this.getProjectDisplayName(proj)"/></span>
+                </td>
+                <td class="project-desc-cell">
+                  <span class="project-desc-text" t-if="proj.description"><t t-out="proj.description"/></span>
+                  <span class="project-meta" t-if="proj.lastUpdate"><t t-out="this.formatRelativeTime(proj.lastUpdate)"/></span>
+                </td>
+                <td class="project-actions-cell">
+                  <div class="project-actions" t-on-click.stop="">
+                    <a class="card-btn primary" t-on-click="() => this.activateProject(proj)">Open</a>
+                    <a class="card-btn danger" t-on-click="() => this.deleteProject(proj)">Delete</a>
+                  </div>
+                </td>
+              </tr>
+            </t>
+          </tbody>
+        </table>
+      </div>
+      <div class="project-manager-empty" t-if="this.activeProjects().length === 0 and this.archivedProjects().length === 0">
+        <p>No projects yet.</p>
+        <p>Create a new project to get started.</p>
+      </div>
+    </div>
+  </div>
+
+  <div t-name="Explorer" class="sidebar-section" t-on-contextmenu.prevent.stop="(ev) => this.showSidebarContextMenu(ev)">
+    <div class="sidebar-header sidebar-header-clickable" t-att-class="{active: this.view.showProjectManager()}" t-on-click="this.toggleProjectManager">
+      <span>Projects</span>
+    </div>
+    <div class="explorer-tree">
+      <t t-foreach="this.project.visibleProjects()" t-as="proj" t-key="proj.id">
+        <div class="explorer-project" t-att-class="{active: this.project.activeProjectId() === proj.id}">
+          <div class="project-row" t-on-click="() => this.selectProject(proj.id)" t-on-contextmenu.prevent.stop="(ev) => this.showProjectContextMenu(ev, proj)" title="Double-click to edit" t-on-dblclick.stop="() => this.editProject(proj.id)">
+            <span class="chevron" t-att-class="{open: this.isExpanded(proj.id)}" t-on-click.stop="() => this.toggleExpand(proj.id)" t-on-dblclick.stop="() => this.toggleExpand(proj.id)"/>
+            <span class="project-name"><t t-out="this.getProjectDisplayName(proj)"/><span class="dirty-indicator" t-if="this.isProjectDirty(proj)"> ●</span></span>
+            <a class="project-delete-btn" t-if="this.canDeleteProject(proj)" t-on-click.stop="() => this.deleteProject(proj)" title="Delete"><span class="delete-icon"/></a>
+          </div>
+          <div class="project-files" t-if="this.isExpanded(proj.id)">
+            <t t-set="fileTree" t-value="this.getProjectFilesWithFolders(proj)"/>
+            
+            <t t-foreach="fileTree.folders" t-as="folder" t-key="folder[0]">
+              <div class="folder-entry">
+              <div class="folder-row" t-on-click="() => this.toggleFolder(folder[0])" t-on-contextmenu.prevent.stop="(ev) => this.showFolderContextMenu(ev, proj, folder[0])">
+                <span class="chevron" t-att-class="{open: this.isFolderExpanded(folder[0])}"/>
+                <span class="folder-name" t-out="folder[0]"/>
+              </div>
+              <div class="folder-files" t-if="this.isFolderExpanded(folder[0])">
+                <t t-if="folder[1].length === 0">
+                  <div class="folder-empty">No files</div>
+                </t>
+                <t t-foreach="folder[1]" t-as="file" t-key="file.fullName">
+                  <div class="file-entry" t-att-class="{active: this.project.activeProjectId() === proj.id and this.code.currentFile() === file.fullName}" t-on-click.stop="() => this.selectFile(proj.id, file.fullName)" t-on-dblclick.stop="() => this.editFile(proj.id, file.fullName)" t-on-contextmenu.prevent.stop="(ev) => this.showFileContextMenu(ev, proj, file.fullName)" t-att-title="file.fullName">
+                    <span class="file-icon" t-att-class="file.iconClass"/>
+                    <span class="file-name" t-out="file.name"/>
+                    <a class="file-companion-btn" t-if="this.getCompanionFile(proj, file.fullName)" t-on-click.stop="() => this.splitWithCompanion(proj.id, file.fullName)" title="Open in split view"><span class="companion-icon"/></a>
+                  </div>
+                </t>
+              </div>
+              </div>
+            </t>
+            
+            <t t-foreach="fileTree.rootFiles" t-as="file" t-key="file.name">
+              <div class="file-entry" t-att-class="{active: this.project.activeProjectId() === proj.id and this.code.currentFile() === file.name}" t-on-click.stop="() => this.selectFile(proj.id, file.name)" t-on-dblclick.stop="() => this.editFile(proj.id, file.name)" t-on-contextmenu.prevent.stop="(ev) => this.showFileContextMenu(ev, proj, file.name)" t-att-title="file.name">
+                <span class="file-icon" t-att-class="file.iconClass"/>
+                <span class="file-name" t-out="file.name"/>
+                <a class="file-companion-btn" t-if="this.getCompanionFile(proj, file.name)" t-on-click.stop="() => this.splitWithCompanion(proj.id, file.name)" title="Open in split view"><span class="companion-icon"/></a>
+              </div>
+            </t>
+          </div>
+        </div>
+      </t>
+    </div>
+    <t t-if="this.sidebarContextMenu().visible">
+      <div class="context-menu-overlay" t-on-click="this.hideContextMenu"/>
+      <div class="context-menu" t-att-style="this.sidebarContextMenuStyle()">
+        <a class="context-menu-item" t-on-click="() => this.sidebarContextMenuNewProject()">New project</a>
+      </div>
+    </t>
+    <t t-if="this.projectContextMenu().visible">
+      <div class="context-menu-overlay" t-on-click="this.hideContextMenu"/>
+      <div class="context-menu" t-att-style="this.projectContextMenuStyle()">
+        <a class="context-menu-item" t-on-click="() => this.contextMenuAddFile()">New file</a>
+        <a class="context-menu-item" t-on-click="() => this.contextMenuNewFolder()">New folder</a>
+        <a class="context-menu-item" t-on-click="() => this.contextMenuNewComponent()">New component</a>
+        <a class="context-menu-item" t-on-click="() => this.contextMenuRename()">Rename</a>
+        <a class="context-menu-item" t-on-click="() => this.contextMenuClone()">Clone as new project</a>
+        <a class="context-menu-item" t-att-class="{disabled: !this.canSaveProject(this.projectContextMenu().project)}" t-on-click="() => this.canSaveProject(this.projectContextMenu().project) and this.contextMenuSave()">Save to LocalStorage</a>
+        <div class="context-menu-separator" t-if="this.canDeleteContextProject()"/>
+        <a class="context-menu-item danger" t-att-class="{disabled: !this.canDeleteContextProject()}" t-on-click="() => this.canDeleteContextProject() and this.contextMenuDelete()">Delete project</a>
+      </div>
+    </t>
+    <t t-if="this.fileContextMenu().visible">
+      <div class="context-menu-overlay" t-on-click="this.hideContextMenu"/>
+      <div class="context-menu" t-att-style="this.fileContextMenuStyle()">
+        <a class="context-menu-item" t-att-class="{disabled: this.fileContextMenu().fileName === 'main.js'}" t-on-click="() => this.fileContextMenuRename()">Rename</a>
+        <a class="context-menu-item danger" t-if="this.fileContextMenu().canDelete" t-on-click="() => this.fileContextMenuDelete()">Delete</a>
+      </div>
+    </t>
+    <t t-if="this.folderContextMenu().visible">
+      <div class="context-menu-overlay" t-on-click="this.hideContextMenu"/>
+      <div class="context-menu" t-att-style="this.folderContextMenuStyle()">
+        <a class="context-menu-item" t-on-click="() => this.folderContextMenuNewFile()">New file</a>
+        <a class="context-menu-item" t-on-click="() => this.folderContextMenuNewComponent()">New component</a>
+        <a class="context-menu-item danger" t-on-click="() => this.folderContextMenuDelete()">Delete folder</a>
+      </div>
+    </t>
+  </div>
+
+  <div t-name="ContentView" class="right-pane-inner">
+    <div class="content-toolbar">
+      <div class="content-toolbar-left">
+        <a class="btn run-code flash" t-on-click="this.runCode" title="Run (Ctrl+Enter)">▶ Run</a>
+        <label class="auto-run-label" title="Auto-run on code change">
+          <input type="checkbox" t-att-checked="this.settings.autoRun()" t-on-change="this.onAutoRunChange"/>
+          <span>auto</span>
+        </label>
+      </div>
+      <div class="content-toolbar-right">
+        <a class="btn content-toolbar-btn flash" t-att-class="{active: this.showConsole()}" t-on-click="this.toggleConsole" title="Toggle console output" t-if="!this.view.showHelp()">
+          <span class="console-icon">&gt;_</span>
+          <span class="console-badge" t-if="this.errorCount()"><t t-out="this.errorCount()"/></span>
+        </a>
+        <a class="btn content-toolbar-btn flash" t-att-class="{active: this.settings.fullscreen()}" t-on-click="this.toggleFullscreen" title="Toggle fullscreen">
+          <span class="fullscreen-icon"/>
+        </a>
+      </div>
+    </div>
+    <div class="tab-content" t-att-class="{hidden: this.view.showHelp()}">
+      <div class="content-iframe" t-ref="this.content" t-att-class="{hidden: this.displayWelcome()}"/>
+      <div class="welcome" t-if="this.displayWelcome()">
+
+        <div class="welcome-icon">🦉</div>
+
+        <div class="welcome-header">
+          <div class="welcome-title">OWL Playground</div>
+          <div class="welcome-subtitle">
+            <span class="welcome-tagline">Build, experiment, and learn — right in the browser.</span>
+            <span class="welcome-features">
+              <span class="welcome-pill">Class components</span>
+              <span class="welcome-pill">Signal-based Reactivity</span>
+              <span class="welcome-pill">Hooks</span>
+              <span class="welcome-pill">Plugin system</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="welcome-divider"></div>
+
+        <div class="welcome-tutorials">
+          <t t-foreach="this.templatePlugin.tutorials" t-as="tutorial" t-key="tutorial.id">
+            <a class="welcome-tutorial-card" t-attf-href="{{ '#' + tutorial.id }}" t-on-click.prevent="() => this.startTutorial(tutorial)" t-attf-title="Open the {{ tutorial.name }} tutorial">
+              <div class="welcome-tutorial-card-name">
+                <span><t t-out="tutorial.name"/></span>
+                <span class="welcome-tutorial-card-difficulty">
+                  <t t-foreach="Array.from({length: 3})" t-as="i" t-key="i_index">
+                    <span t-att-class="i_index &lt; tutorial.difficulty ? 'star filled' : 'star'">★</span>
+                  </t>
+                </span>
+              </div>
+              <div class="welcome-tutorial-card-summary"><t t-out="tutorial.summary"/></div>
+            </a>
+          </t>
+        </div>
+
+      </div>
+    </div>
+    <div class="tab-content" t-att-class="{hidden: !this.view.showHelp()}">
+      <div class="resources-tab">
+        <h3>Documentation</h3>
+        <ul class="resources-list">
+          <li><a href="https://odoo.github.io/owl/" target="_blank" rel="noopener noreferrer">OWL Documentation</a></li>
+          <li><a href="https://www.odoo.com/documentation/17.0/developer/tutorials.html" target="_blank" rel="noopener noreferrer">Odoo Documentation (Tutorials)</a></li>
+        </ul>
+        <h3>GitHub</h3>
+        <ul class="resources-list">
+          <li><a href="https://github.com/odoo/owl" target="_blank" rel="noopener noreferrer">OWL Repository</a></li>
+          <li><a href="https://github.com/odoo/owl/releases" target="_blank" rel="noopener noreferrer">OWL 3 Release Notes</a></li>
+          <li><a href="https://github.com/odoo/owl/tree/master/doc" target="_blank" rel="noopener noreferrer">Documentation Source</a></li>
+        </ul>
+        <h3>Migration</h3>
+        <ul class="resources-list">
+          <li><a href="https://gist.github.com/ged-odoo/0599d7cd9710428eaf97ea5b0e71f589" target="_blank" rel="noopener noreferrer">Migration Guide (OWL 2 to 3)</a></li>
+        </ul>
+        <h3>Tools</h3>
+        <div class="resources-tools">
+          <p><strong>VS Code Extension:</strong> <a href="https://marketplace.visualstudio.com/items?itemName=odoo.owl-vision" target="_blank" rel="noopener noreferrer">Owl Vision</a> - Syntax highlighting and intellisense for OWL templates</p>
+          <p><strong>Browser Extension:</strong> <a href="https://github.com/odoo/owl-devtools" target="_blank" rel="noopener noreferrer">Owl DevTools</a> - Debug and inspect OWL components</p>
+        </div>
+      </div>
+    </div>
+    <div class="console-pane" t-att-class="{hidden: !this.showConsole() or this.view.showHelp()}">
+      <div class="console-header">
+        <span>Console Output</span>
+        <a class="console-clear" t-on-click="this.clearConsole">Clear</a>
+      </div>
+      <div class="console-messages" t-ref="this.messageList">
+        <t t-foreach="this.consoleMessages()" t-as="msg" t-key="msg_index">
+          <div t-att-class="'console-msg console-' + msg.type"><t t-out="msg.text"/></div>
+        </t>
+      </div>
+    </div>
   </div>
 
   <div t-name="Playground" class="playground">
-      <div class="left-bar" t-att-class="{split: state.splitLayout}"
-           t-att-style="leftPaneStyle">
-        <div class="menubar">
-          <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
-          <select t-on-change="onSampleChange">
-            <option t-foreach="samples" t-as="sample" t-key="sample_index">
-              <t t-esc="sample.description"/>
-            </option>
-          </select>
-          <a class="btn flash" t-on-click="exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
-          <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
-          <a class="btn flash share-code" t-on-click="shareCode" title="Copy a link to this playground"><span>Share</span><span class="copied-notification" t-if="state.copied">Copied link to clipboard!</span></a>
+      <div class="navbar">
+        <div class="navbar-left">
+          <span class="navbar-title">🦉 OWL Playground</span>
+          <span class="navbar-version">v3.0.0 alpha</span>
         </div>
-        <TabbedEditor
-            js="state.js"
-            css="!state.splitLayout and state.css"
-            xml="!state.splitLayout and state.xml"
-            style="topEditorStyle"
-            updateCode="updateCode"/>
-        <t t-if="state.splitLayout">
-          <div class="separator horizontal"/>
-          <TabbedEditor
-             js="false"
-             css="state.css"
-             xml="state.xml"
-             resizeable="true"
-             updatePanelHeight.bind="updatePanelHeight"
-             updateCode="updateCode"/>
+        <div class="navbar-center">
+          <span class="navbar-label">Preset:</span>
+          <select t-ref="this.templateSelectRef" t-on-change="this.onTemplateChange">
+            <option value="" disabled="" selected="">— Select —</option>
+            <t t-foreach="this.nonTutorialCategories()" t-as="cat" t-key="cat.name">
+              <optgroup t-att-label="cat.name">
+                <t t-foreach="cat.templates" t-as="tmpl" t-key="tmpl.description">
+                  <option t-att-value="tmpl.description"><t t-out="tmpl.description"/></option>
+                </t>
+              </optgroup>
+            </t>
+            <optgroup label="Tutorials">
+              <t t-foreach="this.tutorials()" t-as="tutorial" t-key="tutorial.description">
+                <option t-att-value="'tutorial:' + tutorial.description"><t t-out="tutorial.description"/></option>
+              </t>
+            </optgroup>
+          </select>
+        </div>
+        <div class="navbar-right">
+          <a class="btn flash" t-att-class="{active: this.view.showHelp()}" t-on-click="this.toggleHelp" title="Help"><i class="fas fa-question-circle"></i></a>
+          <a class="btn flash share-code" t-on-click="this.shareCode" title="Copy a link to this playground">
+            <i class="fas fa-share-alt"></i>
+            <span class="copied-notification" t-if="this.copied()">Copied link to clipboard!</span>
+          </a>
+          <a class="btn flash" t-on-click="this.exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
+          <a class="btn flash" t-on-click="this.openSettings" title="Settings"><i class="fas fa-cog"></i></a>
+        </div>
+      </div>
+      <div class="settings-overlay" t-if="this.dialog.dialogComponent()" t-on-click.self="() => this.dialog.closeDialog()" t-on-keydown="this.onDialogKeydown">
+        <t t-component="this.dialog.dialogComponent()" t-props="this.dialog.dialogProps()"/>
+      </div>
+      <div class="left-pane" t-att-style="this.settings.leftPaneStyle()" t-if="!this.settings.fullscreen()">
+        <div class="sidebar" t-att-style="this.settings.sidebarStyle()">
+          <Explorer/>
+        </div>
+        <div class="separator horizontal" t-on-mousedown="this.onSidebarMouseDown"/>
+        <t t-if="this.view.showProjectManager()">
+          <ProjectManager/>
+        </t>
+        <t t-else="">
+          <div class="editor-container">
+            <TutorialBar t-if="this.project.isTutorialProject()"/>
+            <CodeEditor/>
+          </div>
         </t>
       </div>
-      <div class="separator vertical" t-on-mousedown="onMouseDown"/>
-      <div class="right-pane">
-        <div class="welcome" t-if="state.displayWelcome">
-          <div>🦉 Odoo Web Library 🦉</div>
-          <div>v<t t-esc="version"/></div>
-          <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
-          <div class="note">
-            <p>
-              Note: these examples make use of recent features of Javascript, and require a recent browser to work without a transpilation step! Among other things, it uses class fields and import maps. If you encounter issues, make sure your browser is up to date.
-            </p>
-          </div>
-        </div>
-        <div class="content" t-ref="content"/>
+      <div class="separator vertical" t-on-mousedown="this.onMouseDown" t-if="!this.settings.fullscreen()"/>
+      <div class="right-pane" t-att-class="{fullscreen: this.settings.fullscreen()}">
+        <ContentView/>
       </div>
   </div>
 </templates>

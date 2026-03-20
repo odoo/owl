@@ -1,0 +1,18 @@
+.counter {
+    margin: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+}
+
+.btn {
+    font-weight: 600;
+    cursor: pointer;
+
+    &:active {
+        transform: scale(0.95);
+    }
+}

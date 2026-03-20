@@ -1,0 +1,5 @@
+<templates>
+  <t t-name="hibou.Clock">
+    <span class="clock" t-out="this.time()"/>
+  </t>
+</templates>

@@ -1,0 +1,8 @@
+<templates>
+  <t t-name="TimeTracker">
+    <div class="time-tracker">
+      <h1>Time Tracker</h1>
+      <p>Coming soon...</p>
+    </div>
+  </t>
+</templates>

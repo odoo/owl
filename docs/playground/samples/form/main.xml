@@ -1,0 +1,41 @@
+<templates>
+  <t t-name="example.Form">
+    <div style="border:1px solid gray;padding:10px">
+      <h2>Form</h2>
+      <div>
+        Text (immediate): <input t-model="this.text"/>
+      </div>
+      <div>
+        Number: <input  t-model.number="this.number"/>
+      </div>
+      <div>
+        Boolean: <input  type="checkbox" t-model="this.bool"/>
+      </div>
+      <div>
+        Color, with a select:
+        <select  t-model="this.color">
+          <option value="">Select a color</option>
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+        </select>
+      </div>
+      <div>
+        Color, with radio buttons:
+          <span><input type="radio" name="color" id="red" value="red" t-model="this.color"/><label for="red">Red</label></span>
+          <span><input type="radio" name="color" id="blue" value="blue" t-model="this.color"/><label for="blue">Blue</label></span>
+      </div>
+      <div>
+        Double Amount: <input  t-model.number="this.doubleAmount"/>
+      </div>
+    </div>
+    <div style="border:1px solid gray;padding:10px;margin-top:10px">
+      <h2>State</h2>
+      <div>Text: <t t-out="this.text()"/></div>
+      <div>Uppercased Text: <t t-out="this.uppercaseText()"/></div>
+      <div>Number: <t t-out="this.number()"/></div>
+      <div>Boolean: <t t-if="this.bool()">True</t><t t-else="">False</t></div>
+      <div>Color: <t t-out="this.color()"/></div>
+      <div>Amount: <t t-out="this.amount()"/></div>
+    </div>
+  </t>
+</templates>

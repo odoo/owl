@@ -1,0 +1,86 @@
+.time-tracker {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.time-tracker h1 {
+  margin: 0 0 20px;
+  color: #333;
+}
+
+.phase-label {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.work-phase .phase-label {
+  color: #d32f2f;
+}
+
+.break-phase .phase-label {
+  color: #4caf50;
+}
+
+.timer-display {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+  margin: 20px 0;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.controls button {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.controls button:first-child {
+  background: #4caf50;
+  color: white;
+}
+
+.controls button:first-child:hover {
+  background: #45a049;
+}
+
+.controls button:nth-child(2) {
+  background: #ff9800;
+  color: white;
+}
+
+.controls button:nth-child(2):hover {
+  background: #f57c00;
+}
+
+.controls button:nth-child(3) {
+  background: #9e9e9e;
+  color: white;
+}
+
+.controls button:nth-child(3):hover {
+  background: #757575;
+}
+
+.work-phase .timer-display {
+  color: #d32f2f;
+}
+
+.break-phase .timer-display {
+  color: #4caf50;
+}

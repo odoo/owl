@@ -1,0 +1,21 @@
+<templates>
+  <t t-name="demo.TodoList">
+    <div class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo" placeholder="What needs to be done?" t-model="this.newTodoText" t-on-keyup="this.addTodo" autofocus="true"/>
+      </header>
+      <ul class="todo-list">
+        <t t-foreach="this.todos" t-as="todo" t-key="todo.id">
+          <li t-att-class="{completed: todo.completed}">
+            <div class="view">
+              <input type="checkbox" class="toggle" t-att-checked="todo.completed" t-on-click="() => this.toggleTodo(todo)"/>
+              <label t-on-dblclick="() => this.startEditing(todo)"><t t-out="todo.text"/></label>
+              <button class="destroy" t-on-click="() => this.deleteTodo(todo)"></button>
+            </div>
+          </li>
+        </t>
+      </ul>
+    </div>
+  </t>
+</templates>

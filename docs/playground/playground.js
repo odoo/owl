@@ -1,403 +1,325 @@
-import { debounce, loadJS } from "./utils.js";
 import {
-  App,
-  Component,
-  useState,
-  useRef,
-  onMounted,
-  onWillUnmount,
-  onPatched,
-  onWillUpdateProps,
-  loadFile as _loadFile,
-  whenReady,
   __info__,
-  useEffect,
+  Component,
+  computed,
+  mount,
+  onWillDestroy,
   onWillStart,
+  plugin,
+  providePlugins,
+  signal,
+  useEffect,
 } from "../owl.js";
+import {
+  CodeEditor,
+  ContentView,
+  Explorer,
+  ProjectManager,
+  SettingsDialog,
+  TutorialBar,
+} from "./components.js";
+import {
+  CodePlugin,
+  DialogPlugin,
+  LocalStoragePlugin,
+  ProjectPlugin,
+  SettingsPlugin,
+  TemplatePlugin,
+  ViewPlugin,
+} from "./plugins.js";
+import { HELLO_WORLD_JS, loadFile } from "./samples.js";
+import { debounce, loadJS } from "./utils.js";
 
-//------------------------------------------------------------------------------
-// Constants, helpers, utils
-//------------------------------------------------------------------------------
-
-const MODES = {
-  js: "ace/mode/javascript",
-  css: "ace/mode/css",
-  xml: "ace/mode/xml"
-};
-
-const DEFAULT_XML = `<templates>
-</templates>`;
-
-// Memoize loadFile so that samples aren't reloaded whenever a sample is selected
-const fileCache = {};
-const loadFile = (path) => {
-  if (!(path in fileCache)) {
-    fileCache[path] = _loadFile(path);
-  }
-  return fileCache[path];
-}
-
-/**
- * Make an iframe, with all the js, css and xml properly injected.
- */
-function makeCodeIframe(js, css, xml) {
-  const iframe = document.createElement("iframe");
-  iframe.onload = () => {
-    const doc = iframe.contentDocument;
-
-    const importMap = doc.createElement("script");
-    importMap.type = "importmap";
-    importMap.textContent = `{ "imports": { "@odoo/owl": "../owl.js" } }`;
-    doc.head.appendChild(importMap);
-
-    const script = doc.createElement("script");
-    script.type = "module";
-    // escape characters with special meaning in template literals
-    const escapedXml = xml.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/, "\\${");
-    script.textContent = `const TEMPLATES = \`${escapedXml}\`\n${js}`;
-    doc.body.appendChild(script);
-
-    const style = document.createElement("style");
-    style.innerText = css;
-    doc.head.appendChild(style);
-  };
-  return iframe;
-}
-
-//------------------------------------------------------------------------------
-// SAMPLES
-//------------------------------------------------------------------------------
-
-const SAMPLES = [
-  {
-    description: "Components",
-    folder: "components",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Form Input Bindings",
-    folder: "form",
-    code: ["js", "xml"],
-  },
-  {
-    description: "Inline templates",
-    folder: "single_file_component",
-    code: ["js"],
-  },
-  {
-    description: "Lifecycle demo",
-    folder: "lifecycle_demo",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Customized hook",
-    folder: "custom_hooks",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Todo List App (with reactivity)",
-    folder: "todo_app",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Responsive app",
-    folder: "responsive_app",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Slots And Generic Components",
-    folder: "slots",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Window Management System",
-    folder: "window_manager",
-    code: ["js", "xml", "css"],
-  },
-  {
-    description: "Benchmark example",
-    folder: "benchmark",
-    code: ["js", "xml", "css"],
-  },
-]
-
-function loadSamples() {
-  const result = SAMPLES.map(({ description, folder, code }) => ({
-    description,
-    code: async () => Object.fromEntries(
-      await Promise.all(
-        code.map(async (type) => [type, await loadFile(`./samples/${folder}/${folder}.${type}`)])
-      )
-    ),
-  }));
-  const localSample = localStorage.getItem("owl-playground-local-sample");
-  if (localSample) {
-    const { js, css, xml } = JSON.parse(localSample);
-    result.unshift({
-      description: "Local Storage Code",
-      code: () => Promise.resolve({ js, xml, css }),
-    });
-  }
-  return result;
-}
-
-//------------------------------------------------------------------------------
-// Tabbed editor
-//------------------------------------------------------------------------------
-class TabbedEditor extends Component {
-  setup() {
-    const props = this.props;
-    this.state = useState({
-      currentTab: props.js !== false ? "js" : props.xml ? "xml" : "css"
-    });
-    this.setTab = debounce(this.setTab.bind(this), 250, true);
-
-    this.sessions = {};
-    this._setupSessions(props);
-    this.editorNode = useRef("editor");
-    this._updateCode = this._updateCode.bind(this);
-
-    onMounted(() => {
-      this.editor = this.editor || ace.edit(this.editorNode.el);
-
-      this.editor.setValue(this.props[this.state.currentTab], -1);
-      this.editor.setFontSize("12px");
-      this.editor.setTheme("ace/theme/monokai");
-      this.editor.setSession(this.sessions[this.state.currentTab]);
-      const tabSize = this.state.currentTab === "xml" ? 2 : 4;
-      this.editor.session.setOption("tabSize", tabSize);
-      this.editor.on("blur", this._updateCode);
-      this.interval = setInterval(this._updateCode, 3000);
-    });
-
-    onPatched(() => {
-      const session = this.sessions[this.state.currentTab];
-      let content = this.props[this.state.currentTab];
-      if (content === false) {
-        const tab = this.props.js !== false ? "js" : this.props.xml ? "xml" : "css";
-        content = this.props[tab];
-        this.state.currentTab = tab;
-      }
-      if (this.editor.getValue() !== content) {
-        session.setValue(content, -1);
-        this.editor.setSession(session);
-        this.editor.resize();
-      }
-    });
-
-    onWillUpdateProps((nextProps) => this._setupSessions(nextProps));
-
-    onWillUnmount(() => {
-      clearInterval(this.interval);
-      this.editor.off("blur", this._updateCode);
-    });
-  }
-
-  setTab(tab) {
-    if (this.state.currentTab !== tab) {
-      this.state.currentTab = tab;
-      const session = this.sessions[this.state.currentTab];
-      session.doc.setValue(this.props[tab], -1);
-      this.editor.setSession(session);
-    }
-  }
-
-  onMouseDown(ev) {
-    if (ev.target.tagName === "DIV") {
-      let y = ev.clientY;
-      const resizer = ev => {
-        const delta = ev.clientY - y;
-        y = ev.clientY;
-        this.props.updatePanelHeight({ delta });
-      };
-      document.body.addEventListener("mousemove", resizer);
-      document.body.addEventListener("mouseup", () => {
-        document.body.removeEventListener("mousemove", resizer);
-      });
-    }
-  }
-
-  _setupSessions(props) {
-    for (let tab of ["js", "xml", "css"]) {
-      if (props[tab] !== false && !this.sessions[tab]) {
-        this.sessions[tab] = new ace.EditSession(props[tab], MODES[tab]);
-        this.sessions[tab].setOption("useWorker", false);
-        const tabSize = tab === "xml" ? 2 : 4;
-        this.sessions[tab].setOption("tabSize", tabSize);
-        this.sessions[tab].setUndoManager(new ace.UndoManager());
-      }
-    }
-  }
-
-  _updateCode() {
-    const editorValue = this.editor.getValue();
-    const propsValue = this.props[this.state.currentTab];
-    if (editorValue !== propsValue) {
-      this.props.updateCode({
-        type: this.state.currentTab,
-        value: editorValue
-      });
-    }
-  }
-}
-TabbedEditor.template = "TabbedEditor";
-
-//------------------------------------------------------------------------------
-// MAIN APP
-//------------------------------------------------------------------------------
 class Playground extends Component {
   static template = "Playground";
-  static components = { TabbedEditor };
+  static components = { CodeEditor, ContentView, Explorer, ProjectManager, TutorialBar };
+
   setup() {
     this.version = __info__.version;
+    providePlugins([
+      CodePlugin,
+      TemplatePlugin,
+      ProjectPlugin,
+      LocalStoragePlugin,
+      SettingsPlugin,
+      DialogPlugin,
+      ViewPlugin,
+    ]);
 
-    this.isDirty = false;
-    this.state = useState({
-      js: "",
-      css: "",
-      xml: DEFAULT_XML,
-      displayWelcome: true,
-      splitLayout: true,
-      leftPaneWidth: Math.ceil(window.innerWidth / 2),
-      topPanelHeight: null
+    this.code = plugin(CodePlugin);
+    this.project = plugin(ProjectPlugin);
+    this.templatePlugin = plugin(TemplatePlugin);
+    this.localStorage = plugin(LocalStoragePlugin);
+    this.settings = plugin(SettingsPlugin);
+    this.dialog = plugin(DialogPlugin);
+    this.view = plugin(ViewPlugin);
+
+    this.templates = this.templatePlugin.list;
+    this.categories = this.templatePlugin.categories;
+    this.tutorials = computed(() => this.templatePlugin.list.filter((t) => t.isTutorial));
+    this.nonTutorialCategories = computed(() =>
+      this.templatePlugin.categories
+        .filter((cat) => cat.name !== "Tutorials")
+        .map((cat) => ({
+          ...cat,
+          templates: cat.templates.filter((t) => !t.isTutorial),
+        }))
+    );
+    this.copied = signal(null);
+    this.templateSelectRef = signal(null);
+
+    this.currentTemplateValue = computed(() => {
+      const project = this.project.activeProject();
+      if (!project || !project.templateDesc) return "";
+      if (this.project.isCurrentProjectDirty()) return "";
+      return project.templateDesc;
     });
 
-    this.samples = loadSamples();
-    if (window.location.hash) {
-      try {
-        const { js, css, xml } = JSON.parse(atob(decodeURIComponent(window.location.hash.slice(1))));
-        if ([js, css, xml].every(item => typeof item === "string")) {
-          Object.assign(this.state, { js, css, xml });
-        }
-      } catch {}
-    }
-    onWillStart(async () => {
-      if (!this.state.js) {
-        this.setSample(await this.samples[0].code());
-      }
-    })
     useEffect(() => {
-      const interval = setInterval(() => {
-        if (this.isDirty) {
-          const { js, css, xml } = this.state;
-          const str = JSON.stringify({ js, css, xml });
-          localStorage.setItem("owl-playground-local-sample", str);
-        }
-      }, 1000);
-      return () => clearInterval(interval);
-    }, () => []);
+      const el = this.templateSelectRef();
+      const val = this.currentTemplateValue();
+      if (el) el.value = val;
+    });
 
-    this.toggleLayout = debounce(this.toggleLayout, 250, true);
-    this.runCode = debounce(this.runCode, 250, true);
+    useEffect(() => {
+      const project = this.project.activeProject();
+      if (project && project.tutorial && project.tutorialId) {
+        history.replaceState(null, "", "#" + project.tutorialId);
+      } else {
+        if (window.location.hash) {
+          history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+      }
+    });
+
+    this.hashData = null;
+    this.hashTutorial = null;
+    if (window.location.hash) {
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+      const tutorial = this.templatePlugin.tutorials.find((t) => t.id === hash);
+      if (tutorial) {
+        this.hashTutorial = tutorial;
+      } else {
+        try {
+          const parsed = JSON.parse(atob(hash));
+          if ("js" in parsed && typeof parsed.js === "string") {
+            const { js, css, xml } = parsed;
+            const fileNames = [];
+            const contents = {};
+            if (js) {
+              fileNames.push("main.js");
+              contents["main.js"] = js;
+            }
+            if (xml && xml !== "<templates>\n</templates>") {
+              fileNames.push("main.xml");
+              contents["main.xml"] = xml;
+            }
+            if (css) {
+              fileNames.push("main.css");
+              contents["main.css"] = css;
+            }
+            if (fileNames.length === 0) {
+              fileNames.push("main.js");
+              contents["main.js"] = "";
+            }
+            this.hashData = { fileNames, contents };
+          } else {
+            this.hashData = { fileNames: Object.keys(parsed), contents: parsed };
+          }
+        } catch {}
+      }
+    }
+
+    onWillStart(async () => {
+      if (this.hashTutorial) {
+        await this.openTutorial(this.hashTutorial);
+      } else if (this.hashData) {
+        const { fileNames, contents } = this.hashData;
+        this.project.createProject("shared_code", fileNames, contents);
+      } else {
+        this.project.createProject(
+          "hello_world",
+          ["main.js"],
+          {
+            "main.js": HELLO_WORLD_JS,
+          },
+          "Hello World"
+        );
+      }
+    });
+
     this.exportStandaloneApp = debounce(this.exportStandaloneApp, 250, true);
-    this.content = useRef("content");
-    this.updateCode = this.updateCode.bind(this);
+
+    const onKeyDown = (ev) => {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        this.view.setShowHelp(false);
+        this.code.run();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    onWillDestroy(() => document.removeEventListener("keydown", onKeyDown));
   }
 
-  runCode() {
-    this.content.el.innerHTML = "";
-    this.state.displayWelcome = false;
+  async onTemplateChange(ev) {
+    const desc = ev.target.value;
+    ev.target.value = this.currentTemplateValue();
+    ev.target.blur();
+    if (!desc) return;
 
-    const { js, css, xml } = this.state;
-    const subiframe = makeCodeIframe(js, css, xml);
-    this.content.el.appendChild(subiframe);
+    if (desc.startsWith("tutorial:")) {
+      const tutorialDesc = desc.slice(9);
+      const tutorial = this.tutorials().find((t) => t.description === tutorialDesc);
+      if (tutorial) {
+        await this.openTutorial(tutorial);
+        this.code.requestFocus();
+      }
+      return;
+    }
+
+    const template = this.templates.find((t) => t.description === desc);
+    if (!template) return;
+
+    const projects = this.project.projects();
+    const activeProject = this.project.activeProject();
+    if (projects.length === 1 && activeProject && !this.project.isProjectDirty(activeProject)) {
+      this.project.deleteProject(activeProject.id, true);
+    }
+
+    const contents = await template.code();
+    const fileNames = Object.keys(contents);
+    const projectId = template.id || desc.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+    this.project.createProject(projectId, fileNames, contents, desc);
+    this.view.setShowProjectManager(false);
+    this.code.requestFocus();
+  }
+
+  async openTutorial(tutorial) {
+    await this.templatePlugin.openTutorial(tutorial);
+    this.view.setShowProjectManager(false);
+  }
+
+  toggleHelp() {
+    this.view.toggleHelp();
   }
 
   shareCode() {
-    const state = btoa(JSON.stringify({ js: this.state.js, css: this.state.css, xml: this.state.xml }));
+    const snapshot = this.code.getSnapshot();
+    const state = btoa(JSON.stringify(snapshot));
     const link = new URL(window.location.href);
     link.hash = state;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link.href);
-      clearTimeout(this.state.copied)
-      this.state.copied = setTimeout(() => this.state.copied = null, 2000);
+      clearTimeout(this.copied());
+      this.copied.set(setTimeout(() => this.copied.set(null), 2000));
     }
     window.location.href = link.href;
   }
 
-  setSample(sample) {
-    this.state.js = sample.js;
-    this.state.css = sample.css || "";
-    this.state.xml = sample.xml || DEFAULT_XML;
-    localStorage.removeItem("owl-playground-local-sample");
-    this.isDirty = false;
-  }
-
-  get leftPaneStyle() {
-    return `width:${this.state.leftPaneWidth}px`;
-  }
-
-  get topEditorStyle() {
-    return `flex: 0 0 ${this.state.topPanelHeight}px`;
-  }
-
-  async onSampleChange(ev) {
-    this.setSample(await this.samples.find(s => s.description === ev.target.value).code());
-  }
-
   onMouseDown() {
-    const resizer = ev => {
-      this.state.leftPaneWidth = ev.clientX;
-    };
+    const resizer = (ev) => this.settings.setLeftPaneWidth(ev.clientX);
 
     document.body.addEventListener("mousemove", resizer);
-    for (let iframe of document.getElementsByTagName("iframe")) {
+    for (const iframe of document.getElementsByTagName("iframe")) {
       iframe.classList.add("disabled");
     }
 
-    document.body.addEventListener("mouseup", () => {
-      document.body.removeEventListener("mousemove", resizer);
-      for (let iframe of document.getElementsByTagName("iframe")) {
-        iframe.classList.remove("disabled");
-      }
-    });
+    document.body.addEventListener(
+      "mouseup",
+      () => {
+        document.body.removeEventListener("mousemove", resizer);
+        for (const iframe of document.getElementsByTagName("iframe")) {
+          iframe.classList.remove("disabled");
+        }
+      },
+      { once: true }
+    );
   }
-  updateCode({type, value}) {
-    if (this.state[type] !== value) {
-      this.state[type] = value;
-      this.isDirty = true;
+
+  onSidebarMouseDown() {
+    const resizer = (ev) => this.settings.setSidebarWidth(ev.clientX);
+
+    document.body.addEventListener("mousemove", resizer);
+    for (const iframe of document.getElementsByTagName("iframe")) {
+      iframe.classList.add("disabled");
     }
+
+    document.body.addEventListener(
+      "mouseup",
+      () => {
+        document.body.removeEventListener("mousemove", resizer);
+        for (const iframe of document.getElementsByTagName("iframe")) {
+          iframe.classList.remove("disabled");
+        }
+      },
+      { once: true }
+    );
   }
-  toggleLayout() {
-    this.state.splitLayout = !this.state.splitLayout;
+
+  openSettings() {
+    this.dialog.showDialog(SettingsDialog);
   }
-  updatePanelHeight({ delta }) {
-    let height = this.state.topPanelHeight || document.querySelector(".tabbed-editor").clientHeight;
-    this.state.topPanelHeight = height + delta;
+
+  onDialogKeydown(ev) {
+    if (ev.key !== "Tab") return;
+    const overlay = ev.currentTarget;
+    const focusable = overlay.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (ev.shiftKey && document.activeElement === first) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && document.activeElement === last) {
+      ev.preventDefault();
+      first.focus();
+    }
   }
 
   async exportStandaloneApp() {
-    const { js, css, xml } = this.state;
+    const snapshot = this.code.getSnapshot();
+    const fileList = this.code.files();
+    let jsContent = "";
+    let cssContent = "";
+    let xmlContent = "";
+    for (const f of fileList) {
+      const content = snapshot[f.name] || "";
+      if (f.type === "js") {
+        jsContent += content + "\n";
+      } else if (f.type === "css") {
+        cssContent += content + "\n";
+      } else if (f.type === "xml") {
+        const inner = content.replace(/<\/?templates>/g, "").trim();
+        if (inner) xmlContent += inner + "\n";
+      }
+    }
+    xmlContent = `<templates>\n${xmlContent}</templates>`;
 
     await loadJS("libs/jszip.min.js");
     const zip = new JSZip();
     zip.file("app.py", await loadFile("./standalone_app/app.py"));
     zip.file("index.html", await loadFile("./standalone_app/index.html"));
     zip.file("owl.js", await loadFile("../owl.js"));
-    zip.file("app.js", `const TEMPLATES = await (await fetch('app.xml')).text();\n${js}`);
-    zip.file("app.css", css);
-    zip.file("app.xml", xml);
+    zip.file("app.js", `const TEMPLATES = await (await fetch('app.xml')).text();\n${jsContent}`);
+    zip.file("app.css", cssContent);
+    zip.file("app.xml", xmlContent);
 
     await loadJS("libs/FileSaver.min.js");
     saveAs(await zip.generateAsync({ type: "blob" }), "app.zip");
   }
 }
 
-//------------------------------------------------------------------------------
-// Application initialization
-//------------------------------------------------------------------------------
 async function start() {
   document.title = `${document.title} (v${__info__.version})`;
   const commit = `https://github.com/odoo/owl/commit/${__info__.hash}`;
   console.info(`This application is using Owl built with the following commit:`, commit);
-  const [templates] = await Promise.all([
-    loadFile("templates.xml"),
-    whenReady()
-  ]);
-  const rootApp = new App(Playground, { name: "Owl Playground" });
-  rootApp.addTemplates(templates);
-
-  await  rootApp.mount(document.body);
+  const templates = await loadFile("templates.xml");
+  await mount(Playground, document.body, {
+    name: "Owl Playground",
+    templates,
+  });
 }
 
 start();

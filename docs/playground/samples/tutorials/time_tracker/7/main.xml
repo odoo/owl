@@ -1,0 +1,33 @@
+<templates>
+  <t t-name="TimeTracker">
+    <div class="time-tracker" t-att-class="this.phaseClass()">
+      <h1>Time Tracker</h1>
+      <div class="phase-label">
+        <t t-out="this.isWorkPhase() ? 'Work Session' : 'Break Time'"/>
+      </div>
+      <div class="timer-display">
+        <t t-out="this.formattedTime()"/>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" t-att-style="this.progressStyle()"/>
+      </div>
+      <div class="controls">
+        <button t-on-click="this.toggleTimer">
+          <t t-out="this.isRunning() ? 'Pause' : 'Start'"/>
+        </button>
+        <button t-on-click="this.reset">Reset</button>
+        <button t-on-click="this.skipPhase">Skip</button>
+      </div>
+      <div class="sessions" t-if="this.sessions().length">
+        <h3>Completed Sessions</h3>
+        <ul>
+          <t t-foreach="this.sessions()" t-as="session" t-key="session.id">
+            <li>
+              <t t-out="session.completedAt"/>
+            </li>
+          </t>
+        </ul>
+      </div>
+    </div>
+  </t>
+</templates>

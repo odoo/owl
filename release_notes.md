@@ -17,8 +17,8 @@ Here is the big picture, in terms of changes:
 Please note that the design is still a work in progress and may evolve as
 discussions progress.
 
-This is a significant breaking change in Owl. Another gist contains a migration
-plan for odoo codebase: [Migration Plan to Owl 3](https://gist.github.com/ged-odoo/0599d7cd9710428eaf97ea5b0e71f589)
+This is a significant breaking change in Owl. See the migration
+guide for more details: [Migration Guide to Owl 3](migration_guide.md)
 
 ## Table of Content
 

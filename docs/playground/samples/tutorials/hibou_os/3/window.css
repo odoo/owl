@@ -1,0 +1,37 @@
+.window {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    width: 400px;
+    min-height: 200px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+
+    .window-titlebar {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        height: 32px;
+        background: #e8e8e8;
+
+        .window-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .window-close {
+            margin-left: auto;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+
+            &:hover { color: #e81123; }
+        }
+    }
+
+    .window-body {
+        padding: 12px;
+    }
+}

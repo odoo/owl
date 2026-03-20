@@ -1,0 +1,12 @@
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+
+    &.completed span {
+        text-decoration: line-through;
+        color: #999;
+    }
+}

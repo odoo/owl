@@ -1,0 +1,5 @@
+<templates>
+    <t t-name="demo.FormView">
+        <div>Hello from FormView!</div>
+    </t>
+</templates>

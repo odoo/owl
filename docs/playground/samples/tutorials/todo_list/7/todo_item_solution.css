@@ -1,0 +1,30 @@
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+
+    &.completed span {
+        text-decoration: line-through;
+        color: #999;
+    }
+
+    span {
+        flex: 1;
+    }
+
+    .todo-delete {
+        background: none;
+        border: none;
+        color: #cc9a9a;
+        cursor: pointer;
+        font-size: 16px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    &:hover .todo-delete {
+        opacity: 1;
+    }
+}

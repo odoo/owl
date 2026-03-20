@@ -1,6 +1,5 @@
 <templates>
-  <div t-name="example.Form">
-
+  <t t-name="example.Form">
     <div style="border:1px solid gray;padding:10px">
       <h2>Form</h2>
       <div>
@@ -38,5 +37,5 @@
       <div>Color: <t t-out="this.color()"/></div>
       <div>Amount: <t t-out="this.amount()"/></div>
     </div>
-  </div>
+  </t>
 </templates>

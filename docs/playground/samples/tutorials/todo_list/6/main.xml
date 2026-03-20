@@ -1,0 +1,52 @@
+<templates>
+  <t t-name="demo.TodoList">
+    <section class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="this.addTodo"/>
+      </header>
+      <section class="main" t-if="!this.todoList.isEmpty()">
+        <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="this.allChecked()" t-on-click="() => this.todoList.toggleAll(!this.allChecked())"/>
+        <label for="toggle-all"></label>
+        <ul class="todo-list">
+          <t t-foreach="this.visibleTodos()" t-as="todo" t-key="todo.id">
+            <Todo todo="todo"/>
+          </t>
+        </ul>
+      </section>
+      <footer class="footer" t-if="!this.todoList.isEmpty()">
+        <span class="todo-count">
+          <strong><t t-out="this.remaining()"/></strong>
+          <t t-out="this.remaining() === 1 ? ' item' : ' items'"/> left
+        </span>
+        <ul class="filters">
+          <li>
+            <a t-on-click="() => this.setFilter('all')" t-att-class="{selected: this.filter() === 'all'}">All</a>
+          </li>
+          <li>
+            <a t-on-click="() => this.setFilter('active')" t-att-class="{selected: this.filter() === 'active'}">Active</a>
+          </li>
+          <li>
+            <a t-on-click="() => this.setFilter('completed')" t-att-class="{selected: this.filter() === 'completed'}">Completed</a>
+          </li>
+        </ul>
+        <button class="clear-completed" t-if="this.todoList.todos().length > this.remaining()" t-on-click="() => this.todoList.clearCompleted()">
+          Clear completed
+        </button>
+      </footer>
+    </section>
+  </t>
+
+  <t t-name="demo.Todo">
+    <li class="todo" t-att-class="{completed: this.todo.completed(), editing: this.isEditing()}">
+      <div class="view">
+        <input class="toggle" type="checkbox" t-on-change="() => this.todo.toggle()" t-att-checked="this.todo.completed()"/>
+        <label t-on-dblclick="() => this.startEditing()">
+          <t t-out="this.todo.text()"/>
+        </label>
+        <button class="destroy" t-on-click="() => this.todo.delete()"></button>
+      </div>
+      <input class="edit" t-ref="this.input" t-if="this.isEditing()" t-model="this.editText" t-on-keyup="this.handleKeyup" t-on-blur="() => this.saveEdit()"/>
+    </li>
+  </t>
+</templates>

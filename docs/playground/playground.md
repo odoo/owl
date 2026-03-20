@@ -14,6 +14,11 @@ Interactive IDE for learning and prototyping with the Owl framework. Runs entire
 
 - `index.html` - Main entry, loads `playground.js` as ES module
 - `playground.js` - Root `Playground` component and application bootstrap
+- `plugins.js` - State management via 7 Owl plugins
+- `components.js` - All UI components (CodeEditor, Explorer, ContentView, dialogs)
+- `samples.js` - Example templates and tutorials
+- `code_utils.js` - Code editor utilities (autocompletion, markdown parsing)
+- `file_utils.js` - File-related helpers (getFileType, makeFileEntry, etc.)
 
 ### Component Hierarchy
 
@@ -67,6 +72,7 @@ Lists sample templates from `samples/` directory.
 ```javascript
 {
   category: "Examples" | "Demos" | "Tutorials",
+  id: "template_id",  // Technical identifier (used as project name when applied)
   description: "Display name",
   files: ["main.js", ...],
   isTutorial: boolean,
@@ -232,32 +238,32 @@ The `rewriteImports()` function handles:
 
 ### Examples Category
 
-| Sample           | Files                                   | Demonstrates                                                                        |
-| ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------- |
-| Hello World      | main.js                                 | Basic mount, inline xml template                                                    |
-| Simple Component | main.js, main.css                       | Component class, static template, styling                                           |
-| Props/List       | main.js, product_card.js/xml, main.css  | Parent-child props, component reuse, XML templates                                  |
-| Lifecycle Demo   | helpers.js, chat_window.js, main.js/xml | Hooks: onMounted, onPatched, onWillDestroy, onWillPatch, onWillStart, onWillUnmount |
-| Reactivity       | main.js/xml                             | signal(), proxy(), computed(), effect(), reactive state patterns                    |
-| Canvas           | main.js                                 | t-ref for DOM access, useEffect for side effects                                    |
-| Form             | main.js/xml                             | t-model two-way binding                                                             |
-| Slots            | dialog.js/xml/css, main.js              | Generic components, slot content projection                                         |
-| Plugins          | core_plugins.js, form_view.js, main.js  | Plugin system, dependency injection, cross-plugin communication                     |
+| ID               | Sample           | Files                                   | Demonstrates                                                                        |
+| ---------------- | ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------- |
+| hello_world      | Hello World      | main.js                                 | Basic mount, inline xml template                                                    |
+| simple_component | Simple Component | main.js, main.css                       | Component class, static template, styling                                           |
+| props_list       | Props/List       | main.js, product_card.js/xml, main.css  | Parent-child props, component reuse, XML templates                                  |
+| lifecycle        | Lifecycle Demo   | helpers.js, chat_window.js, main.js/xml | Hooks: onMounted, onPatched, onWillDestroy, onWillPatch, onWillStart, onWillUnmount |
+| reactivity       | Reactivity       | main.js/xml                             | signal(), proxy(), computed(), effect(), reactive state patterns                    |
+| canvas           | Canvas           | main.js                                 | t-ref for DOM access, useEffect for side effects                                    |
+| form             | Form             | main.js/xml                             | t-model two-way binding                                                             |
+| slots            | Slots            | dialog.js/xml/css, main.js              | Generic components, slot content projection                                         |
+| plugins          | Plugins          | core_plugins.js, form_view.js, main.js  | Plugin system, dependency injection, cross-plugin communication                     |
 
 ### Demos Category
 
-| Sample       | Files                                       | Description                             |
-| ------------ | ------------------------------------------- | --------------------------------------- |
-| Kanban Board | main.js/xml/css                             | Multi-column task board with add/delete |
-| HTML Editor  | html_editor/html_editor.js/xml, main.js/css | Contenteditable with formatting toolbar |
-| Web Client   | main.js/xml/css                             | Mock Odoo-style web client with navbar  |
+| ID           | Sample       | Files                                       | Description                             |
+| ------------ | ------------ | ------------------------------------------- | --------------------------------------- |
+| kanban_board | Kanban Board | main.js/xml/css                             | Multi-column task board with add/delete |
+| html_editor  | HTML Editor  | html_editor/html_editor.js/xml, main.js/css | Contenteditable with formatting toolbar |
+| web_client   | Web Client   | main.js/xml/css                             | Mock Odoo-style web client with navbar  |
 
 ### Tutorials Category
 
-| Sample       | Files                 | Description                                               |
-| ------------ | --------------------- | --------------------------------------------------------- |
-| Todo List    | main.js/xml/css       | Full TodoMVC implementation with localStorage persistence |
-| Time Tracker | readme.md/main.js/xml | Timer with step-by-step tutorial (7 progressive steps)    |
+| ID           | Sample       | Files                 | Description                                               |
+| ------------ | ------------ | --------------------- | --------------------------------------------------------- |
+| todo_list    | Todo List    | main.js/xml/css       | Full TodoMVC implementation with localStorage persistence |
+| time_tracker | Time Tracker | readme.md/main.js/xml | Timer with step-by-step tutorial (7 progressive steps)    |
 
 **Time Tracker Tutorial:** The `readme.md` file contains a comprehensive tutorial building a Pomodoro timer in 7 incremental steps, each introducing core Owl concepts:
 
@@ -274,10 +280,15 @@ The `rewriteImports()` function handles:
 ```
 docs/playground/
 ├── index.html              # Entry point
-├── playground.js           # Main application (~1694 lines)
+├── playground.js           # Main application (~292 lines)
 ├── playground.css          # Styles (~981 lines)
 ├── templates.xml           # Owl templates (~256 lines)
 ├── utils.js                # debounce, loadJS utilities
+├── file_utils.js           # File helpers: LANGUAGES, TAB_SIZES, getFileType, etc.
+├── code_utils.js           # Editor config, markdown parsing, OWL autocompletion
+├── samples.js              # EXAMPLES, TUTORIALS, file loading
+├── plugins.js              # All 7 Owl plugins (Code, Template, Project, etc.)
+├── components.js           # All 13 UI components + useAutoscroll hook
 ├── libs/
 │   ├── codemirror.bundle.js  # CodeMirror 6 editor bundle
 │   ├── jszip.min.js          # ZIP creation for export

@@ -1,0 +1,15 @@
+<templates>
+  <t t-name="tutorial.TodoList">
+    <div class="todo-app">
+      <div class="todo-header">
+        <input class="todo-input" t-ref="this.input" placeholder="What needs to be done?" t-on-keyup="this.addTodo"/>
+        <button class="todo-add-btn" t-on-click="this.addTodo">Add</button>
+      </div>
+      <ul class="todo-list">
+        <t t-foreach="this.todos()" t-as="todo" t-key="todo.id">
+          <TodoItem todo="todo" onDelete="() => this.deleteTodo(todo)"/>
+        </t>
+      </ul>
+    </div>
+  </t>
+</templates>

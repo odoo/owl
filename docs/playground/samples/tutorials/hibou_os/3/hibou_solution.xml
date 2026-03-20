@@ -1,0 +1,12 @@
+<templates>
+  <t t-name="hibou.Hibou">
+    <div class="desktop">
+      <div class="desktop-area">
+        <Window title="'Hello'">
+          <p>Welcome to Hibou OS!</p>
+        </Window>
+      </div>
+      <Taskbar/>
+    </div>
+  </t>
+</templates>

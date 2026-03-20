@@ -24,7 +24,7 @@ class Form extends Component {
     // we have to use an arrow function here to avoid redefining 'this'
     set: (v) => {
       this.amount.set(v / 2);
-    }
+    },
   });
 
   setup() {
@@ -33,7 +33,6 @@ class Form extends Component {
       console.log(this.text());
     });
   }
-
 }
 
 // Application setup

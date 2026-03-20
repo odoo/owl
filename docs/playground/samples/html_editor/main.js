@@ -10,4 +10,4 @@ class Root extends Component {
   }
 }
 
-mount(Root, document.body, { templates: TEMPLATES });
+mount(Root, document.body, { templates: TEMPLATES, dev: true });

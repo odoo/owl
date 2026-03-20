@@ -1,0 +1,8 @@
+<templates>
+  <t t-name="tutorial.TodoItem">
+    <li>
+      <input type="checkbox" t-att-checked="this.props.todo.completed"/>
+      <t t-out="this.props.todo.text"/>
+    </li>
+  </t>
+</templates>

@@ -4,4 +4,4 @@ class TimeTracker extends Component {
   static template = "TimeTracker";
 }
 
-mount(TimeTracker, document.body, { templates: TEMPLATES });
+mount(TimeTracker, document.body, { templates: TEMPLATES, dev: true });

@@ -1,44 +1,15 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`t-ref can get a dynamic ref on a node 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['id'];
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
-    return block1([ref1]);
-  }
-}"
-`;
-
-exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['id'];
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
-    return block1([ref1]);
-  }
-}"
-`;
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\`), el);
+  return function template(ctx, node, key = "") {
+    let ref1 = createRef(ctx['myspan']);
     return block1([ref1]);
   }
 }"
@@ -48,12 +19,12 @@ exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  return function template(ctx, node, key = "") {
+    const b2 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -63,11 +34,12 @@ exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
-  let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
+  let block1 = createBlock(\`<div>1<span block-ref="0"/>2</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+  return function template(ctx, node, key = "") {
+    let ref1 = createRef(ctx['name']);
     return block1([ref1]);
   }
 }"
@@ -77,14 +49,15 @@ exports[`t-ref ref in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+      let ref1 = createRef(ctx['name']);
       b2 = block2([ref1]);
     }
     return block1([], [b2]);
@@ -96,22 +69,22 @@ exports[`t-ref refs in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, createRef, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div block-ref=\\"0\\"><block-text-1/></div>\`);
+  let block3 = createBlock(\`<div block-ref="0"><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block2[i1];
-      const key1 = ctx['item'];
-      const tKey_1 = ctx['item'];
-      const v1 = ctx['item'];
-      let ref1 = (el) => this.__owl__.setRef(((v1)), el);
-      let txt1 = ctx['item'];
-      c_block2[i1] = withKey(block3([ref1, txt1]), tKey_1 + key1);
+      const key1 = ctx['item'].id;
+      const tKey_1 = ctx['item'].id;
+      let ref1 = createRef(ctx['item'].ref);
+      const b4 = toggler(tKey_1, safeOutput(ctx['item'].id));
+      c_block2[i1] = withKey(block3([ref1], [b4]), tKey_1 + key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -123,17 +96,18 @@ exports[`t-ref two refs, one in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><p block-ref=\\"0\\"/></div>\`);
-  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p block-ref="0"/></div>\`);
+  let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+      let ref1 = createRef(ctx['refs'].name);
       b2 = block2([ref1]);
     }
-    let ref2 = (el) => this.__owl__.setRef((\`p\`), el);
+    let ref2 = createRef(ctx['refs'].p);
     return block1([ref2], [b2]);
   }
 }"

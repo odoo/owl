@@ -1,8 +1,8 @@
-import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
 import {
   makeTestFixture,
-  nextAppError,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
@@ -28,17 +28,18 @@ afterEach(() => {
 describe("list of components", () => {
   test("simple list", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
-            <t t-foreach="state.elems" t-as="elem" t-key="elem.id">
+            <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
                 <Child value="elem.value"/>
             </t>`;
       static components = { Child };
 
-      state = useState({
+      state = proxy({
         elems: [
           { id: 1, value: "a" },
           { id: 2, value: "b" },
@@ -60,9 +61,10 @@ describe("list of components", () => {
 
   test("components in a node in a t-foreach ", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.item"/></div>`;
+      static template = xml`<div><t t-out="this.props.item"/></div>`;
+      props = props();
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -70,7 +72,7 @@ describe("list of components", () => {
       static template = xml`
               <div>
                   <ul>
-                      <t t-foreach="items" t-as="item" t-key="'li_'+item">
+                      <t t-foreach="this.items" t-as="item" t-key="'li_'+item">
                           <li>
                               <Child item="item"/>
                           </li>
@@ -80,7 +82,7 @@ describe("list of components", () => {
       static components = { Child };
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
 
       get items() {
@@ -93,19 +95,13 @@ describe("list of components", () => {
       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
     );
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Child:mounted",
         "Parent:mounted",
@@ -115,13 +111,14 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.blip"/></div>`;
+      static template = xml`<div><t t-out="this.props.blip"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
-            <t t-foreach="state.s" t-as="section" t-key="section_index">
+            <t t-foreach="this.state.s" t-as="section" t-key="section_index">
                 <t t-foreach="section.blips" t-as="blip" t-key="blip_index">
                   <Child blip="blip"/>
                 </t>
@@ -137,20 +134,21 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.row + '_' + props.col"/></div>`;
+      static template = xml`<div><t t-out="this.props.row + '_' + this.props.col"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
-          <p t-foreach="state.rows" t-as="row" t-key="row">
-            <p t-foreach="state.cols" t-as="col" t-key="col">
+          <p t-foreach="this.state.rows" t-as="row" t-key="row">
+            <p t-foreach="this.state.cols" t-as="col" t-key="col">
                 <Child row="row" col="col"/>
               </p>
             </p>
         </div>`;
       static components = { Child };
-      state = useState({ rows: [1, 2], cols: ["a", "b"] });
+      state = proxy({ rows: [1, 2], cols: ["a", "b"] });
     }
 
     const parent = await mount(Parent, fixture);
@@ -166,19 +164,20 @@ describe("list of components", () => {
 
   test("sub components rendered in a loop", async () => {
     class Child extends Component {
-      static template = xml`<p><t t-esc="props.n"/></p>`;
+      static template = xml`<p><t t-out="this.props.n"/></p>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number" t-key="number" >
+          <t t-foreach="this.state.numbers" t-as="number" t-key="number" >
             <Child n="number"/>
           </t>
         </div>`;
       static components = { Child };
 
-      state = useState({ numbers: [1, 2, 3] });
+      state = proxy({ numbers: [1, 2, 3] });
     }
     await mount(Parent, fixture);
 
@@ -189,10 +188,10 @@ describe("list of components", () => {
     let n = 1;
 
     class Child extends Component {
-      static template = xml`<p><t t-esc="state.n"/></p>`;
+      static template = xml`<p><t t-out="this.state.n"/></p>`;
       state: any;
       setup() {
-        this.state = useState({ n });
+        this.state = proxy({ n });
         n++;
       }
     }
@@ -200,13 +199,13 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number" t-key="number">
+          <t t-foreach="this.state.numbers" t-as="number" t-key="number">
             <Child/>
           </t>
         </div>`;
       static components = { Child };
 
-      state = useState({
+      state = proxy({
         numbers: [1, 2, 3],
       });
     }
@@ -225,12 +224,12 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
       <div>
-          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+          <div t-foreach="this.state.blips" t-as="blip" t-key="blip.id">
               <SubComponent />
           </div>
       </div>`;
       static components = { SubComponent };
-      state = useState({
+      state = proxy({
         blips: [
           { a: "a", id: 1 },
           { b: "b", id: 2 },
@@ -253,10 +252,11 @@ describe("list of components", () => {
     class Child extends Component {
       static template = xml`
           <span>
-            <t t-esc="state.val"/>
-            <t t-esc="props.val"/>
+            <t t-out="this.state.val"/>
+            <t t-out="this.props.val"/>
           </span>`;
-      state = useState({ val: "A" });
+      props = props();
+      state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
           this.state.val = "B";
@@ -283,7 +283,8 @@ describe("list of components", () => {
   test("switch component position", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
       setup() {
         childInstances.push(this);
       }
@@ -292,7 +293,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-foreach="clist" t-as="c" t-key="c">
+        <t t-foreach="this.clist" t-as="c" t-key="c">
           <Child key="c"/>
         </t>
       </span>`;
@@ -303,7 +304,7 @@ describe("list of components", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span><div>1</div><div>2</div></span>");
     parent.clist = [2, 1];
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span><div>2</div><div>1</div></span>");
     expect(childInstances.length).toBe(2);
@@ -324,15 +325,15 @@ describe("list of components", () => {
       `;
       static components = { Child };
     }
-
-    const app = new App(Parent, { test: true });
-    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
-      "Got duplicate key in t-foreach: child"
-    );
-    await expect(nextAppError(app)).resolves.toThrow("Got duplicate key in t-foreach: child");
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause.message).toBe("Got duplicate key in t-foreach: child");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("crash when using object as keys that serialize to the same string", async () => {
@@ -351,23 +352,23 @@ describe("list of components", () => {
       static components = { Child };
     }
 
-    const app = new App(Parent, { test: true });
-    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
-      "Got duplicate key in t-foreach: [object Object]"
-    );
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Got duplicate key in t-foreach: [object Object]"
-    );
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause.message).toBe("Got duplicate key in t-foreach: [object Object]");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("order is correct when slots are not of same type", async () => {
     class Child extends Component {
       static template = xml`
-          <t t-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
+          <t t-foreach="this.slotNames" t-as="slotName" t-key="slotName" t-call-slot="{{ slotName }}"/>
       `;
+      props = props();
       get slotNames() {
         return Object.entries(this.props.slots)
           .filter((entry: any) => entry[1].active)
@@ -378,13 +379,13 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <Child>
-          <t t-set-slot="a" active="!state.active"><div t-if="!state.active">A</div></t>
+          <t t-set-slot="a" active="!this.state.active"><div t-if="!this.state.active">A</div></t>
           <t t-set-slot="b" active="true">B</t>
-          <t t-set-slot="c" active="state.active">C</t>
+          <t t-set-slot="c" active="this.state.active">C</t>
         </Child>
       `;
       static components = { Child };
-      state = useState({ active: false });
+      state = proxy({ active: false });
     }
 
     const parent = await mount(Parent, fixture);

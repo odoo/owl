@@ -1,4 +1,4 @@
-import { App, Component, xml } from "../../src";
+import { Component, mount, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -13,19 +13,18 @@ describe("t-custom", () => {
   test("can use t-custom directive on a node", async () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
-      static template = xml`<div t-custom-plop="click" class="my-div"/>`;
+      static template = xml`<div t-custom-plop="this.click" class="my-div"/>`;
       click() {
         steps.push("clicked");
       }
     }
-    const app = new App(SomeComponent, {
+    await mount(SomeComponent, fixture, {
       customDirectives: {
         plop: (node, value) => {
           node.setAttribute("t-on-click", value);
         },
       },
     });
-    await app.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["clicked"]);
@@ -34,12 +33,12 @@ describe("t-custom", () => {
   test("can use t-custom directive with modifiers on a node", async () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
-      static template = xml`<div t-custom-plop.mouse.stop="click" class="my-div"/>`;
+      static template = xml`<div t-custom-plop.mouse.stop="this.click" class="my-div"/>`;
       click() {
         steps.push("clicked");
       }
     }
-    const app = new App(SomeComponent, {
+    await mount(SomeComponent, fixture, {
       customDirectives: {
         plop: (node, value, modifiers) => {
           node.setAttribute("t-on-click", value);
@@ -49,7 +48,6 @@ describe("t-custom", () => {
         },
       },
     });
-    await app.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["mouse", "stop", "clicked"]);

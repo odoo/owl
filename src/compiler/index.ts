@@ -1,9 +1,13 @@
-import type { customDirectives } from "../common/types";
-import type { TemplateSet } from "../runtime/template_set";
+import { OwlError } from "../common/owl_error";
 import type { BDom } from "../runtime/blockdom";
+import type { TemplateSet } from "../runtime/template_set";
 import { CodeGenerator, Config } from "./code_generator";
 import { parse } from "./parser";
-import { OwlError } from "../common/owl_error";
+
+export type CustomDirectives = Record<
+  string,
+  (node: Element, value: string, modifier: string[]) => void
+>;
 
 export type Template = (context: any, vnode: any, key?: string) => BDom;
 
@@ -11,9 +15,10 @@ export type TemplateFunction = (app: TemplateSet, bdom: any, helpers: any) => Te
 
 interface CompileOptions extends Config {
   name?: string;
-  customDirectives?: customDirectives;
+  customDirectives?: CustomDirectives;
   hasGlobalValues: boolean;
 }
+
 export function compile(
   template: string | Element,
   options: CompileOptions = {
@@ -23,14 +28,8 @@ export function compile(
   // parsing
   const ast = parse(template, options.customDirectives);
 
-  // some work
-  const hasSafeContext =
-    template instanceof Node
-      ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
-      : !template.includes("t-set") && !template.includes("t-call");
-
   // code generation
-  const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });
+  const codeGenerator = new CodeGenerator(ast, options);
   const code = codeGenerator.generateCode();
   // template function
   try {

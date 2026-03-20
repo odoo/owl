@@ -12,16 +12,17 @@ interface EventHandlerCreator {
 export function createEventHandler(rawEvent: string): EventHandlerCreator {
   const eventName = rawEvent.split(".")[0];
   const capture = rawEvent.includes(".capture");
+  const passive = rawEvent.includes(".passive");
   if (rawEvent.includes(".synthetic")) {
-    return createSyntheticHandler(eventName, capture);
+    return createSyntheticHandler(eventName, capture, passive);
   } else {
-    return createElementHandler(eventName, capture);
+    return createElementHandler(eventName, capture, passive);
   }
 }
 
 // Native listener
 let nextNativeEventId = 1;
-function createElementHandler(evName: string, capture: boolean = false): EventHandlerCreator {
+function createElementHandler(evName: string, capture: boolean = false, passive: boolean = false): EventHandlerCreator {
   let eventKey = `__event__${evName}_${nextNativeEventId++}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
@@ -35,14 +36,16 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
     config.mainEventHandler(data, ev, currentTarget);
   }
 
+  const options: AddEventListenerOptions = { capture, passive };
+
   function setup(this: HTMLElement, data: any) {
     (this as any)[eventKey] = data;
-    this.addEventListener(evName, listener, { capture });
+    this.addEventListener(evName, listener, options);
   }
 
   function remove(this: HTMLElement) {
     delete (this as any)[eventKey];
-    this.removeEventListener(evName, listener, { capture });
+    this.removeEventListener(evName, listener, options);
   }
   function update(this: HTMLElement, data: any) {
     (this as any)[eventKey] = data;
@@ -54,12 +57,12 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
 // Synthetic handler: a form of event delegation that allows placing only one
 // listener per event type.
 let nextSyntheticEventId = 1;
-function createSyntheticHandler(evName: string, capture: boolean = false): EventHandlerCreator {
+function createSyntheticHandler(evName: string, capture: boolean = false, passive: boolean = false): EventHandlerCreator {
   let eventKey = `__event__synthetic_${evName}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
   }
-  setupSyntheticEvent(evName, eventKey, capture);
+  setupSyntheticEvent(evName, eventKey, capture, passive);
   const currentId = nextSyntheticEventId++;
   function setup(this: HTMLElement, data: any) {
     const _data = (this as any)[eventKey] || {};
@@ -90,12 +93,13 @@ function nativeToSyntheticEvent(eventKey: string, event: Event) {
 
 const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {};
 
-function setupSyntheticEvent(evName: string, eventKey: string, capture: boolean = false) {
+function setupSyntheticEvent(evName: string, eventKey: string, capture: boolean = false, passive: boolean = false) {
   if (CONFIGURED_SYNTHETIC_EVENTS[eventKey]) {
     return;
   }
   document.addEventListener(evName, (event) => nativeToSyntheticEvent(eventKey, event), {
     capture,
+    passive,
   });
   CONFIGURED_SYNTHETIC_EVENTS[eventKey] = true;
 }

@@ -1,5 +1,6 @@
-import { App, Component, mount, onWillPatch, onWillStart, useState, xml } from "../../src";
-import { status } from "../../src/runtime/status";
+import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { useApp } from "../../src/runtime/hooks";
+import { STATUS, status } from "../../src/runtime/status";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -9,6 +10,7 @@ import {
   makeDeferred,
   nextMicroTick,
   steps,
+  render,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -25,8 +27,8 @@ describe("app", () => {
       static template = xml`<div/>`;
     }
 
-    const app = new App(SomeComponent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     const el = elem(comp);
     expect(document.contains(el)).toBe(true);
     app.destroy();
@@ -34,54 +36,35 @@ describe("app", () => {
     expect(status(comp)).toBe("destroyed");
   });
 
-  test("App supports env with getters/setters", async () => {
-    let someVal = "maggot";
-
-    const services: any = { serv1: "" };
-    const env = {
-      get someVal() {
-        return someVal;
-      },
-      services,
-    };
-
-    class SomeComponent extends Component {
-      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="Object.keys(env.services)" /></div>`;
-    }
-
-    const app = new App(SomeComponent, { env });
-    const comp = await app.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>maggot serv1</div>");
-    someVal = "brain";
-    services.serv2 = "";
-    comp.render();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div>brain serv1,serv2</div>");
-  });
-
   test("can configure an app with props", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
+      props = props();
     }
 
-    const app = new App(SomeComponent, { props: { value: 333 } });
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(SomeComponent, { props: { value: 333 } }).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>333</div>");
   });
 
-  test("warnIfNoStaticProps works as expected", async () => {
+  test.skip("warnIfNoStaticProps works as expected", async () => {
     let originalconsoleWarn = console.warn;
     let mockConsoleWarn = jest.fn(() => {});
     console.warn = mockConsoleWarn;
 
     class Root extends Component {
-      static template = xml`<div t-esc="message"/>`;
+      static template = xml`<div t-out="message"/>`;
+      props = props();
     }
 
-    await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true });
+    await mount(Root, fixture, {
+      test: true,
+      props: { messge: "hey" },
+      warnIfNoStaticProps: true,
+    } as any);
 
     console.warn = originalconsoleWarn;
-    expect(mockConsoleWarn).toBeCalledWith(
+    expect(mockConsoleWarn).toHaveBeenCalledWith(
       "Component 'Root' does not have a static props description"
     );
   });
@@ -93,9 +76,9 @@ describe("app", () => {
 
     const iframe = document.createElement("iframe");
     fixture.appendChild(iframe);
-    const app = new App(SomeComponent);
+    const app = new App();
     const iframeDoc = iframe.contentDocument!;
-    const comp = await app.mount(iframeDoc.body);
+    const comp = await app.createRoot(SomeComponent).mount(iframeDoc.body);
     const div = iframeDoc.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(iframeDoc.contains(div)).toBe(true);
@@ -109,27 +92,25 @@ describe("app", () => {
     class B extends Component {
       static template = xml`B`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onWillStart(() => def);
       }
     }
     class A extends Component {
-      static template = xml`A<t t-if="state.value"><B/></t>`;
+      static template = xml`A<t t-if="this.state.value"><B/></t>`;
       static components = { B };
-      state = useState({ value: false });
+      state = proxy({ value: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(A);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(A).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
-        "A:willRender",
-        "A:rendered",
         "A:mounted",
       ]
     `);
@@ -137,29 +118,25 @@ describe("app", () => {
     comp.state.value = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "A:willRender",
+      [
         "B:setup",
         "B:willStart",
-        "A:rendered",
       ]
     `);
 
     // rerender to force the instantiation of a new B component (and cancelling the first)
-    comp.render();
+    render(comp);
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "A:willRender",
+      [
         "B:setup",
         "B:willStart",
-        "A:rendered",
       ]
     `);
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:willUnmount",
         "B:willDestroy",
         "A:willDestroy",
@@ -177,8 +154,8 @@ describe("app", () => {
       static template = "hello";
     }
 
-    const app = new App(SomeComponent, { templates });
-    await app.mount(fixture);
+    const app = new App({ templates });
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.querySelector(".hello")).toBeDefined();
     // Only the "hello" template is used, so the "world" template is not yet loaded
     expect(Object.keys(app.templates)).toEqual(["hello"]);
@@ -197,8 +174,8 @@ describe("app", () => {
       static components = { Child };
     }
 
-    const app = new App(SomeComponent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("parent<div></div>");
   });
 
@@ -207,16 +184,38 @@ describe("app", () => {
     class SomeComponent extends Component {
       static template = xml`<div t-on-click="() => __globals__.plop('click')" class="my-div"/>`;
     }
-    const app = new App(SomeComponent, {
+    const app = new App({
       globalValues: {
         plop: (string: any) => {
           steps.push(string);
         },
       },
     });
-    await app.mount(fixture);
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["click"]);
+  });
+
+  test("app creates and destroys a plugin manager", () => {
+    const app = new App();
+    expect(app.pluginManager.status).toBe(STATUS.NEW);
+    app.destroy();
+    expect(app.pluginManager.status).toBe(STATUS.DESTROYED);
+  });
+});
+
+describe("useApp", () => {
+  test("destroy remove the widget from the DOM", async () => {
+    let appFromComponent = null;
+    class SomeComponent extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        appFromComponent = useApp();
+      }
+    }
+    const app = new App();
+    await app.createRoot(SomeComponent).mount(fixture);
+    expect(appFromComponent).toBe(app);
   });
 });

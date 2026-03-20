@@ -1,30 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`app App supports env with getters/setters 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['env'].someVal;
-    let txt2 = Object.keys(ctx['env'].services);
-    return block1([txt1, txt2]);
-  }
-}"
-`;
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`A\`);
-    if (ctx['state'].value) {
+    if (ctx['this'].state.value) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -37,7 +23,7 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`B\`);
   }
 }"
@@ -48,11 +34,12 @@ exports[`app can add functions to the bdom 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { __globals__ } = helpers;
+  const hdlr_fn1 = (ctx)=>__globals__.plop('click');
   
-  let block1 = createBlock(\`<div class=\\"my-div\\" block-handler-0=\\"click\\"/>\`);
+  let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [()=>__globals__.plop('click'), ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -62,9 +49,10 @@ exports[`app can call processTask twice in a row without crashing 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -79,7 +67,7 @@ exports[`app can call processTask twice in a row without crashing 2`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -89,12 +77,13 @@ exports[`app can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].value;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -104,9 +93,9 @@ exports[`app can load templates from an object name-string 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div class=\\"hello\\">hello</div>\`);
+  let block1 = createBlock(\`<div class="hello">hello</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -117,9 +106,9 @@ exports[`app can mount app in an iframe 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div class=\\"my-div\\"/>\`);
+  let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -132,7 +121,7 @@ exports[`app destroy remove the widget from the DOM 1`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -145,9 +134,22 @@ exports[`app warnIfNoStaticProps works as expected 1`] = `
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['message'];
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`useApp destroy remove the widget from the DOM 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
   }
 }"
 `;

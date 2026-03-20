@@ -317,13 +317,12 @@ interface BlockCtx {
   locations: IndexedLocation[];
   children: Child[];
   cbRefs: number[];
-  refList: (() => void)[][];
 }
 
 function buildContext(tree: IntermediateTree, ctx?: BlockCtx, fromIdx?: number): BlockCtx {
   if (!ctx) {
     const children = new Array(tree.info.filter((v) => v.type === "child").length);
-    ctx = { collectors: [], locations: [], children, cbRefs: [], refN: tree.refN, refList: [] };
+    ctx = { collectors: [], locations: [], children, cbRefs: [], refN: tree.refN };
     fromIdx = 0;
   }
   if (tree.refN) {
@@ -433,14 +432,16 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
         });
         break;
       }
-      case "ref":
-        const index = ctx.cbRefs.push(info.idx) - 1;
+      case "ref": {
         ctx.locations.push({
           idx: info.idx,
           refIdx: info.refIdx!,
-          setData: makeRefSetter(index, ctx.refList),
+          setData: NO_OP,
           updateData: NO_OP,
         });
+        ctx.cbRefs.push(info.idx);
+        break;
+      }
     }
   }
 }
@@ -450,28 +451,6 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
 
 function buildBlock(template: HTMLElement, ctx: BlockCtx): BlockType {
   let B = createBlockClass(template, ctx);
-
-  if (ctx.cbRefs.length) {
-    const cbRefs = ctx.cbRefs;
-    const refList = ctx.refList;
-    let cbRefsNumber = cbRefs.length;
-    B = class extends B {
-      mount(parent: HTMLElement, afterNode: Node | null) {
-        refList.push(new Array(cbRefsNumber));
-        super.mount(parent, afterNode);
-        for (let cbRef of refList.pop()!) {
-          cbRef();
-        }
-      }
-      remove() {
-        super.remove();
-        for (let cbRef of cbRefs) {
-          let fn = (this as any).data[cbRef];
-          fn(null);
-        }
-      }
-    };
-  }
 
   if (ctx.children.length) {
     B = class extends B {
@@ -492,18 +471,36 @@ type Constructor<T> = new (...args: any[]) => T;
 type BlockClass = Constructor<VNode<any>>;
 
 function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
-  const { refN, collectors, children } = ctx;
-  const colN = collectors.length;
-  ctx.locations.sort((a, b) => a.idx - b.idx);
-  const locations: Location[] = ctx.locations.map((loc) => ({
-    refIdx: loc.refIdx,
-    setData: loc.setData,
-    updateData: loc.updateData,
-  }));
+  const { refN, collectors, children, locations, cbRefs } = ctx;
+  locations.sort((a, b) => a.idx - b.idx);
   const locN = locations.length;
   const childN = children.length;
-  const childrenLocs = children;
   const isDynamic = refN > 0;
+
+  // Flatten locations into parallel arrays (hot path optimization)
+  const locRefIdxs: number[] = locations.map((l) => l.refIdx);
+  const locSetters: Setter[] = locations.map((l) => l.setData);
+  const locUpdaters: Updater[] = locations.map((l) => l.updateData);
+
+  // Bitpack collectors into uint32 array
+  // Layout: bits 0-14: idx, bits 15-29: prevIdx, bit 30: isFirstChild
+  const GETTERS = [nodeGetNextSibling, nodeGetFirstChild];
+  const colN = collectors.length;
+  const colPacked: number[] = collectors.map(
+    (c) =>
+      (c.idx & 0x7fff) |
+      ((c.prevIdx & 0x7fff) << 15) |
+      ((c.getVal === nodeGetFirstChild ? 1 : 0) << 30)
+  );
+
+  // Bitpack children locations into uint32 array
+  // Layout: bits 0-14: parentRefIdx, bit 15: isOnlyChild, bits 16-30: afterRefIdx
+  const childInfos: number[] = children.map(
+    (c) =>
+      (c.parentRefIdx & 0x7fff) |
+      ((c.isOnlyChild ? 1 : 0) << 15) |
+      (((c.afterRefIdx ?? 0) & 0x7fff) << 16)
+  );
 
   // these values are defined here to make them faster to lookup in the class
   // block scope
@@ -564,36 +561,45 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       this.refs = refs;
       refs[0] = el;
       for (let i = 0; i < colN; i++) {
-        const w = collectors[i];
-        refs[w.idx] = w.getVal.call(refs[w.prevIdx]);
+        const packed = colPacked[i];
+        refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1].call(refs[(packed >> 15) & 0x7fff])!;
       }
 
       // applying data to all update points
       if (locN) {
         const data = this.data!;
         for (let i = 0; i < locN; i++) {
-          const loc = locations[i];
-          loc.setData.call(refs[loc.refIdx], data[i]);
+          locSetters[i].call(refs[locRefIdxs[i]], data[i]);
         }
       }
 
-      nodeInsertBefore.call(parent, el, afterNode);
-
-      // preparing all children
+      // preparing all children (off-DOM, before inserting el into the live document)
       if (childN) {
         const children = this.children;
         for (let i = 0; i < childN; i++) {
           const child = children![i];
           if (child) {
-            const loc = childrenLocs[i];
-            const afterNode = loc.afterRefIdx ? refs[loc.afterRefIdx] : null;
-            child.isOnlyChild = loc.isOnlyChild;
-            child.mount(refs[loc.parentRefIdx] as any, afterNode);
+            const info = childInfos[i];
+            const afterRefIdx = (info >> 16) & 0x7fff;
+            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
+            child.isOnlyChild = !!(info & (1 << 15));
+            child.mount(refs[info & 0x7fff] as any, afterNode);
           }
         }
       }
+
+      nodeInsertBefore.call(parent, el, afterNode);
       this.el = el as HTMLElement;
       this.parentEl = parent;
+
+      if (cbRefs.length) {
+        const data = this.data!;
+        const refs = this.refs!;
+        for (let cbRef of cbRefs) {
+          const fn = data[cbRef];
+          fn(refs[locRefIdxs[cbRef]], null);
+        }
+      }
     };
 
     Block.prototype.patch = function patch(other: Block, withBeforeRemove: boolean) {
@@ -609,8 +615,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
           const val1 = data1[i];
           const val2 = data2[i];
           if (val1 !== val2) {
-            const loc = locations[i];
-            loc.updateData.call(refs[loc.refIdx], val2, val1);
+            locUpdaters[i].call(refs[locRefIdxs[i]], val2, val1);
           }
         }
         this.data = data2;
@@ -634,13 +639,27 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
               children1![i] = undefined;
             }
           } else if (child2) {
-            const loc = childrenLocs[i];
-            const afterNode = loc.afterRefIdx ? refs[loc.afterRefIdx] : null;
-            child2.mount(refs[loc.parentRefIdx] as any, afterNode);
+            const info = childInfos[i];
+            const afterRefIdx = (info >> 16) & 0x7fff;
+            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
+            child2.mount(refs[info & 0x7fff] as any, afterNode);
             children1![i] = child2;
           }
         }
       }
+    };
+
+    Block.prototype.remove = function remove() {
+      if (cbRefs.length) {
+        const data = this.data!;
+        const refs = this.refs!;
+        for (let cbRef of cbRefs) {
+          const fn = data[cbRef];
+          fn(null, refs[locRefIdxs[cbRef]]);
+        }
+      }
+
+      elementRemove.call(this.el);
     };
   }
   return Block;
@@ -648,10 +667,4 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
 
 function setText(this: Text, value: any) {
   characterDataSetData.call(this, toText(value));
-}
-
-function makeRefSetter(index: number, refs: (() => void)[][]): Setter<HTMLElement> {
-  return function setRef(this: HTMLElement, fn: any) {
-    refs[refs.length - 1][index] = () => fn(this);
-  };
 }

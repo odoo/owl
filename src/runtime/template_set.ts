@@ -1,11 +1,9 @@
-import { compile, Template, TemplateFunction } from "../compiler";
-import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
-import { getCurrent } from "./component_node";
-import { Portal, portalTemplate } from "./portal";
-import { helpers } from "./template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
-import type { customDirectives } from "../common/types";
+import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
+import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
+import { getContext } from "./context";
+import { helpers } from "./rendering/template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -15,7 +13,7 @@ export interface TemplateSetConfig {
   translateFn?: (s: string, translationCtx: string) => string;
   templates?: string | Document | Record<string, string>;
   getTemplate?: (s: string) => Element | Function | string | void;
-  customDirectives?: customDirectives;
+  customDirectives?: CustomDirectives;
   globalValues?: object;
 }
 
@@ -29,8 +27,7 @@ export class TemplateSet {
   getRawTemplate?: (s: string) => Element | Function | string | void;
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
-  Portal = Portal;
-  customDirectives: customDirectives;
+  customDirectives: CustomDirectives;
   runtimeUtils: object;
   hasGlobalValues: boolean;
 
@@ -64,8 +61,8 @@ export class TemplateSet {
         typeof rawTemplate === "string"
           ? rawTemplate
           : rawTemplate instanceof Element
-          ? rawTemplate.outerHTML
-          : rawTemplate.toString();
+            ? rawTemplate.outerHTML
+            : rawTemplate.toString();
       const newAsString = typeof template === "string" ? template : template.outerHTML;
       if (currentAsString === newAsString) {
         return;
@@ -88,12 +85,13 @@ export class TemplateSet {
   }
 
   getTemplate(name: string): Template {
-    if (!(name in this.templates)) {
+    const cacheKey = name;
+    if (!(cacheKey in this.templates)) {
       const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
         let extraInfo = "";
         try {
-          const componentName = getCurrent().component.constructor.name;
+          const { componentName } = getContext("component");
           extraInfo = ` (for component "${componentName}")`;
         } catch {}
         throw new OwlError(`Missing template: "${name}"${extraInfo}`);
@@ -103,22 +101,17 @@ export class TemplateSet {
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
-      this.templates[name] = function (context, parent) {
-        return templates[name].call(this, context, parent);
+      this.templates[cacheKey] = function (context, parent) {
+        return templates[cacheKey].call(this, context, parent);
       };
       const template = templateFn(this, bdom, this.runtimeUtils);
-      this.templates[name] = template;
+      this.templates[cacheKey] = template;
     }
-    return this.templates[name];
+    return this.templates[cacheKey];
   }
 
-  _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
+  private _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
     throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
-  }
-
-  callTemplate(owner: any, subTemplate: string, ctx: any, parent: any, key: any): any {
-    const template = this.getTemplate(subTemplate);
-    return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
   }
 }
 
@@ -135,5 +128,3 @@ export function xml(...args: Parameters<typeof String.raw>) {
 }
 
 xml.nextId = 1;
-
-TemplateSet.registerTemplate("__portal__", portalTemplate);

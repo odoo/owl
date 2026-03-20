@@ -1,76 +1,19 @@
-import type { App, Env } from "./app";
+import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
-import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
+import { Component, ComponentConstructor } from "./component";
+import { contextStack } from "./context";
+import { PluginManager } from "./plugin_manager";
+import {
+  ComputationAtom,
+  ComputationState,
+  createComputation,
+  disposeComputation,
+  getCurrentComputation,
+  setComputation,
+} from "./reactivity/computations";
+import { fibersInError } from "./rendering/error_handling";
+import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
-
-let currentNode: ComponentNode | null = null;
-
-export function saveCurrent() {
-  let n = currentNode;
-  return () => {
-    currentNode = n;
-  };
-}
-
-export function getCurrent(): ComponentNode {
-  if (!currentNode) {
-    throw new OwlError("No active component (a hook function should only be called in 'setup')");
-  }
-  return currentNode;
-}
-
-export function useComponent(): Component {
-  return currentNode!.component;
-}
-
-/**
- * Apply default props (only top level).
- */
-function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>) {
-  for (let propName in defaultProps) {
-    if (props[propName] === undefined) {
-      (props as any)[propName] = defaultProps[propName];
-    }
-  }
-}
-// -----------------------------------------------------------------------------
-// Integration with reactivity system (useState)
-// -----------------------------------------------------------------------------
-
-const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
-/**
- * Creates a reactive object that will be observed by the current component.
- * Reading data from the returned object (eg during rendering) will cause the
- * component to subscribe to that data and be rerendered when it changes.
- *
- * @param state the state to observe
- * @returns a reactive object that will cause the component to re-render on
- *  relevant changes
- * @see reactive
- */
-export function useState<T extends object>(state: T): T {
-  const node = getCurrent();
-  let render = batchedRenderFunctions.get(node);
-  if (!render) {
-    const wrapper = { fn: batched(node.render.bind(node, false)) };
-    render = (...args) => wrapper.fn(...args);
-    batchedRenderFunctions.set(node, render);
-    // manual implementation of onWillDestroy to break cyclic dependency
-    node.willDestroy.push(cleanupRenderAndReactives.bind(null, wrapper, render));
-  }
-  return reactive(state, render);
-}
-
-const NO_OP = () => {};
-function cleanupRenderAndReactives(wrapper: any, render: Callback) {
-  wrapper.fn = NO_OP;
-  clearReactivesForCallback(render);
-}
 
 // -----------------------------------------------------------------------------
 //  Component VNode class
@@ -78,23 +21,20 @@ function cleanupRenderAndReactives(wrapper: any, render: Callback) {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends Props = any, E = any> implements VNode<ComponentNode<P, E>> {
+export class ComponentNode implements VNode<ComponentNode> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
-  component: Component<P, E>;
+  component: Component;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
   parentKey: string | null;
-  props: P;
-  nextProps: P | null = null;
+  props: Record<string, any>;
 
   renderFn: Function;
   parent: ComponentNode | null;
-  childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
-  refs: any = {};
 
   willStart: LifecycleHook[] = [];
   willUpdateProps: LifecycleHook[] = [];
@@ -103,43 +43,56 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
+  signalComputation: ComputationAtom;
+  computations: ComputationAtom[] = [];
+
+  pluginManager: PluginManager;
 
   constructor(
-    C: ComponentConstructor<P, E>,
-    props: P,
+    C: ComponentConstructor,
+    props: Record<string, any>,
     app: App,
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
-    currentNode = this;
     this.app = app;
     this.parent = parent;
-    this.props = props;
     this.parentKey = parentKey;
-    const defaultProps = C.defaultProps;
-    props = Object.assign({}, props);
-    if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
-    }
-    const env = (parent && parent.childEnv) || app.env;
-    this.childEnv = env;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
-    this.component = new C(props, env, this);
-    const ctx = Object.assign(Object.create(this.component), { this: this.component });
+    this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
+    this.signalComputation = createComputation(
+      () => this.render(false),
+      false,
+      ComputationState.EXECUTED
+    );
+    this.props = props;
+    contextStack.push({
+      type: "component",
+      app,
+      componentName: C.name,
+      node: this,
+      get status() {
+        return this.node.status;
+      },
+    });
+    const previousComputation = getCurrentComputation();
+    setComputation(undefined);
+    this.component = new C(this);
+    const ctx = { this: this.component, __owl__: this };
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
-    currentNode = null;
+    setComputation(previousComputation);
+    contextStack.length = 0; // clear context stack
   }
 
   mountComponent(target: any, options?: MountOptions) {
     const fiber = new MountFiber(this, target, options);
     this.app.scheduler.addFiber(fiber);
+    let prev = getCurrentComputation();
     this.initiateRender(fiber);
+    // only useful if the component is a root, and a willstart function just
+    // crashed synchonously. In that case, it is possible that the previous
+    // computation has not been properly restored
+    setComputation(prev);
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -148,8 +101,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
+    let prev = getCurrentComputation();
+    setComputation(undefined);
     try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
+      let promises = this.willStart.map((f) => f.call(component));
+      setComputation(prev);
+      await Promise.all(promises!);
     } catch (e) {
       this.app.handleError({ node: this, error: e });
       return;
@@ -237,8 +194,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         cb.call(component);
       }
     }
-    for (let child of Object.values(this.children)) {
-      child._destroy();
+    for (let childKey in this.children) {
+      this.children[childKey]._destroy();
     }
     if (this.willDestroy.length) {
       try {
@@ -249,35 +206,30 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         this.app.handleError({ error: e, node: this });
       }
     }
+    for (const computation of this.computations) {
+      disposeComputation(computation);
+    }
+    disposeComputation(this.signalComputation);
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: P, parentFiber: Fiber) {
-    this.nextProps = props;
+  async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
     props = Object.assign({}, props);
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
-    const defaultProps = (component.constructor as any).defaultProps;
-    if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
-    }
 
-    currentNode = this;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
-    currentNode = null;
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
+    let prev = getCurrentComputation();
+    setComputation(undefined);
+    let promises = this.willUpdateProps.map((f) => f.call(component, props));
+    setComputation(prev);
+    await Promise.all(promises!);
+
     if (fiber !== this.fiber) {
       return;
     }
-    component.props = props;
+    this.props = props;
     fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
@@ -313,19 +265,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
   }
 
-  /**
-   * Sets a ref to a given HTMLElement.
-   *
-   * @param name the name of the ref to set
-   * @param el the HTMLElement to set the ref to. The ref is not set if the el
-   *  is null, but useRef will not return elements that are not in the DOM
-   */
-  setRef(name: string, el: HTMLElement | null) {
-    if (el) {
-      this.refs[name] = el;
-    }
-  }
-
   // ---------------------------------------------------------------------------
   // Block DOM methods
   // ---------------------------------------------------------------------------
@@ -349,7 +288,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.bdom!.moveBeforeDOMNode(node, parent);
   }
 
-  moveBeforeVNode(other: ComponentNode<P, E> | null, afterNode: Node | null) {
+  moveBeforeVNode(other: ComponentNode | null, afterNode: Node | null) {
     this.bdom!.moveBeforeVNode(other ? other.bdom : null, afterNode);
   }
 
@@ -359,7 +298,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       // by the component will be patched independently in the appropriate
       // fiber.complete
       this._patch();
-      this.props = this.nextProps!;
     }
   }
   _patch() {
@@ -382,17 +320,5 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   remove() {
     this.bdom!.remove();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Some debug helpers
-  // ---------------------------------------------------------------------------
-  get name(): string {
-    return this.component.constructor.name;
-  }
-
-  get subscriptions(): ReturnType<typeof getSubscriptions> {
-    const render = batchedRenderFunctions.get(this);
-    return render ? getSubscriptions(render) : [];
   }
 }

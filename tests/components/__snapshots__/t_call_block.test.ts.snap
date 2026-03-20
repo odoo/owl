@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`t-call-block simple t-call-block with static text 1`] = `
 "function anonymous(app, bdom, helpers
@@ -7,8 +7,8 @@ exports[`t-call-block simple t-call-block with static text 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx['myBlock']();
+  return function template(ctx, node, key = "") {
+    const b2 = ctx['this'].myBlock();
     return block1([], [b2]);
   }
 }"

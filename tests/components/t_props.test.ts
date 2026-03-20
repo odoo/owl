@@ -1,5 +1,5 @@
-import { Component, mount, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, props, proxy, xml } from "../../src";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -12,12 +12,13 @@ beforeEach(() => {
 describe("t-props", () => {
   test("t-props only", async () => {
     class Comp extends Component {
-      static template = xml`<div><t t-esc="props.a"/></div>`;
+      static template = xml`<div><t t-out="this.props.a"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Comp };
-      static template = xml`<div><div><Comp t-props="state"/></div></div>`;
-      state = useState({
+      static template = xml`<div><div><Comp t-props="this.state"/></div></div>`;
+      state = proxy({
         a: "first",
       });
     }
@@ -33,12 +34,13 @@ describe("t-props", () => {
 
   test("t-props and other props", async () => {
     class Comp extends Component {
-      static template = xml`<div><t t-esc="props.a"/><t t-esc="props.b"/></div>`;
+      static template = xml`<div><t t-out="this.props.a"/><t t-out="this.props.b"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Comp };
-      static template = xml`<div><div><Comp t-props="state1" a="a"/></div></div>`;
-      state1 = useState({
+      static template = xml`<div><div><Comp t-props="this.state1" a="this.a"/></div></div>`;
+      state1 = proxy({
         a: "first",
         b: "second",
       });
@@ -47,7 +49,7 @@ describe("t-props", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.textContent).toBe("thirdsecond");
     delete parent.a;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent).toBe("second");
   });
@@ -55,28 +57,29 @@ describe("t-props", () => {
   test("basic use", async () => {
     expect.assertions(5);
 
-    let props = { a: 1, b: 2 };
+    const state = { a: 1, b: 2 };
 
     class Child extends Component {
       static template = xml`
           <span>
-              <t t-esc="props.a + props.b"/>
+              <t t-out="this.props.a + this.props.b"/>
           </span>
         `;
+      props = props();
       setup() {
         expect(this.props).toEqual({ a: 1, b: 2 });
-        expect(this.props).not.toBe(props);
+        expect(this.props).not.toBe(state);
       }
     }
     class Parent extends Component {
       static template = xml`
           <div>
-              <Child t-props="some.obj"/>
+              <Child t-props="this.some.obj"/>
           </div>
         `;
       static components = { Child };
 
-      some = { obj: props };
+      some = { obj: state };
     }
 
     await mount(Parent, fixture);
@@ -88,6 +91,7 @@ describe("t-props", () => {
 
     class Child extends Component {
       static template = xml`<div />`;
+      props = props();
       setup() {
         expect(this.props).toEqual({ a: 1, b: 2, c: "c" });
       }
@@ -95,7 +99,7 @@ describe("t-props", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-              <Child t-props="childProps" a="1" b="2" />
+              <Child t-props="this.childProps" a="1" b="2" />
           </div>
         `;
       static components = { Child };
@@ -109,13 +113,14 @@ describe("t-props", () => {
   test("child receives a copy of the t-props object, not the original", async () => {
     class Child extends Component {
       static template = xml`<div/>`;
+      props = props();
       setup() {
         expect(this.props).toEqual({ a: 1, b: 2 });
         this.props.d = 5;
       }
     }
     class Parent extends Component {
-      static template = xml`<Child t-props="childProps"/>`;
+      static template = xml`<Child t-props="this.childProps"/>`;
       static components = { Child };
 
       childProps = { a: 1, b: 2 };

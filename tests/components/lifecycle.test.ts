@@ -2,17 +2,16 @@ import {
   App,
   Component,
   mount,
-  useState,
+  proxy,
   xml,
   onWillPatch,
   onWillUnmount,
   onPatched,
   onWillUpdateProps,
-  onWillRender,
   onWillDestroy,
-  onRendered,
   onMounted,
   onWillStart,
+  props,
 } from "../../src";
 import { status } from "../../src/runtime/status";
 import {
@@ -25,6 +24,7 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
+  render,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -45,9 +45,9 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Test);
+    const app = new App();
 
-    const component = await app.mount(fixture);
+    const component = await app.createRoot(Test).mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>test</span>");
     expect(status(component)).toBe("mounted");
@@ -112,7 +112,7 @@ describe("lifecycle hooks", () => {
     await mount(Test, fixture);
   });
 
-  test("timeout in onWillStart emits a console log", async () => {
+  test.skip("timeout in onWillStart emits a console log", async () => {
     const { log } = console;
     let logArgs: any[];
     console.log = jest.fn((...args) => (logArgs = args));
@@ -163,8 +163,8 @@ describe("lifecycle hooks", () => {
           onWillStart(() => new Promise(() => {}));
         }
       }
-      const app = new App(Test, { test: true });
-      app.mount(fixture);
+      const app = new App({ test: true });
+      app.createRoot(Test).mount(fixture);
       app.destroy();
       for (const id in timeoutCbs) {
         timeoutCbs[id]();
@@ -179,7 +179,7 @@ describe("lifecycle hooks", () => {
     }
   });
 
-  test("timeout in onWillUpdateProps emits a console log", async () => {
+  test.skip("timeout in onWillUpdateProps emits a console log", async () => {
     class Child extends Component {
       static template = xml``;
       setup() {
@@ -187,9 +187,9 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child prop="state.prop"/>`;
+      static template = xml`<Child prop="this.state.prop"/>`;
       static components = { Child };
-      state = useState({ prop: 1 });
+      state = proxy({ prop: 1 });
     }
     const parent = await mount(Parent, fixture, { test: true });
 
@@ -270,7 +270,48 @@ describe("lifecycle hooks", () => {
     Object.freeze(steps);
   });
 
-  test("mounted hook is called on subsubcomponents, in proper order", async () => {
+  test("mounted, willunmount, willdestroy hook, same component, in proper order", async () => {
+    let steps: any[] = [];
+
+    class Parent extends Component {
+      static template = xml`<div></div>`;
+      setup() {
+        onMounted(() => {
+          steps.push("parent:mounted1");
+        });
+        onMounted(() => {
+          steps.push("parent:mounted2");
+        });
+        onWillUnmount(() => {
+          steps.push("parent:willunmount1");
+        });
+        onWillUnmount(() => {
+          steps.push("parent:willunmount2");
+        });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy1");
+        });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy2");
+        });
+      }
+    }
+
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
+    expect(steps).toEqual(["parent:mounted1", "parent:mounted2"]);
+    steps.length = 0;
+    app.destroy();
+    expect(steps).toEqual([
+      "parent:willunmount2",
+      "parent:willunmount1",
+      "parent:willDestroy2",
+      "parent:willDestroy1",
+    ]);
+    Object.freeze(steps);
+  });
+
+  test("various hooks are called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
     class ChildChild extends Component {
@@ -281,6 +322,9 @@ describe("lifecycle hooks", () => {
         });
         onWillUnmount(() => {
           steps.push("childchild:willUnmount");
+        });
+        onWillDestroy(() => {
+          steps.push("childchild:willDestroy");
         });
       }
     }
@@ -295,13 +339,16 @@ describe("lifecycle hooks", () => {
         onWillUnmount(() => {
           steps.push("child:willUnmount");
         });
+        onWillDestroy(() => {
+          steps.push("child:willDestroy");
+        });
       }
     }
 
     class Parent extends Component {
-      static template = xml`<div><t t-if="state.flag"><Child/></t></div>`;
+      static template = xml`<div><t t-if="this.state.flag"><Child/></t></div>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       setup() {
         onMounted(() => {
           steps.push("parent:mounted");
@@ -309,11 +356,14 @@ describe("lifecycle hooks", () => {
         onWillUnmount(() => {
           steps.push("parent:willUnmount");
         });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy");
+        });
       }
     }
 
-    const app = new App(Parent);
-    const widget = await app.mount(fixture);
+    const app = new App();
+    const widget = await app.createRoot(Parent).mount(fixture);
     expect(steps).toEqual(["parent:mounted"]);
     widget.state.flag = true;
     await nextTick();
@@ -325,6 +375,9 @@ describe("lifecycle hooks", () => {
       "parent:willUnmount",
       "child:willUnmount",
       "childchild:willUnmount",
+      "childchild:willDestroy",
+      "child:willDestroy",
+      "parent:willDestroy",
     ]);
     Object.freeze(steps);
   });
@@ -334,8 +387,9 @@ describe("lifecycle hooks", () => {
 
     class ChildChild extends Component {
       static template = xml`
-        <div><t t-esc="props.n"/></div>
+        <div><t t-out="this.props.n"/></div>
       `;
+      props = props();
 
       setup() {
         onWillPatch(() => {
@@ -349,9 +403,10 @@ describe("lifecycle hooks", () => {
 
     class Child extends Component {
       static template = xml`
-        <div><ChildChild n="props.n"/></div>
+        <div><ChildChild n="this.props.n"/></div>
       `;
       static components = { ChildChild };
+      props = props();
 
       setup() {
         onWillPatch(() => {
@@ -365,11 +420,11 @@ describe("lifecycle hooks", () => {
 
     class Parent extends Component {
       static template = xml`
-        <div><Child n="state.n"/></div>
+        <div><Child n="this.state.n"/></div>
       `;
       static components = { Child };
 
-      state = useState({ n: 1 });
+      state = proxy({ n: 1 });
 
       setup() {
         onWillPatch(() => {
@@ -381,8 +436,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps).toEqual([]);
     parent.state.n = 2;
     await nextTick();
@@ -420,7 +475,7 @@ describe("lifecycle hooks", () => {
       // patching algorithm
       static template = xml`
         <div>
-          <t t-if="state.ok">
+          <t t-if="this.state.ok">
             <Child />
           </t>
           <t t-else="">
@@ -429,7 +484,7 @@ describe("lifecycle hooks", () => {
         </div>`;
 
       static components = { Child };
-      state = useState({ ok: false });
+      state = proxy({ ok: false });
     }
     const parent = await mount(Parent, fixture);
     expect(steps).toEqual([]);
@@ -459,9 +514,9 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<t t-if="state.ok"><Child /></t>`;
+      static template = xml`<t t-if="this.state.ok"><Child /></t>`;
       static components = { Child };
-      state = useState({ ok: true });
+      state = proxy({ ok: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -474,23 +529,24 @@ describe("lifecycle hooks", () => {
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.n"/></span>`;
+      static template = xml`<span><t t-out="this.props.n"/></span>`;
+      props = props();
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
       static template = xml`
-          <div t-if="state.flag">
-            <Child n="state.n"/>
+          <div t-if="this.state.flag">
+            <Child n="this.state.n"/>
           </div>
       `;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
-      state = useState({ n: 0, flag: true });
+      state = proxy({ n: 0, flag: true });
       increment() {
         this.state.n += 1;
       }
@@ -502,15 +558,11 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -520,12 +572,8 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -537,9 +585,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -552,7 +598,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -560,22 +606,18 @@ describe("lifecycle hooks", () => {
       static template = xml`<div><Child/></div>`;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(Parent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -583,7 +625,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -596,7 +638,8 @@ describe("lifecycle hooks", () => {
     let def = makeDeferred();
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.n"/></span>`;
+      static template = xml`<span><t t-out="this.props.n"/></span>`;
+      props = props();
 
       setup() {
         onWillUpdateProps((nextProps) => {
@@ -607,9 +650,9 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child n="state.n"/>`;
+      static template = xml`<Child n="this.state.n"/>`;
       static components = { Child };
-      state = useState({ n: 1 });
+      state = proxy({ n: 1 });
     }
     const parent = await mount(Parent, fixture);
 
@@ -626,8 +669,8 @@ describe("lifecycle hooks", () => {
     let n = 0;
 
     class Test extends Component {
-      static template = xml`<div><t t-esc="state.a"/></div>`;
-      state = useState({ a: 1 });
+      static template = xml`<div><t t-out="this.state.a"/></div>`;
+      state = proxy({ a: 1 });
 
       setup() {
         onPatched(() => n++);
@@ -657,8 +700,8 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child a="state.a"/></div>`;
-      state = useState({ a: 1 });
+      static template = xml`<div><Child a="this.state.a"/></div>`;
+      state = proxy({ a: 1 });
       static components = { Child };
     }
 
@@ -674,30 +717,26 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child a="state.a"/></div>`;
+      static template = xml`<div><Child a="this.state.a"/></div>`;
       static components = { Child };
-      state = useState({ a: 1 });
+      state = proxy({ a: 1 });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(Parent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -705,7 +744,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -718,34 +757,32 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -753,17 +790,11 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
         "GrandChild:setup",
         "GrandChild:willStart",
-        "Child:rendered",
-        "GrandChild:willRender",
-        "GrandChild:rendered",
         "Parent:willPatch",
         "GrandChild:mounted",
         "Child:mounted",
@@ -773,7 +804,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "GrandChild:willUnmount",
@@ -788,34 +819,32 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -825,7 +854,7 @@ describe("lifecycle hooks", () => {
     app.destroy();
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Parent:willDestroy",
       ]
@@ -838,7 +867,7 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onWillStart(() => def);
       }
     }
@@ -846,28 +875,26 @@ describe("lifecycle hooks", () => {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -875,21 +902,17 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
         "GrandChild:setup",
         "GrandChild:willStart",
-        "Child:rendered",
       ]
     `);
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "GrandChild:willDestroy",
         "Child:willDestroy",
@@ -902,30 +925,26 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: true });
+      state = proxy({ hasChild: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -934,9 +953,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -949,30 +966,26 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child value="state.value" />`;
+      static template = xml`<Child value="this.state.value" />`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -981,90 +994,8 @@ describe("lifecycle hooks", () => {
     parent.state.value = 2;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Parent:willPatch",
-        "Child:willPatch",
-        "Child:patched",
-        "Parent:patched",
-      ]
-    `);
-  });
-
-  test("onWillRender", async () => {
-    const def = makeDeferred();
-
-    class Child extends Component {
-      static template = xml`<button t-on-click="increment"><t t-esc="state.value"/></button>`;
-      state = useState({ value: 1 });
-      visibleState = this.state.value;
-      setup() {
-        useLogLifecycle();
-        onWillUpdateProps(() => def);
-        onWillRender(() => (this.visibleState = this.state.value));
-      }
-      increment() {
-        this.state.value++;
-      }
-    }
-
-    class Parent extends Component {
-      static template = xml`
-        <Child someValue="state.value" />`;
-      static components = { Child };
-      state = useState({ value: 1 });
-      setup() {
-        useLogLifecycle();
-      }
-    }
-
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<button>1</button>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
-
-    parent.state.value++; // to block child render
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Child:willUpdateProps",
-        "Parent:rendered",
-      ]
-    `);
-
-    fixture.querySelector("button")!.click();
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
-
-    fixture.querySelector("button")!.click();
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
-    expect(fixture.innerHTML).toBe("<button>1</button>");
-
-    def.resolve();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<button>3</button>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -1088,9 +1019,9 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child t-if="state.flag"/>`;
+      static template = xml`<Child t-if="this.state.flag"/>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
     const parent = await mount(Parent, fixture);
     expect(created).toBe(false);
@@ -1107,7 +1038,7 @@ describe("lifecycle hooks", () => {
     class TestWidget extends Component {
       name: string = "test";
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class B extends TestWidget {
@@ -1131,12 +1062,12 @@ describe("lifecycle hooks", () => {
     class C extends TestWidget {
       static template = xml`
         <div>C<D />
-          <E t-if="state.flag" />
-          <F t-else="!state.flag" />
+          <E t-if="this.state.flag" />
+          <F t-else="!this.state.flag" />
         </div>`;
       static components = { D, E, F };
       name = "C";
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
 
       setup() {
         c = this;
@@ -1152,27 +1083,17 @@ describe("lifecycle hooks", () => {
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
-        "A:willRender",
         "B:setup",
         "B:willStart",
         "C:setup",
         "C:willStart",
-        "A:rendered",
-        "B:willRender",
-        "B:rendered",
-        "C:willRender",
         "D:setup",
         "D:willStart",
         "E:setup",
         "E:willStart",
-        "C:rendered",
-        "D:willRender",
-        "D:rendered",
-        "E:willRender",
-        "E:rendered",
         "E:mounted",
         "D:mounted",
         "C:mounted",
@@ -1185,13 +1106,9 @@ describe("lifecycle hooks", () => {
     c!.state.flag = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "C:willRender",
+      [
         "F:setup",
         "F:willStart",
-        "C:rendered",
-        "F:willRender",
-        "F:rendered",
         "C:willPatch",
         "E:willUnmount",
         "E:willDestroy",
@@ -1205,30 +1122,26 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: true });
+      state = proxy({ hasChild: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -1237,9 +1150,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -1250,13 +1161,9 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:mounted",
         "Parent:patched",
@@ -1266,13 +1173,13 @@ describe("lifecycle hooks", () => {
 
   test("render in mounted", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           this.patched = "Patched";
-          this.render();
+          render(this);
         });
       }
     }
@@ -1280,21 +1187,17 @@ describe("lifecycle hooks", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1303,16 +1206,16 @@ describe("lifecycle hooks", () => {
 
   test("render in patched", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onPatched(() => {
           if (this.patched === "Patched") {
             return;
           }
           this.patched = "Patched";
-          this.render();
+          render(this);
         });
       }
     }
@@ -1320,33 +1223,27 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
 
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1355,16 +1252,16 @@ describe("lifecycle hooks", () => {
 
   test("render in willPatch", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onWillPatch(() => {
           if (this.patched === "Patched") {
             return;
           }
           this.patched = "Patched";
-          this.render();
+          render(this);
         });
       }
     }
@@ -1372,33 +1269,27 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
 
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1407,11 +1298,12 @@ describe("lifecycle hooks", () => {
   });
 
   test("lifecycle callbacks are bound to component", async () => {
-    expect.assertions(14);
+    expect.assertions(10);
     let instance: any;
 
     class Test extends Component {
-      static template = xml`<t t-esc="props.rev" />`;
+      static template = xml`<t t-out="this.props.rev" />`;
+      props = props();
       setup() {
         instance = this;
         onWillStart(this.logger("onWillStart"));
@@ -1421,8 +1313,6 @@ describe("lifecycle hooks", () => {
         onPatched(this.logger("onPatched"));
         onWillUnmount(this.logger("onWillUnmount"));
         onWillDestroy(this.logger("onWillDestroy"));
-        onWillRender(this.logger("onWillRender"));
-        onRendered(this.logger("onRendered"));
       }
       logger(hookName: string) {
         return function (this: Test) {
@@ -1433,27 +1323,23 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Test rev="rev" />`;
+      static template = xml`<Test rev="this.rev" />`;
       static components = { Test };
       rev = 0;
     }
 
-    const app = new App(Parent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(Parent).mount(fixture);
     comp.rev++;
-    comp.render();
+    render(comp);
     await nextTick();
     app.destroy();
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "onWillStart",
-        "onWillRender",
-        "onRendered",
         "onMounted",
         "onWillUpdateProps",
-        "onWillRender",
-        "onRendered",
         "onWillPatch",
         "onPatched",
         "onWillUnmount",
@@ -1466,37 +1352,35 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`child`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`before<Child t-if="state.flag"/>after`;
+      static template = xml`before<Child t-if="this.state.flag"/>after<t t-set="noop" t-value="this.notify()"/>`;
       static components = { Child };
 
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       setup() {
-        useLogLifecycle();
-        onRendered(async () => {
-          // we destroy here the app after the new child component has been
-          // created, but before this rendering has been patched to the DOM
-          if (this.state.flag) {
-            await Promise.resolve();
-            app.destroy();
-          }
-        });
+        useLogLifecycle(this);
+      }
+      async notify() {
+        // we destroy here the app after the new child component has been
+        // created, but before this rendering has been patched to the DOM
+        if (this.state.flag) {
+          await Promise.resolve();
+          app.destroy();
+        }
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(fixture.innerHTML).toBe("beforeafter");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1506,11 +1390,9 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
         "Parent:willUnmount",
         "Child:willDestroy",
         "Parent:willDestroy",

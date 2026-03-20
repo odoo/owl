@@ -1,14 +1,15 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`t-custom can use t-custom directive on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].click).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<div class=\\"my-div\\" block-handler-0=\\"click\\"/>\`);
+  let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['click'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -18,11 +19,12 @@ exports[`t-custom can use t-custom directive with modifiers on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].click).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<div class=\\"my-div\\" block-handler-0=\\"click\\"/>\`);
+  let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['click'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"

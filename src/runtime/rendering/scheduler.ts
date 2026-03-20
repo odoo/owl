@@ -1,7 +1,7 @@
-import type { ComponentNode } from "./component_node";
+import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
 import { Fiber, RootFiber } from "./fibers";
-import { STATUS } from "./status";
+import { STATUS } from "../status";
 
 // -----------------------------------------------------------------------------
 //  Scheduler

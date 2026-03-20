@@ -1,5 +1,12 @@
-import { Component, mount, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import { Component, mount, proxy, xml } from "../../src";
+import {
+  makeTestFixture,
+  nextTick,
+  render,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -14,15 +21,15 @@ describe("t-component", () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="Child"/>`;
+      static template = xml`<t t-component="this.Child"/>`;
       Child = Child;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -30,15 +37,11 @@ describe("t-component", () => {
 
     expect(fixture.innerHTML).toBe("<div>child</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -49,54 +52,46 @@ describe("t-component", () => {
     class ChildA extends Component {
       static template = xml`<div>child a</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class ChildB extends Component {
       static template = xml`child b`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="Child"/>`;
+      static template = xml`<t t-component="this.Child"/>`;
       Child = ChildA;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>child a</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "ChildA:setup",
         "ChildA:willStart",
-        "Parent:rendered",
-        "ChildA:willRender",
-        "ChildA:rendered",
         "ChildA:mounted",
         "Parent:mounted",
       ]
     `);
 
     parent.Child = ChildB;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("child b");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "ChildB:setup",
         "ChildB:willStart",
-        "Parent:rendered",
-        "ChildB:willRender",
-        "ChildB:rendered",
         "Parent:willPatch",
         "ChildA:willUnmount",
         "ChildA:willDestroy",
@@ -116,11 +111,11 @@ describe("t-component", () => {
     class App extends Component {
       static template = xml`
         <div>
-            <t t-component="constructor.components[state.child]"/>
+            <t t-component="this.constructor.components[this.state.child]"/>
         </div>`;
       static components = { A, B };
 
-      state = useState({ child: "A" });
+      state = proxy({ child: "A" });
     }
     const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><span>child a</span></div>");
@@ -137,8 +132,8 @@ describe("t-component", () => {
       static template = xml`<span>child b</span>`;
     }
     class Parent extends Component {
-      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
-      state = useState({
+      static template = xml`<t t-component="this.myComponent" t-key="this.state.child"/>`;
+      state = proxy({
         child: "a",
       });
       get myComponent() {
@@ -160,8 +155,8 @@ describe("t-component", () => {
       static template = xml`<div>child b</div>`;
     }
     class Parent extends Component {
-      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
-      state = useState({
+      static template = xml`<t t-component="this.myComponent" t-key="this.state.child"/>`;
+      state = proxy({
         child: "a",
       });
       get myComponent() {
@@ -178,14 +173,14 @@ describe("t-component", () => {
   test("modifying a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      state = proxy({
         counter: 0,
       });
     }
 
     class ParentWidget extends Component {
-      static template = xml`<div><t t-component="Counter"/></div>`;
+      static template = xml`<div><t t-component="this.Counter"/></div>`;
 
       get Counter() {
         return Counter;
@@ -205,7 +200,7 @@ describe("t-component", () => {
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<div><div t-component="Child"/></div>`;
+      static template = xml`<div><div t-component="this.uChild"/></div>`;
     }
     let error: Error;
     try {

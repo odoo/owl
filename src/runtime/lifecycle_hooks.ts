@@ -1,127 +1,64 @@
-import { getCurrent } from "./component_node";
-import { nodeErrorHandlers } from "./error_handling";
-import { OwlError } from "../common/owl_error";
-
-const TIMEOUT = Symbol("timeout");
-const HOOK_TIMEOUT: { [key: string]: number } = {
-  onWillStart: 3000,
-  onWillUpdateProps: 3000,
-};
-function wrapError(fn: (...args: any[]) => any, hookName: string) {
-  const error = new OwlError() as Error & {
-    cause: any;
-  };
-  const timeoutError = new OwlError();
-  const node = getCurrent();
-  return (...args: any[]) => {
-    const onError = (cause: any) => {
-      error.cause = cause;
-      error.message =
-        cause instanceof Error
-          ? `The following error occurred in ${hookName}: "${cause.message}"`
-          : `Something that is not an Error was thrown in ${hookName} (see this Error's "cause" property)`;
-      throw error;
-    };
-    let result;
-    try {
-      result = fn(...args);
-    } catch (cause) {
-      onError(cause);
-    }
-    if (!(result instanceof Promise)) {
-      return result;
-    }
-    const timeout = HOOK_TIMEOUT[hookName];
-    if (timeout) {
-      const fiber = node.fiber;
-      Promise.race([
-        result.catch(() => {}),
-        new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), timeout)),
-      ]).then((res) => {
-        if (res === TIMEOUT && node.fiber === fiber && node.status <= 2) {
-          timeoutError.message = `${hookName}'s promise hasn't resolved after ${
-            timeout / 1000
-          } seconds`;
-          console.log(timeoutError);
-        }
-      });
-    }
-    return result.catch(onError);
-  };
-}
+import { ComponentNode } from "./component_node";
+import { getContext } from "./context";
+import { nodeErrorHandlers } from "./rendering/error_handling";
 
 // -----------------------------------------------------------------------------
 //  hooks
 // -----------------------------------------------------------------------------
 
+function decorate(node: ComponentNode, f: Function, hookName: string) {
+  const result = f.bind(node.component);
+  if (node.app.dev) {
+    const suffix = f.name ? ` <${f.name}>` : "";
+    Reflect.defineProperty(result, "name", {
+      value: hookName + suffix,
+    });
+  }
+  return result;
+}
+
 export function onWillStart(fn: () => Promise<void> | void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.willStart.push(decorate(fn.bind(node.component), "onWillStart"));
+  const { node } = getContext("component");
+  node.willStart.push(decorate(node, fn, "onWillStart"));
 }
 
 export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.willUpdateProps.push(decorate(fn.bind(node.component), "onWillUpdateProps"));
+  const { node } = getContext("component");
+  node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
 }
 
 export function onMounted(fn: () => void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.mounted.push(decorate(fn.bind(node.component), "onMounted"));
+  const { node } = getContext("component");
+  node.mounted.push(decorate(node, fn, "onMounted"));
 }
 
 export function onWillPatch(fn: () => any | void) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.willPatch.unshift(decorate(fn.bind(node.component), "onWillPatch"));
+  const { node } = getContext("component");
+  node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
 }
 
 export function onPatched(fn: () => void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.patched.push(decorate(fn.bind(node.component), "onPatched"));
+  const { node } = getContext("component");
+  node.patched.push(decorate(node, fn, "onPatched"));
 }
 
 export function onWillUnmount(fn: () => void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.willUnmount.unshift(decorate(fn.bind(node.component), "onWillUnmount"));
+  const { node } = getContext("component");
+  node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
 }
 
 export function onWillDestroy(fn: () => void | any) {
-  const node = getCurrent();
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.willDestroy.push(decorate(fn.bind(node.component), "onWillDestroy"));
-}
-
-export function onWillRender(fn: () => void | any) {
-  const node = getCurrent();
-  const renderFn = node.renderFn;
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  fn = decorate(fn.bind(node.component), "onWillRender");
-  node.renderFn = () => {
-    fn();
-    return renderFn();
-  };
-}
-
-export function onRendered(fn: () => void | any) {
-  const node = getCurrent();
-  const renderFn = node.renderFn;
-  const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  fn = decorate(fn.bind(node.component), "onRendered");
-  node.renderFn = () => {
-    const result = renderFn();
-    fn();
-    return result;
-  };
+  const context = getContext();
+  if (context.type === "component") {
+    context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
+  } else {
+    context.manager.onDestroyCb.push(fn);
+  }
 }
 
 type OnErrorCallback = (error: any) => void | any;
 export function onError(callback: OnErrorCallback) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   let handlers = nodeErrorHandlers.get(node);
   if (!handlers) {
     handlers = [];

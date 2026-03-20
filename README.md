@@ -1,155 +1,144 @@
-<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Owl Framework</a> 🦉</h1>
+<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Owl</a> 🦉</h1>
 
- [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+<p align="center">
+  <strong>A modern, lightweight UI framework for applications that scale</strong>
+</p>
+
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![npm version](https://badge.fury.io/js/@odoo%2Fowl.svg)](https://badge.fury.io/js/@odoo%2Fowl)
 [![Downloads](https://img.shields.io/npm/dm/@odoo%2Fowl.svg)](https://www.npmjs.com/package/@odoo/owl)
 
-_Class based components with hooks, signals and concurrent mode_
+---
 
-**Try it online!** you can experiment with the Owl framework in an online [playground](https://odoo.github.io/owl/playground).
+## Try it now
 
-## Project Overview
+The fastest way to discover Owl is the **[online playground](https://odoo.github.io/owl/playground)**.
+It features interactive examples, a live editor, and showcases all major features:
+reactivity, components, plugins, and more.
 
-The Odoo Web Library (Owl) is a smallish (~<20kb gzipped) UI framework built by
-[Odoo](https://www.odoo.com/) for its products. Owl is a modern
-framework, written in Typescript, taking the best ideas from React and Vue in a
-simple and consistent way. Owl's main features are:
+## What is Owl?
 
-- a declarative component system,
-- a signal-based reactivity system (signals, computed values, effects),
-- a plugin system for sharing state and services,
-- hooks,
-- fragments,
-- asynchronous rendering
+Owl is a modern UI framework (~20kb gzipped, zero dependencies) written in TypeScript.
+It powers [Odoo](https://www.odoo.com/), one of the largest open-source business applications,
+but is equally suited for small projects and prototypes.
 
-Owl components are defined with ES6 classes and xml templates, uses an
-underlying virtual DOM, integrates beautifully with hooks, and the rendering is
-asynchronous.
+Key features:
 
-Quick links:
+- **Signal-based reactivity** — Explicit, composable, and debuggable state management
+- **Plugin system** — Type-safe, composable sharing of state and services
+- **Class-based components** — Familiar OOP patterns with ES6 classes
+- **Declarative templates** — XML templates with a clean syntax
+- **Async rendering** — Concurrent mode for smooth user experiences
 
-- [documentation](#documentation),
-- [changelog](CHANGELOG.md) (from Owl 1.x to 2.x),
-- [Owl 3.x release notes](release_notes.md) (draft),
-- [playground](https://odoo.github.io/owl/playground)
-
-## Example
-
-Here is a short example to illustrate interactive components:
+## Quick Example
 
 ```javascript
-const { Component, signal, mount, xml } = owl;
+import { Component, signal, computed, mount, xml } from "@odoo/owl";
 
-class Counter extends Component {
+class TodoList extends Component {
   static template = xml`
-    <button t-on-click="this.increment">
-      Click Me! [<t t-out="this.count()"/>]
-    </button>`;
+    <input placeholder="Add todo..." t-on-keydown="this.onKeydown"/>
+    <ul>
+      <t t-foreach="this.todos()" t-as="todo" t-key="todo.id">
+        <li t-att-class="{ done: todo.done }">
+          <input type="checkbox" t-model="todo.done"/>
+          <t t-out="todo.text"/>
+        </li>
+      </t>
+    </ul>
+    <p t-if="this.remaining() > 0">
+      <t t-out="this.remaining()"/> item(s) remaining
+    </p>`;
 
-  count = signal(0);
+  todos = signal.Array([
+    { id: 1, text: "Learn Owl", done: false },
+    { id: 2, text: "Build something", done: false },
+  ]);
 
-  increment() {
-    this.count.set(this.count() + 1);
+  remaining = computed(() => this.todos().filter((t) => !t.done).length);
+
+  onKeydown(ev) {
+    if (ev.key === "Enter" && ev.target.value) {
+      this.todos.push({
+        id: Date.now(),
+        text: ev.target.value,
+        done: false,
+      });
+      ev.target.value = "";
+    }
   }
 }
 
-class Root extends Component {
-  static template = xml`
-    <span>Hello Owl</span>
-    <Counter/>`;
-
-  static components = { Counter };
-}
-
-mount(Root, document.body);
+mount(TodoList, document.body);
 ```
 
-Note that the counter component is made reactive with a [`signal`](release_notes.md#signals).
-Also, all examples here use the `xml` helper to define inline templates.
-But this is not mandatory, many applications will load templates separately.
+This example demonstrates Owl's reactivity: `todos` is a signal, `remaining`
+is a computed value that updates automatically, and the UI reacts to changes
+without manual subscription management.
 
-More interesting examples can be found on the
-[playground](https://odoo.github.io/owl/playground) application.
+## Design Principles
 
-## Documentation
+Owl is built on principles that make it powerful yet approachable:
 
-Note: the reference documentation below was written for Owl 2.x. The
-[Owl 3.x release notes](release_notes.md) describe all changes in detail.
+**Explicit over Implicit**
 
-### Learning Owl
+Reactiveness is explicit — you read signals by calling them (`this.count()`),
+making dependencies visible and bugs easier to trace. No hidden magic.
 
-Are you new to Owl? This is the place to start!
+**Composable Architecture**
 
-- [Tutorial: create a TodoList application](doc/learning/tutorial_todoapp.md)
-- [How to start an Owl project](doc/learning/quick_start.md)
-- [How to test Components](doc/learning/how_to_test.md)
+Plugins provide a structured way to share state and services across components.
+They compose naturally and support full type inference.
 
-### Reference
+**Scales with You**
+
+Start simple with inline templates and signals. Grow into a large codebase
+with external templates, registries, and plugins. Owl powers Odoo's
+multi-million-line codebase — it's proven at scale.
+
+**Developer Experience**
+
+First-class TypeScript support, comprehensive error messages in dev mode,
+and a browser devtools extension for debugging.
+
+## Resources
+
+### Getting Started
+
+- **[Playground](https://odoo.github.io/owl/playground)** — Interactive examples and live coding
+- **[Owl 3.x Release Notes](release_notes.md)** — Complete guide to all changes
+- [Tutorial: Todo App](doc/learning/tutorial_todoapp.md)
+- [Quick Start Guide](doc/learning/quick_start.md)
+- [Testing Components](doc/learning/how_to_test.md)
+
+### Reference Documentation
 
 - [Overview](doc/readme.md)
-- [App](doc/reference/app.md)
-- [Component](doc/reference/component.md)
-- [Component Lifecycle](doc/reference/component.md#lifecycle)
-- [Concurrency Model](doc/reference/concurrency_model.md)
-- [Dev mode](doc/reference/app.md#dev-mode)
-- [Dynamic sub components](doc/reference/component.md#dynamic-sub-components)
-- [Error Handling](doc/reference/error_handling.md)
-- [Event Handling](doc/reference/event_handling.md)
-- [Form Input Bindings](doc/reference/input_bindings.md)
-- [Fragments](doc/reference/templates.md#fragments)
-- [Hooks](doc/reference/hooks.md)
-- [Loading Templates](doc/reference/app.md#loading-templates)
-- [Mounting a component](doc/reference/app.md#mount-helper)
-- [Precompiling templates](doc/reference/precompiling_templates.md)
-- [Props](doc/reference/props.md)
-- [Props Validation](doc/reference/props.md#props-validation)
-- [Reactivity](doc/reference/reactivity.md)
-- [Rendering SVG](doc/reference/templates.md#rendering-svg)
-- [Refs](doc/reference/refs.md)
-- [Slots](doc/reference/slots.md)
-- [Sub components](doc/reference/component.md#sub-components)
-- [Sub templates](doc/reference/templates.md#sub-templates)
-- [Templates (Qweb)](doc/reference/templates.md)
-- [Translations](doc/reference/translations.md)
-- [Utils](doc/reference/utils.md)
+- [App](doc/reference/app.md) | [Component](doc/reference/component.md)
+- [Reactivity](doc/reference/reactivity.md) | [Hooks](doc/reference/hooks.md)
+- [Templates](doc/reference/templates.md) | [Props](doc/reference/props.md)
+- [Plugins](doc/reference/plugins.md) | [Slots](doc/reference/slots.md)
 
-### Other Topics
+### Understanding Owl
 
-- [Notes On Owl Architecture](doc/miscellaneous/architecture.md)
+- [Why we built Owl](doc/miscellaneous/why_owl.md)
+- [Architecture Notes](doc/miscellaneous/architecture.md)
 - [Comparison with React/Vue](doc/miscellaneous/comparison.md)
-- [Why did Odoo build Owl?](doc/miscellaneous/why_owl.md)
-- [Changelog (from owl 1.x to 2.x)](CHANGELOG.md)
-- [Owl 3.x Release Notes (draft)](release_notes.md)
-- [Notes on compiled templates](doc/miscellaneous/compiled_template.md)
-- [Owl devtools extension](doc/tools/devtools.md)
 
-## Installing Owl
+## Installation
 
-Owl is available on `npm` and can be installed with the following command:
-
-```
+```bash
 npm install @odoo/owl
 ```
-If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
-- [owl](https://github.com/odoo/owl/releases/latest)
+Or download directly: [latest release](https://github.com/odoo/owl/releases/latest)
 
-## Installing Owl devtools
+## Devtools
 
-The Owl devtools browser extension is also available in the [release](https://github.com/odoo/owl/releases/latest):
-Unzip the owl-devtools.zip file and follow the instructions depending on your browser:
+The Owl devtools extension helps debug your applications with component tree
+inspection, state visualization, and performance profiling. Download it from
+the [releases page](https://github.com/odoo/owl/releases/latest).
 
-### Chrome
+## License
 
-Go to your chrome extensions admin panel, activate developer mode and click on `Load unpacked`.
-Select the devtools-chrome folder and that's it, your extension is active!
-There is a convenient refresh button on the extension card (still on the same admin page) to update your code.
-Do note that if you have problems, you may need to completely remove and reload the extension to fully refresh it.
-
-### Firefox
-Go to the address about:debugging#/runtime/this-firefox and click on `Load temporary Add-on...`.
-Select any file in the devtools-firefox folder and that's it, your extension is active!
-Here, you can use the reload button to refresh the extension.
-
-Note that you may have to open another window or reload your tab to see the extension working.
-Also note that the extension will only be active on pages that have a sufficient version of owl.
+Owl is released under the [LGPL v3](https://www.gnu.org/licenses/lgpl-3.0) license.

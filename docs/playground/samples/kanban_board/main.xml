@@ -1,0 +1,25 @@
+<templates>
+  <div t-name="tutorial.KanbanCard" class="kanban-card">
+    <span t-out="this.props.title"/>
+    <button class="card-delete" t-on-click="() => this.props.onDelete()">×</button>
+  </div>
+
+  <div t-name="tutorial.KanbanColumn" class="kanban-column">
+    <div class="column-header">
+      <span t-out="this.props.column.name"/>
+      <span class="card-count" t-out="this.props.column.cards().length"/>
+    </div>
+    <div class="column-cards">
+      <t t-foreach="this.props.column.cards()" t-as="card" t-key="card.id">
+        <KanbanCard title="card.title" onDelete="() => this.props.onDeleteCard(this.props.column.id, card.id)"/>
+      </t>
+    </div>
+    <button class="add-card" t-on-click="this.addCard">+ Add card</button>
+  </div>
+
+  <div t-name="tutorial.Root" class="kanban-board">
+    <t t-foreach="this.columns()" t-as="col" t-key="col.id">
+      <KanbanColumn column="col" onAddCard="(colId, title) => this.addCard(colId, title)" onDeleteCard="(colId, cardId) => this.deleteCard(colId, cardId)"/>
+    </t>
+  </div>
+</templates>

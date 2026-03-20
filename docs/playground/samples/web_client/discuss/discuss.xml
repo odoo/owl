@@ -1,0 +1,5 @@
+<templates>
+    <t t-name="demo.Discuss">
+        <div>Hello from Discuss!</div>
+    </t>
+</templates>

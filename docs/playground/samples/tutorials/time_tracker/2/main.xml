@@ -1,0 +1,10 @@
+<templates>
+  <t t-name="TimeTracker">
+    <div class="time-tracker">
+      <h1>Time Tracker</h1>
+      <div class="timer-display">
+        <t t-out="this.formattedTime()"/>
+      </div>
+    </div>
+  </t>
+</templates>

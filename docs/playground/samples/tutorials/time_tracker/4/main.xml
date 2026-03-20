@@ -1,0 +1,16 @@
+<templates>
+  <t t-name="TimeTracker">
+    <div class="time-tracker">
+      <h1>Time Tracker</h1>
+      <div class="timer-display">
+        <t t-out="this.formattedTime()"/>
+      </div>
+      <div class="controls">
+        <button t-on-click="this.toggleTimer">
+          <t t-out="this.isRunning() ? 'Pause' : 'Start'"/>
+        </button>
+        <button t-on-click="this.reset">Reset</button>
+      </div>
+    </div>
+  </t>
+</templates>

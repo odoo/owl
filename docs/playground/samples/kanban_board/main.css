@@ -1,0 +1,85 @@
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    height: 100%;
+    font-family: system-ui, sans-serif;
+    background: #f0f2f5;
+}
+
+.kanban-column {
+    background: #e2e6ea;
+    border-radius: 8px;
+    padding: 12px;
+    width: 260px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.column-header {
+    font-weight: 600;
+    font-size: 14px;
+    padding: 4px 4px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-count {
+    background: #c5cbd1;
+    border-radius: 10px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.column-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.kanban-card {
+    background: white;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-delete {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.card-delete:hover {
+    color: #e44;
+}
+
+.add-card {
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: left;
+}
+
+.add-card:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+}

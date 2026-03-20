@@ -1,0 +1,5 @@
+<templates>
+    <t t-name="demo.ListView">
+        <div>Hello from ListView!</div>
+    </t>
+</templates>

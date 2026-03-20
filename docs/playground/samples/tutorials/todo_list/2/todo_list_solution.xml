@@ -1,0 +1,16 @@
+<templates>
+  <t t-name="tutorial.TodoList">
+    <div>
+      <h1>Todo List Tutorial</h1>
+      <div>
+        <input placeholder="What needs to be done?" t-on-keyup="this.addTodo"/>
+        <button t-on-click="this.addTodo">Add</button>
+      </div>
+      <ul>
+        <t t-foreach="this.todos()" t-as="todo" t-key="todo.id">
+          <TodoItem todo="todo"/>
+        </t>
+      </ul>
+    </div>
+  </t>
+</templates>

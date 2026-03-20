@@ -1,0 +1,9 @@
+<templates>
+  <t t-name="tutorial.TodoItem">
+    <li class="todo-item" t-att-class="{ completed: this.props.todo.completed() }">
+      <input type="checkbox" t-model="this.props.todo.completed"/>
+      <span t-out="this.props.todo.text"/>
+      <button class="todo-delete" t-on-click="() => this.todoList.deleteTodo(this.props.todo)">✕</button>
+    </li>
+  </t>
+</templates>

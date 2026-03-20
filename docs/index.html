@@ -5,70 +5,122 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OWL Framework</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
-  <link rel="stylesheet" href="assets/normalize.css">
-  <link rel="stylesheet" href="assets/milligram.css">
-  <link rel="stylesheet" href="assets/highlight.tomorrow.css">
   <link rel="stylesheet" href="assets/main.css">
-  <script type="importmap">{ "imports": { "@odoo/owl": "./owl.js" } }</script>
 </head>
 <body>
-  <header class="container">
-    <img class="homepage-logo" src="assets/owl_1f989.png" alt="OWL Logo">
-    <hgroup>
-      <h1>OWL Framework</h1>
-      <p>Mysterious OWL: A web framework for structured, dynamic and maintainable applications</p>
-    </hgroup>
+  <header>
+    <div class="header-content">
+      <span class="logo">🦉</span>
+      <h1>OWL</h1>
+      <p class="tagline">A modern, lightweight UI framework for applications that scale</p>
+      <p class="subtitle">Built by <a href="https://www.odoo.com/" target="_blank">Odoo</a> — ~20kb gzipped, zero dependencies, written in TypeScript</p>
+      <nav>
+        <a class="nav-btn primary" href="playground/">Try the Playground</a>
+        <a class="nav-btn" href="https://github.com/odoo/owl">GitHub</a>
+        <a class="nav-btn" href="https://github.com/odoo/owl/blob/master/doc/readme.md">Documentation</a>
+      </nav>
+    </div>
   </header>
-  <nav class="container">
-    <p>
-      <a href="https://github.com/odoo/owl" title="https://github.com/odoo/owl">Github</a>
-      &bull;
-      <a href="https://github.com/odoo/owl/blob/master/doc/readme.md">Documentation</a>
-      &bull;
-      <a href="playground/">Playground</a>
-    </p>
-  </nav>
+
   <main>
-    <article class="design">
+    <section class="features">
       <div class="container">
-        <h2>Why OWL?</h2>
-        <div class="row">
-          <section class="column">
-            <h3>XML based</h3>
-            <p>Templates are based on the XML format, which allows interesting applications. For example, they could be stored in a database and modified dynamically with <tt>xpaths</tt>.</p>
-          </section>
-          <section class="column">
-            <h3>Templates compiled in the browser</h3>
-            <p>This may not be a good fit for all applications, but if you need to generate dynamically user interfaces in the browser, this is very powerful. For example, a generic form view component could generate a specific form user interface for each various models, from a XML view.</p>
-          </section>
-          <section class="column">
-            <h3>No toolchain required</h3>
-            <p>This is extremely useful for some applications, if, for various reasons (security/deployment/dynamic modules/specific assets tools), it is not ok to use standard web tools based on <tt>npm</tt>.</p>
-          </section>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Signal-based Reactivity</h3>
+            <p>Explicit, composable, and debuggable state management. Read signals by calling them, making dependencies visible and bugs easier to trace.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔌</div>
+            <h3>Plugin System</h3>
+            <p>Type-safe, composable sharing of state and services across components. Plugins replace the env pattern with something more powerful.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧱</div>
+            <h3>Class Components</h3>
+            <p>Familiar OOP patterns with ES6 classes. Combine the readability of class-based architecture with modern reactivity.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>XML Templates</h3>
+            <p>Declarative templates with a clean syntax. Templates can be stored, modified dynamically, and targeted with xpaths.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏳</div>
+            <h3>Async Rendering</h3>
+            <p>Concurrent mode for smooth user experiences. Components can load data asynchronously without blocking the UI.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛠️</div>
+            <h3>No Toolchain Required</h3>
+            <p>Works directly in the browser with native ES modules. No build step needed to get started.</p>
+          </div>
         </div>
       </div>
-    </article>
-    <article class="example">
+    </section>
+
+    <section class="example">
       <div class="container">
-        <h2>Example</h2>
-        <div class="row">
-          <section class="column">
-            <pre><code class="javascript"></code></pre>
-          </section>
-          <section class="column">
-            <pre><code class="xml"></code></pre>
+        <h2>Quick Example</h2>
+        <div class="example-layout">
+          <div class="code-block">
+            <div class="code-header">main.js</div>
+            <pre><code>import { Component, signal, mount, xml } from "@odoo/owl";
+
+class Counter extends Component {
+    static template = xml`
+        &lt;div class="counter"&gt;
+            &lt;button t-on-click="this.decrement"&gt;-&lt;/button&gt;
+            &lt;span t-out="this.count()"/&gt;
+            &lt;button t-on-click="this.increment"&gt;+&lt;/button&gt;
+        &lt;/div&gt;`;
+
+    count = signal(0);
+
+    increment() { this.count.set(this.count() + 1); }
+    decrement() { this.count.set(this.count() - 1); }
+}
+
+mount(Counter, document.body);</code></pre>
+          </div>
+          <div class="demo-block">
+            <div class="code-header">Result</div>
             <div id="app-container"></div>
-          </section>
+          </div>
         </div>
       </div>
-    </article>
+    </section>
+
+    <section class="tutorials">
+      <div class="container">
+        <h2>Learn Owl</h2>
+        <p class="section-subtitle">The playground includes guided tutorials — the best way to get started.</p>
+        <div class="tutorial-grid">
+          <a class="tutorial-card" href="playground/#getting_started">
+            <div class="tutorial-name">Getting Started <span class="stars"><span class="star filled">★</span><span class="star">★</span><span class="star">★</span></span></div>
+            <div class="tutorial-desc">Learn Owl fundamentals step by step</div>
+          </a>
+          <a class="tutorial-card" href="playground/#todo_list">
+            <div class="tutorial-name">Todo List <span class="stars"><span class="star filled">★</span><span class="star filled">★</span><span class="star">★</span></span></div>
+            <div class="tutorial-desc">Build a complete todo app with Owl</div>
+          </a>
+          <a class="tutorial-card" href="playground/#hibou_os">
+            <div class="tutorial-name">Hibou OS <span class="stars"><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span></span></div>
+            <div class="tutorial-desc">Build a mini desktop environment</div>
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
+
   <footer>
-    <p><a href=".">OWL</a> is licensed under LGPLv3.<br>Logo from <a href="https://github.com/googlefonts/noto-emoji">Google Noto Emoji Font</a>, licensed under Apache License 2.0</p>
+    <p>
+      <a href="https://github.com/odoo/owl">OWL</a> is licensed under <a href="https://www.gnu.org/licenses/lgpl-3.0">LGPLv3</a>.
+    </p>
   </footer>
-  <script src="assets/highlight.pack.js"></script>
-  <script type="module" src="display_code.js"></script>
+
+  <script type="importmap">{ "imports": { "@odoo/owl": "./owl.js" } }</script>
   <script type="module" src="counter.js"></script>
 </body>
 </html>

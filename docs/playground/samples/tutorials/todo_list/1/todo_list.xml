@@ -1,0 +1,7 @@
+<templates>
+  <t t-name="tutorial.TodoList">
+    <div>
+      <h1>Todo List Tutorial</h1>
+    </div>
+  </t>
+</templates>

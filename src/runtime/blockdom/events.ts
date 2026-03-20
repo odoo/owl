@@ -22,7 +22,11 @@ export function createEventHandler(rawEvent: string): EventHandlerCreator {
 
 // Native listener
 let nextNativeEventId = 1;
-function createElementHandler(evName: string, capture: boolean = false, passive: boolean = false): EventHandlerCreator {
+function createElementHandler(
+  evName: string,
+  capture: boolean = false,
+  passive: boolean = false
+): EventHandlerCreator {
   let eventKey = `__event__${evName}_${nextNativeEventId++}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
@@ -57,7 +61,11 @@ function createElementHandler(evName: string, capture: boolean = false, passive:
 // Synthetic handler: a form of event delegation that allows placing only one
 // listener per event type.
 let nextSyntheticEventId = 1;
-function createSyntheticHandler(evName: string, capture: boolean = false, passive: boolean = false): EventHandlerCreator {
+function createSyntheticHandler(
+  evName: string,
+  capture: boolean = false,
+  passive: boolean = false
+): EventHandlerCreator {
   let eventKey = `__event__synthetic_${evName}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
@@ -93,7 +101,12 @@ function nativeToSyntheticEvent(eventKey: string, event: Event) {
 
 const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {};
 
-function setupSyntheticEvent(evName: string, eventKey: string, capture: boolean = false, passive: boolean = false) {
+function setupSyntheticEvent(
+  evName: string,
+  eventKey: string,
+  capture: boolean = false,
+  passive: boolean = false
+) {
   if (CONFIGURED_SYNTHETIC_EVENTS[eventKey]) {
     return;
   }

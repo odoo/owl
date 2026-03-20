@@ -1,0 +1,12 @@
+<templates>
+  <t t-name="tutorial.TodoList">
+    <div>
+      <h1>Todo List Tutorial</h1>
+      <ul>
+        <t t-foreach="this.todos" t-as="todo" t-key="todo.id">
+          <TodoItem todo="todo"/>
+        </t>
+      </ul>
+    </div>
+  </t>
+</templates>

@@ -1,0 +1,7 @@
+<templates>
+    <t t-name="demo.WebClient">
+        <Navbar/>
+        <button t-on-click="this.testNotification" style="margin: 8px;">Test Notification</button>
+        <NotificationContainer/>
+    </t>
+</templates>

@@ -1,0 +1,41 @@
+<templates>
+  <t t-name="demo.TodoList">
+    <div class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo" placeholder="What needs to be done?" t-on-keyup="this.addTodo" autofocus="true"/>
+      </header>
+      <section class="main" t-if="this.todos().length">
+        <ul class="todo-list">
+          <t t-foreach="this.filteredTodos()" t-as="todo" t-key="todo.id">
+            <li t-att-class="{completed: todo.completed, editing: this.editingId() === todo.id}">
+              <div class="view">
+                <input type="checkbox" class="toggle" t-att-checked="todo.completed" t-on-click="() => this.toggleTodo(todo)"/>
+                <label t-on-dblclick="() => this.startEditing(todo)"><t t-out="todo.text"/></label>
+                <button class="destroy" t-on-click="() => this.deleteTodo(todo)"></button>
+              </div>
+              <input class="edit" t-if="this.editingId() === todo.id" t-ref="this.editInput" t-model="this.editText" t-on-keyup="(ev) => this.handleEditKeyup(todo, ev)" t-on-blur="this.handleBlur"/>
+            </li>
+          </t>
+        </ul>
+      </section>
+      <footer class="footer" t-if="this.todos().length">
+        <span class="todo-count">
+          <strong><t t-out="this.remaining()"/></strong>
+          <t t-out="this.remaining() === 1 ? ' item' : ' items'"/> left
+        </span>
+        <ul class="filters">
+          <li>
+            <a t-on-click="() => this.setFilter('all')" t-att-class="{selected: this.filter() === 'all'}">All</a>
+          </li>
+          <li>
+            <a t-on-click="() => this.setFilter('active')" t-att-class="{selected: this.filter() === 'active'}">Active</a>
+          </li>
+          <li>
+            <a t-on-click="() => this.setFilter('completed')" t-att-class="{selected: this.filter() === 'completed'}">Completed</a>
+          </li>
+        </ul>
+      </footer>
+    </div>
+  </t>
+</templates>

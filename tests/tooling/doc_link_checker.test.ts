@@ -63,6 +63,13 @@ function getFiles(path: string[] = []): FileData[] {
       { name: "CHANGELOG.md", path: [], links: [], sections: [], fullName: "CHANGELOG.md" },
       { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" },
       { name: "release_notes.md", path: [], links: [], sections: [], fullName: "release_notes.md" },
+      {
+        name: "migration_guide.md",
+        path: [],
+        links: [],
+        sections: [],
+        fullName: "migration_guide.md",
+      },
     ];
     const rest = getFiles(["doc"]);
     const result = baseFiles.concat(rest);

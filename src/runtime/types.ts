@@ -1,0 +1,314 @@
+import { atomSymbol, ReactiveValue } from "./reactivity/computations";
+import { ValidationContext, ValidationIssue } from "./validation";
+
+type Constructor<T = any> = { new (...args: any[]): T };
+
+export type GetOptionalEntries<T> = {
+  [K in keyof T as K extends `${infer P}?` ? P : never]?: T[K];
+};
+export type GetRequiredEntries<T> = {
+  [K in keyof T as K extends `${string}?` ? never : K]: T[K];
+};
+export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
+
+export type KeyedObject<K extends string[]> = {
+  [P in K[number]]: any;
+};
+
+type ResolveShapedObject<T extends {}> = PrettifyShape<ResolveOptionalEntries<T>>;
+export type ResolveObjectType<T extends {}> = ResolveShapedObject<
+  T extends string[] ? KeyedObject<T> : T
+>;
+
+type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) extends (_: infer I) => void
+  ? I
+  : never;
+
+const anyType: any = function validateAny() {} as any;
+
+const booleanType: boolean = function validateBoolean(context: ValidationContext) {
+  if (typeof context.value !== "boolean") {
+    context.addIssue({ message: "value is not a boolean" });
+  }
+} as any;
+
+const numberType: number = function validateNumber(context: ValidationContext) {
+  if (typeof context.value !== "number") {
+    context.addIssue({ message: "value is not a number" });
+  }
+} as any;
+
+const stringType: string = function validateString(context: ValidationContext) {
+  if (typeof context.value !== "string") {
+    context.addIssue({ message: "value is not a string" });
+  }
+} as any;
+
+function arrayType(): any[];
+function arrayType<T>(elementType: T): T[];
+function arrayType(elementType?: any): any {
+  return function validateArray(context: ValidationContext) {
+    if (!Array.isArray(context.value)) {
+      context.addIssue({ message: "value is not an array" });
+      return;
+    }
+    if (!elementType) {
+      return;
+    }
+
+    for (let index = 0; index < context.value.length; index++) {
+      context.withKey(index).validate(elementType);
+    }
+  } as any;
+}
+
+function constructorType<T extends Constructor>(constructor: T): T {
+  return function validateConstructor(context: ValidationContext) {
+    if (
+      !(typeof context.value === "function") ||
+      !(context.value === constructor || context.value.prototype instanceof constructor)
+    ) {
+      context.addIssue({ message: `value is not '${constructor.name}' or an extension` });
+    }
+  } as any;
+}
+
+function customValidator<T>(
+  type: T,
+  validator: (value: T) => boolean,
+  errorMessage: string = "value does not match custom validation"
+): T {
+  return function validateCustom(context: ValidationContext) {
+    context.validate(type);
+    if (!context.isValid) {
+      return;
+    }
+
+    if (!validator(context.value)) {
+      context.addIssue({ message: errorMessage });
+    }
+  } as any;
+}
+
+function functionType(): (...parameters: any[]) => any;
+function functionType<const P extends any[]>(parameters: P): (...parameters: P) => void;
+function functionType<const P extends any[], R>(parameters: P, result: R): (...parameters: P) => R;
+function functionType(parameters = [], result = undefined): (...parameters: any[]) => any {
+  return function validateFunction(context: ValidationContext) {
+    if (typeof context.value !== "function") {
+      context.addIssue({ message: "value is not a function" });
+    }
+  } as any;
+}
+
+function instanceType<T extends Constructor>(constructor: T): InstanceType<T> {
+  return function validateInstanceType(context: ValidationContext) {
+    if (!(context.value instanceof constructor)) {
+      context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
+    }
+  } as any;
+}
+
+function intersection<T extends any[]>(types: T): UnionToIntersection<T[number]> {
+  return function validateIntersection(context: ValidationContext) {
+    for (const type of types) {
+      context.validate(type);
+    }
+  } as any;
+}
+
+type LiteralTypes = number | string | boolean | null | undefined;
+function literalType<const T extends LiteralTypes>(literal: T): T {
+  return function validateLiteral(context: ValidationContext) {
+    if (context.value !== literal) {
+      context.addIssue({
+        message: `value is not equal to ${typeof literal === "string" ? `'${literal}'` : literal}`,
+      });
+    }
+  } as any;
+}
+
+function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
+  return union(literals.map(literalType)) as any;
+}
+
+function validateObject(context: ValidationContext, schema: any, isStrict: boolean) {
+  if (typeof context.value !== "object" || Array.isArray(context.value) || context.value === null) {
+    context.addIssue({ message: "value is not an object" });
+    return;
+  }
+  if (!schema) {
+    return;
+  }
+
+  const isShape = !Array.isArray(schema);
+  let shape: Record<string, any> = schema;
+  if (Array.isArray(schema)) {
+    shape = {};
+    for (const key of schema) {
+      shape[key] = null;
+    }
+  }
+
+  const missingKeys: string[] = [];
+  for (const key in shape) {
+    const property = key.endsWith("?") ? key.slice(0, -1) : key;
+    if (context.value[property] === undefined) {
+      if (!key.endsWith("?")) {
+        missingKeys.push(property);
+      }
+      continue;
+    }
+    if (isShape) {
+      context.withKey(property).validate(shape[key]);
+    }
+  }
+  if (missingKeys.length) {
+    context.addIssue({
+      message: "object value has missing keys",
+      missingKeys,
+    });
+  }
+  if (isStrict) {
+    const unknownKeys: string[] = [];
+    for (const key in context.value) {
+      if (!(key in shape) && !(`${key}?` in shape)) {
+        unknownKeys.push(key);
+      }
+    }
+    if (unknownKeys.length) {
+      context.addIssue({
+        message: "object value has unknown keys",
+        unknownKeys,
+      });
+    }
+  }
+}
+
+function objectType(): Record<string, any>;
+function objectType<const Keys extends string[]>(
+  keys: Keys
+): ResolveOptionalEntries<KeyedObject<Keys>>;
+function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
+function objectType(schema = {}): Record<string, any> {
+  return function validateLooseObject(context: ValidationContext) {
+    validateObject(context, schema, false);
+  } as any;
+}
+
+function strictObjectType<const Keys extends string[]>(
+  keys: Keys
+): ResolveOptionalEntries<KeyedObject<Keys>>;
+function strictObjectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
+function strictObjectType(schema: any): Record<string, any> {
+  return function validateStrictObject(context: ValidationContext) {
+    validateObject(context, schema, true);
+  } as any;
+}
+
+function promiseType(): Promise<void>;
+function promiseType<T>(type: T): Promise<T>;
+function promiseType(type?: any): any {
+  return function validatePromise(context: ValidationContext) {
+    if (!(context.value instanceof Promise)) {
+      context.addIssue({ message: "value is not a promise" });
+    }
+  } as any;
+}
+
+function recordType(): Record<PropertyKey, any>;
+function recordType<V>(valueType: V): Record<PropertyKey, V>;
+function recordType(valueType?: any): any {
+  return function validateRecord(context: ValidationContext) {
+    if (
+      typeof context.value !== "object" ||
+      Array.isArray(context.value) ||
+      context.value === null
+    ) {
+      context.addIssue({ message: "value is not an object" });
+      return;
+    }
+    if (!valueType) {
+      return;
+    }
+    for (const key in context.value) {
+      context.withKey(key).validate(valueType);
+    }
+  } as any;
+}
+
+function tuple<const T extends any[]>(types: T): T {
+  return function validateTuple(context: ValidationContext) {
+    if (!Array.isArray(context.value)) {
+      context.addIssue({ message: "value is not an array" });
+      return;
+    }
+    if (context.value.length !== types.length) {
+      context.addIssue({ message: "tuple value does not have the correct length" });
+      return;
+    }
+    for (let index = 0; index < types.length; index++) {
+      context.withKey(index).validate(types[index]);
+    }
+  } as any;
+}
+
+function union<T extends any[]>(types: T): T[number] {
+  return function validateUnion(context: ValidationContext) {
+    let firstIssueIndex = 0;
+    const subIssues: ValidationIssue[] = [];
+    for (const type of types) {
+      const subContext = context.withIssues(subIssues);
+      subContext.validate(type);
+      if (subIssues.length === firstIssueIndex || subContext.issueDepth > 0) {
+        context.mergeIssues(subIssues.slice(firstIssueIndex));
+        return;
+      }
+      firstIssueIndex = subIssues.length;
+    }
+    context.addIssue({
+      message: "value does not match union type",
+      subIssues,
+    });
+  } as any;
+}
+
+function reactiveValueType(): ReactiveValue<any>;
+function reactiveValueType<T>(type: T): ReactiveValue<T>;
+function reactiveValueType(type?: any): ReactiveValue<any> {
+  return function validateReactiveValue(context: ValidationContext) {
+    if (typeof context.value !== "function" || !context.value[atomSymbol]) {
+      context.addIssue({ message: "value is not a reactive value" });
+    }
+  } as any;
+}
+
+function ref(): HTMLElement | null;
+function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;
+function ref(type?: any): any {
+  return union([literalType(null), instanceType(type)]);
+}
+
+export const types = {
+  and: intersection,
+  any: anyType,
+  array: arrayType,
+  boolean: booleanType,
+  constructor: constructorType,
+  customValidator: customValidator,
+  function: functionType,
+  instanceOf: instanceType,
+  literal: literalType,
+  number: numberType,
+  object: objectType,
+  or: union,
+  promise: promiseType,
+  record: recordType,
+  ref,
+  selection: literalSelection,
+  signal: reactiveValueType,
+  strictObject: strictObjectType,
+  string: stringType,
+  tuple: tuple,
+};

@@ -13,6 +13,8 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
+export { Resource, useResource } from "./resource";
+export { Registry } from "./registry";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
@@ -32,16 +34,20 @@ export const blockDom = {
   html,
   comment,
 };
-
 export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
-export { useComponent, useState } from "./component_node";
+export { props } from "./props";
+export type { GetProps } from "./props";
 export { status } from "./status";
-export { reactive, markRaw, toRaw } from "./reactivity";
-export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
-export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
+export { proxy, markRaw, toRaw } from "./reactivity/proxy";
+export { untrack, type ReactiveValue } from "./reactivity/computations";
+export { signal, type Signal } from "./reactivity/signal";
+export { computed } from "./reactivity/computed";
+export { effect } from "./reactivity/effect";
+export { useEffect, useListener, useApp } from "./hooks";
+export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {
   onWillStart,
   onMounted,
@@ -49,13 +55,18 @@ export {
   onWillUpdateProps,
   onWillPatch,
   onPatched,
-  onWillRender,
-  onRendered,
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";
-export { validate, validateType } from "./validation";
+export { assertType, validateType } from "./validation";
+export { types } from "./types";
 export { OwlError } from "../common/owl_error";
+export { config, plugin, providePlugins } from "./plugin_hooks";
+export type { PluginInstance } from "./plugin_hooks";
+export { Plugin } from "./plugin_manager";
+export type { PluginConstructor } from "./plugin_manager";
+export { useContext } from "./context";
+export type { CapturedContext } from "./context";
 
 export const __info__ = {
   version: App.version,

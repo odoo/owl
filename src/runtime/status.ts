@@ -1,4 +1,5 @@
 import type { Component } from "./component";
+import { Plugin } from "./plugin_manager";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -13,16 +14,16 @@ export const enum STATUS {
   DESTROYED,
 }
 
-type STATUS_DESCR = "new" | "mounted" | "cancelled" | "destroyed";
+type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
 
-export function status(component: Component): STATUS_DESCR {
-  switch (component.__owl__.status) {
+export function status(entity: Component | Plugin): STATUS_DESCR {
+  switch (entity.__owl__.status) {
     case STATUS.NEW:
       return "new";
     case STATUS.CANCELLED:
       return "cancelled";
     case STATUS.MOUNTED:
-      return "mounted";
+      return entity instanceof Plugin ? "started" : "mounted";
     case STATUS.DESTROYED:
       return "destroyed";
   }

@@ -1,73 +1,12 @@
-import type { Env } from "./app";
-import { getCurrent } from "./component_node";
-import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
-import { inOwnerDocument } from "./utils";
+import { App } from "./app";
+import { getContext } from "./context";
+import { onWillDestroy } from "./lifecycle_hooks";
+import { effect } from "./reactivity/effect";
+import { Signal } from "./reactivity/signal";
 
-// -----------------------------------------------------------------------------
-// useRef
-// -----------------------------------------------------------------------------
-
-/**
- * The purpose of this hook is to allow components to get a reference to a sub
- * html node or component.
- */
-export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el: T | null } {
-  const node = getCurrent();
-  const refs = node.refs;
-  return {
-    get el(): T | null {
-      const el = refs[name];
-      return inOwnerDocument(el) ? el : null;
-    },
-  };
-}
-
-// -----------------------------------------------------------------------------
-// useEnv and useSubEnv
-// -----------------------------------------------------------------------------
-
-/**
- * This hook is useful as a building block for some customized hooks, that may
- * need a reference to the env of the component calling them.
- */
-export function useEnv<E extends Env>(): E {
-  return getCurrent().component.env as any;
-}
-
-function extendEnv(currentEnv: Object, extension: Object): Object {
-  const env = Object.create(currentEnv);
-  const descrs = Object.getOwnPropertyDescriptors(extension);
-  return Object.freeze(Object.defineProperties(env, descrs));
-}
-
-/**
- * This hook is a simple way to let components use a sub environment.  Note that
- * like for all hooks, it is important that this is only called in the
- * constructor method.
- */
-export function useSubEnv(envExtension: Env) {
-  const node = getCurrent();
-  node.component.env = extendEnv(node.component.env as any, envExtension);
-  useChildSubEnv(envExtension);
-}
-
-export function useChildSubEnv(envExtension: Env) {
-  const node = getCurrent();
-  node.childEnv = extendEnv(node.childEnv, envExtension);
-}
 // -----------------------------------------------------------------------------
 // useEffect
 // -----------------------------------------------------------------------------
-
-type EffectDeps<T extends unknown[]> = T | (T extends [...infer H, never] ? EffectDeps<H> : never);
-
-/**
- * @template T
- * @param {...T} dependencies the dependencies computed by computeDependencies
- * @returns {void|(()=>void)} a cleanup function that reverses the side
- *      effects of the effect callback.
- */
-type Effect<T extends unknown[]> = (...dependencies: EffectDeps<T>) => void | (() => void);
 
 /**
  * This hook will run a callback when a component is mounted and patched, and
@@ -82,57 +21,53 @@ type Effect<T extends unknown[]> = (...dependencies: EffectDeps<T>) => void | ((
  *      again. The default value returns an array containing only NaN because
  *      NaN !== NaN, which will cause the effect to rerun on every patch.
  */
-export function useEffect<T extends unknown[]>(
-  effect: Effect<T>,
-  computeDependencies: () => [...T] = () => [NaN] as never
-) {
-  let cleanup: (() => void) | void;
-  let dependencies: T;
-  onMounted(() => {
-    dependencies = computeDependencies();
-    cleanup = effect(...dependencies);
-  });
-
-  onPatched(() => {
-    const newDeps = computeDependencies();
-    const shouldReapply = newDeps.some((val, i) => val !== dependencies[i]);
-    if (shouldReapply) {
-      dependencies = newDeps;
-      if (cleanup) {
-        cleanup();
-      }
-      cleanup = effect(...dependencies);
-    }
-  });
-
-  onWillUnmount(() => cleanup && cleanup());
+export function useEffect(fn: Parameters<typeof effect>[0]) {
+  onWillDestroy(effect(fn));
 }
 
 // -----------------------------------------------------------------------------
-// useExternalListener
+// useListener
 // -----------------------------------------------------------------------------
 
 /**
  * When a component needs to listen to DOM Events on element(s) that are not
- * part of his hierarchy, we can use the `useExternalListener` hook.
- * It will correctly add and remove the event listener, whenever the
- * component is mounted and unmounted.
+ * part of his hierarchy, we can use the `useListener` hook.
+ * It will immediately add the listener, and remove it whenever the plugin or
+ * component is destroyed.
  *
  * Example:
  *  a menu needs to listen to the click on window to be closed automatically
  *
  * Usage:
  *  in the constructor of the OWL component that needs to be notified,
- *  `useExternalListener(window, 'click', this._doSomething);`
+ *  `useListener(window, 'click', () => this._doSomething());`
  * */
-export function useExternalListener(
-  target: EventTarget,
+export function useListener(
+  target: EventTarget | Signal<EventTarget | null>,
   eventName: string,
   handler: EventListener,
   eventParams?: AddEventListenerOptions
 ) {
-  const node = getCurrent();
-  const boundHandler = handler.bind(node.component);
-  onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
-  onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
+  if (typeof target === "function") {
+    // this is a ref
+    useEffect(() => {
+      const el = target();
+      if (el) {
+        el.addEventListener(eventName, handler, eventParams);
+        return () => el.removeEventListener(eventName, handler, eventParams);
+      }
+      return;
+    });
+  } else {
+    target.addEventListener(eventName, handler, eventParams);
+    onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
+  }
+}
+
+// -----------------------------------------------------------------------------
+// useApp
+// -----------------------------------------------------------------------------
+
+export function useApp(): App {
+  return getContext().app;
 }

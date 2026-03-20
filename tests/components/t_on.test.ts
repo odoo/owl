@@ -1,4 +1,4 @@
-import { Component, mount, onMounted, useState, xml } from "../../src/index";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
 import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { status } from "../../src/runtime/status";
 
@@ -15,7 +15,7 @@ describe("t-on", () => {
     const steps: string[] = [];
     let child: any;
     class Child extends Component {
-      static template = xml`<div t-on-click="onClick"/>`;
+      static template = xml`<div t-on-click="this.onClick"/>`;
       setup() {
         onMounted(() => {
           child = this;
@@ -26,9 +26,9 @@ describe("t-on", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static template = xml`<div><Child t-if="this.state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
     const parent = await mount(Parent, fixture);
     let el = elem(child!);
@@ -36,7 +36,7 @@ describe("t-on", () => {
     expect(steps).toEqual(["click"]);
     (parent as any).state.flag = false;
     await nextTick();
-    expect(status(child as any)).toBe("destroyed");
+    expect(status(child)).toBe("destroyed");
     el.click();
     expect(steps).toEqual(["click"]);
   });
@@ -44,15 +44,16 @@ describe("t-on", () => {
   test("t-on when first component child is an empty component", async () => {
     class Child extends Component {
       static template = xml`
-        <span t-foreach="props.list" t-as="c" t-key="c_index" t-esc="c"/>
+        <span t-foreach="this.props.list" t-as="c" t-key="c_index" t-out="c"/>
       `;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
-        <div t-on-click="push"><Child list="list" t-on-click="() => {}"/></div>
+        <div t-on-click="this.push"><Child list="this.list" t-on-click="() => {}"/></div>
       `;
       static components = { Child };
-      list = useState([] as string[]);
+      list = proxy([] as string[]);
       push() {
         this.list.push("foo");
       }
@@ -69,13 +70,13 @@ describe("t-on", () => {
     class Comp extends Component {
       static template = xml`
           <div>
-            <div t-foreach="state.values" t-as="val" t-key="val">
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="() => otherState.vals.push(val)">Expr</button>
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
+              <button t-on-click="() => this.otherState.vals.push(val)">Expr</button>
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: [] };
     }
     const comp = await mount(Comp, fixture);
@@ -94,14 +95,14 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <t t-set="bossa" t-value="'nova'"/>
-            <div t-foreach="state.values" t-as="val" t-key="val">
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
               <t t-set="bossa" t-value="bossa + '_' + val_index" />
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="() => otherState.vals.push(val + '_' + bossa)">Expr</button>
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
+              <button t-on-click="() => this.otherState.vals.push(val + '_' + bossa)">Expr</button>
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: [] };
     }
     const comp = await mount(Comp, fixture);
@@ -112,20 +113,20 @@ describe("t-on", () => {
     const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(comp.otherState.vals).toStrictEqual(["a_nova_0", "b_nova_0_1"]);
+    expect(comp.otherState.vals).toStrictEqual(["a_nova_0_1", "b_nova_0_1"]);
   });
 
   test("t-on method call in t-foreach", async () => {
     class Comp extends Component {
       static template = xml`
           <div>
-            <div t-foreach="state.values" t-as="val" t-key="val">
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
               <button t-on-click="() => this.addVal(val)">meth call</button>
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: new Array<string>() };
       addVal(val: string) {
         this.otherState.vals.push(val);
@@ -147,8 +148,8 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <t t-set="iter" t-value="0" />
-            <div t-foreach="arr" t-as="val" t-key="val">
-              <button t-on-click="() => otherState.vals.push(iter + '_' + iter)">expr</button>
+            <div t-foreach="this.arr" t-as="val" t-key="val">
+              <button t-on-click="() => this.otherState.vals.push(iter + '_' + iter)">expr</button>
               <t t-set="iter" t-value="iter + 1" />
             </div>
           </div>
@@ -164,18 +165,19 @@ describe("t-on", () => {
     const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(comp.otherState.vals).toStrictEqual(["0_0", "1_1"]);
+    expect(comp.otherState.vals).toStrictEqual(["2_2", "2_2"]);
   });
 
   test("t-on on components", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-on-click="increment" value="state.value"/>`;
+      static template = xml`<Child t-on-click="this.increment" value="this.state.value"/>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -189,18 +191,19 @@ describe("t-on", () => {
 
   test("t-on on components, variation", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
           <span/>
-          <Child t-on-click="increment" value="state.value"/>
+          <Child t-on-click="this.increment" value="this.state.value"/>
           <p/>
         </div>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -223,17 +226,18 @@ describe("t-on", () => {
 
   test("t-on on component next to t-on on div", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child t-on-click="increment" value="state.value"/>
-          <p t-on-click="decrement">dec</p>
+          <Child t-on-click="this.increment" value="this.state.value"/>
+          <p t-on-click="this.decrement">dec</p>
         </div>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -251,13 +255,13 @@ describe("t-on", () => {
     expect(fixture.innerHTML).toBe("<div><button>1</button><p>dec</p></div>");
   });
 
-  test("t-on on t-slots", async () => {
+  test("t-on on t-call-slots", async () => {
     class Child extends Component {
       static template = xml`
-        [<t t-esc="state.count"/>]
-        <t t-slot="default" t-on-click="() => this.state.count++"/>`;
-
-      state = useState({ count: 0 });
+        [<t t-out="this.state.count"/>]
+        <t t-call-slot="default" t-on-click="() => this.state.count++"/>`;
+      props = props();
+      state = proxy({ count: 0 });
     }
 
     class Parent extends Component {
@@ -277,12 +281,13 @@ describe("t-on", () => {
 
   test("t-on on t-set-slots", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="myslot"/>`;
+      static template = xml`<t t-call-slot="myslot"/>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
-        [<t t-esc="state.count"/>]
+        [<t t-out="this.state.count"/>]
         <Child>
           <t t-set-slot="myslot" t-on-click="() => this.state.count++">
             <p>something</p>
@@ -290,7 +295,7 @@ describe("t-on", () => {
           </t>
         </Child>`;
       static components = { Child };
-      state = useState({ count: 0 });
+      state = proxy({ count: 0 });
     }
 
     await mount(Parent, fixture);
@@ -303,13 +308,14 @@ describe("t-on", () => {
   test("t-on on components, with 'prevent' modifier", async () => {
     expect.assertions(4); // 2 snaps and 2 expects
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-on-click.prevent="increment" value="state.value"/>`;
+      static template = xml`<Child t-on-click.prevent="this.increment" value="this.state.value"/>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
         this.state.value++;
@@ -323,7 +329,8 @@ describe("t-on", () => {
 
   test("t-on on slot, with 'prevent' modifier", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="default" t-on-click.prevent="doSomething"/>`;
+      static template = xml`<t t-call-slot="default" t-on-click.prevent="this.doSomething"/>`;
+      props = props();
       doSomething(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
         logStep("hey");
@@ -346,7 +353,8 @@ describe("t-on", () => {
 
   test("t-on on components and t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -377,16 +385,17 @@ describe("t-on", () => {
 
   test("t-on on components, with a handler update", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
-          <t t-set="name" t-value="state.name"/>
+          <t t-set="name" t-value="this.state.name"/>
           <Child value="name" t-on-click="() => this.log(name)"
         />`;
       static components = { Child };
-      state = useState({ name: "aaron" });
+      state = proxy({ name: "aaron" });
       log(name: string) {
         logStep(name);
       }

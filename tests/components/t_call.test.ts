@@ -1,5 +1,5 @@
-import { App, Component, mount, useState, xml } from "../../src/index";
-import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { App, Component, mount, props, proxy, signal, xml } from "../../src/index";
+import { isDirectChildOf, makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -13,10 +13,10 @@ describe("t-call", () => {
   test("dynamic t-call", async () => {
     class Root extends Component {
       static template = xml`
-          <t t-call="{{current.template}}">
+          <t t-call="{{this.current.template}}">
             owl
           </t>`;
-      current = useState({ template: "foo" });
+      current = proxy({ template: "foo" });
     }
 
     const root = await mount(Root, fixture, {
@@ -35,22 +35,23 @@ describe("t-call", () => {
 
   test("sub components in two t-calls", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
       static template = xml`
-          <t t-if="state.val===1">
+          <t t-if="this.state.val===1">
             <t t-call="sub"/>
           </t>
           <div t-else=""><t t-call="sub"/></div>`;
       static components = { Child };
-      state = useState({ val: 1 });
+      state = proxy({ val: 1 });
     }
-    const app = new App(Parent);
-    app.addTemplate("sub", `<Child val="state.val"/>`);
+    const app = new App();
+    app.addTemplate("sub", `<Child val="this.state.val"/>`);
 
-    const parent = await app.mount(fixture);
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(fixture.innerHTML).toBe("<span>1</span>");
     parent.state.val = 2;
     await nextTick();
@@ -60,16 +61,16 @@ describe("t-call", () => {
   test("handlers are properly bound through a t-call", async () => {
     let parent: any;
 
-    const subTemplate = xml`<p t-on-click="update">lucas</p>`;
+    const subTemplate = xml`<p t-on-click="this.update">lucas</p>`;
     class Parent extends Component {
       static template = xml`
-        <div><t t-call="${subTemplate}"/><t t-esc="counter"/></div>`;
+        <div><t t-call="${subTemplate}"/><t t-out="this.counter"/></div>`;
       counter = 0;
 
       update() {
         expect(this).toBe(parent);
         this.counter++;
-        this.render();
+        render(this);
       }
     }
     parent = await mount(Parent, fixture);
@@ -86,13 +87,13 @@ describe("t-call", () => {
     const subTemplate = xml`<p t-on-click="() => this.update()">lucas</p>`;
     class Parent extends Component {
       static template = xml`
-        <div><t t-call="{{'${subTemplate}'}}"/><t t-esc="counter"/></div>`;
+        <div><t t-call="{{'${subTemplate}'}}"/><t t-out="this.counter"/></div>`;
       counter = 0;
 
       update() {
         expect(this).toBe(parent);
         this.counter++;
-        this.render();
+        render(this);
       }
     }
     parent = await mount(Parent, fixture);
@@ -126,7 +127,8 @@ describe("t-call", () => {
     const sub = xml`<Child val="val"/>`;
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -166,7 +168,7 @@ describe("t-call", () => {
   });
 
   test("handlers with arguments are properly bound through a t-call", async () => {
-    const sub = xml`<p t-on-click="() => this.update(a)">lucas</p>`;
+    const sub = xml`<p t-on-click="() => this.update(this.a)">lucas</p>`;
 
     let value: any = null;
 
@@ -187,7 +189,7 @@ describe("t-call", () => {
   test("dynamic t-call: key is propagated", async () => {
     let childId = 0;
     class Child extends Component {
-      static template = xml`<div t-att-id="id" />`;
+      static template = xml`<div t-att-id="this.id" />`;
       id: any;
       setup() {
         this.id = childId++;
@@ -196,7 +198,7 @@ describe("t-call", () => {
     const sub = xml`<Child />`;
 
     class Parent extends Component {
-      static template = xml`<Child /><t t-call="{{ sub }}"/>`;
+      static template = xml`<Child /><t t-call="{{ this.sub }}"/>`;
       static components = { Child };
 
       sub = sub;
@@ -221,24 +223,22 @@ describe("t-call", () => {
       }
 
       static template = xml`
-          <div><t t-call="recursive"><t t-set="level" t-value="0" /></t></div>
+          <div><t t-call="recursive" level="0"/></div>
       `;
     }
 
-    const app = new App(Parent);
+    const app = new App();
     app.addTemplate(
       "recursive",
       `
         <t t-if="level &lt; 2" >
-          <div t-on-click.stop="onClicked.bind(this)" t-esc="level" />
-          <t t-call="recursive">
-            <t t-set="level" t-value="level + 1" />
-          </t>
+          <div t-on-click.stop="this.onClicked.bind(this)" t-out="level" />
+          <t t-call="recursive" level="level + 1" />
         </t>
     `
     );
 
-    await app.mount(fixture);
+    await app.createRoot(Parent).mount(fixture);
     for (const div of fixture.querySelectorAll("div")) {
       div.click();
     }
@@ -248,7 +248,7 @@ describe("t-call", () => {
   test("t-call with t-call-context, simple use", async () => {
     class Root extends Component {
       static template = xml`
-          <t t-call="someTemplate" t-call-context="subctx"/>`;
+          <t t-call="someTemplate" t-call-context="this.subctx"/>`;
 
       subctx = { aab: "aaron", lpe: "lucas" };
     }
@@ -256,7 +256,7 @@ describe("t-call", () => {
     await mount(Root, fixture, {
       templates: `
         <templates>
-          <t t-name="someTemplate"><t t-esc="aab"/><t t-esc="lpe"/></t>
+          <t t-name="someTemplate"><t t-out="this.aab"/><t t-out="this.lpe"/></t>
         </templates>`,
     });
     expect(fixture.innerHTML).toBe("aaronlucas");
@@ -264,12 +264,13 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="props.name"/>`;
+      static template = xml`child<t t-out="this.props.name"/>`;
+      props = props();
     }
 
     class Root extends Component {
       static template = xml`
-          <t t-call="someTemplate" t-call-context="subctx"/>`;
+          <t t-call="someTemplate" t-call-context="this.subctx"/>`;
 
       static components = { Child };
 
@@ -280,8 +281,8 @@ describe("t-call", () => {
       templates: `
         <templates>
           <t t-name="someTemplate">
-            <Child name="aab"/>
-            <Child name="lpe"/>
+            <Child name="this.aab"/>
+            <Child name="this.lpe"/>
           </t>
         </templates>`,
     });
@@ -290,13 +291,13 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent, in dev mode", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="props.name"/>`;
-      static props = ["name"];
+      static template = xml`child<t t-out="this.props.name"/>`;
+      props = props(["name"]);
     }
 
     class Root extends Component {
       static template = xml`
-          <t t-call="someTemplate" t-call-context="subctx"/>`;
+          <t t-call="someTemplate" t-call-context="this.subctx"/>`;
 
       static components = { Child };
 
@@ -308,8 +309,8 @@ describe("t-call", () => {
       templates: `
         <templates>
           <t t-name="someTemplate">
-            <Child name="aab"/>
-            <Child name="lpe"/>
+            <Child name="this.aab"/>
+            <Child name="this.lpe"/>
           </t>
         </templates>`,
     });
@@ -319,8 +320,10 @@ describe("t-call", () => {
   test("t-call-context: ComponentNode is not looked up in the context", async () => {
     let child: any;
     class Child extends Component {
-      static template = xml`<t t-slot="default"/>`;
-      static props = ["name"];
+      static template = xml`<t t-call-slot="default"/>`;
+      props = props();
+      myRef = signal<any>(null);
+      myRef2 = signal<any>(null);
       setup() {
         child = this;
       }
@@ -328,8 +331,10 @@ describe("t-call", () => {
 
     class Root extends Component {
       static template = xml`
-          <t t-call="someTemplate" t-call-context="{method: function(){}}"/>`;
+          <t t-call="someTemplate" t-call-context="{method: function(){}, myRef: this.myRef, myRef2: this.myRef2}"/>`;
       static components = { Child };
+      myRef = signal<any>(null);
+      myRef2 = signal<any>(null);
     }
 
     // The following things need a reference to the ComponentNode, historically
@@ -341,11 +346,11 @@ describe("t-call", () => {
       templates: `
         <templates>
           <t t-name="someTemplate">
-            <div t-ref="myRef">outside slot</div>
-            <Child prop.bind="method">
-              <div t-ref="myRef2">I'm the default slot</div>
+            <div t-ref="this.myRef">outside slot</div>
+            <Child prop.bind="this.method">
+              <div t-ref="this.myRef2">I'm the default slot</div>
               <t t-set="test" t-value="3"/>
-              <div t-esc="test"/>
+              <div t-out="test"/>
             </Child>
           </t>
         </templates>`,
@@ -353,13 +358,14 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe(
       "<div>outside slot</div><div>I'm the default slot</div><div>3</div>"
     );
-    expect(Object.keys(child.__owl__.refs)).toEqual([]);
-    expect(Object.keys(root.__owl__.refs)).toEqual(["myRef", "myRef2"]);
+    expect([child.myRef(), child.myRef2()]).toEqual([null, null]);
+    expect([root.myRef(), root.myRef2()]).toEqual([expect.anything(), expect.anything()]);
   });
 
   test("t-call-context: slots don't make component available again when context is captured", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="default"/>`;
+      static template = xml`<t t-call-slot="default"/>`;
+      props = props();
     }
 
     class Root extends Component {
@@ -375,7 +381,7 @@ describe("t-call", () => {
           <t t-name="template">
             <t t-set="dummy" t-value="0"/>
             <Child>
-              <t t-esc="someValue"/>
+              <t t-out="Object.keys(this)"/>
             </Child>
           </t>
         </templates>`,
@@ -392,7 +398,7 @@ describe("t-call", () => {
       templates: `
         <templates>
           <t t-name="someTemplate">
-            <t t-esc="this"/>
+            <t t-out="Object.keys(this)"/>
           </t>
         </templates>`,
     });
@@ -406,10 +412,10 @@ describe("t-call", () => {
 
     class Root extends Component {
       static template = xml`
-        <t t-esc="current.template"/>
-        <t t-call="{{current.template}}"/>`;
+        <t t-out="this.current.template"/>
+        <t t-call="{{this.current.template}}"/>`;
       static components = { Child };
-      current = useState({ template: "A" });
+      current = proxy({ template: "A" });
     }
 
     const root = await mount(Root, fixture, {
@@ -424,5 +430,64 @@ describe("t-call", () => {
     root.current.template = "B";
     await nextTick();
     expect(fixture.innerHTML).toBe("Bchild");
+  });
+
+  test("t-call and t-out", async () => {
+    class Root extends Component {
+      static template = xml`<t t-call="a"/>`;
+    }
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="a"><t t-out="0"/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("");
+  });
+
+  test("t-set inside t-call are not evaluated before being rendered", async () => {
+    class Root extends Component {
+      static template = xml`
+        <t t-call="a">
+          <t t-out="v"/>
+          coucou
+          <t t-set="v" t-value="this.f()"/>
+          <t t-out="v"/>
+        </t>`;
+
+      f() {
+        return 3;
+      }
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="a"><t t-out="0"/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe(" coucou 3");
+  });
+
+  test("body content is not evaluated if callee does not use t-out='0'", async () => {
+    let evalCount = 0;
+    class Root extends Component {
+      static template = xml`
+        <t t-call="noZero">
+          <t t-out="this.sideEffect()"/>
+        </t>`;
+      sideEffect() {
+        evalCount++;
+        return "body";
+      }
+    }
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="noZero"><span>no zero here</span></t>
+        </templates>`,
+    });
+    expect(evalCount).toBe(0);
+    expect(fixture.innerHTML).toBe("<span>no zero here</span>");
   });
 });

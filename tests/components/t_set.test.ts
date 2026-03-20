@@ -1,5 +1,5 @@
-import { Component, mount, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, props, xml } from "../../src";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -19,7 +19,7 @@ describe("t-set", () => {
       static template = xml`
         <div>
           <t t-set="iter" t-value="0"/>
-          <t t-set="flag" t-value="state.flag" />
+          <t t-set="flag" t-value="this.state.flag" />
           <t t-if="flag === 'if'">
             <t t-set="iter" t-value="2"/>
           </t>
@@ -29,7 +29,7 @@ describe("t-set", () => {
           <t t-else="">
             <t t-set="iter" t-value="4"/>
           </t>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       state = { flag: "if" };
     }
@@ -37,11 +37,11 @@ describe("t-set", () => {
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
     comp.state.flag = "elif";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
     comp.state.flag = "false";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });
@@ -52,7 +52,7 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <t t-set="flag" t-value="state.flag" />
+          <t t-set="flag" t-value="this.state.flag" />
           <t t-if="flag === 'if'">
             <t t-set="iter" t-value="2"/>
           </t>
@@ -62,7 +62,7 @@ describe("t-set", () => {
           <t t-else="">
             <t t-set="iter" t-value="4"/>
           </t>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       state = { flag: "if" };
     }
@@ -70,11 +70,11 @@ describe("t-set", () => {
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
     comp.state.flag = "elif";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
     comp.state.flag = "false";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });
@@ -83,15 +83,16 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       iter = 1;
     }
     const comp = await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p>1</p><p>5</p></div>");
+    expect(fixture.innerHTML).toBe("<div><p>1</p><p>1</p><p>5</p></div>");
     expect(comp.iter).toBe(1);
   });
 
@@ -99,31 +100,32 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     const comp = await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p></p><p>5</p></div>");
+    expect(fixture.innerHTML).toBe("<div><p></p><p></p><p>5</p></div>");
     expect((comp as any).iter).toBeUndefined();
   });
 
-  test("slot setted value (with t-set) not accessible with t-esc", async () => {
+  test("slot setted value (with t-set) not accessible with t-out", async () => {
     class Childcomp extends Component {
-      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+      static template = xml`<div><t t-out="iter"/><t t-set="iter" t-value="'called'"/><t t-out="iter"/></div>`;
     }
     class Comp extends Component {
       static components = { Childcomp };
       static template = xml`
         <div>
           <t t-set="iter" t-value="'source'"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
           <Childcomp>
             <t t-set="iter" t-value="'inCall'"/>
           </Childcomp>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     await mount(Comp, fixture);
@@ -134,7 +136,13 @@ describe("t-set", () => {
   test("t-set not altered by child comp", async () => {
     let child;
     class Childcomp extends Component {
-      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+      static template = xml`
+        <div>
+          <t t-out="this.iter"/>
+          <t t-set="iter" t-value="'called'"/>
+          <t t-out="this.iter"/>
+          <t t-out="iter"/>
+        </div>`;
       iter = "child";
       setup() {
         super.setup();
@@ -146,14 +154,16 @@ describe("t-set", () => {
       static template = xml`
         <div>
           <t t-set="iter" t-value="'source'"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
           <Childcomp/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p>source</p><div>childcalled</div><p>source</p></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><p>source</p><div>childchildcalled</div><p>source</p></div>"
+    );
     expect((child as any).iter).toBe("child");
   });
 
@@ -196,7 +206,8 @@ describe("t-set", () => {
 
   test("slots with an unused t-set with a component in body", async () => {
     class Child extends Component {
-      static template = xml`Child <t t-slot="default"/>`;
+      static template = xml`Child <t t-call-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {
@@ -220,7 +231,8 @@ describe("t-set", () => {
       static template = xml`C`;
     }
     class Child extends Component {
-      static template = xml`Child <t t-slot="default"/>`;
+      static template = xml`Child <t t-call-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {
@@ -245,7 +257,8 @@ describe("t-set", () => {
       static template = xml`Child`;
     }
     class Blorg extends Component {
-      static template = xml`Blorg <t t-slot="default"/>`;
+      static template = xml`Blorg <t t-call-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {

@@ -1,4 +1,4 @@
-import { compileExpr, tokenize } from "../../src/compiler/inline_expressions";
+import { compileExpr, processExpr, tokenize } from "../../src/compiler/inline_expressions";
 
 describe("tokenizer", () => {
   test("simple tokens", () => {
@@ -18,6 +18,7 @@ describe("tokenizer", () => {
     expect(tokenize("abcde")).toEqual([{ type: "SYMBOL", value: "abcde" }]);
     expect(tokenize("_ab2")).toEqual([{ type: "SYMBOL", value: "_ab2" }]);
     expect(tokenize("$ab2")).toEqual([{ type: "SYMBOL", value: "$ab2" }]);
+    expect(tokenize("ab2$")).toEqual([{ type: "SYMBOL", value: "ab2$" }]);
     expect(tokenize("ABC")).toEqual([{ type: "SYMBOL", value: "ABC" }]);
 
     expect(tokenize("{a: 2}")).toEqual([
@@ -178,6 +179,20 @@ describe("expression evaluation", () => {
       "(_ev)=>{ctx['myFunc'](ctx['v1'],ctx['v2'],_ev.target.value);}"
     );
   });
+  test("processExpr: free variables detection", () => {
+    const freeVars = (expr: string) => processExpr(expr).freeVariables;
+    // simple arrow
+    expect(freeVars("x => this.doSomething(x, item)")).toEqual(["item"]);
+    // parenthesized single param
+    expect(freeVars("(a) => this.doSomething(a, item)")).toEqual(["item"]);
+    // parenthesized multi params
+    expect(freeVars("(a, b) => this.doSomething(a, b, item)")).toEqual(["item"]);
+    // no free vars
+    expect(freeVars("(a) => a")).toEqual([]);
+    // not an arrow function
+    expect(freeVars("this.doSomething(item)")).toBeNull();
+  });
+
   test.skip("arrow functions: not yet supported", () => {
     // e is added to localvars in inline_expression but not removed after the arrow func body
     expect(compileExpr("(e => e)(e)")).toBe("(_e=>_e)(ctx['e'])");

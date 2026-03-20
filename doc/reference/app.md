@@ -40,7 +40,6 @@ instance somewhere in the DOM.
   is complete.
 
   The `option` object is an object with the following keys:
-
   - **`position (string)`**: either `first-child` or `last-child`. This option determines
     the position of the application in the target: either first or last child.
 
@@ -130,7 +129,7 @@ what it could look like in practice:
 
 ```js
 // in the main js file:
-const { loadFile, mount } = owl;
+const { mount } = owl;
 
 // async, so we can use async/await
 (async function setup() {

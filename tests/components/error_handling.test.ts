@@ -1,27 +1,27 @@
-import { App, Component, mount, onWillDestroy } from "../../src";
+import { App, Component, mount, onWillDestroy, props, types } from "../../src";
+import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
   onMounted,
   onPatched,
   onWillPatch,
   onWillStart,
-  onWillRender,
-  onRendered,
   onWillUnmount,
-  useState,
+  proxy,
   xml,
 } from "../../src/index";
+import { getContext } from "../../src/runtime/context";
 import {
   logStep,
   makeTestFixture,
-  nextTick,
-  nextMicroTick,
-  snapshotEverything,
-  useLogLifecycle,
   nextAppError,
+  nextMicroTick,
+  nextTick,
+  render,
+  snapshotEverything,
   steps,
+  useLogLifecycle,
 } from "../helpers";
-import { OwlError } from "../../src/common/owl_error";
 
 let fixture: HTMLElement;
 
@@ -48,11 +48,12 @@ afterEach(() => {
 describe("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<div><ErrorComponent flag="state.flag"/></div>`;
+      static template = xml`<div><ErrorComponent flag="this.state.flag"/></div>`;
       static components = { ErrorComponent };
       state = { flag: false };
     }
@@ -60,12 +61,12 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><div>heyfalse</div></div>");
     parent.state.flag = true;
 
-    parent.render();
+    render(parent);
     await expect(nextAppError(parent.__owl__.app)).resolves.toThrow(
-      "An error occured in the owl lifecycle"
+      "[Owl] Unhandled error. Destroying the root component"
     );
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("display a nice error if it cannot find component", async () => {
@@ -74,18 +75,21 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    const app = new App(Parent);
-    let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    const app = new App();
+    let error: any;
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
-    expect(console.error).toBeCalledTimes(0);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause!.message).toBe(
+      'Cannot find the definition of component "SomeMispelledComponent"'
+    );
+    expect(console.error).toHaveBeenCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("display a nice error if it cannot find component (in dev mode)", async () => {
@@ -94,18 +98,19 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    const app = new App(Parent, { test: true });
-    let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
-    expect(console.error).toBeCalledTimes(0);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(console.error).toHaveBeenCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("display a nice error if a component is not a component", async () => {
@@ -114,15 +119,14 @@ describe("basics", () => {
       static template = xml`<SomeComponent />`;
       static components = { SomeComponent: notAComponentConstructor };
     }
-    const app = new App(Parent as typeof Component);
-    let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      '"SomeComponent" is not a Component. It must inherit from the Component class'
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(
+    let error: any;
+    try {
+      await mount(Parent as any, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       '"SomeComponent" is not a Component. It must inherit from the Component class'
     );
   });
@@ -131,15 +135,14 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<div><MissingChild /></div>`;
     }
-    const app = new App(Parent as typeof Component);
-    let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      'Cannot find the definition of component "MissingChild", missing static components key in parent'
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(
+    let error: any;
+    try {
+      await mount(Parent as any, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       'Cannot find the definition of component "MissingChild", missing static components key in parent'
     );
   });
@@ -150,10 +153,9 @@ describe("basics", () => {
     class Comp extends Component {
       static template = xml`<div t-att-class="a b">test</div>`;
     }
-    const app = new App(Comp);
     let error: Error;
     try {
-      await app.mount(fixture);
+      await mount(Comp, fixture);
     } catch (e) {
       error = e as Error;
     }
@@ -171,7 +173,7 @@ function(app, bdom, helpers) {
   }
 }`;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(expectedErrorMessage);
+    expect((error! as any).message).toBe(expectedErrorMessage);
   });
 
   test("display a nice error if a non-root component template fails to compile", async () => {
@@ -195,24 +197,25 @@ function(app, bdom, helpers) {
     return block1([attr1]);
   }
 }`;
-    const app = new App(Parent as typeof Component);
-    let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(expectedErrorMessage);
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e as Error;
+    }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(expectedErrorMessage);
+    expect(error!.cause.message).toBe(expectedErrorMessage);
   });
 
   test("simple catchError", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
     }
 
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-if="error">Error</t>
+          <t t-if="this.error">Error</t>
           <t t-else="">
             <Boom />
           </t>
@@ -224,19 +227,20 @@ function(app, bdom, helpers) {
       setup() {
         onError((err) => {
           this.error = err;
-          this.render();
+          render(this);
         });
       }
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("render from above on error -- handler is not a Root or MountFiber", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
+      props = props({ onError: types.function() });
       setup() {
         onError((err) => {
           this.props.onError(err);
@@ -247,9 +251,9 @@ function(app, bdom, helpers) {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-if="error">Error</t>
+          <t t-if="this.error">Error</t>
           <t t-else="">
-            <Boom onError.bind="handleError"/>
+            <Boom onError.bind="this.handleError"/>
           </t>
         </div>`;
       static components = { Boom };
@@ -258,7 +262,7 @@ function(app, bdom, helpers) {
 
       handleError(err: Error) {
         this.error = err;
-        this.render();
+        render(this);
       }
     }
 
@@ -268,8 +272,8 @@ function(app, bdom, helpers) {
     }
     await mount(GrandParent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 });
 
@@ -277,21 +281,32 @@ describe("errors and promises", () => {
   test("a rendering error will reject the mount promise", async () => {
     // we do not catch error in willPatch anymore
     class Root extends Component {
-      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-out="this.will.crash"/></div>`;
     }
 
-    const app = new App(Root);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e as Error;
+    }
+
+    // const app = new App();
+    // let error: OwlError;
+    // const mountProm = app
+    //   .createRoot(Root)
+    //   .mount(fixture)
+    //   .catch((e: Error) => (error = e));
+    // await expect(nextAppError(app)).resolves.toThrow(
+    //   "[Owl] Unhandled error. Destroying the root component"
+    // );
+    // await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.cause.message).toMatch(regexp);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(error!.cause!.message).toMatch(regexp);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
   });
 
   test("an error in mounted call will reject the mount promise", async () => {
@@ -304,17 +319,20 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    const mountProm = app
+      .createRoot(Root)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
+    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
-    expect(error!.cause.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("an error in onMounted callback will have the component's setup in its stack trace", async () => {
@@ -327,60 +345,21 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.stack).toContain("Root.setup");
-    expect(error!.stack).toContain("error_handling.test.ts");
-    expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
-  });
-
-  test("errors in onWillRender/onRender aren't wrapped more than once", async () => {
-    class Root extends Component {
-      static template = xml`<div>abc</div>`;
-      setup() {
-        onWillRender(() => {
-          throw new Error("boom in onWillRender");
-        });
-        onRendered(() => {
-          throw new Error("boom in onRendered");
-        });
-      }
-    }
-
-    const app = new App(Root, { test: true });
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillRender");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(
-      `The following error occurred in onWillRender: "boom in onWillRender"`
+    const mountProm = app
+      .createRoot(Root)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
     );
-  });
-
-  test("error while rendering component isn't wrapped by onWillRender/onRendered", async () => {
-    class App extends Component {
-      static template = xml`<div t-att-class="{ 'invalid: 5 }">abc</div>`;
-      setup() {
-        onWillRender(() => {});
-        onRendered(() => {});
-      }
-    }
-
-    let error: Error;
-    try {
-      await mount(App, fixture, { test: true });
-    } catch (e) {
-      error = e as Error;
-    }
+    await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Tokenizer error: could not tokenize `{ 'invalid: 5 }`");
+    expect(error!.cause.stack).toContain("error_handling.test.ts");
+    expect(fixture.innerHTML).toBe("");
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("wrapped errors in async code are correctly caught", async () => {
@@ -394,21 +373,23 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
+    const mountProm = app
+      .createRoot(Root)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
+    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(
-      `The following error occurred in onWillStart: "boom in onWillStart"`
-    );
-    await new Promise((r) => setTimeout(r, 0)); // wait for the rejection event to bubble
+    expect(error!.cause.message).toBe(`boom in onWillStart`);
   });
 
   test("an error in willPatch call will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-esc="val"/></div>`;
+      static template = xml`<div><t t-out="this.val"/></div>`;
       val = 3;
       setup() {
         onWillPatch(() => {
@@ -421,17 +402,17 @@ describe("errors and promises", () => {
     const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`The following error occurred in onWillPatch: "boom"`);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(error!.message).toBe(`boom`);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("an error in patched call will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-esc="val"/></div>`;
+      static template = xml`<div><t t-out="this.val"/></div>`;
       val = 3;
       setup() {
         onPatched(() => {
@@ -444,44 +425,43 @@ describe("errors and promises", () => {
     const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`The following error occurred in onPatched: "boom"`);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(error!.message).toBe(`boom`);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("a rendering error in a sub component will reject the mount promise", async () => {
     // we do not catch error in willPatch anymore
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-out="this.will.crash"/></div>`;
     }
     class Parent extends Component {
       static template = xml`<div><Child/></div>`;
       static components = { Child };
     }
 
-    const app = new App(Parent);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("a rendering error will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-if="this.flag" t-out="this.will.crash"/></div>`;
       flag = false;
       setup() {
-        onError(({ cause }) => (error = cause));
+        onError((cause) => (error = cause));
       }
     }
 
@@ -489,14 +469,14 @@ describe("errors and promises", () => {
     expect(fixture.innerHTML).toBe("<div></div>");
     root.flag = true;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("a rendering error will reject the render promise (with sub components)", async () => {
@@ -504,22 +484,22 @@ describe("errors and promises", () => {
       static template = xml`<span></span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Child/><t t-esc="x.y"/></div>`;
+      static template = xml`<div><Child/><t t-out="x.y"/></div>`;
       static components = { Child };
     }
 
-    const app = new App(Parent);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("errors in mounted and in willUnmount", async () => {
@@ -537,49 +517,48 @@ describe("errors and promises", () => {
         });
       }
     }
-
-    const app = new App(Example, { test: true });
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
-    await mountProm;
-    expect(error!.message).toBe(`The following error occurred in onMounted: "Error in mounted"`);
-    // 1 additional error is logged because the destruction of the app causes
-    // the onWillUnmount hook to be called and to fail
-    expect(mockConsoleError).toBeCalledTimes(1);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    let error: any;
+    try {
+      await mount(Example, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`Error in mounted`);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("errors in rerender", async () => {
     class Example extends Component {
-      static template = xml`<div t-esc="state.a.b"/>`;
+      static template = xml`<div t-out="this.state.a.b"/>`;
       state: any = { a: { b: 1 } };
     }
     const root = await mount(Example, fixture);
     expect(fixture.innerHTML).toBe("<div>1</div>");
 
     root.state = "boom";
-    root.render();
-    await expect(nextAppError(root.__owl__.app)).resolves.toThrow(
-      "error occured in the owl lifecycle"
-    );
+    render(root);
+    const error: any = await nextAppError(root.__owl__.app)!;
+    expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'b')");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 });
 
 describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
+      props = props();
     }
     class ErrorBoundary extends Component {
       static template = xml`
           <div>
-            <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-if="this.state.error">Error handled</t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -588,9 +567,9 @@ describe("can catch errors", () => {
     class App extends Component {
       static template = xml`
           <div>
-            <ErrorBoundary><ErrorComponent flag="state.flag"/></ErrorBoundary>
+            <ErrorBoundary><ErrorComponent flag="this.state.flag"/></ErrorBoundary>
           </div>`;
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
@@ -598,15 +577,15 @@ describe("can catch errors", () => {
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in onmounted", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Error!!!</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           throw new Error("error");
         });
@@ -615,31 +594,29 @@ describe("can catch errors", () => {
     class PerfectComponent extends Component {
       static template = xml`<div>perfect</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Main extends Component {
-      static template = xml`Main<t t-if="state.ok" t-component="component"/>`;
+      static template = xml`Main<t t-if="this.state.ok" t-component="this.component"/>`;
       component: any;
       state: any;
       setup() {
-        this.state = useState({ ok: false });
-        useLogLifecycle();
+        this.state = proxy({ ok: false });
+        useLogLifecycle(this);
         this.component = ErrorComponent;
         onError(() => {
           this.component = PerfectComponent;
-          this.render();
+          render(this);
         });
       }
     }
 
     const app = await mount(Main, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Main:setup",
         "Main:willStart",
-        "Main:willRender",
-        "Main:rendered",
         "Main:mounted",
       ]
     `);
@@ -648,26 +625,18 @@ describe("can catch errors", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Main:willRender",
+      [
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "Main:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "Main:willPatch",
         "ErrorComponent:mounted",
-        "Main:willRender",
         "PerfectComponent:setup",
         "PerfectComponent:willStart",
-        "Main:rendered",
       ]
     `);
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "PerfectComponent:willRender",
-        "PerfectComponent:rendered",
+      [
         "Main:willPatch",
         "ErrorComponent:willUnmount",
         "ErrorComponent:willDestroy",
@@ -680,30 +649,29 @@ describe("can catch errors", () => {
 
   test("calling a hook outside setup should crash", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(() => {
-          this.state = useState({ value: 2 });
+          getContext();
         });
       }
     }
-    const app = new App(Root, { test: true });
-    let error: OwlError;
-    const crashProm = expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
-    await app.mount(fixture).catch((e: Error) => (error = e));
-    await crashProm;
-    expect(error!.message).toBe(
-      `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
-    );
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e: any) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`No active context`);
   });
 
   test("Errors have the right cause", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -711,20 +679,20 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
-    await mountProm;
-    expect(error!.message).toBe(`The following error occurred in onMounted: "test error"`);
-    expect(error!.cause).toBe(err);
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped in dev mode: async hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(async () => {
@@ -733,20 +701,20 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
-    await mountProm;
-    expect(error!.message).toBe(`The following error occurred in onWillStart: "test error"`);
-    expect(error!.cause).toBe(err);
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped outside dev mode: sync hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -754,22 +722,21 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!.message).toBe(
-      `An error occured in the owl lifecycle (see this Error's "cause" property)`
-    );
-    expect(error!.cause).toBe(err);
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`test error`);
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped out of dev mode: async hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(async () => {
@@ -778,21 +745,19 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!.message).toBe(
-      `An error occured in the owl lifecycle (see this Error's "cause" property)`
-    );
-    expect(error!.cause).toBe(err);
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`test error`);
   });
 
   test("Thrown values that are not errors are wrapped in dev mode", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -800,21 +765,19 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("not an Error was thrown in onMounted");
-    await mountProm;
-    expect(error!.message).toBe(
-      `Something that is not an Error was thrown in onMounted (see this Error's "cause" property)`
-    );
-    expect(error!.cause).toBe("This is not an error");
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause).toBe(`This is not an error`);
   });
 
   test("Thrown values that are not errors are wrapped outside dev mode", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      static template = xml`<t t-out="this.state.value"/>`;
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -822,28 +785,27 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
-    let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!.message).toBe(
-      `An error occured in the owl lifecycle (see this Error's "cause" property)`
-    );
-    expect(error!.cause).toBe("This is not an error");
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause).toBe(`This is not an error`);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.this.will.crash"/></div>`;
     }
     class ErrorBoundary extends Component {
       static template = xml`
           <div>
-            <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-if="this.state.error">Error handled</t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => {
@@ -860,21 +822,22 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the initial call of a component render function (parent updated)", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.this.will.crash"/></div>`;
     }
     class ErrorBoundary extends Component {
       static template = xml`
           <div>
-            <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-if="this.state.error">Error handled</t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -883,17 +846,17 @@ describe("can catch errors", () => {
     class App extends Component {
       static template = xml`
           <div>
-              <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
+              <ErrorBoundary t-if="this.state.flag"><ErrorComponent /></ErrorBoundary>
           </div>`;
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the constructor call of a component render function", async () => {
@@ -905,10 +868,11 @@ describe("can catch errors", () => {
     }
     class ErrorBoundary extends Component {
       static template = xml`<div>
-              <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-if="this.state.error">Error handled</t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -922,8 +886,8 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the constructor call of a component render function 2", async () => {
@@ -939,10 +903,11 @@ describe("can catch errors", () => {
     }
     class ErrorBoundary extends Component {
       static template = xml`<div>
-              <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-if="this.state.error">Error handled</t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -956,8 +921,8 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the willStart call", async () => {
@@ -974,10 +939,11 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`
           <div>
-            <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-if="this.state.error">Error handled</t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -989,8 +955,8 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error origination from a child's willStart function", async () => {
@@ -1008,10 +974,11 @@ describe("can catch errors", () => {
     }
     class ErrorBoundary extends Component {
       static template = xml`<div>
-              <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-if="this.state.error">Error handled</t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -1025,15 +992,15 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the mounted call", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1042,13 +1009,14 @@ describe("can catch errors", () => {
     }
     class ErrorBoundary extends Component {
       static template = xml`<div>
-       <t t-if="state.error">Error handled</t>
-       <t t-else=""><t t-slot="default" /></t>
+       <t t-if="this.state.error">Error handled</t>
+       <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => (this.state.error = true));
       }
     }
@@ -1058,42 +1026,34 @@ describe("can catch errors", () => {
       </div>`;
       static components = { ErrorBoundary, ErrorComponent };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "ErrorBoundary:setup",
         "ErrorBoundary:willStart",
-        "Root:rendered",
-        "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "ErrorBoundary:willRender",
-        "ErrorBoundary:rendered",
         "ErrorBoundary:mounted",
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the mounted call (in root component)", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1102,45 +1062,39 @@ describe("can catch errors", () => {
     }
     class Root extends Component {
       static template = xml`<div>
-       <t t-if="state.error">Error handled</t>
+       <t t-if="this.state.error">Error handled</t>
        <t t-else=""><ErrorComponent /></t>
       </div>`;
       static components = { ErrorComponent };
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => (this.state.error = true));
       }
     }
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div>Error handled</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "Root:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "Root:willRender",
-        "Root:rendered",
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the mounted call (in child of child)", async () => {
     class Boom extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1150,14 +1104,14 @@ describe("can catch errors", () => {
 
     class C extends Component {
       static template = xml`<div>
-       <t t-if="state.error">Error handled</t>
+       <t t-if="this.state.error">Error handled</t>
        <t t-else=""><Boom/></t>
       </div>`;
       static components = { Boom };
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => (this.state.error = true));
       }
     }
@@ -1166,54 +1120,44 @@ describe("can catch errors", () => {
       static template = xml`<div><C/></div>`;
       static components = { C };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class A extends Component {
       static template = xml`<B/>`;
       static components = { B };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
-        "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
-        "B:willRender",
         "C:setup",
         "C:willStart",
-        "B:rendered",
-        "C:willRender",
         "Boom:setup",
         "Boom:willStart",
-        "C:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Boom:mounted",
         "boom",
-        "C:willRender",
-        "C:rendered",
         "C:mounted",
         "B:mounted",
         "A:mounted",
       ]
     `);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("error in mounted on a component with a sibling (properly mounted)", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1222,20 +1166,21 @@ describe("can catch errors", () => {
     }
     class ErrorBoundary extends Component {
       static template = xml`<div>
-       <t t-if="state.error">Error handled</t>
-       <t t-else=""><t t-slot="default" /></t>
+       <t t-if="this.state.error">Error handled</t>
+       <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => (this.state.error = true));
       }
     }
     class OK extends Component {
       static template = xml`OK`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1246,45 +1191,36 @@ describe("can catch errors", () => {
       </div>`;
       static components = { ErrorBoundary, ErrorComponent, OK };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div>OK<div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "OK:setup",
         "OK:willStart",
         "ErrorBoundary:setup",
         "ErrorBoundary:willStart",
-        "Root:rendered",
-        "OK:willRender",
-        "OK:rendered",
-        "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "ErrorBoundary:willRender",
-        "ErrorBoundary:rendered",
         "ErrorBoundary:mounted",
         "OK:mounted",
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div><t t-esc="props.message"/></div>`;
+      static template = xml`<div><t t-out="this.props.message"/></div>`;
+      props = props();
       setup() {
         onWillPatch(() => {
           throw new Error("NOOOOO");
@@ -1294,10 +1230,11 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`
           <div>
-            <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-if="this.state.error">Error handled</t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      props = props();
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -1306,10 +1243,10 @@ describe("can catch errors", () => {
     class App extends Component {
       static template = xml`
           <div>
-              <span><t t-esc="state.message"/></span>
-            <ErrorBoundary><ErrorComponent message="state.message" /></ErrorBoundary>
+              <span><t t-out="this.state.message"/></span>
+            <ErrorBoundary><ErrorComponent message="this.state.message" /></ErrorBoundary>
           </div>`;
-      state = useState({ message: "abc" });
+      state = proxy({ message: "abc" });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
@@ -1319,12 +1256,12 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>def</span><div>Error handled</div></div>");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("catchError in catchError", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
     }
 
     class Child extends Component {
@@ -1344,7 +1281,7 @@ describe("can catch errors", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-if="error">Error</t>
+          <t t-if="this.error">Error</t>
           <t t-else="">
             <Child />
           </t>
@@ -1356,14 +1293,14 @@ describe("can catch errors", () => {
       setup() {
         onError((error) => {
           this.error = error;
-          this.render();
+          render(this);
         });
       }
     }
 
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("onError in class inheritance is not called if no rethrown", async () => {
@@ -1371,16 +1308,16 @@ describe("can catch errors", () => {
 
     class Abstract extends Component {
       static template = xml`<div>
-          <t t-if="!state.error">
-            <t t-esc="this.will.crash" />
+          <t t-if="!this.state.error">
+            <t t-out="this.will.crash" />
           </t>
           <t t-else="">
-            <t t-esc="state.error"/>
+            <t t-out="this.state.error"/>
           </t>
         </div>`;
       state: any;
       setup() {
-        this.state = useState({});
+        this.state = proxy({});
         onError(() => {
           steps.push("Abstract onError");
           this.state.error = "Abstract";
@@ -1407,7 +1344,7 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError"]);
     expect(fixture.innerHTML).toBe("<div>Concrete</div>");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("onError in class inheritance is called if rethrown", async () => {
@@ -1415,16 +1352,16 @@ describe("can catch errors", () => {
 
     class Abstract extends Component {
       static template = xml`<div>
-          <t t-if="!state.error">
-            <t t-esc="this.will.crash" />
+          <t t-if="!this.state.error">
+            <t t-out="this.will.crash" />
           </t>
           <t t-else="">
-            <t t-esc="state.error"/>
+            <t t-out="this.state.error"/>
           </t>
         </div>`;
       state: any;
       setup() {
-        this.state = useState({});
+        this.state = proxy({});
         onError(() => {
           steps.push("Abstract onError");
           this.state.error = "Abstract";
@@ -1452,7 +1389,7 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError", "Abstract onError"]);
     expect(fixture.innerHTML).toBe("<div>Abstract</div>");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("catching error, rethrow, render parent  -- a main component loop implementation", async () => {
@@ -1480,7 +1417,8 @@ describe("can catch errors", () => {
     }
 
     class ErrorHandler extends Component {
-      static template = xml`<t t-slot="default" />`;
+      static template = xml`<t t-call-slot="default" />`;
+      props = props();
       setup() {
         onError(() => {
           this.props.onError();
@@ -1496,14 +1434,14 @@ describe("can catch errors", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-foreach="Object.values(state.cps)" t-as="cp" t-key="cp.id">
+        <t t-foreach="Object.values(this.state.cps)" t-as="cp" t-key="cp.id">
           <ErrorHandler onError="() => this.cleanUp(cp.id)">
               <t t-component="cp.Comp" />
             </ErrorHandler>
         </t>`;
 
       static components = { ErrorHandler };
-      state: any = useState({
+      state: any = proxy({
         cps: {},
       });
 
@@ -1526,7 +1464,8 @@ describe("can catch errors", () => {
 
   test("catching in child makes parent render", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="'Child ' + props.id" />`;
+      static template = xml`<div t-out="'Child ' + this.props.id" />`;
+      props = props();
     }
 
     class ErrorComp extends Component {
@@ -1537,10 +1476,11 @@ describe("can catch errors", () => {
     }
 
     class Catch extends Component {
-      static template = xml`<t t-slot="default" />`;
+      static template = xml`<t t-call-slot="default" />`;
+      props = props();
       setup() {
-        onError(({ cause }) => {
-          this.props.onError(cause);
+        onError((e) => {
+          this.props.onError(e);
         });
       }
     }
@@ -1562,7 +1502,7 @@ describe("can catch errors", () => {
         steps.push(error.message);
         delete this.elements[id];
         this.elements[2] = Child;
-        this.render();
+        render(this);
       }
     }
 
@@ -1570,7 +1510,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("");
 
     parent.elements[1] = ErrorComp;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Child 2</div>");
     expect(steps).toEqual(["Error Component"]);
@@ -1580,22 +1520,22 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
-        useLogLifecycle();
         onWillDestroy(() => {
           throw new Error("boom");
         });
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="state.value"/>
-        <t t-if="state.hasChild"><Child/></t>`;
+        <t t-out="this.state.value"/>
+        <t t-if="this.state.hasChild"><Child/></t>`;
       static components = { Child };
 
-      state = useState({ value: 1, hasChild: true });
+      state = proxy({ value: 1, hasChild: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => {
           this.state.value++;
         });
@@ -1605,15 +1545,11 @@ describe("can catch errors", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("1<div>abc</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -1624,15 +1560,11 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1644,22 +1576,22 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
-        useLogLifecycle();
         onWillDestroy(() => {
           throw new Error("boom");
         });
+        useLogLifecycle(this);
       }
     }
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="state.value"/>
-        <t t-if="state.hasChild"><Child/></t>`;
+        <t t-out="this.state.value"/>
+        <t t-if="this.state.hasChild"><Child/></t>`;
       static components = { Child };
 
-      state = useState({ value: 1, hasChild: false });
+      state = proxy({ value: 1, hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => {
           this.state.value++;
         });
@@ -1670,11 +1602,9 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("1");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1686,30 +1616,22 @@ describe("can catch errors", () => {
     await nextMicroTick();
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
+      [
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
       ]
     `);
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
+      [
         "Child:willDestroy",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
     expect(fixture.innerHTML).toBe("1");
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1721,21 +1643,21 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`abc`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class OtherChild extends Component {
       static template = xml`def`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Boom extends Component {
       static template = xml`boom`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           throw new Error("boom");
         });
@@ -1746,20 +1668,20 @@ describe("can catch errors", () => {
       static template = xml`parent<Child/><Boom/>`;
       static components = { Child, Boom };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Root extends Component {
-      static template = xml`<t t-component="component"/>`;
+      static template = xml`<t t-component="this.component"/>`;
 
       component: any = Parent;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => {
           logStep("error");
           this.component = OtherChild;
-          this.render();
+          render(this);
         });
       }
     }
@@ -1768,31 +1690,19 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("def");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "Parent:setup",
         "Parent:willStart",
-        "Root:rendered",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Boom:setup",
         "Boom:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Boom:mounted",
         "error",
-        "Root:willRender",
         "OtherChild:setup",
         "OtherChild:willStart",
-        "Root:rendered",
-        "OtherChild:willRender",
-        "OtherChild:rendered",
         "OtherChild:mounted",
         "Root:mounted",
       ]
@@ -1803,21 +1713,21 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`abc`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class OtherChild extends Component {
       static template = xml`def`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Boom extends Component {
       static template = xml`boom`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           throw new Error("boom");
         });
@@ -1828,22 +1738,22 @@ describe("can catch errors", () => {
       static template = xml`parent<Child/><Boom/>`;
       static components = { Child, Boom };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Root extends Component {
-      static template = xml`R<t t-if="state.gogogo" t-component="component"/>`;
+      static template = xml`R<t t-if="this.state.gogogo" t-component="this.component"/>`;
 
       component: any = Parent;
-      state = useState({ gogogo: false });
+      state = proxy({ gogogo: false });
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onError(() => {
           logStep("error");
           this.component = OtherChild;
-          this.render();
+          render(this);
         });
       }
     }
@@ -1853,11 +1763,9 @@ describe("can catch errors", () => {
 
     // standard mounting process
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
-        "Root:rendered",
         "Root:mounted",
       ]
     `);
@@ -1868,28 +1776,18 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("Rparentabcboom");
     // rerender, root creates sub components, it crashes, tries to recover
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Root:willRender",
+      [
         "Parent:setup",
         "Parent:willStart",
-        "Root:rendered",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Boom:setup",
         "Boom:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Root:willPatch",
         "Boom:mounted",
         "error",
-        "Root:willRender",
         "OtherChild:setup",
         "OtherChild:willStart",
-        "Root:rendered",
       ]
     `);
 
@@ -1897,9 +1795,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("Rdef");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "OtherChild:willRender",
-        "OtherChild:rendered",
+      [
         "Root:willPatch",
         "Child:willDestroy",
         "Boom:willUnmount",

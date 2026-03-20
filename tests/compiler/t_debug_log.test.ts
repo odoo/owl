@@ -47,7 +47,7 @@ describe("debugging", () => {
       <t>
         <t t-log="foo" t-set="foo" t-value="42"/>
         <t t-log="bar" t-set="bar" t-value="49"/>
-        <span t-esc="foo + bar"/>
+        <span t-out="foo + bar"/>
       </t>
     `;
     snapshotTemplate(template);
@@ -62,7 +62,7 @@ describe("debugging", () => {
       <t>
         <t t-debug="" t-set="foo" t-value="42"/>
         <t t-debug="" t-set="bar" t-value="49"/>
-        <span t-esc="foo + bar"/>
+        <span t-out="foo + bar"/>
       </t>
     `;
     snapshotTemplate(template);

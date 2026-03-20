@@ -4,18 +4,16 @@ import {
   Component,
   onMounted,
   onPatched,
-  onRendered,
   onWillDestroy,
   onWillPatch,
-  onWillRender,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
   status,
-  useComponent,
   xml,
+  effect,
 } from "../src";
-import { helpers } from "../src/runtime/template_helpers";
+import { helpers } from "../src/runtime/rendering/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
 import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
@@ -25,6 +23,12 @@ const mount = blockDom.mount;
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
+}
+
+// todo: investigate why two ticks are needed
+export async function waitScheduler() {
+  await nextMicroTick();
+  await nextMicroTick();
 }
 
 let lastFixture: any = null;
@@ -47,12 +51,12 @@ export async function nextTick(): Promise<void> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
-interface Deferred extends Promise<any> {
-  resolve(val?: any): void;
-  reject(val?: any): void;
+interface Deferred<T = any> extends Promise<T> {
+  resolve(val?: T): void;
+  reject(val?: T): void;
 }
 
-export function makeDeferred(): Deferred {
+export function makeDeferred<T = any>(): Deferred<T> {
   let resolve, reject;
   let def = new Promise((_resolve, _reject) => {
     resolve = _resolve;
@@ -60,7 +64,7 @@ export function makeDeferred(): Deferred {
   });
   (def as any).resolve = resolve;
   (def as any).reject = reject;
-  return <Deferred>def;
+  return <Deferred<T>>def;
 }
 
 export function trim(str: string): string {
@@ -115,6 +119,9 @@ export class TestContext extends TemplateSet {
     return fixture.innerHTML;
   }
 }
+export function render(c: Component, deep: boolean = false) {
+  return c.__owl__.render(deep);
+}
 
 export function snapshotEverything() {
   if (shouldSnapshot) {
@@ -127,8 +134,11 @@ export function snapshotEverything() {
     snapshottedTemplates.clear();
   });
 
-  const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
-  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element) {
+  const originalCompileTemplate = (TemplateSet.prototype as any)._compileTemplate;
+  (TemplateSet.prototype as any)._compileTemplate = function (
+    name: string,
+    template: string | Element
+  ) {
     const fn = originalCompileTemplate.call(this, "", template);
     if (!globalTemplateNames.has(name)) {
       expect(fn.toString()).toMatchSnapshot();
@@ -142,8 +152,11 @@ export const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
-  const component = useComponent();
+export function useLogLifecycle(
+  component: Component,
+  key?: string,
+  skipAsyncHooks: boolean = false
+) {
   let name = component.constructor.name;
   if (key) {
     name = `${name} (${key})`;
@@ -169,14 +182,6 @@ export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
       logStep(`${name}:willUpdateProps`);
     });
   }
-
-  onWillRender(() => {
-    logStep(`${name}:willRender`);
-  });
-
-  onRendered(() => {
-    logStep(`${name}:rendered`);
-  });
 
   onWillPatch(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
@@ -217,6 +222,16 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   input.dispatchEvent(new Event("input"));
   input.dispatchEvent(new Event("change"));
   return nextTick();
+}
+
+export function expectSpy(
+  spy: jest.Mock,
+  count: number,
+  opt: { args?: any[]; result?: any } = {}
+): void {
+  expect(spy).toHaveBeenCalledTimes(count);
+  if ("args" in opt) expect(spy).toHaveBeenLastCalledWith(...opt.args!);
+  if ("result" in opt) expect(spy).toHaveReturnedWith(opt.result);
 }
 
 afterEach(() => {
@@ -263,16 +278,33 @@ expect.extend({
 
 export function nextAppError(app: any) {
   const { handleError } = app;
-  return new Promise((resolve) => {
-    app.handleError = (...args: Parameters<typeof handleError>) => {
-      try {
-        handleError.call(app, ...args);
-      } catch (e: any) {
-        app.handleError = handleError;
-        resolve(e);
-      }
-    };
-  });
+  const rootPromises = [...app.roots].map((r) => r.promise);
+
+  let settled = false;
+
+  const done = (error: any, restore = true) => {
+    if (settled) return;
+    settled = true;
+    if (restore) app.handleError = handleError;
+    resolve(error);
+  };
+
+  let resolve: (value: any) => void;
+  const result = new Promise((res) => (resolve = res));
+
+  app.handleError = (...args: Parameters<typeof handleError>) => {
+    try {
+      handleError.call(app, ...args);
+    } catch (e) {
+      done(e);
+    }
+  };
+
+  for (const p of rootPromises) {
+    p.catch((err: any) => done(err));
+  }
+
+  return result;
 }
 
 declare global {
@@ -281,4 +313,12 @@ declare global {
       toBeLogged(): R;
     }
   }
+}
+
+export type SpyEffect<T> = (() => () => void) & { spy: jest.Mock<any, T[]> };
+export function spyEffect<T>(fn: () => T): SpyEffect<T> {
+  const spy = jest.fn(fn);
+  const unsubscribeWrapper = () => effect(spy);
+  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
+  return wrapped;
 }

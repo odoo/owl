@@ -1,13 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`children, default props and renderings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -19,7 +20,7 @@ exports[`children, default props and renderings 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`child\`);
   }
 }"
@@ -29,10 +30,11 @@ exports[`force render in case of existing render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["val"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -41,11 +43,12 @@ exports[`force render in case of existing render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { createComponent, safeOutput } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = text(ctx['props'].val);
+    const b3 = safeOutput(ctx['this'].props.val);
     return multi([b2, b3]);
   }
 }"
@@ -56,7 +59,7 @@ exports[`force render in case of existing render 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`C\`);
   }
 }"
@@ -66,11 +69,14 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    const b2 = safeOutput(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3]);
   }
 }"
@@ -81,7 +87,9 @@ exports[`rendering semantics can force a render to update sub tree 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
     return text(\`child\`);
   }
 }"
@@ -91,10 +99,11 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -106,79 +115,58 @@ exports[`rendering semantics can render a parent without rendering child 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`child\`);
   }
 }"
 `;
 
-exports[`rendering semantics props are reactive (nested prop) 1`] = `
+exports[`rendering semantics props are proxy (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"a\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
   }
 }"
 `;
 
-exports[`rendering semantics props are reactive (nested prop) 2`] = `
+exports[`rendering semantics props are proxy (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].a.b.c);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.a.b.c);
   }
 }"
 `;
 
-exports[`rendering semantics props are reactive 1`] = `
+exports[`rendering semantics props are proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"a\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
   }
 }"
 `;
 
-exports[`rendering semantics props are reactive 2`] = `
+exports[`rendering semantics props are proxy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].a.b);
-  }
-}"
-`;
-
-exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`rendering semantics render need a boolean = true to be 'deep' 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return text(\`child\`);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.a.b);
   }
 }"
 `;
@@ -187,11 +175,12 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
-    const b3 = text(ctx['state'].value);
+    const b3 = safeOutput(ctx['this'].state.value);
     const b4 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3, b4]);
   }
@@ -202,10 +191,11 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`child\`);
-    const b3 = text(ctx['env'].getValue());
+    const b3 = safeOutput(ctx['this'].state.getValue());
     return multi([b2, b3]);
   }
 }"
@@ -215,11 +205,12 @@ exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"obj\\"]);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["obj"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].obj.val);
-    const b3 = comp1({obj: ctx['state'].obj}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.obj.val);
+    const b3 = comp1({obj: ctx['this'].state.obj}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -229,10 +220,11 @@ exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"obj\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["obj"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({obj: ctx['props'].obj}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({obj: ctx['this'].props.obj}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -241,9 +233,10 @@ exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].obj.val);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.obj.val);
   }
 }"
 `;
@@ -252,10 +245,11 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, true, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1(Object.assign({}, ctx['state']), key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1(Object.assign({}, ctx['this'].state), key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -264,9 +258,10 @@ exports[`rendering semantics works as expected for dynamic number of props 2`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(Object.keys(ctx['props']).length);
+  return function template(ctx, node, key = "") {
+    return safeOutput(Object.keys(ctx['this'].props).length);
   }
 }"
 `;

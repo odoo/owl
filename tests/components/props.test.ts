@@ -1,4 +1,4 @@
-import { Component, mount, onWillUpdateProps, useState, xml } from "../../src";
+import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -12,17 +12,18 @@ beforeEach(() => {
 describe("basics", () => {
   test("explicit object prop", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="state.someval"/></span>`;
+      static template = xml`<span><t t-out="this.state.someval"/></span>`;
+      props = props();
       state: any;
       setup() {
-        this.state = useState({ someval: this.props.value });
+        this.state = proxy({ someval: this.props.value });
       }
     }
 
     class Parent extends Component {
-      static template = xml`<div><Child value="state.val"/></div>`;
+      static template = xml`<div><Child value="this.state.val"/></div>`;
       static components = { Child };
-      state = useState({ val: 42 });
+      state = proxy({ val: 42 });
     }
 
     await mount(Parent, fixture);
@@ -31,7 +32,8 @@ describe("basics", () => {
 
   test("prop names can contain -", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props['prop-name']"/></div>`;
+      static template = xml`<div><t t-out="this.props['prop-name']"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -45,11 +47,12 @@ describe("basics", () => {
 
   test("accept ES6-like syntax for props (with getters)", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.greetings"/></span>`;
+      static template = xml`<span><t t-out="this.props.greetings"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<div><Child greetings="greetings"/></div>`;
+      static template = xml`<div><Child greetings="this.greetings"/></div>`;
       static components = { Child };
       get greetings() {
         const name = "aaron";
@@ -63,7 +66,8 @@ describe("basics", () => {
 
   test("t-set works ", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -80,7 +84,8 @@ describe("basics", () => {
 
   test("t-set with a body expression can be used as textual prop", async () => {
     class Child extends Component {
-      static template = xml`<span t-esc="props.val"/>`;
+      static template = xml`<span t-out="this.props.val"/>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -99,9 +104,9 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
         <span>
-          <t t-esc="props.val"/>
-          <t t-out="props.val"/>
+          <t t-out="this.props.val"/>
         </span>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -113,19 +118,20 @@ describe("basics", () => {
     }
 
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>&lt;p&gt;43&lt;/p&gt;<p>43</p></span></div>");
+    expect(fixture.innerHTML).toBe("<div><span><p>43</p></span></div>");
   });
 
   test("arrow functions as prop correctly capture their scope", async () => {
     class Child extends Component {
-      static template = xml`<button t-on-click="props.onClick"/>`;
+      static template = xml`<button t-on-click="this.props.onClick"/>`;
+      props = props();
     }
 
     let onClickArgs: [number, MouseEvent] | null = null;
     class Parent extends Component {
       static template = xml`
-        <t t-foreach="items" t-as="item" t-key="item.val">
-          <Child onClick="ev => onClick(item.val, ev)"/>
+        <t t-foreach="this.items" t-as="item" t-key="item.val">
+          <Child onClick="(ev) => this.onClick(item.val, ev)"/>
         </t>
       `;
       static components = { Child };
@@ -141,10 +147,35 @@ describe("basics", () => {
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
 
+  test("arrow function props do not leak synthetic keys into props()", async () => {
+    let childProps: any;
+    class Child extends Component {
+      static template = xml`<span><t t-esc="this.props.onClick"/></span>`;
+      props = props();
+      setup() {
+        childProps = this.props;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.items" t-as="item" t-key="item.val">
+          <Child onClick="(ev) => this.onClick(item.val, ev)"/>
+        </t>
+      `;
+      static components = { Child };
+      items = [{ val: 1 }];
+      onClick() {}
+    }
+    await mount(Parent, fixture);
+    expect(Object.keys(childProps)).toEqual(["onClick"]);
+  });
+
   test("support prop names that aren't valid bare object property names", async () => {
     expect.assertions(3);
     class Child extends Component {
-      static template = xml`<button t-on-click="props.onClick"/>`;
+      static template = xml`<button t-on-click="this.props.onClick"/>`;
+      props = props();
       setup() {
         expect(this.props["some-dashed-prop"]).toBe(5);
       }
@@ -161,13 +192,14 @@ describe("basics", () => {
     expect.assertions(3);
     class Child extends Component {
       static template = xml``;
+      props = props();
       setup() {
         expect(this.props.propName).toBe("123");
       }
     }
 
     class Parent extends Component {
-      static template = xml({ raw: ['<Child propName="`1${someVal}3`"/>'] });
+      static template = xml({ raw: ['<Child propName="`1${this.someVal}3`"/>'] });
       static components = { Child };
       someVal = 2;
     }
@@ -178,6 +210,7 @@ describe("basics", () => {
 test("can bind function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
+    props = props();
     setup() {
       this.props.doSomething(123);
     }
@@ -186,7 +219,7 @@ test("can bind function prop with bind suffix", async () => {
   let boundedThing: any = null;
 
   class Parent extends Component {
-    static template = xml`<Child doSomething.bind="doSomething"/>`;
+    static template = xml`<Child doSomething.bind="this.doSomething"/>`;
     static components = { Child };
 
     doSomething(val: number) {
@@ -203,6 +236,7 @@ test("can bind function prop with bind suffix", async () => {
 test("do not crash when binding anonymous function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
+    props = props();
     setup() {
       this.props.doSomething(123);
     }
@@ -228,7 +262,8 @@ test("do not crash when binding anonymous function prop with bind suffix", async
 test("bound functions is not referentially equal after update", async () => {
   let isEqual = false;
   class Child extends Component {
-    static template = xml`<t t-esc="props.val"/>`;
+    static template = xml`<t t-out="this.props.val"/>`;
+    props = props();
     setup() {
       onWillUpdateProps((nextProps: any) => {
         isEqual = nextProps.fn === this.props.fn;
@@ -237,9 +272,9 @@ test("bound functions is not referentially equal after update", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child val="state.val" fn.bind="someFunction"/>`;
+    static template = xml`<Child val="this.state.val" fn.bind="this.someFunction"/>`;
     static components = { Child };
-    state = useState({ val: 1 });
+    state = proxy({ val: 1 });
     someFunction() {}
   }
 
@@ -254,18 +289,18 @@ test("bound functions are considered 'alike'", async () => {
   class Child extends Component {
     static template = xml`child`;
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="state.val"/>
-      <Child fn.bind="someFunction"/>`;
+      <t t-out="this.state.val"/>
+      <Child fn.bind="this.someFunction"/>`;
     static components = { Child };
-    state = useState({ val: 1 });
+    state = proxy({ val: 1 });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
     someFunction() {}
   }
@@ -273,15 +308,11 @@ test("bound functions are considered 'alike'", async () => {
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("1child");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -289,9 +320,7 @@ test("bound functions are considered 'alike'", async () => {
   parent.state.val = 3;
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "Parent:willRender",
-      "Parent:rendered",
+    [
       "Parent:willPatch",
       "Parent:patched",
     ]
@@ -301,7 +330,8 @@ test("bound functions are considered 'alike'", async () => {
 
 test("can use .translate suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.message"/>`;
+    static template = xml`<t t-out="this.props.message"/>`;
+    props = props();
   }
 
   class Parent extends Component {
@@ -315,7 +345,8 @@ test("can use .translate suffix", async () => {
 
 test(".translate props are translated", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.message"/>`;
+    static template = xml`<t t-out="this.props.message"/>`;
+    props = props();
   }
 
   class Parent extends Component {
@@ -329,49 +360,47 @@ test(".translate props are translated", async () => {
 
 test("throw if prop uses an unknown suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.val"/>`;
+    static template = xml`<t t-out="this.props.val"/>`;
+    props = props();
   }
 
   class Parent extends Component {
-    static template = xml`<Child val.somesuffix="state.val"/>`;
+    static template = xml`<Child val.somesuffix="this.state.val"/>`;
     static components = { Child };
   }
 
   await expect(async () => {
     await mount(Parent, fixture);
-  }).rejects.toThrowError("Invalid prop suffix: somesuffix");
+  }).rejects.toThrow("Invalid prop suffix: somesuffix");
 });
 
 test(".alike suffix in a simple case", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.fn()"/>`;
+    static template = xml`<t t-out="this.props.fn()"/>`;
+    props = props();
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="state.counter"/>
+      <t t-out="this.state.counter"/>
       <Child fn.alike="() => 1"/>`;
     static components = { Child };
-    state = useState({ counter: 0 });
+    state = proxy({ counter: 0 });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
   const parent = await mount(Parent, fixture);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -382,9 +411,7 @@ test(".alike suffix in a simple case", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("11");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "Parent:willRender",
-      "Parent:rendered",
+    [
       "Parent:willPatch",
       "Parent:patched",
     ]
@@ -394,28 +421,29 @@ test(".alike suffix in a simple case", async () => {
 test(".alike suffix in a list", async () => {
   class Todo extends Component {
     static template = xml`
-      <button t-on-click="props.toggle">
-        <t t-esc="props.todo.id"/><t t-if="props.todo.isChecked">V</t>
+      <button t-on-click="this.props.toggle">
+        <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
       </button>`;
+    props = props();
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
   class Parent extends Component {
     static template = xml`
-      <t t-foreach="state.elems" t-as="elem" t-key="elem.id">
+      <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
         <Todo todo="elem" toggle.alike="() => this.toggle(elem.id)"/>
       </t>`;
     static components = { Todo };
-    state = useState({
+    state = proxy({
       elems: [
         { id: 1, isChecked: false },
         { id: 2, isChecked: true },
       ],
     });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
     toggle(id: number) {
       const todo = this.state.elems.find((el) => el.id === id)!;
@@ -425,19 +453,13 @@ test(".alike suffix in a list", async () => {
 
   await mount(Parent, fixture);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Todo:setup",
       "Todo:willStart",
       "Todo:setup",
       "Todo:willStart",
-      "Parent:rendered",
-      "Todo:willRender",
-      "Todo:rendered",
-      "Todo:willRender",
-      "Todo:rendered",
       "Todo:mounted",
       "Todo:mounted",
       "Parent:mounted",
@@ -449,15 +471,118 @@ test(".alike suffix in a list", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "Parent:willRender",
-      "Parent:rendered",
-      "Todo:willRender",
-      "Todo:rendered",
+    [
       "Todo:willPatch",
       "Todo:patched",
+    ]
+  `);
+});
+
+test("arrow function props auto-skip re-render when captured variables don't change", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.fn()"/>`;
+    props = props();
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-out="this.state.counter"/>
+      <Child fn="() => 1"/>`;
+    static components = { Child };
+    state = proxy({ counter: 0 });
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "Parent:setup",
+      "Parent:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:mounted",
+      "Parent:mounted",
+    ]
+  `);
+
+  expect(fixture.innerHTML).toBe("01");
+  parent.state.counter++;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("11");
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
       "Parent:willPatch",
       "Parent:patched",
     ]
+  `);
+});
+
+test("arrow function props re-render when captured variable changes", async () => {
+  class Todo extends Component {
+    static template = xml`
+      <button t-on-click="this.props.toggle">
+        <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
+      </button>`;
+    props = props();
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
+        <Todo todo="elem" toggle="() => this.toggle(elem.id)"/>
+      </t>`;
+    static components = { Todo };
+    state = proxy({
+      elems: [
+        { id: 1, isChecked: false },
+        { id: 2, isChecked: true },
+      ],
+    });
+    setup() {
+      useLogLifecycle(this);
+    }
+    toggle(id: number) {
+      const index = this.state.elems.findIndex((el) => el.id === id)!;
+      const todo = this.state.elems[index];
+      this.state.elems[index] = { ...todo, isChecked: !todo.isChecked };
+    }
+  }
+
+  await mount(Parent, fixture);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "Parent:setup",
+      "Parent:willStart",
+      "Todo:setup",
+      "Todo:willStart",
+      "Todo:setup",
+      "Todo:willStart",
+      "Todo:mounted",
+      "Todo:mounted",
+      "Parent:mounted",
+    ]
+  `);
+
+  expect(fixture.innerHTML).toBe("<button>1</button><button>2V</button>");
+  fixture.querySelector("button")?.click();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
+  // elem changed (replaced object), so the child with that elem re-renders
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+   [
+     "Todo:willUpdateProps",
+     "Parent:willPatch",
+     "Todo:willPatch",
+     "Todo:patched",
+     "Parent:patched",
+   ]
   `);
 });

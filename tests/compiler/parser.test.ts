@@ -1,4 +1,4 @@
-import { ASTType, parse } from "../../src/compiler/parser";
+import { ASTType, ForEachNoFlag, parse } from "../../src/compiler/parser";
 
 describe("qweb parser", () => {
   // ---------------------------------------------------------------------------
@@ -35,7 +35,7 @@ describe("qweb parser", () => {
 
   test("white spaces only text nodes with newlines are removed", async () => {
     const template = `
-      <div>  
+      <div>
       </div>`;
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
@@ -157,7 +157,7 @@ describe("qweb parser", () => {
   });
 
   test("dom node with t multi inside", async () => {
-    const template = `<div><t>Loading<t t-esc="abc"/></t></div>`;
+    const template = `<div><t>Loading<t t-out="abc"/></t></div>`;
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
@@ -170,7 +170,7 @@ describe("qweb parser", () => {
       ns: null,
       content: [
         { type: ASTType.Text, value: "Loading" },
-        { type: ASTType.TEsc, expr: "abc", defaultValue: "" },
+        { type: ASTType.TOut, expr: "abc", body: null },
       ],
     });
   });
@@ -178,10 +178,10 @@ describe("qweb parser", () => {
   test("dom node with multiple t multi inside", async () => {
     const template = `
       <div>
-        <t t-esc="a"/>
+        <t t-out="a"/>
         <t>
-          <t t-esc="b"/>
-          <t>Loading<t t-esc="c"/></t>
+          <t t-out="b"/>
+          <t>Loading<t t-out="c"/></t>
         </t>
       </div>`;
     expect(parse(template)).toEqual({
@@ -195,16 +195,16 @@ describe("qweb parser", () => {
       model: null,
       ns: null,
       content: [
-        { type: ASTType.TEsc, expr: "a", defaultValue: "" },
-        { type: ASTType.TEsc, expr: "b", defaultValue: "" },
+        { type: ASTType.TOut, expr: "a", body: null },
+        { type: ASTType.TOut, expr: "b", body: null },
         { type: ASTType.Text, value: "Loading" },
-        { type: ASTType.TEsc, expr: "c", defaultValue: "" },
+        { type: ASTType.TOut, expr: "c", body: null },
       ],
     });
   });
 
   test("dom node with t multi inside", async () => {
-    const template = `<div><t><t>Loading<t t-esc="abc"/></t></t></div>`;
+    const template = `<div><t><t>Loading<t t-out="abc"/></t></t></div>`;
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
@@ -217,7 +217,7 @@ describe("qweb parser", () => {
       ns: null,
       content: [
         { type: ASTType.Text, value: "Loading" },
-        { type: ASTType.TEsc, expr: "abc", defaultValue: "" },
+        { type: ASTType.TOut, expr: "abc", body: null },
       ],
     });
   });
@@ -225,8 +225,8 @@ describe("qweb parser", () => {
   test("dom node with two t multi inside", async () => {
     const template = `
       <div>
-        <t><t t-esc="a"/><t t-esc="b"/></t>
-        <t><t t-esc="c"/><t t-esc="d"/></t>
+        <t><t t-out="a"/><t t-out="b"/></t>
+        <t><t t-out="c"/><t t-out="d"/></t>
       </div>`;
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
@@ -239,10 +239,10 @@ describe("qweb parser", () => {
       model: null,
       ns: null,
       content: [
-        { type: ASTType.TEsc, expr: "a", defaultValue: "" },
-        { type: ASTType.TEsc, expr: "b", defaultValue: "" },
-        { type: ASTType.TEsc, expr: "c", defaultValue: "" },
-        { type: ASTType.TEsc, expr: "d", defaultValue: "" },
+        { type: ASTType.TOut, expr: "a", body: null },
+        { type: ASTType.TOut, expr: "b", body: null },
+        { type: ASTType.TOut, expr: "c", body: null },
+        { type: ASTType.TOut, expr: "d", body: null },
       ],
     });
   });
@@ -388,76 +388,21 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // t-esc
-  // ---------------------------------------------------------------------------
-
-  test("t-esc node", async () => {
-    expect(parse(`<t t-esc="text"/>`)).toEqual({
-      type: ASTType.TEsc,
-      expr: "text",
-      defaultValue: "",
-    });
-    expect(parse(`<t><t t-esc="text"/></t>`)).toEqual({
-      type: ASTType.TEsc,
-      expr: "text",
-      defaultValue: "",
-    });
-  });
-
-  test("dom node with t-esc", async () => {
-    expect(parse(`<span t-esc="text"/>`)).toEqual({
-      type: ASTType.DomNode,
-      tag: "span",
-      dynamicTag: null,
-      attrs: null,
-      attrsTranslationCtx: null,
-      on: null,
-      ref: null,
-      model: null,
-      ns: null,
-      content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "" }],
-    });
-  });
-
-  test("t-esc node with default value", async () => {
-    expect(parse(`<t t-esc="text">hey</t>`)).toEqual({
-      type: ASTType.TEsc,
-      expr: "text",
-      defaultValue: "hey",
-    });
-  });
-
-  test("dom node with t-esc with default value", async () => {
-    expect(parse(`<div t-esc="text">hey</div>`)).toEqual({
-      type: ASTType.DomNode,
-      tag: "div",
-      dynamicTag: null,
-      attrs: null,
-      attrsTranslationCtx: null,
-      on: null,
-      ref: null,
-      model: null,
-      ns: null,
-      content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "hey" }],
-    });
-  });
-
-  // ---------------------------------------------------------------------------
   // t-out
   // ---------------------------------------------------------------------------
 
-  test("t-raw node (deprecated)", async () => {
+  test("t-esc node (deprecated)", async () => {
     const warn = console.warn;
     const steps: string[] = [];
     console.warn = (msg: any) => steps.push(msg);
-    expect(parse(`<t t-raw="text"/>`)).toEqual({
+    expect(parse(`<t t-esc="text"/>`)).toEqual({
       type: ASTType.TOut,
       expr: "text",
       body: null,
     });
 
     expect(steps).toEqual([
-      't-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+      't-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
     ]);
     console.warn = warn;
   });
@@ -807,44 +752,36 @@ describe("qweb parser", () => {
 
   test("simple t-foreach expression, t-key mandatory", async () => {
     expect(() =>
-      parse(`<t t-foreach="list" t-as="item"><t t-esc="item"/></t>`)
+      parse(`<t t-foreach="list" t-as="item"><t t-out="item"/></t>`)
     ).toThrowErrorMatchingSnapshot();
   });
 
   test("simple t-foreach expression", async () => {
     expect(
-      parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t>`)
+      parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-out="item"/></t>`)
     ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
       key: "item_index",
-      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      body: { type: ASTType.TOut, expr: "item", body: null },
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
-  test("t-foreach expression with t-esc", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-esc="item" t-key="item_index"/>`)).toEqual({
+  test("t-foreach expression with t-out", async () => {
+    expect(parse(`<t t-foreach="list" t-as="item" t-out="item" t-key="item_index"/>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
       key: "item_index",
-      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      body: { type: ASTType.TOut, expr: "item", body: null },
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
-  test("t-foreach on a div expression with t-esc", async () => {
-    expect(parse(`<div t-foreach="list" t-as="item" t-esc="item" t-key="item_index"/>`)).toEqual({
+  test("t-foreach on a div expression with t-out", async () => {
+    expect(parse(`<div t-foreach="list" t-as="item" t-out="item" t-key="item_index"/>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
@@ -859,34 +796,26 @@ describe("qweb parser", () => {
         ref: null,
         model: null,
         ns: null,
-        content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
+        content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
   test("simple keyed t-foreach expression", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-key="item.id"><t t-esc="item"/></t>`)).toEqual({
+    expect(parse(`<t t-foreach="list" t-as="item" t-key="item.id"><t t-out="item"/></t>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
       key: "item.id",
-      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: true,
-      hasNoLast: true,
-      hasNoValue: true,
+      body: { type: ASTType.TOut, expr: "item", body: null },
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Index | ForEachNoFlag.Value,
     });
   });
 
   test("t-foreach expression on a span", async () => {
     expect(
-      parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)
+      parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-out="item"/></span>`)
     ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
@@ -902,20 +831,16 @@ describe("qweb parser", () => {
         ref: null,
         model: null,
         ns: null,
-        content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
+        content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
   test("t-foreach expression on a span", async () => {
     expect(
       parse(
-        `<span t-foreach="list" t-if="condition" t-as="item" t-key="item_index"><t t-esc="item"/></span>`
+        `<span t-foreach="list" t-if="condition" t-as="item" t-key="item_index"><t t-out="item"/></span>`
       )
     ).toEqual({
       type: ASTType.TForEach,
@@ -937,21 +862,17 @@ describe("qweb parser", () => {
           ref: null,
           model: null,
           ns: null,
-          content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
+          content: [{ type: ASTType.TOut, expr: "item", body: null }],
         },
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
   test("more complex t-foreach expression on an option", async () => {
     expect(
       parse(
-        `<option t-foreach="categories" t-as="category" t-att-value="category.id" t-esc="category.name" t-att-selected="category.id==options.active_category_id" t-key="category_index"/>`
+        `<option t-foreach="categories" t-as="category" t-att-value="category.id" t-out="category.name" t-att-selected="category.id==options.active_category_id" t-key="category_index"/>`
       )
     ).toEqual({
       type: ASTType.TForEach,
@@ -971,19 +892,15 @@ describe("qweb parser", () => {
         ref: null,
         model: null,
         ns: null,
-        content: [{ type: ASTType.TEsc, expr: "category.name", defaultValue: "" }],
+        content: [{ type: ASTType.TOut, expr: "category.name", body: null }],
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
   test("t-foreach in a div", async () => {
     expect(
-      parse(`<div><t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t></div>`)
+      parse(`<div><t t-foreach="list" t-as="item" t-key="item_index"><t t-out="item"/></t></div>`)
     ).toEqual({
       type: ASTType.DomNode,
       attrs: null,
@@ -1000,12 +917,8 @@ describe("qweb parser", () => {
           collection: "list",
           elem: "item",
           key: "item_index",
-          body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-          memo: "",
-          hasNoFirst: true,
-          hasNoIndex: false,
-          hasNoLast: true,
-          hasNoValue: true,
+          body: { type: ASTType.TOut, expr: "item", body: null },
+          noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
         },
       ],
     });
@@ -1021,7 +934,7 @@ describe("qweb parser", () => {
 
   test("t-foreach expression on a span with a t-key", async () => {
     expect(
-      parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)
+      parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-out="item"/></span>`)
     ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
@@ -1037,13 +950,9 @@ describe("qweb parser", () => {
         attrs: null,
         attrsTranslationCtx: null,
         ns: null,
-        content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
+        content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -1063,11 +972,7 @@ describe("qweb parser", () => {
         slots: null,
         on: null,
       },
-      memo: "",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -1082,33 +987,12 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.TCall,
         name: "blap",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
-      memo: "",
-      hasNoFirst: false,
-      hasNoIndex: false,
-      hasNoLast: false,
-      hasNoValue: false,
-    });
-  });
-
-  test("t-foreach expression with t-memo", async () => {
-    expect(
-      parse(
-        `<t t-foreach="list" t-as="item" t-memo="[row.x]" t-key="item_index"><t t-esc="item"/></t>`
-      )
-    ).toEqual({
-      type: ASTType.TForEach,
-      collection: "list",
-      elem: "item",
-      key: "item_index",
-      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-      memo: "[row.x]",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: 0,
     });
   });
 
@@ -1120,6 +1004,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" />`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: null,
     });
@@ -1129,8 +1015,10 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="sub">ok</t>`)).toEqual({
       type: ASTType.TCall,
       name: "sub",
+      attrs: null,
+      attrsTranslationCtx: null,
       context: null,
-      body: [{ type: ASTType.Text, value: "ok" }],
+      body: { type: ASTType.Text, value: "ok" },
     });
   });
 
@@ -1138,31 +1026,17 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" t-call-context="someContext"/>`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: "someContext",
     });
   });
 
   test("t-call on a div node", async () => {
-    expect(parse(`<div t-call="blabla" />`)).toEqual({
-      type: ASTType.DomNode,
-      tag: "div",
-      dynamicTag: null,
-      attrs: null,
-      attrsTranslationCtx: null,
-      on: null,
-      ref: null,
-      model: null,
-      ns: null,
-      content: [
-        {
-          type: ASTType.TCall,
-          name: "blabla",
-          body: null,
-          context: null,
-        },
-      ],
-    });
+    expect(() => parse(`<div t-call="blabla" />`)).toThrow(
+      "Directive 't-call' can only be used on <t> nodes (used on a <div>)"
+    );
   });
 
   test("t-call with t-if", async () => {
@@ -1174,6 +1048,8 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.TCall,
         name: "blabla",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1200,19 +1076,19 @@ describe("qweb parser", () => {
   });
 
   test("t-onclick without dash", async () => {
-    expect(() => parse(`<button t-onclick="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-onclick="add">Click</button>`)).toThrow(
       "Unknown QWeb directive: 't-onclick'"
     );
   });
 
   test("t-on without event", async () => {
-    expect(() => parse(`<button t-on="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-on="add">Click</button>`)).toThrow(
       "Missing event name with t-on directive"
     );
   });
 
   test("t-on- without event", async () => {
-    expect(() => parse(`<button t-on-="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-on-="add">Click</button>`)).toThrow(
       "Missing event name with t-on directive"
     );
   });
@@ -1245,8 +1121,7 @@ describe("qweb parser", () => {
         },
       ],
       model: {
-        baseExpr: "state",
-        expr: "'model'",
+        expr: "state.model",
         targetAttr: "value",
         hasDynamicChildren: false,
         specialInitTargetAttr: null,
@@ -1284,8 +1159,7 @@ describe("qweb parser", () => {
         },
       ],
       model: {
-        baseExpr: "state",
-        expr: "'model'",
+        expr: "state.model",
         targetAttr: "value",
         specialInitTargetAttr: null,
         eventType: "change",
@@ -1354,7 +1228,7 @@ describe("qweb parser", () => {
   });
 
   test("component with event handler", async () => {
-    expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrowError(
+    expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrow(
       "unsupported directive on Component: t-onclick"
     );
   });
@@ -1493,7 +1367,7 @@ describe("qweb parser", () => {
           scope: null,
         },
       },
-      type: 11,
+      type: ASTType.TComponent,
     });
   });
 
@@ -1563,9 +1437,7 @@ describe("qweb parser", () => {
   });
 
   test("a component with a named slot with div tag", async () => {
-    expect(() =>
-      parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)
-    ).toThrowError();
+    expect(() => parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)).toThrow();
   });
 
   test("a component with a named slot and some white space", async () => {
@@ -1668,43 +1540,16 @@ describe("qweb parser", () => {
     });
   });
 
-  test("component with t-esc", async () => {
-    expect(parse(`<MyComponent t-esc="someValue"/>`)).toEqual(
-      parse(`<MyComponent><t t-esc="someValue"/></MyComponent>`)
-    );
-  });
-
   test("component with t-out", async () => {
     expect(parse(`<MyComponent t-out="someValue"/>`)).toEqual(
       parse(`<MyComponent><t t-out="someValue"/></MyComponent>`)
     );
   });
 
-  test("component with t-esc and content", async () => {
-    expect(() => parse(`<MyComponent t-esc="someValue">Some content</MyComponent>`)).toThrow(
-      "Cannot have t-esc on a component that already has content"
+  test("component with t-out and content", async () => {
+    expect(() => parse(`<MyComponent t-out="someValue">Some content</MyComponent>`)).toThrow(
+      "Cannot have t-out on a component that already has content"
     );
-  });
-
-  test("component with t-call", async () => {
-    expect(parse(`<MyComponent t-call="subTemplate"/>`)).toEqual({
-      type: ASTType.TComponent,
-      name: "MyComponent",
-      dynamicProps: null,
-      props: null,
-      propsTranslationCtx: null,
-      isDynamic: false,
-      on: null,
-      slots: {
-        default: {
-          content: { body: null, name: "subTemplate", type: ASTType.TCall, context: null },
-          attrs: null,
-          attrsTranslationCtx: null,
-          scope: null,
-          on: null,
-        },
-      },
-    });
   });
 
   test("component with t-set-slot inside component", async () => {
@@ -1798,12 +1643,12 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // t-slot
+  // t-call-slot
   // ---------------------------------------------------------------------------
 
-  test("a simple t-slot", async () => {
-    expect(parse(`<t t-slot="default"/>`)).toEqual({
-      type: ASTType.TSlot,
+  test("a simple t-call-slot", async () => {
+    expect(parse(`<t t-call-slot="default"/>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "default",
       attrs: null,
       attrsTranslationCtx: null,
@@ -1812,9 +1657,9 @@ describe("qweb parser", () => {
     });
   });
 
-  test("a t-slot with default content", async () => {
-    expect(parse(`<t t-slot="header">default content</t>`)).toEqual({
-      type: ASTType.TSlot,
+  test("a t-call-slot with default content", async () => {
+    expect(parse(`<t t-call-slot="header">default content</t>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "header",
       attrs: null,
       attrsTranslationCtx: null,
@@ -1823,9 +1668,9 @@ describe("qweb parser", () => {
     });
   });
 
-  test("t-slot with t-on-", async () => {
-    expect(parse(`<t t-slot="default" t-on-click.prevent="doSomething"/>`)).toEqual({
-      type: ASTType.TSlot,
+  test("t-call-slot with t-on-", async () => {
+    expect(parse(`<t t-call-slot="default" t-on-click.prevent="doSomething"/>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "default",
       attrs: null,
       attrsTranslationCtx: null,
@@ -1911,21 +1756,6 @@ describe("qweb parser", () => {
     });
   });
 
-  test("node with t-ref and t-esc", async () => {
-    expect(parse(`<div t-esc="text" t-ref="name">body</div>`)).toEqual({
-      type: ASTType.DomNode,
-      tag: "div",
-      dynamicTag: null,
-      attrs: null,
-      attrsTranslationCtx: null,
-      on: null,
-      ref: "name",
-      model: null,
-      ns: null,
-      content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "body" }],
-    });
-  });
-
   // ---------------------------------------------------------------------------
   // t-call-block
   // ---------------------------------------------------------------------------
@@ -1973,37 +1803,9 @@ describe("qweb parser", () => {
       },
       collection: "list",
       elem: "item",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
       key: "item_index",
-      memo: "",
       type: ASTType.TForEach,
-    });
-  });
-
-  test('t-translation="off": interaction with t-esc', async () => {
-    expect(parse(`<span t-esc="a" t-translation="off"/>`)).toEqual({
-      type: ASTType.TTranslation,
-      content: {
-        attrs: null,
-        attrsTranslationCtx: null,
-        content: [
-          {
-            defaultValue: "",
-            expr: "a",
-            type: ASTType.TEsc,
-          },
-        ],
-        dynamicTag: null,
-        model: null,
-        ns: null,
-        on: null,
-        ref: null,
-        tag: "span",
-        type: ASTType.DomNode,
-      },
     });
   });
 
@@ -2065,31 +1867,6 @@ describe("qweb parser", () => {
       },
       translationCtx: "fr",
       type: ASTType.TTranslationContext,
-    });
-  });
-
-  test("t-translation-context: interaction with t-esc", async () => {
-    expect(parse(`<span t-esc="a" t-translation-context="fr"/>`)).toEqual({
-      type: ASTType.TTranslationContext,
-      content: {
-        attrs: null,
-        attrsTranslationCtx: null,
-        content: [
-          {
-            defaultValue: "",
-            expr: "a",
-            type: ASTType.TEsc,
-          },
-        ],
-        dynamicTag: null,
-        model: null,
-        ns: null,
-        on: null,
-        ref: null,
-        tag: "span",
-        type: ASTType.DomNode,
-      },
-      translationCtx: "fr",
     });
   });
 
@@ -2182,8 +1959,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state.stuff",
         eventType: "input",
         shouldNumberize: false,
         shouldTrim: false,
@@ -2203,8 +1979,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state['stuff']",
         eventType: "input",
         shouldNumberize: false,
         shouldTrim: false,
@@ -2224,8 +1999,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state.stuff",
         eventType: "change",
         shouldNumberize: true,
         shouldTrim: true,
@@ -2246,8 +2020,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "input",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2267,8 +2040,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "input",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2288,8 +2060,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "click",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2309,8 +2080,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "click",
       shouldNumberize: true,
       shouldTrim: true,
@@ -2335,31 +2105,6 @@ describe("qweb parser", () => {
       dynamicTag: "theTag",
       model: null,
       ns: null,
-    });
-  });
-
-  // ---------------------------------------------------------------------------
-  // t-portal
-  // ---------------------------------------------------------------------------
-  test("t-portal", async () => {
-    expect(parse(`<t t-portal="target">Content</t>`)).toEqual({
-      type: ASTType.TPortal,
-      target: "target",
-      content: { type: ASTType.Text, value: "Content" },
-    });
-  });
-
-  test("t-portal with t-if", async () => {
-    expect(parse(`<t t-portal="target" t-if="condition">Content</t>`)).toEqual({
-      condition: "condition",
-      content: {
-        content: { type: ASTType.Text, value: "Content" },
-        target: "target",
-        type: ASTType.TPortal,
-      },
-      tElif: null,
-      tElse: null,
-      type: ASTType.TIf,
     });
   });
 });

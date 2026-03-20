@@ -1,5 +1,5 @@
-import { Component, mount, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, props, proxy, xml } from "../../src";
+import { makeTestFixture, nextTick, snapshotEverything, render } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -12,7 +12,8 @@ beforeEach(() => {
 describe("basics", () => {
   test("basic use", async () => {
     class Child extends Component {
-      static template = xml`<span>child<t t-esc="props.p"/></span>`;
+      static template = xml`<span>child<t t-out="this.props.p"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -28,9 +29,9 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
             <span>
-                <button t-on-click="inc">click</button>child<t t-esc="state.val"/>
+                <button t-on-click="this.inc">click</button>child<t t-out="this.state.val"/>
             </span>`;
-      state = useState({ val: 1 });
+      state = proxy({ val: 1 });
       inc() {
         this.state.val++;
       }
@@ -57,18 +58,19 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
             <t>
-              <t t-if="env.options.flag"><Child /></t>
-              <t t-if="!env.options.flag"><OtherChild /></t>
+              <t t-if="this.state.options.flag"><Child /></t>
+              <t t-if="!this.state.options.flag"><OtherChild /></t>
             </t>
           `;
       static components = { Child, OtherChild };
+      state = state;
     }
-    const env = { options: { flag: true } };
-    const parent = await mount(Parent, fixture, { env });
+    const state = { options: { flag: true } };
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
-    env.options.flag = false;
-    parent.render();
+    state.options.flag = false;
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
   });
@@ -83,11 +85,11 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
             <t>
-              <t t-if="state.flag"><Child /></t>
-              <t t-if="!state.flag"><OtherChild /></t>
+              <t t-if="this.state.flag"><Child /></t>
+              <t t-if="!this.state.flag"><OtherChild /></t>
             </t>
           `;
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
       static components = { Child, OtherChild };
     }
     let parent = await mount(Parent, fixture);

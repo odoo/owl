@@ -14,6 +14,7 @@ describe("t-on", () => {
     if (!node) {
       node = { component: ctx, status: STATUS.MOUNTED };
       ctx.__owl__ = node;
+      ctx.this = ctx;
     }
     const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
@@ -157,6 +158,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
@@ -169,7 +171,7 @@ describe("t-on", () => {
   test("handler is bound to proper owner, part 4", () => {
     expect.assertions(3);
     const context = new TemplateSet();
-    const sub = `<button t-on-click="add">Click</button>`;
+    const sub = `<button t-on-click="this.add">Click</button>`;
     const main = `
         <t t-foreach="[1]" t-as="value" t-key="value">
           <t t-call="sub"/>
@@ -182,6 +184,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
@@ -261,6 +264,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
 
@@ -439,7 +443,7 @@ describe("t-on", () => {
       const template = `<div>
         <t t-foreach="projects" t-as="project" t-key="project">
           <a href="#" t-on-click.prevent="ev => onEdit(project.id, ev)">
-            Edit <t t-esc="project.name"/>
+            Edit <t t-out="project.name"/>
           </a>
         </t>
       </div>`;
@@ -488,26 +492,7 @@ describe("t-on", () => {
 
       let owner = { onClick(e: Event) {} };
 
-      expect(() => mountToFixture(template, owner)).toThrowError("Unknown event modifier");
-    });
-
-    test("t-on combined with t-esc", async () => {
-      expect.assertions(3);
-      const template = `<div><button t-on-click="onClick" t-esc="text"/></div>`;
-      const steps: string[] = [];
-      const owner = {
-        text: "Click here",
-        onClick() {
-          steps.push("onClick");
-        },
-      };
-
-      const node = mountToFixture(template, owner);
-      expect(node.innerHTML).toBe(`<div><button>Click here</button></div>`);
-
-      node.querySelector("button")!.click();
-
-      expect(steps).toEqual(["onClick"]);
+      expect(() => mountToFixture(template, owner)).toThrow("Unknown event modifier");
     });
 
     test("t-on combined with t-out", async () => {
@@ -549,6 +534,38 @@ describe("t-on", () => {
       const button = (<HTMLElement>node).getElementsByTagName("button")[0];
       button.click();
       expect(steps).toEqual(["captured", "normal"]);
+    });
+
+    test("t-on with .passive modifier", () => {
+      const template = `<button t-on-click.passive="this.onClick">Button</button>`;
+
+      const steps: string[] = [];
+      const owner = {
+        onClick() {
+          steps.push("clicked");
+        },
+      };
+      const fixture = mountToFixture(template, owner);
+
+      fixture.querySelector("button")!.click();
+      expect(steps).toEqual(["clicked"]);
+    });
+
+    test("t-on with .passive and .capture modifiers", () => {
+      const template = `<div t-on-click.passive.capture="this.onClick">
+        <button>Button</button>
+      </div>`;
+
+      const steps: string[] = [];
+      const owner = {
+        onClick() {
+          steps.push("clicked");
+        },
+      };
+      const fixture = mountToFixture(template, owner);
+
+      fixture.querySelector("button")!.click();
+      expect(steps).toEqual(["clicked"]);
     });
   });
 

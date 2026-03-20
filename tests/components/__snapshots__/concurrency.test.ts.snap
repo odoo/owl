@@ -1,21 +1,22 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Cascading renders after microtaskTick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent, prepareList, safeOutput, withKey } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = text(\` _ \`);
-    ctx = Object.create(ctx);
-    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state']);;
+    const ctx1 = ctx;
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['this'].state);;
     for (let i1 = 0; i1 < l_block4; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block4[i1];
       const key1 = ctx['elem'].id;
-      c_block4[i1] = withKey(text(ctx['elem'].id), key1);
+      c_block4[i1] = withKey(safeOutput(ctx['elem'].id), key1);
     }
     const b4 = list(c_block4);
     return multi([b2, b3, b4]);
@@ -27,13 +28,14 @@ exports[`Cascading renders after microtaskTick 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`Element\`, true, false, false, [\\"id\\"]);
+  let { prepareList, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`Element\`, true, false, false, ["id"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state']);;
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       c_block1[i1] = withKey(comp1({id: ctx['elem'].id}, key + \`__1__\${key1}\`, node, this, null), key1);
@@ -47,9 +49,10 @@ exports[`Cascading renders after microtaskTick 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].id);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.id);
   }
 }"
 `;
@@ -58,14 +61,17 @@ exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
     let b2, b3;
     b2 = text(\`A\`);
-    if (ctx['state'].value<15) {
-      b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.value<15) {
+      b3 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     }
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3]);
   }
 }"
@@ -75,10 +81,11 @@ exports[`another scenario with delayed rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -89,13 +96,15 @@ exports[`another scenario with delayed rendering 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -107,7 +116,7 @@ exports[`async rendering destroying a widget before start is over 1`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -117,11 +126,12 @@ exports[`calling render in destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tKey_1 = ctx['key'];
-    return toggler(tKey_1, comp1({fromA: ctx['state']}, tKey_1 + key + \`__1\`, node, this, null));
+    return toggler(tKey_1, comp1({fromA: ctx['this'].state}, tKey_1 + key + \`__1\`, node, this, null));
   }
 }"
 `;
@@ -130,10 +140,11 @@ exports[`calling render in destroy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["fromA"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -142,12 +153,13 @@ exports[`calling render in destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -156,12 +168,13 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -170,13 +183,14 @@ exports[`changing state before first render does not trigger a render (with pare
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`TestW\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`TestW\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
@@ -188,12 +202,13 @@ exports[`changing state before first render does not trigger a render (with pare
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -202,12 +217,13 @@ exports[`changing state before first render does not trigger a render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -216,9 +232,10 @@ exports[`component destroyed just after render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -228,10 +245,11 @@ exports[`component destroyed just after render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`B\`);
-    const b3 = text(ctx['state'].value);
+    const b3 = safeOutput(ctx['this'].state.value);
     return multi([b2, b3]);
   }
 }"
@@ -241,12 +259,13 @@ exports[`components are not destroyed between animation frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`A\`);
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -258,9 +277,10 @@ exports[`components are not destroyed between animation frame 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`B\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -273,7 +293,7 @@ exports[`components are not destroyed between animation frame 5`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`C\`);
   }
 }"
@@ -283,12 +303,13 @@ exports[`concurrent renderings scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -298,12 +319,13 @@ exports[`concurrent renderings scenario 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\",\\"fromB\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromB: ctx['this'].state.fromB}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -313,13 +335,14 @@ exports[`concurrent renderings scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['someValue']();
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -328,14 +351,15 @@ exports[`concurrent renderings scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
-  let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['state'].fromA;
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
-    return block1([txt1], [b2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.fromA);
+    const b3 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -344,12 +368,13 @@ exports[`concurrent renderings scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\",\\"fromB\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromB: ctx['this'].state.fromB}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -359,13 +384,14 @@ exports[`concurrent renderings scenario 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['props'].fromB;
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].props.fromB);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -374,12 +400,13 @@ exports[`concurrent renderings scenario 2bis 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -389,12 +416,13 @@ exports[`concurrent renderings scenario 2bis 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\",\\"fromB\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromB: ctx['this'].state.fromB}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -404,13 +432,14 @@ exports[`concurrent renderings scenario 2bis 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['props'].fromB;
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].props.fromB);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -419,12 +448,13 @@ exports[`concurrent renderings scenario 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -434,12 +464,13 @@ exports[`concurrent renderings scenario 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -449,12 +480,13 @@ exports[`concurrent renderings scenario 3 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentD\`, true, false, false, [\\"fromA\\",\\"fromC\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromC: ctx['this'].state.fromC}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -464,13 +496,14 @@ exports[`concurrent renderings scenario 3 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
+  let block1 = createBlock(\`<i><block-child-0/><block-child-1/></i>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['someValue']();
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -479,12 +512,13 @@ exports[`concurrent renderings scenario 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -494,12 +528,13 @@ exports[`concurrent renderings scenario 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -509,12 +544,13 @@ exports[`concurrent renderings scenario 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentD\`, true, false, false, [\\"fromA\\",\\"fromC\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromC: ctx['this'].state.fromC}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -524,13 +560,14 @@ exports[`concurrent renderings scenario 4 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
+  let block1 = createBlock(\`<i><block-child-0/><block-child-1/></i>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['someValue']();
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -539,12 +576,13 @@ exports[`concurrent renderings scenario 5 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -554,12 +592,13 @@ exports[`concurrent renderings scenario 5 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['someValue']();
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2]);
   }
 }"
 `;
@@ -568,12 +607,13 @@ exports[`concurrent renderings scenario 6 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -583,12 +623,13 @@ exports[`concurrent renderings scenario 6 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['someValue']();
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2]);
   }
 }"
 `;
@@ -597,12 +638,13 @@ exports[`concurrent renderings scenario 7 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -612,13 +654,14 @@ exports[`concurrent renderings scenario 7 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/><block-child-1/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['someValue']();
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].someValue());
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -627,12 +670,13 @@ exports[`concurrent renderings scenario 8 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -642,13 +686,14 @@ exports[`concurrent renderings scenario 8 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/><block-child-1/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['state'].fromB;
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].state.fromB);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -657,16 +702,17 @@ exports[`concurrent renderings scenario 9 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"fromA\\"]);
-  const comp2 = app.createComponent(\`ComponentC\`, true, false, false, [\\"fromA\\"]);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
+  const comp2 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
   
-  let block1 = createBlock(\`<div><block-text-0/><block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['state'].fromA;
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
-    const b3 = comp2({fromA: ctx['state'].fromA}, key + \`__2\`, node, this, null);
-    return block1([txt1], [b2, b3]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.fromA);
+    const b3 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
+    const b4 = comp2({fromA: ctx['this'].state.fromA}, key + \`__2\`, node, this, null);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -675,12 +721,13 @@ exports[`concurrent renderings scenario 9 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<b><block-text-0/></b>\`);
+  let block1 = createBlock(\`<b><block-child-0/></b>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -689,12 +736,13 @@ exports[`concurrent renderings scenario 9 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentD\`, true, false, false, [\\"fromA\\",\\"fromC\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].props.fromA,fromC: ctx['this'].state.fromC}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -704,13 +752,14 @@ exports[`concurrent renderings scenario 9 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['props'].fromC;
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].props.fromC);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -719,12 +768,13 @@ exports[`concurrent renderings scenario 10 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["value"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -734,14 +784,15 @@ exports[`concurrent renderings scenario 10 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["value"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
-      b2 = comp1({value: ctx['props'].value}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.hasChild) {
+      b2 = comp1({value: ctx['this'].props.value}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -752,12 +803,13 @@ exports[`concurrent renderings scenario 10 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -766,12 +818,13 @@ exports[`concurrent renderings scenario 11 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({val: ctx['this'].state.valA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -781,13 +834,14 @@ exports[`concurrent renderings scenario 11 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/>|<block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/>|<block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    let txt2 = ctx['val'];
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    const b3 = safeOutput(ctx['this'].val);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -796,12 +850,13 @@ exports[`concurrent renderings scenario 12 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({val: ctx['this'].val}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -811,12 +866,13 @@ exports[`concurrent renderings scenario 12 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -825,15 +881,16 @@ exports[`concurrent renderings scenario 13 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = comp1({}, key + \`__1\`, node, this, null);
-    if (ctx['state'].bool) {
+    if (ctx['this'].state.bool) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
     }
     return block1([], [b2, b3]);
@@ -845,12 +902,13 @@ exports[`concurrent renderings scenario 13 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['state'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -859,12 +917,13 @@ exports[`concurrent renderings scenario 14 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -874,12 +933,13 @@ exports[`concurrent renderings scenario 14 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"fromB\\",\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromB: ctx['this'].state.fromB,fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -889,14 +949,15 @@ exports[`concurrent renderings scenario 14 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
+  let block1 = createBlock(\`<p><span><block-child-0/></span><span><block-child-1/></span><span><block-child-2/></span></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['props'].fromB;
-    let txt3 = ctx['state'].fromC;
-    return block1([txt1, txt2, txt3]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].props.fromB);
+    const b4 = safeOutput(ctx['this'].state.fromC);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -905,12 +966,13 @@ exports[`concurrent renderings scenario 15 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -920,12 +982,13 @@ exports[`concurrent renderings scenario 15 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"fromB\\",\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({fromB: ctx['this'].state.fromB,fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -935,14 +998,15 @@ exports[`concurrent renderings scenario 15 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
+  let block1 = createBlock(\`<p><span><block-child-0/></span><span><block-child-1/></span><span><block-child-2/></span></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].fromA;
-    let txt2 = ctx['props'].fromB;
-    let txt3 = ctx['state'].fromC;
-    return block1([txt1, txt2, txt3]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.fromA);
+    const b3 = safeOutput(ctx['this'].props.fromB);
+    const b4 = safeOutput(ctx['this'].state.fromC);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -951,10 +1015,11 @@ exports[`concurrent renderings scenario 16 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({fromA: ctx['state'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({fromA: ctx['this'].state.fromA}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -963,10 +1028,11 @@ exports[`concurrent renderings scenario 16 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"fromB\\",\\"fromA\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({fromB: ctx['this'].state.fromB,fromA: ctx['this'].props.fromA}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -975,17 +1041,18 @@ exports[`concurrent renderings scenario 16 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3, b4, b5, b6, b7, b8;
-    b2 = text(ctx['props'].fromA);
+    b2 = safeOutput(ctx['this'].props.fromA);
     b3 = text(\`:\`);
-    b4 = text(ctx['props'].fromB);
+    b4 = safeOutput(ctx['this'].props.fromB);
     b5 = text(\`:\`);
-    b6 = text(ctx['state'].fromC);
+    b6 = safeOutput(ctx['this'].state.fromC);
     b7 = text(\`: \`);
-    if (ctx['state'].fromC===13) {
+    if (ctx['this'].state.fromC===13) {
       b8 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3, b4, b5, b6, b7, b8]);
@@ -998,7 +1065,7 @@ exports[`concurrent renderings scenario 16 6`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`D\`);
   }
 }"
@@ -1008,15 +1075,16 @@ exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, []);
-  const comp2 = app.createComponent(\`ChildB\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildA\`, true, false, false, []);
+  const comp2 = createComponent(app, \`ChildB\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['state'].flagA) {
+    if (ctx['this'].state.flagA) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
-    if (ctx['state'].flagB) {
+    if (ctx['this'].state.flagB) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -1028,12 +1096,13 @@ exports[`creating two async components, scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['getValue']();
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].getValue());
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1045,7 +1114,7 @@ exports[`creating two async components, scenario 1 5`] = `
   
   let block1 = createBlock(\`<span>b</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -1055,16 +1124,17 @@ exports[`creating two async components, scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, [\\"val\\"]);
-  const comp2 = app.createComponent(\`ChildB\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, \`ChildB\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
-    b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
-    if (ctx['state'].flagB) {
-      b3 = comp2({val: ctx['state'].valB}, key + \`__2\`, node, this, null);
+    b2 = comp1({val: ctx['this'].state.valA}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.flagB) {
+      b3 = comp2({val: ctx['this'].state.valB}, key + \`__2\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -1075,12 +1145,13 @@ exports[`creating two async components, scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>a<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1089,12 +1160,13 @@ exports[`creating two async components, scenario 2 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>b<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1103,16 +1175,17 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, [\\"val\\"]);
-  const comp2 = app.createComponent(\`ChildB\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, \`ChildB\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
-    b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
-    if (ctx['state'].flagB) {
-      b3 = comp2({val: ctx['state'].valB}, key + \`__2\`, node, this, null);
+    b2 = comp1({val: ctx['this'].state.valA}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.flagB) {
+      b3 = comp2({val: ctx['this'].state.valB}, key + \`__2\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -1123,12 +1196,13 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>a<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1137,12 +1211,13 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>b<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1151,10 +1226,11 @@ exports[`delay willUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1163,11 +1239,12 @@ exports[`delay willUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
     const b3 = text(\`_\`);
-    const b4 = text(ctx['state'].int);
+    const b4 = safeOutput(ctx['this'].state.int);
     return multi([b2, b3, b4]);
   }
 }"
@@ -1177,10 +1254,11 @@ exports[`delay willUpdateProps with rendering grandchild 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Parent\`, true, false, false, [\\"state\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Parent\`, true, false, false, ["state"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({state: ctx['state']}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({state: ctx['this'].state}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1189,11 +1267,12 @@ exports[`delay willUpdateProps with rendering grandchild 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`DelayedChild\`, true, false, false, [\\"value\\"]);
-  const comp2 = app.createComponent(\`ReactiveChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`DelayedChild\`, true, false, false, ["value"]);
+  const comp2 = createComponent(app, \`ReactiveChild\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({value: ctx['props'].state.value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({value: ctx['this'].props.state.value}, key + \`__1\`, node, this, null);
     const b3 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -1204,11 +1283,12 @@ exports[`delay willUpdateProps with rendering grandchild 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
     const b3 = text(\`_\`);
-    const b4 = text(ctx['state'].int);
+    const b4 = safeOutput(ctx['this'].state.int);
     return multi([b2, b3, b4]);
   }
 }"
@@ -1221,7 +1301,7 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -1231,9 +1311,10 @@ exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`A\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -1245,9 +1326,10 @@ exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`B\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -1259,9 +1341,10 @@ exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`C\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -1274,7 +1357,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`D\`);
   }
 }"
@@ -1284,11 +1367,12 @@ exports[`delayed render does not go through when t-component value changed 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, null, false, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`A\`);
-    const Comp1 = ctx['state'].component;
+    const Comp1 = ctx['this'].state.component;
     const b3 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
     return multi([b2, b3]);
   }
@@ -1299,10 +1383,11 @@ exports[`delayed render does not go through when t-component value changed 2`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`B\`);
-    const b3 = text(ctx['state'].val);
+    const b3 = safeOutput(ctx['this'].state.val);
     return multi([b2, b3]);
   }
 }"
@@ -1313,7 +1398,7 @@ exports[`delayed render does not go through when t-component value changed 4`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`C\`);
   }
 }"
@@ -1323,9 +1408,9 @@ exports[`delayed render is not cancelled by upcoming render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"state\\",\\"isEmpty\\"]);
+  const comp1 = app.createComponent(\`B\`, true, false, false, ["state","isEmpty"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({state: ctx['state'],isEmpty: ctx['state'].groups.length===0}, key + \`__1\`, node, this, null);
   }
 }"
@@ -1336,9 +1421,9 @@ exports[`delayed render is not cancelled by upcoming render 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].state.groups.length);
-    const b3 = text(ctx['props'].state.config.test);
+  return function template(ctx, node, key = "") {
+    const b2 = text(ctx['this'].props.state.groups.length);
+    const b3 = text(ctx['this'].props.state.config.test);
     return multi([b2, b3]);
   }
 }"
@@ -1348,10 +1433,11 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1360,10 +1446,11 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].someValue+ctx['props'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.someValue+ctx['this'].props.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1372,14 +1459,15 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
+  let { createComponent, safeOutput } = helpers;
+  const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
-  let block3 = createBlock(\`<p><block-text-0/></p>\`);
+  let block3 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['props'].value;
-    const b3 = block3([txt1]);
+    const b4 = safeOutput(ctx['this'].props.value);
+    const b3 = block3([], [b4]);
     return multi([b2, b3]);
   }
 }"
@@ -1389,13 +1477,15 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -1404,11 +1494,12 @@ exports[`delayed rendering, destruction, stuff happens 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`A\`);
-    const b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    const b3 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -1418,13 +1509,14 @@ exports[`delayed rendering, destruction, stuff happens 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`B\`);
-    if (ctx['state'].hasChild) {
-      b3 = comp1({value: ctx['state'].someValue+ctx['props'].value}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.hasChild) {
+      b3 = comp1({value: ctx['this'].state.someValue+ctx['this'].props.value}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
   }
@@ -1435,15 +1527,16 @@ exports[`delayed rendering, destruction, stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
+  let { createComponent, safeOutput } = helpers;
+  const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
-  let block4 = createBlock(\`<p><block-text-0/></p>\`);
+  let block4 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`C\`);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['props'].value;
-    const b4 = block4([txt1]);
+    const b5 = safeOutput(ctx['this'].props.value);
+    const b4 = block4([], [b5]);
     return multi([b2, b3, b4]);
   }
 }"
@@ -1453,14 +1546,16 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block3 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block3 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    const b3 = block3([hdlr1, txt1]);
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b4 = safeOutput(ctx['this'].state.val);
+    const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
   }
 }"
@@ -1470,10 +1565,11 @@ exports[`delayed rendering, reusing fiber and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1482,11 +1578,14 @@ exports[`delayed rendering, reusing fiber and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    const b2 = safeOutput(ctx['this'].props.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3]);
   }
 }"
@@ -1496,13 +1595,15 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -1511,13 +1612,14 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`A\`);
-    if (ctx['state'].value<15) {
-      b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.value<15) {
+      b3 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
   }
@@ -1528,10 +1630,11 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -1542,13 +1645,15 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -1557,10 +1662,11 @@ exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1569,12 +1675,13 @@ exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
-    b2 = text(ctx['props'].value);
-    if (ctx['props'].value<10) {
+    b2 = safeOutput(ctx['this'].props.value);
+    if (ctx['this'].props.value<10) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -1586,13 +1693,15 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -1601,15 +1710,16 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
-  const comp2 = app.createComponent(\`C\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
+  const comp2 = createComponent(app, \`C\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\` A \`);
-    if (ctx['state'].flag) {
-      const b4 = comp1({value: ctx['state'].valueB}, key + \`__1\`, node, this, null);
-      const b5 = comp2({value: ctx['state'].valueC}, key + \`__2\`, node, this, null);
+    if (ctx['this'].state.flag) {
+      const b4 = comp1({value: ctx['this'].state.valueB}, key + \`__1\`, node, this, null);
+      const b5 = comp2({value: ctx['this'].state.valueC}, key + \`__2\`, node, this, null);
       b3 = multi([b4, b5]);
     }
     return multi([b2, b3]);
@@ -1621,9 +1731,12 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
+    return safeOutput(ctx['this'].props.value);
   }
 }"
 `;
@@ -1632,9 +1745,10 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['state'].val+ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].state.val+ctx['this'].props.value);
   }
 }"
 `;
@@ -1643,12 +1757,13 @@ exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`parent\`);
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -1661,7 +1776,7 @@ exports[`destroying/recreating a subcomponent, other scenario 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`child\`);
   }
 }"
@@ -1671,14 +1786,15 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].val>1) {
-      b2 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.val>1) {
+      b2 = comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -1689,12 +1805,13 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>child:<block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>child:<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1703,10 +1820,11 @@ exports[`parent and child rendered at exact same time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1715,9 +1833,10 @@ exports[`parent and child rendered at exact same time 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.value);
   }
 }"
 `;
@@ -1726,14 +1845,15 @@ exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
-      b2 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.flag) {
+      b2 = comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -1744,12 +1864,13 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubChild\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubChild\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: ctx['props'].val}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({val: ctx['this'].props.val}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -1762,7 +1883,7 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -1772,14 +1893,16 @@ exports[`rendering component again in next microtick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Click</button><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click">Click</button><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    let hdlr1 = [ctx['onClick'], ctx];
-    if (ctx['env'].config.flag) {
+    let hdlr1 = [hdlr_fn1, ctx];
+    if (ctx['this'].state.config.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([hdlr1], [b2]);
@@ -1794,7 +1917,7 @@ exports[`rendering component again in next microtick 3`] = `
   
   let block1 = createBlock(\`<div>Child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -1804,10 +1927,11 @@ exports[`rendering parent twice, with different props on child and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1816,9 +1940,10 @@ exports[`rendering parent twice, with different props on child and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.value);
   }
 }"
 `;
@@ -1827,12 +1952,13 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
-  const comp2 = app.createComponent(\`D\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
+  const comp2 = createComponent(app, \`D\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`A\`);
-    const b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    const b3 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     const b4 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b2, b3, b4]);
   }
@@ -1843,12 +1969,13 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     b2 = text(\`B\`);
-    if (ctx['props'].value===33) {
+    if (ctx['this'].props.value===33) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -1860,14 +1987,16 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block3 = createBlock(\`<p block-handler-0=\\"click\\"><block-text-1/></p>\`);
+  let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    const b3 = block3([hdlr1, txt1]);
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b4 = safeOutput(ctx['this'].state.val);
+    const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
   }
 }"
@@ -1877,14 +2006,16 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
-  let block3 = createBlock(\`<span block-handler-0=\\"click\\"><block-text-1/></span>\`);
+  let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`C\`);
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].val;
-    const b3 = block3([hdlr1, txt1]);
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b4 = safeOutput(ctx['this'].state.val);
+    const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
   }
 }"
@@ -1894,19 +2025,20 @@ exports[`t-foreach with dynamic async component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(null, false, false, false, [\\"key\\"]);
+  let { prepareList, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['list']);;
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`arr\`] = k_block1[i1];
       ctx[\`arr_index\`] = i1;
       const key1 = ctx['arr_index'];
       let b3;
       if (ctx['arr']) {
-        const Comp1 = ctx['myComp'];
+        const Comp1 = ctx['this'].myComp;
         b3 = toggler(Comp1, comp1({key: ctx['arr'][0]}, (Comp1).name + key + \`__1__\${key1}\`, node, this, Comp1));
       }
       c_block1[i1] = withKey(multi([b3]), key1);
@@ -1920,12 +2052,13 @@ exports[`t-foreach with dynamic async component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].key;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1934,14 +2067,15 @@ exports[`t-key on dom node having a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, [\\"key\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const tKey_1 = ctx['key'];
-    const Comp1 = ctx['myComp'];
-    const b2 = toggler(tKey_1, toggler(Comp1, comp1({key: ctx['key']}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
+  return function template(ctx, node, key = "") {
+    const tKey_1 = ctx['this'].key;
+    const Comp1 = ctx['this'].myComp;
+    const b2 = toggler(tKey_1, toggler(Comp1, comp1({key: ctx['this'].key}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
     return toggler(tKey_1, block1([], [b2]));
   }
 }"
@@ -1951,9 +2085,10 @@ exports[`t-key on dom node having a component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].key);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.key);
   }
 }"
 `;
@@ -1962,12 +2097,13 @@ exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, [\\"key\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    const tKey_1 = ctx['key'];
-    const Comp1 = ctx['myComp'];
-    return toggler(tKey_1, toggler(Comp1, comp1({key: ctx['key']}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
+  return function template(ctx, node, key = "") {
+    const tKey_1 = ctx['this'].key;
+    const Comp1 = ctx['this'].myComp;
+    return toggler(tKey_1, toggler(Comp1, comp1({key: ctx['this'].key}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
   }
 }"
 `;
@@ -1976,12 +2112,13 @@ exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].key;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1990,15 +2127,16 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Panel\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Panel\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
-      const tKey_1 = 'panel_'+ctx['state'].panel;
-      b2 = toggler(tKey_1, comp1({val: ctx['state'].panel}, tKey_1 + key + \`__1\`, node, this, null));
+    if (ctx['this'].state.flag) {
+      const tKey_1 = 'panel_'+ctx['this'].state.panel;
+      b2 = toggler(tKey_1, comp1({val: ctx['this'].state.panel}, tKey_1 + key + \`__1\`, node, this, null));
     }
     return block1([], [b2]);
   }
@@ -2009,13 +2147,14 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<abc><block-text-0/><block-text-1/></abc>\`);
+  let block1 = createBlock(\`<abc><block-child-0/><block-child-1/></abc>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    let txt2 = ctx['mounted'];
-    return block1([txt1, txt2]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    const b3 = safeOutput(ctx['this'].mounted);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -2024,10 +2163,11 @@ exports[`two sequential renderings before an animation frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -2036,9 +2176,10 @@ exports[`two sequential renderings before an animation frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].value);
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.value);
   }
 }"
 `;
@@ -2047,12 +2188,13 @@ exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({val: ctx['this'].state.valA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -2062,12 +2204,13 @@ exports[`update a sub-component twice in the same frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].val;
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -2076,12 +2219,13 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, [\\"val\\"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({val: ctx['this'].state.valA}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -2091,12 +2235,13 @@ exports[`update a sub-component twice in the same frame, 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['val']();
-    return block1([txt1]);
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].val());
+    return block1([], [b2]);
   }
 }"
 `;

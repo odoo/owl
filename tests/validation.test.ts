@@ -1,311 +1,598 @@
-import { Schema, validateSchema } from "../src/runtime/validation";
+import { assertType, computed, signal, types as t, validateType } from "../src";
 
-describe("validateSchema", () => {
-  test("simple use", () => {
-    expect(validateSchema({ a: "hey" }, { a: String })).toEqual([]);
-    expect(validateSchema({ a: 1 }, { a: Boolean })).toEqual(["'a' is not a boolean"]);
-  });
+class A {}
 
-  test("simple use, alternate form", () => {
-    expect(validateSchema({ a: "hey" }, { a: { type: String } })).toEqual([]);
-    expect(validateSchema({ a: 1 }, { a: { type: Boolean } })).toEqual(["'a' is not a boolean"]);
-  });
+test("simple assertion", () => {
+  expect(() => assertType("hey", t.string)).not.toThrow();
+  expect(() => assertType({}, t.object())).not.toThrow();
+  expect(() => assertType([], t.array())).not.toThrow();
+  expect(() => assertType(1, t.boolean)).toThrow("Value does not match the type");
+});
 
-  test("some particular edgecases as key name", () => {
-    expect(validateSchema({ shape: "hey" }, { shape: String })).toEqual([]);
-    expect(validateSchema({ shape: 1 }, { shape: Boolean })).toEqual(["'shape' is not a boolean"]);
-    expect(validateSchema({ element: "hey" }, { element: String })).toEqual([]);
-    expect(validateSchema({ element: 1 }, { element: Boolean })).toEqual([
-      "'element' is not a boolean",
+test("validateType", () => {
+  expect(validateType("abc", t.string)).toMatchObject([]);
+  expect(validateType("abc", t.number)).toMatchObject([{ message: "value is not a number" }]);
+  expect(validateType(undefined, t.number)).toMatchObject([{ message: "value is not a number" }]);
+  expect(validateType(1, t.number)).toEqual([]);
+});
+
+test("and", () => {
+  const a = t.object({ a: t.string });
+  const b = t.object({ b: t.number });
+  expect(validateType({}, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["a"] },
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: "abc" }, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: 123 }, t.and([a, b]))).toMatchObject([
+    { message: "value is not a string", path: ["a"] },
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: "abc", b: 123 }, t.and([a, b]))).toEqual([]);
+  expect(validateType({ b: 123 }, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["a"] },
+  ]);
+  expect(validateType({ a: "abc", b: "abc" }, t.and([a, b]))).toMatchObject([
+    { message: "value is not a number", path: ["b"] },
+  ]);
+});
+
+test("any", () => {
+  expect(validateType("", t.any)).toEqual([]);
+  expect(validateType("abc", t.any)).toEqual([]);
+  expect(validateType(true, t.any)).toEqual([]);
+  expect(validateType(false, t.any)).toEqual([]);
+  expect(validateType(123, t.any)).toEqual([]);
+  expect(validateType(987, t.any)).toEqual([]);
+  expect(validateType(undefined, t.any)).toEqual([]);
+  expect(validateType(null, t.any)).toEqual([]);
+  expect(validateType({}, t.any)).toEqual([]);
+  expect(validateType({ a: 1, b: "", c: { a: true } }, t.any)).toEqual([]);
+  expect(validateType([{ a: 1 }, { b: 2 }], t.any)).toEqual([]);
+  expect(validateType(() => {}, t.any)).toEqual([]);
+  expect(validateType(A, t.any)).toEqual([]);
+  expect(validateType(new A(), t.any)).toEqual([]);
+});
+
+test("array", () => {
+  expect(validateType({}, t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType("", t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType("abc", t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType(123, t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType(987, t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType(true, t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType({}, t.array())).toMatchObject([{ message: "value is not an array" }]);
+  expect(validateType([], t.array())).toEqual([]);
+  expect(validateType([123], t.array())).toEqual([]);
+  expect(validateType(["abc"], t.array())).toEqual([]);
+  expect(validateType(["abc", 123], t.array())).toEqual([]);
+  expect(validateType(["abc", 123, false], t.array())).toEqual([]);
+  expect(validateType(["abc"], t.array(t.string))).toEqual([]);
+  expect(validateType([123, "abc"], t.array(t.string))).toMatchObject([
+    { message: "value is not a string", path: [0] },
+  ]);
+  expect(validateType(["abc", "def"], t.array(t.string))).toEqual([]);
+  expect(validateType(["abc", 321], t.array(t.string))).toMatchObject([
+    { message: "value is not a string", path: [1] },
+  ]);
+});
+
+test("boolean", () => {
+  const issue = { message: "value is not a boolean" };
+  expect(validateType(true, t.boolean)).toEqual([]);
+  expect(validateType(false, t.boolean)).toEqual([]);
+  expect(validateType("", t.boolean)).toMatchObject([issue]);
+  expect(validateType("abc", t.boolean)).toMatchObject([issue]);
+  expect(validateType(123, t.boolean)).toMatchObject([issue]);
+  expect(validateType(987, t.boolean)).toMatchObject([issue]);
+  expect(validateType(undefined, t.boolean)).toMatchObject([issue]);
+  expect(validateType(null, t.boolean)).toMatchObject([issue]);
+  expect(validateType({}, t.boolean)).toMatchObject([issue]);
+  expect(validateType([], t.boolean)).toMatchObject([issue]);
+  expect(validateType(A, t.boolean)).toMatchObject([issue]);
+  expect(validateType(new A(), t.boolean)).toMatchObject([issue]);
+});
+
+test("constructor", () => {
+  class B extends A {}
+  class C {}
+  const issue = { message: "value is not 'A' or an extension" };
+  expect(validateType(true, t.constructor(A))).toMatchObject([issue]);
+  expect(validateType("abc", t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(123, t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(A, t.constructor(A))).toEqual([]);
+  expect(validateType(B, t.constructor(A))).toEqual([]);
+  expect(validateType(C, t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(A, t.constructor(B))).toMatchObject([
+    { message: "value is not 'B' or an extension" },
+  ]);
+  expect(validateType(B, t.constructor(B))).toEqual([]);
+  expect(validateType(C, t.constructor(B))).toMatchObject([
+    { message: "value is not 'B' or an extension" },
+  ]);
+  expect(validateType(A, t.constructor(C))).toMatchObject([
+    { message: "value is not 'C' or an extension" },
+  ]);
+  expect(validateType(B, t.constructor(C))).toMatchObject([
+    { message: "value is not 'C' or an extension" },
+  ]);
+  expect(validateType(C, t.constructor(C))).toEqual([]);
+  expect(validateType({}, t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(new A(), t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(new B(), t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(new C(), t.constructor(A))).toMatchObject([issue]);
+  expect(validateType([], t.constructor(A))).toMatchObject([issue]);
+  expect(validateType(() => {}, t.constructor(A))).toMatchObject([issue]);
+});
+
+test("customValidator", () => {
+  const validator = t.customValidator(t.string, (size) => ["sm", "md", "lg"].includes(size));
+  expect(validateType(123, validator)).toMatchObject([{ message: "value is not a string" }]);
+  expect(validateType("sm", validator)).toEqual([]);
+  expect(validateType("md", validator)).toEqual([]);
+  expect(validateType("lg", validator)).toEqual([]);
+  expect(validateType("small", validator)).toMatchObject([
+    { message: "value does not match custom validation" },
+  ]);
+  expect(
+    validateType(
+      "small",
+      t.customValidator(t.string, (size) => ["sm", "md", "lg"].includes(size), "Invalid")
+    )
+  ).toMatchObject([{ message: "Invalid" }]);
+});
+
+describe("function", () => {
+  test("function", () => {
+    expect(validateType(123, t.function())).toMatchObject([{ message: "value is not a function" }]);
+    expect(validateType("abc", t.function())).toMatchObject([
+      { message: "value is not a function" },
     ]);
-  });
-
-  test("multiple errors", () => {
-    expect(validateSchema({ a: 1, b: 2 }, { a: Boolean, b: Boolean })).toEqual([
-      "'a' is not a boolean",
-      "'b' is not a boolean",
+    expect(validateType(true, t.function())).toMatchObject([
+      { message: "value is not a function" },
     ]);
+    expect(validateType(() => {}, t.function())).toEqual([]);
+    expect(validateType(function () {}, t.function())).toEqual([]);
+    expect(validateType(A, t.function())).toEqual([]); // Should return an issue
   });
 
-  test("missing key", () => {
-    expect(validateSchema({}, { a: Boolean })).toEqual(["'a' is missing (should be a boolean)"]);
+  test("parameters and return types are not checked", () => {
+    expect(validateType(() => {}, t.function([t.string], t.boolean))).toEqual([]);
+    expect(validateType(function () {}, t.function([t.string], t.boolean))).toEqual([]);
   });
+});
 
-  test("additional key", () => {
-    expect(validateSchema({ b: 1 }, {})).toEqual(["unknown key 'b'"]);
-  });
+test("instanceOf", () => {
+  class B extends A {}
+  class C {}
+  const issue = { message: "value is not an instance of 'A'" };
+  expect(validateType(123, t.instanceOf(A))).toMatchObject([issue]);
+  expect(validateType("abc", t.instanceOf(A))).toMatchObject([issue]);
+  expect(validateType(true, t.instanceOf(A))).toMatchObject([issue]);
+  expect(validateType({}, t.instanceOf(A))).toMatchObject([issue]);
+  expect(validateType([], t.instanceOf(A))).toMatchObject([issue]);
+  expect(validateType(new A(), t.instanceOf(A))).toEqual([]);
+  expect(validateType(new B(), t.instanceOf(A))).toEqual([]);
+  expect(validateType(new C(), t.instanceOf(A))).toMatchObject([issue]);
+});
 
-  test("undefined key", () => {
-    expect(validateSchema({ a: undefined }, { a: Boolean })).toEqual([
-      "'a' is undefined (should be a boolean)",
+test("literal", () => {
+  expect(validateType(123, t.literal(123))).toEqual([]);
+  expect(validateType(321, t.literal(123))).toMatchObject([
+    { message: "value is not equal to 123" },
+  ]);
+  expect(validateType("abc", t.literal("abc"))).toEqual([]);
+  expect(validateType("", t.literal("abc"))).toMatchObject([
+    { message: "value is not equal to 'abc'" },
+  ]);
+  expect(validateType("abc", t.literal(""))).toMatchObject([
+    { message: "value is not equal to ''" },
+  ]);
+  expect(validateType(123, t.literal(""))).toMatchObject([{ message: "value is not equal to ''" }]);
+  expect(validateType("", t.literal(123))).toMatchObject([
+    { message: "value is not equal to 123" },
+  ]);
+  expect(validateType(true, t.literal(true))).toEqual([]);
+  expect(validateType(false, t.literal(true))).toMatchObject([
+    { message: "value is not equal to true" },
+  ]);
+  expect(validateType(null, t.literal(null))).toEqual([]);
+  expect(validateType(true, t.literal(null))).toMatchObject([
+    { message: "value is not equal to null" },
+  ]);
+  expect(validateType(null, t.literal(false))).toMatchObject([
+    { message: "value is not equal to false" },
+  ]);
+  expect(validateType(undefined, t.literal(undefined))).toEqual([]);
+  expect(validateType(123, t.literal(undefined))).toMatchObject([
+    { message: "value is not equal to undefined" },
+  ]);
+  expect(validateType("abc", t.literal(undefined))).toMatchObject([
+    { message: "value is not equal to undefined" },
+  ]);
+  expect(validateType(null, t.literal(undefined))).toMatchObject([
+    { message: "value is not equal to undefined" },
+  ]);
+});
+
+test("number", () => {
+  const issue = { message: "value is not a number" };
+  expect(validateType(123, t.number)).toEqual([]);
+  expect(validateType(987, t.number)).toEqual([]);
+  expect(validateType(true, t.number)).toMatchObject([issue]);
+  expect(validateType(false, t.number)).toMatchObject([issue]);
+  expect(validateType("", t.number)).toMatchObject([issue]);
+  expect(validateType("abc", t.number)).toMatchObject([issue]);
+  expect(validateType(undefined, t.number)).toMatchObject([issue]);
+  expect(validateType(null, t.number)).toMatchObject([issue]);
+  expect(validateType({}, t.number)).toMatchObject([issue]);
+  expect(validateType([], t.number)).toMatchObject([issue]);
+  expect(validateType(A, t.number)).toMatchObject([issue]);
+  expect(validateType(new A(), t.number)).toMatchObject([issue]);
+});
+
+describe("object", () => {
+  test("shaped object", () => {
+    expect(validateType(123, t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
     ]);
-    expect(validateSchema({}, { a: Boolean })).toEqual(["'a' is missing (should be a boolean)"]);
-  });
-
-  test("can use '*' to denote any type", () => {
-    expect(validateSchema({ a: "hey" }, { a: "*" })).toEqual([]);
-    expect(validateSchema({}, { a: "*" })).toEqual(["'a' is missing"]);
-  });
-
-  test("an union of type", () => {
-    expect(validateSchema({ a: "hey" }, { a: [String, Boolean] })).toEqual([]);
-    expect(validateSchema({ a: 1 }, { a: [String, Boolean] })).toEqual([
-      "'a' is not a string or boolean",
+    expect(validateType("abc", t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
     ]);
-    expect(validateSchema({ a: "hey" }, { a: { type: [String, Boolean] } })).toEqual([]);
+    expect(validateType(true, t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType(null, t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType(undefined, t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType([], t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType(() => {}, t.object({}))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType({}, t.object({}))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({}))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({ a: t.number }))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({ a: t.string }))).toMatchObject([
+      { message: "value is not a string", path: ["a"] },
+    ]);
+    expect(validateType({ b: 1 }, t.object({ a: t.string }))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+    ]);
+    expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string }))).toEqual([]);
   });
 
-  test("another union of types", () => {
-    const schema: Schema = {
-      id: Number,
-      url: [Boolean, { type: Array, element: Number }],
-    };
-    expect(validateSchema({ a: "hey" }, schema)).toEqual([
-      "unknown key 'a'",
-      "'id' is missing (should be a number)",
-      "'url' is missing (should be a boolean or list of numbers)",
+  test("shaped object with optional key", () => {
+    expect(validateType({}, t.object({ a: t.number }))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
     ]);
-    expect(validateSchema({ id: 1 }, schema)).toEqual([
-      "'url' is missing (should be a boolean or list of numbers)",
+    expect(validateType({}, t.object({ "a?": t.number }))).toEqual([]);
+    expect(validateType({}, t.object({ a: t.number, "b?": t.number }))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
     ]);
-    expect(validateSchema({ id: 1, url: true }, schema)).toEqual([]);
-    expect(validateSchema({ id: true, url: true }, schema)).toEqual(["'id' is not a number"]);
-    expect(validateSchema({ id: 3, url: 3 }, schema)).toEqual([
-      "'url' is not a boolean or list of numbers",
-    ]);
-  });
-
-  test("simplified schema description", () => {
-    expect(validateSchema({ a: "hey" }, ["a"])).toEqual([]);
-    expect(validateSchema({ b: 1 }, ["a"])).toEqual(["unknown key 'b'", "'a' is missing"]);
-  });
-
-  test("simplified schema description with optional props and *", () => {
-    expect(validateSchema({ a: "hey" }, ["a", "b?", "*"])).toEqual([]);
-    expect(validateSchema({ a: "hey" }, ["a", "*"])).toEqual([]);
-    expect(validateSchema({ a: "hey", b: 1, c: 3 }, ["a", "*"])).toEqual([]);
-  });
-
-  test("simplified schema description with optional props", () => {
-    expect(validateSchema({ a: "hey" }, ["a", "b?"])).toEqual([]);
-    expect(validateSchema({ a: "hey", b: 1 }, ["a", "b?"])).toEqual([]);
-  });
-
-  test("object type description, with no type/optional key", () => {
-    expect(validateSchema({ a: "hey" }, { a: {} })).toEqual([]);
-    expect(validateSchema({ a: 1 }, { a: {} })).toEqual([]);
-    expect(validateSchema({}, { a: {} })).toEqual(["'a' is missing"]);
-  });
-
-  test("optional key", () => {
-    expect(validateSchema({}, { a: { optional: true } })).toEqual([]);
-    expect(validateSchema({}, { a: { type: Number, optional: true } })).toEqual([]);
-    expect(validateSchema({ a: undefined }, { a: { type: Number, optional: true } })).toEqual([]);
-    expect(validateSchema({ a: 2 }, { a: { optional: true } })).toEqual([]);
-    expect(validateSchema({ a: undefined }, { a: { optional: true } })).toEqual([]);
-    expect(validateSchema({ a: 2 }, { a: { type: Number, optional: true } })).toEqual([]);
-    expect(validateSchema({ a: 2 }, { a: { type: String, optional: true } })).toEqual([
-      "'a' is not a string",
-    ]);
-  });
-
-  test("can validate dates", () => {
-    expect(validateSchema({ a: new Date() }, { a: Date })).toEqual([]);
-    expect(validateSchema({ a: 4 }, { a: Date })).toEqual(["'a' is not a date"]);
-  });
-
-  test("arrays with simple element description", () => {
-    const schema: Schema = { p: { type: Array, element: String } };
-    expect(validateSchema({ p: [] }, schema)).toEqual([]);
-    expect(validateSchema({ p: 1 }, schema)).toEqual(["'p' is not a list of strings"]);
-    expect(validateSchema({}, schema)).toEqual(["'p' is missing (should be a list of strings)"]);
-    expect(validateSchema({ p: undefined }, schema)).toEqual([
-      "'p' is undefined (should be a list of strings)",
-    ]);
-    expect(validateSchema({ p: ["a"] }, schema)).toEqual([]);
-    expect(validateSchema({ p: [1] }, schema)).toEqual(["'p[0]' is not a string"]);
-  });
-
-  test("arrays with union type as element description", () => {
-    const schema: Schema = { p: { type: Array, element: [String, Boolean] } };
-    expect(validateSchema({ p: [] }, schema)).toEqual([]);
-    expect(validateSchema({ p: 1 }, schema)).toEqual(["'p' is not a list of string or booleans"]);
-    expect(validateSchema({}, schema)).toEqual([
-      "'p' is missing (should be a list of string or booleans)",
-    ]);
-    expect(validateSchema({ p: undefined }, schema)).toEqual([
-      "'p' is undefined (should be a list of string or booleans)",
-    ]);
-    expect(validateSchema({ p: ["a"] }, schema)).toEqual([]);
-    expect(validateSchema({ p: [1] }, schema)).toEqual(["'p[0]' is not a string or boolean"]);
-    expect(validateSchema({ p: [true, 1] }, schema)).toEqual(["'p[1]' is not a string or boolean"]);
-  });
-
-  test("objects with specified shape", () => {
-    const schema: Schema = { p: { type: Object, shape: { id: Number, url: String } } };
-    expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
-    expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('id' is missing (should be a number), 'url' is missing (should be a string))",
-    ]);
-    expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([]);
-    expect(validateSchema({ p: { id: 1, url: 1 } }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('url' is not a string)",
-    ]);
-    expect(validateSchema({ p: undefined }, schema)).toEqual([
-      "'p' is undefined (should be a object)",
-    ]);
-  });
-
-  test("objects with a values schema", () => {
-    const schema: Schema = {
-      p: { type: Object, values: { type: Object, shape: { id: Number, url: String } } },
-    };
-    expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
-    expect(validateSchema({ p: {} }, schema)).toEqual([]);
-    expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([
-      "some of the values in 'p' are invalid ('id' is not an object, 'url' is not an object)",
-    ]);
+    expect(validateType({ a: 1 }, t.object({ a: t.number, "b?": t.number }))).toEqual([]);
+    expect(validateType({ a: 1, b: 1 }, t.object({ a: t.number, "b?": t.number }))).toMatchObject(
+      []
+    );
     expect(
-      validateSchema(
-        {
-          p: {
-            a: { id: 1, url: "asf" },
-          },
-        },
-        schema
-      )
-    ).toEqual([]);
-    expect(
-      validateSchema(
-        {
-          p: {
-            a: { id: 1, url: "asf" },
-            b: { id: 1, url: 1 },
-          },
-        },
-        schema
-      )
-    ).toEqual([
-      "some of the values in 'p' are invalid ('b' doesn't have the correct shape ('url' is not a string))",
+      validateType({ a: 1, b: "abc" }, t.object({ a: t.number, "b?": t.number }))
+    ).toMatchObject([{ message: "value is not a number", path: ["b"] }]);
+  });
+
+  test("shaped object with nested object", () => {
+    const type = t.object({
+      a: t.number,
+      b: t.object({
+        c: t.string,
+      }),
+    });
+
+    expect(validateType({}, type)).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a", "b"] },
+    ]);
+    expect(validateType({ a: 1 }, type)).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+    ]);
+    expect(validateType({ a: 1, b: 1 }, type)).toMatchObject([
+      { message: "value is not an object", path: ["b"] },
+    ]);
+    expect(validateType({ a: 1, b: {} }, type)).toMatchObject([
+      { message: "object value have missing keys", path: ["b"], missingKeys: ["c"] },
+    ]);
+    expect(validateType({ a: 1, b: { c: "" } }, type)).toEqual([]);
+    expect(validateType({ a: "", b: { c: "" } }, type)).toMatchObject([
+      { message: "value is not a number", path: ["a"] },
+    ]);
+    expect(validateType({ a: 1, b: { c: 123 } }, type)).toMatchObject([
+      { message: "value is not a string", path: ["b", "c"] },
     ]);
   });
 
-  test("objects with more complex shape", () => {
-    const schema: Schema = {
-      p: {
-        type: Object,
-        shape: {
-          id: Number,
-          url: [Boolean, { type: Array, element: Number }],
-        },
+  test("keyed object", () => {
+    expect(validateType("abc", t.object(["a", "b"]))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType(123, t.object(["a", "b"]))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType(true, t.object(["a", "b"]))).toMatchObject([
+      { message: "value is not an object", path: [] },
+    ]);
+    expect(validateType({}, t.object(["a", "b"]))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a", "b"] },
+    ]);
+    expect(validateType({ a: "abc" }, t.object(["a", "b"]))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+    ]);
+    expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b"]))).toEqual([]);
+    expect(validateType({ a: 123 }, t.object(["a", "b"]))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+    ]);
+    expect(validateType({ a: 123, b: "def" }, t.object(["a", "b"]))).toEqual([]);
+    expect(validateType({ a: 123, b: 123 }, t.object(["a", "b"]))).toEqual([]);
+  });
+
+  test("keyed object with optional keys", () => {
+    expect(validateType({}, t.object(["a", "b?"]))).toMatchObject([
+      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+    ]);
+    expect(validateType({ a: "abc" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: 123 }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: 123, b: "def" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: 123, b: 123 }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: 123, b: 123 }, t.object(["a", "b?"]))).toEqual([]);
+  });
+
+  test("keyed object with additional keys", () => {
+    expect(validateType({ a: "abc", b: "def", c: "ghi" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: "abc", c: "ghi" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: "abc", d: "jkl" }, t.object(["a", "b?"]))).toEqual([]);
+  });
+});
+
+describe("promise", () => {
+  test("promise", () => {
+    const issue = { message: "value is not a promise" };
+    expect(validateType(123, t.promise())).toMatchObject([issue]);
+    expect(validateType("abc", t.promise())).toMatchObject([issue]);
+    expect(validateType(true, t.promise())).toMatchObject([issue]);
+    expect(validateType(Promise.resolve(), t.promise())).toEqual([]);
+  });
+
+  test("return type is not checked", () => {
+    expect(validateType(Promise.resolve(""), t.promise(t.string))).toEqual([]);
+    expect(validateType(Promise.resolve(123), t.promise(t.string))).toEqual([]);
+    expect(validateType(Promise.resolve(true), t.promise(t.string))).toEqual([]);
+  });
+});
+
+test("signal", () => {
+  const issue = { message: "value is not a reactive value" };
+  expect(validateType(123, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType("abc", t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(true, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(() => {}, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(function () {}, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(A, t.signal(t.string))).toMatchObject([issue]);
+  class B {
+    set() {}
+  }
+  expect(validateType(B, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(signal(1), t.signal(t.number))).toEqual([]);
+  expect(
+    validateType(
+      computed(() => 1),
+      t.signal(t.number)
+    )
+  ).toEqual([]);
+});
+
+test("record", () => {
+  expect(validateType("abc", t.record(t.string))).toMatchObject([
+    { message: "value is not an object", path: [] },
+  ]);
+  expect(validateType(123, t.record(t.string))).toMatchObject([
+    { message: "value is not an object", path: [] },
+  ]);
+  expect(validateType(true, t.record(t.string))).toMatchObject([
+    { message: "value is not an object", path: [] },
+  ]);
+  expect(validateType({}, t.record(t.string))).toEqual([]);
+  expect(validateType({ a: "abc" }, t.record(t.string))).toEqual([]);
+  expect(validateType({ a: "abc", b: "def" }, t.record(t.string))).toEqual([]);
+  expect(validateType({ a: 123 }, t.record(t.string))).toMatchObject([
+    { message: "value is not a string", path: ["a"] },
+  ]);
+  expect(validateType({ a: 123, b: "def" }, t.record(t.string))).toMatchObject([
+    { message: "value is not a string", path: ["a"] },
+  ]);
+  expect(validateType({ a: 123, b: 123 }, t.record(t.string))).toMatchObject([
+    { message: "value is not a string", path: ["a"] },
+    { message: "value is not a string", path: ["b"] },
+  ]);
+  expect(validateType({ a: 123, b: 123 }, t.record(t.number))).toEqual([]);
+});
+
+test("string", () => {
+  const issue = { message: "value is not a string" };
+  expect(validateType("", t.string)).toEqual([]);
+  expect(validateType("abc", t.string)).toEqual([]);
+  expect(validateType(123, t.string)).toMatchObject([issue]);
+  expect(validateType(987, t.string)).toMatchObject([issue]);
+  expect(validateType(true, t.string)).toMatchObject([issue]);
+  expect(validateType(false, t.string)).toMatchObject([issue]);
+  expect(validateType(undefined, t.string)).toMatchObject([issue]);
+  expect(validateType(null, t.string)).toMatchObject([issue]);
+  expect(validateType({}, t.string)).toMatchObject([issue]);
+  expect(validateType([], t.string)).toMatchObject([issue]);
+  expect(validateType(A, t.string)).toMatchObject([issue]);
+  expect(validateType(new A(), t.string)).toMatchObject([issue]);
+});
+
+test("tuple", () => {
+  expect(validateType(["abc"], t.tuple([t.string]))).toEqual([]);
+  expect(validateType([], t.tuple([t.string]))).toMatchObject([
+    { message: "tuple value does not have the correct length" },
+  ]);
+  expect(validateType([123], t.tuple([t.string]))).toMatchObject([
+    { message: "value is not a string", path: [0] },
+  ]);
+  expect(validateType(["abc", 123], t.tuple([t.string]))).toMatchObject([
+    { message: "tuple value does not have the correct length" },
+  ]);
+  expect(validateType("", t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType("abc", t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType(123, t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType(987, t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType(true, t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType({}, t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not an array" },
+  ]);
+  expect(validateType(["abc", 123], t.tuple([t.string, t.number]))).toEqual([]);
+  expect(validateType([123, "abc"], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not a string", path: [0] },
+    { message: "value is not a number", path: [1] },
+  ]);
+  expect(validateType(["abc"], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "tuple value does not have the correct length" },
+  ]);
+  expect(validateType([123], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "tuple value does not have the correct length" },
+  ]);
+  expect(validateType(["abc", true], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not a number", path: [1] },
+  ]);
+  expect(validateType([true, 123], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "value is not a string", path: [0] },
+  ]);
+  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number]))).toMatchObject([
+    { message: "tuple value does not have the correct length" },
+  ]);
+  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number, t.boolean]))).toEqual([]);
+  expect(validateType(["abc", 123, 123], t.tuple([t.string, t.number, t.boolean]))).toMatchObject([
+    { message: "value is not a boolean", path: [2] },
+  ]);
+});
+
+test("or", () => {
+  expect(validateType("", t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType("abc", t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(123, t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(987, t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(true, t.or([t.string, t.number]))).toMatchObject([
+    {
+      message: "value does not match union type",
+      subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
+    },
+  ]);
+  expect(validateType({}, t.or([t.string, t.number]))).toMatchObject([
+    {
+      message: "value does not match union type",
+      subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
+    },
+  ]);
+  expect(validateType([], t.or([t.string, t.number]))).toMatchObject([
+    {
+      message: "value does not match union type",
+      subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
+    },
+  ]);
+  expect(validateType([], t.or([t.string, t.array(t.number)]))).toEqual([]);
+  expect(validateType([""], t.or([t.string, t.array(t.number)]))).toMatchObject([
+    { message: "value is not a number", path: [0] },
+  ]);
+});
+
+test("complex type", () => {
+  const complexType = t.object({
+    "a?": t.number,
+    b: t.array(
+      t.object({
+        a: t.instanceOf(A),
+        "b?": t.or([t.number, t.literal(false)]),
+        c: t.tuple([t.string, t.string]),
+      })
+    ),
+  });
+
+  expect(validateType(1, complexType)).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType("", complexType)).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType([], complexType)).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType(null, complexType)).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType({}, complexType)).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: "" }, complexType)).toMatchObject([
+    { message: "value is not a number", path: ["a"] },
+    { message: "object value have missing keys", missingKeys: ["b"], path: [] },
+  ]);
+  expect(validateType({ a: 1 }, complexType)).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ b: {} }, complexType)).toMatchObject([
+    { message: "value is not an array", path: ["b"] },
+  ]);
+  expect(
+    validateType(
+      {
+        b: [{ a: 1, c: ["a", "b", "c"] }],
       },
-    };
-    expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
-    expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('id' is missing (should be a number), 'url' is missing (should be a boolean or list of numbers))",
-    ]);
-    expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('url' is not a boolean or list of numbers)",
-    ]);
-    expect(validateSchema({ p: { id: 1, url: true } }, schema)).toEqual([]);
-    expect(validateSchema({ p: undefined }, schema)).toEqual([
-      "'p' is undefined (should be a object)",
-    ]);
-  });
-
-  test("objects with shape and *", () => {
-    const schema: Schema = { p: { type: Object, shape: { id: Number, "*": true } } };
-    expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
-    expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('id' is missing (should be a number))",
-    ]);
-    expect(validateSchema({ p: { id: 1 } }, schema)).toEqual([]);
-    expect(validateSchema({ p: { id: "asdf" } }, schema)).toEqual([
-      "'p' doesn't have the correct shape ('id' is not a number)",
-    ]);
-    expect(validateSchema({ p: { id: 1, url: 1 } }, schema)).toEqual([]);
-    expect(validateSchema({ p: undefined }, schema)).toEqual([
-      "'p' is undefined (should be a object)",
-    ]);
-  });
-
-  test("can specify that additional keys are allowed", () => {
-    const schema: Schema = {
-      message: String,
-      "*": true,
-    };
-    expect(validateSchema({ message: "hey" }, schema)).toEqual([]);
-    expect(validateSchema({ message: "hey", otherKey: true }, schema)).toEqual([]);
-  });
-
-  test("array with element with shape", () => {
-    const schema: Schema = {
-      p: {
-        type: Array,
-        element: {
-          type: Object,
-          shape: {
-            num: { type: Number, optional: true },
-          },
-        },
+      complexType
+    )
+  ).toMatchObject([
+    { message: "value is not an instance of 'A'", path: ["b", 0, "a"] },
+    { message: "tuple value does not have the correct length", path: ["b", 0, "c"] },
+  ]);
+  expect(
+    validateType(
+      {
+        b: [{ a: new A(), c: ["a", "b"] }],
       },
-    };
-    expect(validateSchema({ p: 1 }, schema)).toEqual(["'p' is not a list of objects"]);
-    expect(validateSchema({ p: {} }, schema)).toEqual(["'p' is not a list of objects"]);
-    expect(validateSchema({ p: [] }, schema)).toEqual([]);
-    expect(validateSchema({ p: [{}] }, schema)).toEqual([]);
-    expect(validateSchema({ p: [{ num: 1 }] }, schema)).toEqual([]);
-    expect(validateSchema({ p: [{ num: true }] }, schema)).toEqual([
-      "'p[0]' doesn't have the correct shape ('num' is not a number)",
-    ]);
-  });
-
-  test("schema with custom validate function", () => {
-    const schema: Schema = {
-      size: {
-        validate: (e: string) => ["small", "medium", "large"].includes(e),
+      complexType
+    )
+  ).toEqual([]);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), c: ["a", "b"] }],
       },
-    };
-    expect(validateSchema({ size: "small" }, schema)).toEqual([]);
-    expect(validateSchema({ size: "sall" }, schema)).toEqual(["'size' is not valid"]);
-    expect(validateSchema({ size: 1 }, schema)).toEqual(["'size' is not valid"]);
-  });
-
-  test("schema with custom validate function and type", () => {
-    const schema: Schema = {
-      size: {
-        type: String,
-        validate: (e: string) => ["small", "medium", "large"].includes(e),
+      complexType
+    )
+  ).toEqual([]);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), b: false, c: ["a", "b"] }],
       },
-    };
-    expect(validateSchema({ size: "small" }, schema)).toEqual([]);
-    expect(validateSchema({ size: "sall" }, schema)).toEqual(["'size' is not valid"]);
-    expect(validateSchema({ size: 1 }, schema)).toEqual(["'size' is not a string"]);
-  });
-
-  test("value as type", () => {
-    expect(validateSchema({ a: false }, { a: { value: false } })).toEqual([]);
-    expect(validateSchema({ a: true }, { a: { value: false } })).toEqual([
-      "'a' is not equal to 'false'",
-    ]);
-  });
-
-  test("value as type (some other values)", () => {
-    expect(validateSchema({ a: null }, { a: { value: null } })).toEqual([]);
-    expect(validateSchema({ a: false }, { a: { value: null } })).toEqual([
-      "'a' is not equal to 'null'",
-    ]);
-    expect(validateSchema({ a: "hey" }, { a: { value: "hey" } })).toEqual([]);
-    expect(validateSchema({ a: true }, { a: { value: "hey" } })).toEqual([
-      "'a' is not equal to 'hey'",
-    ]);
-  });
-
-  test("value as type work in union type", () => {
-    expect(validateSchema({ a: false }, { a: [String, { value: false }] })).toEqual([]);
-    expect(validateSchema({ a: true }, { a: [String, { value: false }] })).toEqual([
-      "'a' is not a string or false",
-    ]);
-    expect(validateSchema({ a: "string" }, { a: [String, { value: false }] })).toEqual([]);
-  });
+      complexType
+    )
+  ).toEqual([]);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), b: 123, c: ["a", "b"] }],
+      },
+      complexType
+    )
+  ).toEqual([]);
 });

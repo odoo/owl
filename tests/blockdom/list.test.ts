@@ -1,18 +1,14 @@
-import {
-  list,
-  mount,
-  multi,
-  patch,
-  text,
-  createBlock,
-  VNode,
-  withKey,
-} from "../../src/runtime/blockdom";
+import { list, mount, multi, patch, text, createBlock, VNode } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
+
+function withKey(vnode: VNode, key: any) {
+  vnode.key = key;
+  return vnode;
+}
 
 let fixture: HTMLElement;
 

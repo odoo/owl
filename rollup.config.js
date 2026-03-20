@@ -1,7 +1,7 @@
-import pkg from "./package.json";
+import pkg from "./package.json" with { type: "json" };
 import git from "git-rev-sync";
 import typescript from "rollup-plugin-typescript2";
-import { terser } from "rollup-plugin-terser";
+import terser from '@rollup/plugin-terser';
 import dts from "rollup-plugin-dts";
 
 let input, output;
@@ -16,7 +16,7 @@ if (pkg.module !== ES_FILENAME || pkg.main !== CJS_FILENAME) {
 
 const outro = `
 __info__.date = '${new Date().toISOString()}';
-__info__.hash = '${git.short()}';
+__info__.hash = '${git.short(".")}';
 __info__.url = 'https://github.com/odoo/owl';
 `;
 

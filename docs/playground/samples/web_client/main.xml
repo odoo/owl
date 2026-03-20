@@ -1,0 +1,85 @@
+<templates>
+  <div t-name="demo.NavBar" class="wc-navbar">
+    <span class="wc-brand">MyERP</span>
+    <div class="wc-nav-apps">
+      <t t-foreach="this.env.root.apps" t-as="app" t-key="app.name">
+        <a class="wc-nav-app" t-att-class="{active: this.env.root.currentApp() === app.name}" t-on-click="() => this.env.root.switchApp(app.name)">
+          <span t-out="app.icon"/> <span t-out="app.name"/>
+        </a>
+      </t>
+    </div>
+    <span class="wc-user">👤 Admin</span>
+  </div>
+
+  <div t-name="demo.Sidebar" class="wc-sidebar" t-att-class="{collapsed: this.env.root.sidebarCollapsed()}">
+    <button class="wc-sidebar-toggle" t-on-click="() => this.env.root.toggleSidebar()">☰</button>
+    <div class="wc-sidebar-menu" t-if="!this.env.root.sidebarCollapsed()">
+      <div class="wc-sidebar-section">Favorites</div>
+      <a class="wc-sidebar-item active">All Records</a>
+      <a class="wc-sidebar-item">My Records</a>
+      <div class="wc-sidebar-section">Filters</div>
+      <a class="wc-sidebar-item">New</a>
+      <a class="wc-sidebar-item">Won</a>
+      <a class="wc-sidebar-item">Lost</a>
+    </div>
+  </div>
+
+  <div t-name="demo.Breadcrumbs" class="wc-breadcrumbs">
+    <t t-foreach="this.env.root.breadcrumbs()" t-as="crumb" t-key="crumb_index">
+      <span t-if="crumb_index > 0" class="wc-bc-sep">/</span>
+      <a class="wc-bc-item" t-att-class="{clickable: crumb_index === 0 and this.env.root.selectedRecord()}" t-on-click="() => { if(crumb_index === 0) this.env.root.goBack(); }">
+        <t t-out="crumb"/>
+      </a>
+    </t>
+  </div>
+
+  <table t-name="demo.ListView" class="wc-list">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Stage</th>
+        <th>Value</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <t t-foreach="this.env.root.records()" t-as="rec" t-key="rec.id">
+        <tr t-on-click="() => this.env.root.openRecord(rec)">
+          <td class="rec-name"><t t-out="rec.name"/></td>
+          <td><span class="wc-badge" t-att-class="rec.stage.toLowerCase()"><t t-out="rec.stage"/></span></td>
+          <td><t t-out="rec.value"/></td>
+          <td><t t-out="rec.date"/></td>
+        </tr>
+      </t>
+    </tbody>
+  </table>
+
+  <div t-name="demo.FormView" class="wc-form">
+    <div class="wc-form-header">
+      <h2 t-out="this.env.root.selectedRecord().name"/>
+      <span class="wc-badge" t-att-class="this.env.root.selectedRecord().stage.toLowerCase()" t-out="this.env.root.selectedRecord().stage"/>
+    </div>
+    <div class="wc-form-grid">
+      <label>Name</label>
+      <input t-att-value="this.env.root.selectedRecord().name" readonly=""/>
+      <label>Stage</label>
+      <input t-att-value="this.env.root.selectedRecord().stage" readonly=""/>
+      <label>Value</label>
+      <input t-att-value="this.env.root.selectedRecord().value" readonly=""/>
+      <label>Date</label>
+      <input t-att-value="this.env.root.selectedRecord().date" readonly=""/>
+    </div>
+  </div>
+
+  <div t-name="demo.Root" class="wc-root">
+    <NavBar/>
+    <div class="wc-main">
+      <Sidebar/>
+      <div class="wc-content">
+        <Breadcrumbs/>
+        <ListView t-if="this.currentView() === 'list'"/>
+        <FormView t-if="this.currentView() === 'form'"/>
+      </div>
+    </div>
+  </div>
+</templates>

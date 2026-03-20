@@ -1,10 +1,5 @@
-import {
-  compileExpr,
-  compileExprToArray,
-  interpolate,
-  INTERP_REGEXP,
-  replaceDynamicParts,
-} from "./inline_expressions";
+import { OwlError } from "../common/owl_error";
+import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -13,16 +8,15 @@ import {
   ASTDomNode,
   ASTLog,
   ASTMulti,
-  ASTSlot,
   ASTTCall,
   ASTTCallBlock,
-  ASTTEsc,
+  ASTTCallSlot,
   ASTText,
   ASTTForEach,
+  ForEachNoFlag,
   ASTTif,
   ASTTKey,
   ASTTOut,
-  ASTTPortal,
   ASTTranslation,
   ASTTranslationContext,
   ASTTSet,
@@ -30,7 +24,8 @@ import {
   Attrs,
   EventHandlers,
 } from "./parser";
-import { OwlError } from "../common/owl_error";
+
+const zero = Symbol("zero");
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 const whitespaceRE = /\s+/g;
@@ -42,7 +37,6 @@ export interface Config {
 }
 
 export interface CodeGenOptions extends Config {
-  hasSafeContext?: boolean;
   name?: string;
   hasGlobalValues: boolean;
 }
@@ -54,7 +48,7 @@ if (typeof document !== "undefined") {
   xmlDoc = document.implementation.createDocument(null, null, null);
 }
 
-const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic"]);
+const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic", "passive"]);
 
 let nextDataIds: { [key: string]: number } = {};
 
@@ -173,13 +167,11 @@ interface Context {
   block: BlockDescription | null;
   index: number | string;
   forceNewBlock: boolean;
-  isLast?: boolean;
   translate: boolean;
   translationCtx: string;
   tKeyExpr: string | null;
   nameSpace?: string;
   tModelSelectedExpr?: string;
-  ctxVar?: string;
   inPreTag?: boolean;
 }
 
@@ -203,12 +195,12 @@ class CodeTarget {
   name: string;
   indentLevel = 0;
   loopLevel = 0;
+  loopCtxVars: string[] = [];
+  tSetVars: Map<string, number> = new Map();
   code: string[] = [];
   hasRoot = false;
-  hasCache = false;
-  shouldProtectScope: boolean = false;
+  needsScopeProtection = false;
   on: EventHandlers | null;
-  hasRefWrapper: boolean = false;
 
   constructor(name: string, on?: EventHandlers | null) {
     this.name = name;
@@ -227,16 +219,8 @@ class CodeTarget {
   generateCode(): string {
     let result: string[] = [];
     result.push(`function ${this.name}(ctx, node, key = "") {`);
-    if (this.shouldProtectScope) {
+    if (this.needsScopeProtection) {
       result.push(`  ctx = Object.create(ctx);`);
-      result.push(`  ctx[isBoundary] = 1`);
-    }
-    if (this.hasRefWrapper) {
-      result.push(`  let refWrapper = makeRefWrapper(this.__owl__);`);
-    }
-    if (this.hasCache) {
-      result.push(`  let cache = ctx.cache || {};`);
-      result.push(`  let nextCache = ctx.cache = {};`);
     }
     for (let line of this.code) {
       result.push(line);
@@ -272,7 +256,6 @@ const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 export class CodeGenerator {
   blocks: BlockDescription[] = [];
   nextBlockId = 1;
-  hasSafeContext: boolean;
   isDebug: boolean = false;
   targets: CodeTarget[] = [];
   target = new CodeTarget("template");
@@ -282,9 +265,8 @@ export class CodeGenerator {
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
-  slotNames: Set<String> = new Set();
+  slotNames: Set<String | Symbol> = new Set();
   helpers: Set<string> = new Set();
-
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {
@@ -298,7 +280,6 @@ export class CodeGenerator {
       }
       this.translatableAttributes = [...attrs];
     }
-    this.hasSafeContext = options.hasSafeContext || false;
     this.dev = options.dev || false;
     this.ast = ast;
     this.templateName = options.name;
@@ -316,7 +297,6 @@ export class CodeGenerator {
       block: null,
       index: 0,
       forceNewBlock: false,
-      isLast: true,
       translate: true,
       translationCtx: "",
       tKeyExpr: null,
@@ -439,40 +419,6 @@ export class CodeGenerator {
     }
   }
 
-  /**
-   * Captures variables that are used inside of an expression. This is useful
-   * because in compiled code, almost all variables are accessed through the ctx
-   * object. In the case of functions, that lookup in the context can be delayed
-   * which can cause issues if the value has changed since the function was
-   * defined.
-   *
-   * @param expr the expression to capture
-   * @param forceCapture whether the expression should capture its scope even if
-   *  it doesn't contain a function. Useful when the expression will be used as
-   *  a function body.
-   * @returns a new expression that uses the captured values
-   */
-  captureExpression(expr: string, forceCapture: boolean = false): string {
-    if (!forceCapture && !expr.includes("=>")) {
-      return compileExpr(expr);
-    }
-    const tokens = compileExprToArray(expr);
-    const mapping = new Map<string, string>();
-    return tokens
-      .map((tok) => {
-        if (tok.varName && !tok.isLocal) {
-          if (!mapping.has(tok.varName)) {
-            const varId = generateId("v");
-            mapping.set(tok.varName, varId);
-            this.define(varId, tok.value);
-          }
-          tok.value = mapping.get(tok.varName)!;
-        }
-        return tok.value;
-      })
-      .join("");
-  }
-
   translate(str: string, translationCtx: string): string {
     const match = translationRE.exec(str) as any;
     return match[1] + this.translateFn(match[2], translationCtx) + match[3];
@@ -489,8 +435,6 @@ export class CodeGenerator {
         return this.compileText(ast, ctx);
       case ASTType.DomNode:
         return this.compileTDomNode(ast, ctx);
-      case ASTType.TEsc:
-        return this.compileTEsc(ast, ctx);
       case ASTType.TOut:
         return this.compileTOut(ast, ctx);
       case ASTType.TIf:
@@ -513,14 +457,12 @@ export class CodeGenerator {
         return this.compileDebug(ast, ctx);
       case ASTType.TLog:
         return this.compileLog(ast, ctx);
-      case ASTType.TSlot:
-        return this.compileTSlot(ast, ctx);
+      case ASTType.TCallSlot:
+        return this.compileTCallSlot(ast, ctx);
       case ASTType.TTranslation:
         return this.compileTTranslation(ast, ctx);
       case ASTType.TTranslationContext:
         return this.compileTTranslationContext(ast, ctx);
-      case ASTType.TPortal:
-        return this.compileTPortal(ast, ctx);
     }
   }
 
@@ -593,7 +535,30 @@ export class CodeGenerator {
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
     }
-    return `[${modifiersCode}${this.captureExpression(handler)}, ctx]`;
+
+    const compiled = compileExpr(handler);
+    if (!compiled.trim()) {
+      return `[${modifiersCode}, ctx]`;
+    }
+
+    let hoistedExpr: string;
+    const arrowMatch = compiled.match(/^(\([^)]*\))\s*=>/);
+    const bareArrowMatch = !arrowMatch && compiled.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/);
+
+    if (arrowMatch) {
+      const inner = arrowMatch[1].slice(1, -1).trim();
+      const rest = compiled.slice(arrowMatch[0].length);
+      hoistedExpr = inner ? `(ctx,${inner})=>${rest}` : `(ctx)=>${rest}`;
+    } else if (bareArrowMatch) {
+      const rest = compiled.slice(bareArrowMatch[0].length);
+      hoistedExpr = `(ctx,${bareArrowMatch[1]})=>${rest}`;
+    } else {
+      hoistedExpr = `(ctx, ev) => (${compiled}).call(ctx['this'], ev)`;
+    }
+
+    const id = generateId("hdlr_fn");
+    this.staticDefs.push({ id, expr: hoistedExpr });
+    return `[${modifiersCode}${id}, ctx]`;
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context): string {
@@ -668,7 +633,6 @@ export class CodeGenerator {
     if (ast.model) {
       const {
         hasDynamicChildren,
-        baseExpr,
         expr,
         eventType,
         shouldNumberize,
@@ -677,15 +641,10 @@ export class CodeGenerator {
         specialInitTargetAttr,
       } = ast.model;
 
-      const baseExpression = compileExpr(baseExpr);
-      const bExprId = generateId("bExpr");
-      this.define(bExprId, baseExpression);
-
       const expression = compileExpr(expr);
       const exprId = generateId("expr");
-      this.define(exprId, expression);
-
-      const fullExpression = `${bExprId}[${exprId}]`;
+      this.helpers.add("modelExpr");
+      this.define(exprId, `modelExpr(${expression})`);
 
       let idx: number;
       if (specialInitTargetAttr) {
@@ -697,14 +656,14 @@ export class CodeGenerator {
             targetExpr = compileExpr(dynamicTgExpr);
           }
         }
-        idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "prop");
+        idx = block!.insertData(`${exprId}() === ${targetExpr}`, "prop");
         attrs[`block-property-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
         const bValueId = generateId("bValue");
         tModelSelectedExpr = `${bValueId}`;
-        this.define(tModelSelectedExpr, fullExpression);
+        this.define(tModelSelectedExpr, `${exprId}()`);
       } else {
-        idx = block!.insertData(`${fullExpression}`, "prop");
+        idx = block!.insertData(`${exprId}()`, "prop");
         attrs[`block-property-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -712,7 +671,7 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ev) => { ${fullExpression} = ${valueCode}; }]`;
+      const handler = `[(ctx, ev) => { ${exprId}.set(${valueCode}); }, ctx]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }
@@ -726,19 +685,9 @@ export class CodeGenerator {
 
     // t-ref
     if (ast.ref) {
-      if (this.dev) {
-        this.helpers.add("makeRefWrapper");
-        this.target.hasRefWrapper = true;
-      }
-      const isDynamic = INTERP_REGEXP.test(ast.ref);
-      let name = `\`${ast.ref}\``;
-      if (isDynamic) {
-        name = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
-      }
-      let setRefStr = `(el) => this.__owl__.setRef((${name}), el)`;
-      if (this.dev) {
-        setRefStr = `refWrapper(${name}, ${setRefStr})`;
-      }
+      const refExpr = compileExpr(ast.ref);
+      this.helpers.add("createRef");
+      const setRefStr = `createRef(${refExpr})`;
       const idx = block!.insertData(setRefStr, "ref");
       attrs["block-ref"] = String(idx);
     }
@@ -763,7 +712,6 @@ export class CodeGenerator {
           block,
           index: block!.childNumber,
           forceNewBlock: false,
-          isLast: ctx.isLast && i === children.length - 1,
           tKeyExpr: ctx.tKeyExpr,
           nameSpace,
           tModelSelectedExpr,
@@ -794,29 +742,15 @@ export class CodeGenerator {
     return block!.varName;
   }
 
-  compileTEsc(ast: ASTTEsc, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-    let expr: string;
-    if (ast.expr === "0") {
-      this.helpers.add("zero");
-      expr = `ctx[zero]`;
-    } else {
-      expr = compileExpr(ast.expr);
-      if (ast.defaultValue) {
-        this.helpers.add("withDefault");
-        // FIXME: defaultValue is not translated
-        expr = `withDefault(${expr}, ${toStringExpression(ast.defaultValue)})`;
-      }
+  compileZero() {
+    this.helpers.add("zero");
+    const isMultiple = this.slotNames.has(zero);
+    this.slotNames.add(zero);
+    let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
+    if (isMultiple) {
+      key = this.generateComponentKey(key);
     }
-    if (!block || forceNewBlock) {
-      block = this.createBlock(block, "text", ctx);
-      this.insertBlock(`text(${expr})`, block, { ...ctx, forceNewBlock: forceNewBlock && !block });
-    } else {
-      const idx = block.insertData(expr, "txt");
-      const text = xmlDoc.createElement(`block-text-${idx}`);
-      block.insert(text);
-    }
-    return block.varName;
+    return `ctx[zero]?.(node, ${key}) || text("")`;
   }
 
   compileTOut(ast: ASTTOut, ctx: Context): string {
@@ -827,8 +761,7 @@ export class CodeGenerator {
     block = this.createBlock(block, "html", ctx);
     let blockStr;
     if (ast.expr === "0") {
-      this.helpers.add("zero");
-      blockStr = `ctx[zero]`;
+      blockStr = this.compileZero();
     } else if (ast.body) {
       let bodyValue = null;
       bodyValue = BlockDescription.nextBlockId;
@@ -909,7 +842,9 @@ export class CodeGenerator {
     block = this.createBlock(block, "list", ctx);
     this.target.loopLevel++;
     const loopVar = `i${this.target.loopLevel}`;
-    this.addLine(`ctx = Object.create(ctx);`);
+    const ctxVar = generateId("ctx");
+    this.addLine(`const ${ctxVar} = ctx;`);
+    this.target.loopCtxVars.push(ctxVar);
     const vals = `v_block${block.id}`;
     const keys = `k_block${block.id}`;
     const l = `l_block${block.id}`;
@@ -922,17 +857,18 @@ export class CodeGenerator {
     }
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
+    this.addLine(`let ctx = Object.create(${ctxVar});`);
     this.addLine(`ctx[\`${ast.elem}\`] = ${keys}[${loopVar}];`);
-    if (!ast.hasNoFirst) {
+    if (!(ast.noFlags & ForEachNoFlag.First)) {
       this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
     }
-    if (!ast.hasNoLast) {
+    if (!(ast.noFlags & ForEachNoFlag.Last)) {
       this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${keys}.length - 1;`);
     }
-    if (!ast.hasNoIndex) {
+    if (!(ast.noFlags & ForEachNoFlag.Index)) {
       this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
     }
-    if (!ast.hasNoValue) {
+    if (!(ast.noFlags & ForEachNoFlag.Value)) {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${vals}[${loopVar}];`);
     }
     this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);
@@ -944,40 +880,13 @@ export class CodeGenerator {
       );
       this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
     }
-    let id: string;
-    if (ast.memo) {
-      this.target.hasCache = true;
-      id = generateId();
-      this.define(`memo${id}`, compileExpr(ast.memo));
-      this.define(`vnode${id}`, `cache[key${this.target.loopLevel}];`);
-      this.addLine(`if (vnode${id}) {`);
-      this.target.indentLevel++;
-      this.addLine(`if (shallowEqual(vnode${id}.memo, memo${id})) {`);
-      this.target.indentLevel++;
-      this.addLine(`${c}[${loopVar}] = vnode${id};`);
-      this.addLine(`nextCache[key${this.target.loopLevel}] = vnode${id};`);
-      this.addLine(`continue;`);
-      this.target.indentLevel--;
-      this.addLine("}");
-      this.target.indentLevel--;
-      this.addLine("}");
-    }
 
     const subCtx = createContext(ctx, { block, index: loopVar });
     this.compileAST(ast.body, subCtx);
-    if (ast.memo) {
-      this.addLine(
-        `nextCache[key${
-          this.target.loopLevel
-        }] = Object.assign(${c}[${loopVar}], {memo: memo${id!}});`
-      );
-    }
     this.target.indentLevel--;
     this.target.loopLevel--;
+    this.target.loopCtxVars.pop();
     this.addLine(`}`);
-    if (!ctx.isLast) {
-      this.addLine(`ctx = ctx.__proto__;`);
-    }
     this.insertBlock("l", block, ctx);
     return block.varName;
   }
@@ -1017,7 +926,6 @@ export class CodeGenerator {
         block,
         index,
         forceNewBlock,
-        isLast: ctx.isLast && i === l - 1,
       });
       this.compileAST(child, subCtx);
       if (forceNewBlock) {
@@ -1047,11 +955,10 @@ export class CodeGenerator {
 
   compileTCall(ast: ASTTCall, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
-    let ctxVar = ctx.ctxVar || "ctx";
-    if (ast.context) {
-      ctxVar = generateId("ctx");
-      this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
-    }
+
+    const attrs: string[] = ast.attrs
+      ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
+      : [];
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
     if (block && !forceNewBlock) {
@@ -1059,39 +966,36 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     if (ast.body) {
-      this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
-      this.addLine(`${ctxVar}[isBoundary] = 1;`);
-      this.helpers.add("isBoundary");
-      const subCtx = createContext(ctx, { ctxVar });
-      const bl = this.compileMulti({ type: ASTType.Multi, content: ast.body }, subCtx);
-      if (bl) {
-        this.helpers.add("zero");
-        this.addLine(`${ctxVar}[zero] = ${bl};`);
-      }
+      const name = this.compileInNewTarget("callBody", ast.body, ctx);
+      const zeroStr = generateId("lazyBlock");
+      this.define(zeroStr, `${name}.bind(this, ctx)`);
+      this.helpers.add("zero");
+      attrs.push(`[zero]: ${zeroStr}`);
     }
 
-    const key = this.generateComponentKey();
-    if (isDynamic) {
-      const templateVar = generateId("template");
-      if (!this.staticDefs.find((d) => d.id === "call")) {
-        this.staticDefs.push({ id: "call", expr: `app.callTemplate.bind(app)` });
+    let ctxExpr: string;
+    const ctxString = `{${attrs.join(", ")}}`;
+    if (ast.context) {
+      const dynCtxVar = generateId("ctx");
+      this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
+      if (attrs.length) {
+        ctxExpr = `Object.assign({this: ${dynCtxVar}}, ${ctxString})`;
+      } else {
+        ctxExpr = `{this: ${dynCtxVar}}`;
       }
-      this.define(templateVar, subTemplate);
-      this.insertBlock(`call(this, ${templateVar}, ${ctxVar}, node, ${key})`, block!, {
-        ...ctx,
-        forceNewBlock: !block,
-      });
     } else {
-      const id = generateId(`callTemplate_`);
-      this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
-      this.insertBlock(`${id}.call(this, ${ctxVar}, node, ${key})`, block!, {
-        ...ctx,
-        forceNewBlock: !block,
-      });
+      if (attrs.length === 0) {
+        ctxExpr = "ctx";
+      } else {
+        ctxExpr = `Object.assign(Object.create(ctx), ${ctxString})`;
+      }
     }
-    if (ast.body && !ctx.isLast) {
-      this.addLine(`${ctxVar} = ${ctxVar}.__proto__;`);
-    }
+    const key = this.generateComponentKey();
+    this.helpers.add("callTemplate");
+    this.insertBlock(`callTemplate(${subTemplate}, this, app, ${ctxExpr}, node, ${key})`, block!, {
+      ...ctx,
+      forceNewBlock: !block,
+    });
     return block.varName;
   }
 
@@ -1108,9 +1012,10 @@ export class CodeGenerator {
   }
 
   compileTSet(ast: ASTTSet, ctx: Context): null {
-    this.target.shouldProtectScope = true;
-    this.helpers.add("isBoundary").add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
+    const isOuterScope = this.target.loopLevel === 0;
+    const defLevel = this.target.tSetVars.get(ast.name);
+    const isReassignment = defLevel !== undefined && this.target.loopLevel > defLevel;
     if (ast.body) {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
@@ -1118,7 +1023,18 @@ export class CodeGenerator {
       let key = this.target.currentKey(ctx);
       let value = `new LazyValue(${name}, ctx, this, node, ${key})`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
-      this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+      this.helpers.add("withDefault");
+      if (isReassignment) {
+        const ctxVar = this.target.loopCtxVars[defLevel];
+        this.addLine(`${ctxVar}[\`${ast.name}\`] = ${value};`);
+      } else if (isOuterScope) {
+        this.target.needsScopeProtection = true;
+        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+        this.target.tSetVars.set(ast.name, 0);
+      } else {
+        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+        this.target.tSetVars.set(ast.name, this.target.loopLevel);
+      }
     } else {
       let value: string;
       if (ast.defaultValue) {
@@ -1126,6 +1042,7 @@ export class CodeGenerator {
           ctx.translate ? this.translate(ast.defaultValue, ctx.translationCtx) : ast.defaultValue
         );
         if (ast.value) {
+          this.helpers.add("withDefault");
           value = `withDefault(${expr}, ${defaultValue})`;
         } else {
           value = defaultValue;
@@ -1133,8 +1050,17 @@ export class CodeGenerator {
       } else {
         value = expr;
       }
-      this.helpers.add("setContextValue");
-      this.addLine(`setContextValue(${ctx.ctxVar || "ctx"}, "${ast.name}", ${value});`);
+      if (isReassignment) {
+        const ctxVar = this.target.loopCtxVars[defLevel];
+        this.addLine(`${ctxVar}["${ast.name}"] = ${value};`);
+      } else if (isOuterScope) {
+        this.target.needsScopeProtection = true;
+        this.addLine(`ctx["${ast.name}"] = ${value};`);
+        this.target.tSetVars.set(ast.name, 0);
+      } else {
+        this.addLine(`ctx["${ast.name}"] = ${value};`);
+        this.target.tSetVars.set(ast.name, this.target.loopLevel);
+      }
     }
     return null;
   }
@@ -1168,7 +1094,7 @@ export class CodeGenerator {
       const attrTranslationCtx = attrsTranslationCtx?.[name] || translationCtx;
       value = toStringExpression(this.translateFn(value, attrTranslationCtx));
     } else {
-      value = this.captureExpression(value);
+      value = compileExpr(value);
     }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
@@ -1212,26 +1138,44 @@ export class CodeGenerator {
     let { block } = ctx;
     // props
     const hasSlotsProp = "slots" in (ast.props || {});
-    const props: string[] = ast.props
-      ? this.formatPropObject(ast.props, ast.propsTranslationCtx, ctx.translationCtx)
-      : [];
+    const props: string[] = [];
+    const propList: string[] = [];
+
+    for (let p in ast.props || {}) {
+      let [name, suffix] = p.split(".");
+
+      if (suffix) {
+        // .alike, .bind, .translate — delegate to formatProp, no propList entry
+        props.push(this.formatProp(p, ast.props![p], ast.propsTranslationCtx, ctx.translationCtx));
+        continue;
+      }
+
+      const { expr: compiledValue, freeVariables } = processExpr(ast.props![p]);
+
+      const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
+      props.push(`${propName}: ${compiledValue || undefined}`);
+
+      if (freeVariables) {
+        for (const varName of freeVariables) {
+          const syntheticKey = `\x01${name}.${varName}`;
+          propList.push(`"${syntheticKey}"`);
+          props.push(`"${syntheticKey}": ctx['${varName}']`);
+        }
+      } else {
+        propList.push(`"${name}"`);
+      }
+    }
 
     // slots
     let slotDef: string = "";
     if (ast.slots) {
-      let ctxStr = "ctx";
-      if (this.target.loopLevel || !this.hasSafeContext) {
-        ctxStr = generateId("ctx");
-        this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx)`);
-      }
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
         const slotAst = ast.slots[slotName];
         const params = [];
         if (slotAst.content) {
           const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
+          params.push(`__render: ${name}.bind(this), __ctx: ctx`);
         }
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1280,10 +1224,6 @@ export class CodeGenerator {
       expr = `\`${ast.name}\``;
     }
 
-    if (this.dev) {
-      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, this);`);
-    }
-
     if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);
@@ -1294,16 +1234,10 @@ export class CodeGenerator {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
     let id = generateId("comp");
-    const propList: string[] = [];
-    for (let p in ast.props || {}) {
-      let [name, suffix] = p.split(".");
-      if (!suffix) {
-        propList.push(`"${name}"`);
-      }
-    }
+    this.helpers.add("createComponent");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${
+      expr: `createComponent(app, ${
         ast.isDynamic ? null : expr
       }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });
@@ -1346,7 +1280,7 @@ export class CodeGenerator {
     return `${name}(${expr}, [${handlers.join(",")}])`;
   }
 
-  compileTSlot(ast: ASTSlot, ctx: Context): string {
+  compileTCallSlot(ast: ASTTCallSlot, ctx: Context): string {
     this.helpers.add("callSlot");
     let { block } = ctx;
     let blockString: string;
@@ -1413,34 +1347,5 @@ export class CodeGenerator {
       );
     }
     return null;
-  }
-  compileTPortal(ast: ASTTPortal, ctx: Context): string {
-    if (!this.staticDefs.find((d) => d.id === "Portal")) {
-      this.staticDefs.push({ id: "Portal", expr: `app.Portal` });
-    }
-
-    let { block } = ctx;
-    const name = this.compileInNewTarget("slot", ast.content, ctx);
-    let ctxStr = "ctx";
-    if (this.target.loopLevel || !this.hasSafeContext) {
-      ctxStr = generateId("ctx");
-      this.helpers.add("capture");
-      this.define(ctxStr, `capture(ctx)`);
-    }
-    let id = generateId("comp");
-    this.staticDefs.push({
-      id,
-      expr: `app.createComponent(null, false, true, false, false)`,
-    });
-
-    const target = compileExpr(ast.target);
-    const key = this.generateComponentKey();
-    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, ${key}, node, ctx, Portal)`;
-    if (block) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
-    return block.varName;
   }
 }

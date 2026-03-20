@@ -1396,8 +1396,8 @@
               subscription.target.contentType === "object"
                 ? Object.keys(rawSubscription.target).length > 0
                 : subscription.target.contentType === "array"
-                ? rawSubscription.target.length > 0
-                : false;
+                  ? rawSubscription.target.length > 0
+                  : false;
           }
           subscription.target.children = [];
           if (subscription.target.toggled) {

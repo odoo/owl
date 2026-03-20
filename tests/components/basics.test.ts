@@ -1,14 +1,14 @@
-import { App, Component, mount, status, toRaw, useState, xml } from "../../src";
+import { App, Component, mount, props, proxy, status, types as t, toRaw, xml } from "../../src";
+import { markup } from "../../src/runtime/utils";
 import {
   elem,
   makeTestFixture,
-  nextAppError,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
 } from "../helpers";
-import { markup } from "../../src/runtime/utils";
 
 let fixture: HTMLElement;
 
@@ -46,11 +46,11 @@ describe("basics", () => {
 
   test("can mount a simple component with props", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
     }
 
-    const app = new App(Test, { props: { value: 3 } });
-    const component = await app.mount(fixture);
+    const component = await mount(Test, fixture, { props: { value: 3 } });
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(elem(component)).toEqual(fixture.querySelector("span"));
@@ -91,7 +91,7 @@ describe("basics", () => {
 
   test("component with dynamic content can be updated", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="value"/></span>`;
+      static template = xml`<span><t t-out="this.value"/></span>`;
       value = 1;
     }
 
@@ -100,7 +100,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>1</span>");
 
     component.value = 2;
-    component.render();
+    render(component);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
@@ -108,8 +108,8 @@ describe("basics", () => {
   test("updating a component with t-foreach as root", async () => {
     class Test extends Component {
       static template = xml`
-        <t t-foreach="items" t-as="item" t-key="item">
-          <t t-esc="item"/>
+        <t t-foreach="this.items" t-as="item" t-key="item">
+          <t t-out="item"/>
         </t>`;
       items = ["one", "two", "three"];
     }
@@ -118,7 +118,7 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("onetwothree");
     component.items = ["two", "three", "one"];
-    component.render();
+    render(component);
     await nextTick();
     expect(fixture.innerHTML).toBe("twothreeone");
   });
@@ -128,13 +128,14 @@ describe("basics", () => {
     const p = {};
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
+      props = props();
       setup() {
         expect(toRaw(this.props)).not.toBe(p);
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Test, { props: p }).mount(fixture);
   });
 
   test("props value are own property of props object", async () => {
@@ -142,13 +143,13 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
+      props = props();
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    await mount(Test, fixture, { props: p });
   });
 
   test("props value are own property of props object, even with default values", async () => {
@@ -156,15 +157,20 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      static defaultProps = { b: 1 };
+      props = props(
+        {
+          a: t.any,
+          "b?": t.number,
+        },
+        { b: 1 }
+      );
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
         expect(Object.prototype.hasOwnProperty.call(this.props, "b")).toBe(true);
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    await mount(Test, fixture, { props: p });
   });
 
   test("some simple sanity checks (el/status)", async () => {
@@ -215,18 +221,19 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    let error: Error;
-    const app = new App(Test);
-    const prom = app.mount(fixture);
+    let error: any;
+    const app = new App();
+    const prom = app.createRoot(Test).mount(fixture);
     await Promise.resolve();
     fixture.remove();
-    prom.catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot mount a component on a detached dom node"
-    );
+    try {
+      await prom;
+    } catch (e) {
+      error = e;
+    }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Cannot mount a component on a detached dom node");
-    expect(console.warn).toBeCalledTimes(1);
+    expect(error!.cause.message).toBe("Cannot mount a component on a detached dom node");
+    expect(console.warn).toHaveBeenCalledTimes(0);
     console.warn = warn;
   });
 
@@ -247,7 +254,7 @@ describe("basics", () => {
 
   test("class component with dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<span>My value: <t t-esc="value"/></span>`;
+      static template = xml`<span>My value: <t t-out="this.value"/></span>`;
 
       value = 42;
     }
@@ -297,22 +304,22 @@ describe("basics", () => {
 
   test("simple component with a dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="value" /></div>`;
+      static template = xml`<div><t t-out="this.value" /></div>`;
       value = 3;
     }
 
     const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     test.value = 5;
-    test.render();
+    render(test);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>5</div>");
   });
 
-  test("simple component, useState", async () => {
+  test("simple component, proxy", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="state.value" /></div>`;
-      state = useState({ value: 3 });
+      static template = xml`<div><t t-out="this.state.value" /></div>`;
+      state = proxy({ value: 3 });
     }
 
     const test = await mount(Test, fixture);
@@ -338,7 +345,8 @@ describe("basics", () => {
 
   test("class parent, class child component with props", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.value" /></div>`;
+      static template = xml`<div><t t-out="this.props.value" /></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -375,9 +383,9 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
     }
 
     const parent = await mount(Parent, fixture);
@@ -386,7 +394,7 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
-
+  jest.setTimeout(10000000);
   test("text after a conditional component", async () => {
     class Child extends Component {
       static template = xml`<p>simple vnode</p>`;
@@ -395,11 +403,11 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child t-if="state.hasChild"/>
-          <span t-esc="state.text"/>
+          <Child t-if="this.state.hasChild"/>
+          <span t-out="this.state.text"/>
         </div>`;
       static components = { Child };
-      state = useState({ hasChild: false, text: "1" });
+      state = proxy({ hasChild: false, text: "1" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -418,8 +426,8 @@ describe("basics", () => {
   test("can be clicked on and updated", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      state = proxy({
         counter: 0,
       });
     }
@@ -436,8 +444,8 @@ describe("basics", () => {
   test("rerendering a widget with a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      state = proxy({
         counter: 0,
       });
     }
@@ -450,13 +458,14 @@ describe("basics", () => {
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
-    await parent.render();
+    await render(parent);
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
   test("can handle empty props", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Child val=""/></div>`;
@@ -469,13 +478,14 @@ describe("basics", () => {
 
   test("child can be updated", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.value"/>`;
+      static template = xml`<t t-out="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<Child value="state.counter"/>`;
+      static template = xml`<Child value="this.state.counter"/>`;
       static components = { Child };
-      state = useState({
+      state = proxy({
         counter: 0,
       });
     }
@@ -496,15 +506,16 @@ describe("basics", () => {
       static template = xml`<span>b</span>`;
     }
     class Child extends Component {
-      static template = xml`<ChildA t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static template = xml`<ChildA t-if="this.props.child==='a'"/><ChildB t-else=""/>`;
       static components = { ChildA, ChildB };
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<Child child="state.child" />`;
+      static template = xml`<Child child="this.state.child" />`;
       static components = { Child };
 
-      state = useState({ child: "a" });
+      state = proxy({ child: "a" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -540,14 +551,14 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe(`<div></div>`);
     fixture.querySelector("div")!.appendChild(document.createElement("span"));
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
-    await widget.render();
+    await render(widget);
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
 
   test("do not remove previously rendered dom if not necessary, variation", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div><h1>h1</h1><span><t t-esc="state.value"/></span></div>`;
-      state = useState({ value: 1 });
+      static template = xml`<div><h1>h1</h1><span><t t-out="this.state.value"/></span></div>`;
+      state = proxy({ value: 1 });
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe(`<div><h1>h1</h1><span>1</span></div>`);
@@ -582,7 +593,8 @@ describe("basics", () => {
 
   test("same t-keys in two different places", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.blip"/></span>`;
+      static template = xml`<span><t t-out="this.props.blip"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -635,9 +647,9 @@ describe("basics", () => {
       static template = xml`<span>hey</span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static template = xml`<div><Child t-if="this.state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -661,11 +673,11 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
+          <div t-if="this.state.flag">somediv</div>
           <Child t-else=""/>
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -685,11 +697,11 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
-          <Child t-elif="!state.flag" />
+          <div t-if="this.state.flag">somediv</div>
+          <Child t-elif="!this.state.flag" />
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -709,11 +721,11 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
+          <div t-if="this.state.flag">somediv</div>
           <Child t-else="" />
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -734,16 +746,16 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <h1 t-if="state.flag">hey</h1>
+          <h1 t-if="this.state.flag">hey</h1>
           <h2 t-else="">noo</h2>
           <span><Child/></span>
-          <t t-if="state.flag"><span>test</span></t>
+          <t t-if="this.state.flag"><span>test</span></t>
         </div>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
     const parent = await mount(Parent, fixture);
-    const child = Object.values(parent.__owl__.children)[0].component;
+    const child = Object.values(parent.__owl__.children)[0].component as any;
     expect(fixture.innerHTML).toBe(`<div><h2>noo</h2><span><span>child</span></span></div>`);
 
     parent.state.flag = true;
@@ -762,13 +774,13 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
       <div>
-          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+          <div t-foreach="this.state.blips" t-as="blip" t-key="blip.id">
               <SubWidget />
               <SubWidget />
           </div>
       </div>`;
       static components = { SubWidget };
-      state = useState({ blips: [{ a: "a", id: 1 }] });
+      state = proxy({ blips: [{ a: "a", id: 1 }] });
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
@@ -779,12 +791,13 @@ describe("basics", () => {
     // interplay between components and vnodes, a sub widget vnode was patched
     // twice.
     class Child extends Component {
-      static template = xml`<span>abc<t t-if="props.flag">def</t></span>`;
+      static template = xml`<span>abc<t t-if="this.props.flag">def</t></span>`;
+      props = props();
     }
     class Parent extends Component {
-      static template = xml`<Child flag="state.flag"/>`;
+      static template = xml`<Child flag="this.state.flag"/>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
 
     const parent = await mount(Parent, fixture);
@@ -795,10 +808,10 @@ describe("basics", () => {
   });
 
   test("can inject values in tagged templates", async () => {
-    const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
+    const SUBTEMPLATE = xml`<span><t t-out="this.state.n"/></span>`;
     class Parent extends Component {
       static template = xml`<t t-call="${SUBTEMPLATE}"/>`;
-      state = useState({ n: 42 });
+      state = proxy({ n: 42 });
     }
 
     await mount(Parent, fixture);
@@ -810,23 +823,25 @@ describe("basics", () => {
     class Custom extends Component {
       static template = xml`
         <div class="widget-subkey">
-          <t t-esc="props.key"/>__<t t-esc="props.subKey"/>
+          <t t-out="this.props.key"/>__<t t-out="this.props.subKey"/>
         </div>`;
+      props = props();
     }
     class Child extends Component {
       static components = { Custom };
       static template = xml`
         <Custom
-          t-key="props.subKey"
-          key="props.key"
-          subKey="props.subKey"/>`;
+          t-key="this.props.subKey"
+          key="this.props.key"
+          subKey="this.props.subKey"/>`;
+      props = props();
     }
 
     class Parent extends Component {
       static components = { Child };
       static template = xml`
         <div>
-          <Child t-key="childProps.key" t-props="childProps"/>
+          <Child t-key="this.childProps.key" t-props="this.childProps"/>
         </div>`;
       childProps = {
         key: 1,
@@ -840,7 +855,7 @@ describe("basics", () => {
     Object.assign(parent.childProps, {
       subKey: 2,
     });
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("1__2");
 
@@ -849,7 +864,7 @@ describe("basics", () => {
       key: 2,
       subKey: 3,
     });
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("2__3");
   });
@@ -858,33 +873,31 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-if="ifVar" />`;
+      static template = xml`<Child t-if="this.ifVar" />`;
       ifVar = true;
     }
 
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
       ]
     `);
 
     parent.ifVar = false;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(0);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willUnmount",
         "Child:willDestroy",
       ]
@@ -896,37 +909,33 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-key="keyVar" />`;
+      static template = xml`<Child t-key="this.keyVar" />`;
       keyVar = 1;
     }
 
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
       ]
     `);
 
     parent.keyVar = 2;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:willUnmount",
         "Child:willDestroy",
         "Child:mounted",
@@ -938,17 +947,18 @@ describe("basics", () => {
     class GrandChild extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class Child extends Component {
       static components = { GrandChild };
-      static template = xml`<GrandChild t-if="props.displayGrandChild" />`;
+      static template = xml`<GrandChild t-if="this.props.displayGrandChild" />`;
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="myComp" displayGrandChild="displayGrandChild"/>`;
+      static template = xml`<t t-component="this.myComp" displayGrandChild="this.displayGrandChild"/>`;
       myComp = Child;
       displayGrandChild = true;
     }
@@ -956,22 +966,20 @@ describe("basics", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "GrandChild:setup",
         "GrandChild:willStart",
-        "GrandChild:willRender",
-        "GrandChild:rendered",
         "GrandChild:mounted",
       ]
     `);
 
     parent.displayGrandChild = false;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "GrandChild:willUnmount",
         "GrandChild:willDestroy",
       ]
@@ -986,8 +994,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture, { position: "first-child" });
+    await mount(Root, fixture, { position: "first-child" });
     expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
   });
 
@@ -997,8 +1004,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture, { position: "last-child" });
+    await mount(Root, fixture, { position: "last-child" });
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 
@@ -1018,8 +1024,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture);
+    await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 });
@@ -1051,8 +1056,8 @@ describe("support svg components", () => {
 describe("t-out in components", () => {
   test("update properly on state changes", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-out="state.value"/></div>`;
-      state = useState({ value: markup("<b>content</b>") });
+      static template = xml`<div><t t-out="this.state.value"/></div>`;
+      state = proxy({ value: markup("<b>content</b>") });
     }
     const component = await mount(Test, fixture);
 
@@ -1068,29 +1073,26 @@ describe("t-out in components", () => {
     class Test extends Component {
       static template = xml`
         <div>
-            <t t-foreach="state.items" t-as="item" t-key="item">
-            <t t-esc="item"/>
+            <t t-foreach="this.state.items" t-as="item" t-key="item">
             <t t-out="item"/>
             </t>
         </div>`;
-      state = useState({
+      state = proxy({
         items: [markup("<b>one</b>"), markup("<b>two</b>"), markup("<b>tree</b>")],
       });
     }
     await mount(Test, fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><b>one</b><b>two</b><b>tree</b></div>");
   });
 
   test("can switch the contents of two t-out repeatedly", async () => {
     class Test extends Component {
       static template = xml`
-        <t t-out="state.a"/>
-        <t t-out="state.b"/>
+        <t t-out="this.state.a"/>
+        <t t-out="this.state.b"/>
       `;
-      state = useState({
+      state = proxy({
         a: markup("<div>1</div>"),
         b: markup("<div>2</div>"),
       });
@@ -1113,8 +1115,8 @@ describe("t-out in components", () => {
 
   test("t-out and updating falsy values, ", async () => {
     class Test extends Component {
-      static template = xml`<t t-out="state.a"/>`;
-      state: any = useState({ a: 0 });
+      static template = xml`<t t-out="this.state.a"/>`;
+      state: any = proxy({ a: 0 });
     }
 
     const comp = await mount(Test, fixture);

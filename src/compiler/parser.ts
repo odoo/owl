@@ -1,5 +1,5 @@
+import { CustomDirectives } from ".";
 import { OwlError } from "../common/owl_error";
-import type { customDirectives } from "../common/types";
 import { parseXML } from "../common/utils";
 
 // -----------------------------------------------------------------------------
@@ -14,7 +14,6 @@ export const enum ASTType {
   Comment,
   DomNode,
   Multi,
-  TEsc,
   TIf,
   TSet,
   TCall,
@@ -24,11 +23,10 @@ export const enum ASTType {
   TComponent,
   TDebug,
   TLog,
-  TSlot,
+  TCallSlot,
   TCallBlock,
   TTranslation,
   TTranslationContext,
-  TPortal,
 }
 
 export interface BaseAST {
@@ -47,7 +45,6 @@ export interface ASTComment extends BaseAST {
 }
 
 interface TModelInfo {
-  baseExpr: string;
   expr: string;
   targetAttr: string;
   eventType: "change" | "click" | "input";
@@ -75,12 +72,6 @@ export interface ASTMulti extends BaseAST {
   content: AST[];
 }
 
-export interface ASTTEsc extends BaseAST {
-  type: ASTType.TEsc;
-  expr: string;
-  defaultValue: string;
-}
-
 export interface ASTTOut extends BaseAST {
   type: ASTType.TOut;
   expr: string;
@@ -104,16 +95,19 @@ export interface ASTTSet extends BaseAST {
   hasNoRepresentation: true;
 }
 
+export const enum ForEachNoFlag {
+  First = 1,
+  Last = 2,
+  Index = 4,
+  Value = 8,
+}
+
 export interface ASTTForEach extends BaseAST {
   type: ASTType.TForEach;
   collection: string;
   elem: string;
   body: AST;
-  memo: string;
-  hasNoFirst: boolean;
-  hasNoLast: boolean;
-  hasNoIndex: boolean;
-  hasNoValue: boolean;
+  noFlags: number;
   key: string | null;
 }
 
@@ -126,7 +120,9 @@ export interface ASTTKey extends BaseAST {
 export interface ASTTCall extends BaseAST {
   type: ASTType.TCall;
   name: string;
-  body: AST[] | null;
+  attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
+  body: AST | null;
   context: string | null;
 }
 
@@ -149,8 +145,8 @@ export interface ASTComponent extends BaseAST {
   slots: { [name: string]: SlotDefinition } | null;
 }
 
-export interface ASTSlot extends BaseAST {
-  type: ASTType.TSlot;
+export interface ASTTCallSlot extends BaseAST {
+  type: ASTType.TCallSlot;
   name: string;
   attrs: Attrs | null;
   attrsTranslationCtx: Attrs | null;
@@ -185,18 +181,11 @@ export interface ASTTranslationContext extends BaseAST {
   translationCtx: string;
 }
 
-export interface ASTTPortal extends BaseAST {
-  type: ASTType.TPortal;
-  target: string;
-  content: AST;
-}
-
 export type AST =
   | ASTText
   | ASTComment
   | ASTDomNode
   | ASTMulti
-  | ASTTEsc
   | ASTTif
   | ASTTSet
   | ASTTCall
@@ -204,20 +193,19 @@ export type AST =
   | ASTTForEach
   | ASTTKey
   | ASTComponent
-  | ASTSlot
+  | ASTTCallSlot
   | ASTTCallBlock
   | ASTLog
   | ASTDebug
   | ASTTranslation
-  | ASTTranslationContext
-  | ASTTPortal;
+  | ASTTranslationContext;
 
 // -----------------------------------------------------------------------------
 // Parser
 // -----------------------------------------------------------------------------
 const cache: WeakMap<Element, AST> = new WeakMap();
 
-export function parse(xml: string | Element, customDir?: customDirectives): AST {
+export function parse(xml: string | Element, customDir?: CustomDirectives): AST {
   const ctx = {
     inPreTag: false,
     customDirectives: customDir,
@@ -244,7 +232,7 @@ interface ParsingContext {
   tModelInfo?: TModelInfo | null;
   nameSpace?: string;
   inPreTag: boolean;
-  customDirectives?: customDirectives;
+  customDirectives?: CustomDirectives;
 }
 
 function parseNode(node: Node, ctx: ParsingContext): AST | null {
@@ -256,15 +244,13 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTDebugLog(node, ctx) ||
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
-    parseTPortal(node, ctx) ||
-    parseTCall(node, ctx) ||
-    parseTCallBlock(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
+    parseTCall(node, ctx) ||
+    parseTCallBlock(node, ctx) ||
     parseTKey(node, ctx) ||
-    parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||
-    parseTSlot(node, ctx) ||
+    parseTCallSlot(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
     parseTSetNode(node, ctx) ||
@@ -371,9 +357,6 @@ function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 // Regular dom node
 // -----------------------------------------------------------------------------
-const hasDotAtTheEnd = /\.[\w_]+\s*$/;
-const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
-
 const ROOT_SVG_TAGS = new Set(["svg", "g", "path"]);
 
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
@@ -415,20 +398,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
           "The t-model directive only works with <input>, <textarea> and <select>"
         );
       }
-
-      let baseExpr, expr;
-      if (hasDotAtTheEnd.test(value)) {
-        const index = value.lastIndexOf(".");
-        baseExpr = value.slice(0, index);
-        expr = `'${value.slice(index + 1)}'`;
-      } else if (hasBracketsAtTheEnd.test(value)) {
-        const index = value.lastIndexOf("[");
-        baseExpr = value.slice(0, index);
-        expr = value.slice(index + 1, -1);
-      } else {
-        throw new OwlError(`Invalid t-model expression: "${value}" (it should be assignable)`);
-      }
-
       const typeAttr = node.getAttribute("type");
       const isInput = tagName === "input";
       const isSelect = tagName === "select";
@@ -440,8 +409,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
 
       model = {
-        baseExpr,
-        expr,
+        expr: value,
         targetAttr: isCheckboxInput ? "checked" : "value",
         specialInitTargetAttr: isRadioInput ? "checked" : null,
         eventType,
@@ -494,52 +462,21 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
 }
 
 // -----------------------------------------------------------------------------
-// t-esc
-// -----------------------------------------------------------------------------
-
-function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-esc")) {
-    return null;
-  }
-  const escValue = node.getAttribute("t-esc")!;
-  node.removeAttribute("t-esc");
-  const tesc: AST = {
-    type: ASTType.TEsc,
-    expr: escValue,
-    defaultValue: node.textContent || "",
-  };
-  let ref = node.getAttribute("t-ref");
-  node.removeAttribute("t-ref");
-  const ast = parseNode(node, ctx);
-  if (!ast) {
-    return tesc;
-  }
-  if (ast.type === ASTType.DomNode) {
-    return {
-      ...ast,
-      ref,
-      content: [tesc],
-    };
-  }
-  return tesc;
-}
-
-// -----------------------------------------------------------------------------
 // t-out
 // -----------------------------------------------------------------------------
 
 function parseTOutNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-raw")) {
+  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-esc")) {
     return null;
   }
-  if (node.hasAttribute("t-raw")) {
+  if (node.hasAttribute("t-esc")) {
     console.warn(
-      `t-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
+      `t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
     );
   }
-  const expr = (node.getAttribute("t-out") || node.getAttribute("t-raw"))!;
+  const expr = (node.getAttribute("t-out") || node.getAttribute("t-esc"))!;
   node.removeAttribute("t-out");
-  node.removeAttribute("t-raw");
+  node.removeAttribute("t-esc");
 
   const tOut: AST = { type: ASTType.TOut, expr, body: null };
   const ref = node.getAttribute("t-ref");
@@ -580,8 +517,6 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     );
   }
   node.removeAttribute("t-key");
-  const memo = node.getAttribute("t-memo") || "";
-  node.removeAttribute("t-memo");
   const body = parseNode(node, ctx);
 
   if (!body) {
@@ -589,22 +524,19 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   }
 
   const hasNoTCall = !html.includes("t-call");
-  const hasNoFirst = hasNoTCall && !html.includes(`${elem}_first`);
-  const hasNoLast = hasNoTCall && !html.includes(`${elem}_last`);
-  const hasNoIndex = hasNoTCall && !html.includes(`${elem}_index`);
-  const hasNoValue = hasNoTCall && !html.includes(`${elem}_value`);
+  let noFlags = 0;
+  if (hasNoTCall && !html.includes(`${elem}_first`)) noFlags |= ForEachNoFlag.First;
+  if (hasNoTCall && !html.includes(`${elem}_last`)) noFlags |= ForEachNoFlag.Last;
+  if (hasNoTCall && !html.includes(`${elem}_index`)) noFlags |= ForEachNoFlag.Index;
+  if (hasNoTCall && !html.includes(`${elem}_value`)) noFlags |= ForEachNoFlag.Value;
 
   return {
     type: ASTType.TForEach,
     collection,
     elem,
     body,
-    memo,
     key,
-    hasNoFirst,
-    hasNoLast,
-    hasNoIndex,
-    hasNoValue,
+    noFlags,
   };
 }
 
@@ -637,39 +569,37 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-call")) {
     return null;
   }
+  if (node.tagName !== "t") {
+    throw new OwlError(
+      `Directive 't-call' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
   const subTemplate = node.getAttribute("t-call")!;
   const context = node.getAttribute("t-call-context");
   node.removeAttribute("t-call");
   node.removeAttribute("t-call-context");
 
-  if (node.tagName !== "t") {
-    const ast = parseNode(node, ctx);
-    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null, context };
-    if (ast && ast.type === ASTType.DomNode) {
-      ast.content = [tcall];
-      return ast;
-    }
-    if (ast && ast.type === ASTType.TComponent) {
-      return {
-        ...ast,
-        slots: {
-          default: {
-            content: tcall,
-            scope: null,
-            on: null,
-            attrs: null,
-            attrsTranslationCtx: null,
-          },
-        },
-      };
+  let attrs: Attrs | null = null;
+  let attrsTranslationCtx: Attrs | null = null;
+  for (let attributeName of node.getAttributeNames()) {
+    const value = node.getAttribute(attributeName)!;
+    if (attributeName.startsWith("t-translation-context-")) {
+      const attrName = attributeName.slice(22);
+      attrsTranslationCtx = attrsTranslationCtx || {};
+      attrsTranslationCtx[attrName] = value;
+    } else {
+      attrs = attrs || {};
+      attrs[attributeName] = value;
     }
   }
-  const body = parseChildren(node, ctx);
 
+  const body = parseChildNodes(node, ctx);
   return {
     type: ASTType.TCall,
     name: subTemplate,
-    body: body.length ? body : null,
+    attrs,
+    attrsTranslationCtx,
+    body,
     context,
   };
 }
@@ -903,11 +833,15 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 // Slots
 // -----------------------------------------------------------------------------
 
-function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-slot")) {
+function parseTCallSlot(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-call-slot") && !node.hasAttribute("t-slot")) {
     return null;
   }
-  const name = node.getAttribute("t-slot")!;
+  if (node.hasAttribute("t-slot")) {
+    console.warn(`t-slot has been renamed t-call-slot.`);
+  }
+  const name = (node.getAttribute("t-call-slot") || node.getAttribute("t-slot"))!;
+  node.removeAttribute("t-call-slot");
   node.removeAttribute("t-slot");
   let attrs: Attrs | null = null;
   let attrsTranslationCtx: Attrs | null = null;
@@ -927,7 +861,7 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
     }
   }
   return {
-    type: ASTType.TSlot,
+    type: ASTType.TCallSlot,
     name,
     attrs,
     attrsTranslationCtx,
@@ -989,30 +923,6 @@ function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | nul
     return makeASTMulti(children);
   }
   return wrapInTTranslationContextAST(result, translationCtx);
-}
-
-// -----------------------------------------------------------------------------
-// Portal
-// -----------------------------------------------------------------------------
-
-function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-portal")) {
-    return null;
-  }
-  const target = node.getAttribute("t-portal")!;
-  node.removeAttribute("t-portal");
-  const content = parseNode(node, ctx);
-  if (!content) {
-    return {
-      type: ASTType.Text,
-      value: "",
-    };
-  }
-  return {
-    type: ASTType.TPortal,
-    target,
-    content,
-  };
 }
 
 // -----------------------------------------------------------------------------
@@ -1107,30 +1017,28 @@ function normalizeTIf(el: Element) {
 }
 
 /**
- * Normalizes the content of an Element so that t-esc directives on components
- * are removed and instead places a <t t-esc=""> as the default slot of the
+ * Normalizes the content of an Element so that t-out directives on components
+ * are removed and instead places a <t t-out=""> as the default slot of the
  * component. Also throws if the component already has content. This function
  * modifies the Element in place.
  *
  * @param el the element containing the tree that should be normalized
  */
-function normalizeTEscTOut(el: Element) {
-  for (const d of ["t-esc", "t-out"]) {
-    const elements = [...el.querySelectorAll(`[${d}]`)].filter(
-      (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
-    );
-    for (const el of elements) {
-      if (el.childNodes.length) {
-        throw new OwlError(`Cannot have ${d} on a component that already has content`);
-      }
-      const value = el.getAttribute(d);
-      el.removeAttribute(d);
-      const t = el.ownerDocument.createElement("t");
-      if (value != null) {
-        t.setAttribute(d, value);
-      }
-      el.appendChild(t);
+function normalizeTOut(el: Element) {
+  const elements = [...el.querySelectorAll(`[t-out]`)].filter(
+    (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
+  );
+  for (const el of elements) {
+    if (el.childNodes.length) {
+      throw new OwlError(`Cannot have t-out on a component that already has content`);
     }
+    const value = el.getAttribute("t-out");
+    el.removeAttribute("t-out");
+    const t = el.ownerDocument.createElement("t");
+    if (value != null) {
+      t.setAttribute("t-out", value);
+    }
+    el.appendChild(t);
   }
 }
 
@@ -1142,5 +1050,5 @@ function normalizeTEscTOut(el: Element) {
  */
 function normalizeXML(el: Element) {
   normalizeTIf(el);
-  normalizeTEscTOut(el);
+  normalizeTOut(el);
 }

@@ -1,6 +1,5 @@
-import { OwlError } from "../../src/common/owl_error";
-import { App, Component, mount, onMounted, useState, xml } from "../../src";
-import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
@@ -30,7 +29,8 @@ describe("style and class handling", () => {
 
   test("can set class on sub component, as prop", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class">child</div>`;
+      static template = xml`<div t-att-class="this.props.class">child</div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -43,7 +43,8 @@ describe("style and class handling", () => {
 
   test("no class is set is parent does not give it as prop", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class">child</div>`;
+      static template = xml`<div t-att-class="this.props.class">child</div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -69,7 +70,8 @@ describe("style and class handling", () => {
 
   test("empty class attribute is not added on widget root el", async () => {
     class Child extends Component {
-      static template = xml`<span t-att-class="props.class"/>`;
+      static template = xml`<span t-att-class="this.props.class"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Child class=""/></div>`;
@@ -81,7 +83,8 @@ describe("style and class handling", () => {
 
   test("can set more than one class on sub component", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class">child</div>`;
+      static template = xml`<div t-att-class="this.props.class">child</div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -94,7 +97,8 @@ describe("style and class handling", () => {
 
   test("component class and parent class combine together", async () => {
     class Child extends Component {
-      static template = xml`<div class="child" t-att-class="props.class">child</div>`;
+      static template = xml`<div class="child" t-att-class="this.props.class">child</div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -107,12 +111,14 @@ describe("style and class handling", () => {
 
   test("can set class on sub sub component", async () => {
     class ChildChild extends Component {
-      static template = xml`<div t-att-class="props.class">childchild</div>`;
+      static template = xml`<div t-att-class="this.props.class">childchild</div>`;
+      props = props();
     }
 
     class Child extends Component {
-      static template = xml`<ChildChild class="(props.class || '') + ' fromchild'" />`;
+      static template = xml`<ChildChild class="(this.props.class || '') + ' fromchild'" />`;
       static components = { ChildChild };
+      props = props();
     }
 
     class Parent extends Component {
@@ -125,7 +131,8 @@ describe("style and class handling", () => {
 
   test("can set class on multi root component", async () => {
     class Child extends Component {
-      static template = xml`<div>a</div><span t-att-class="props.class">b</span>`;
+      static template = xml`<div>a</div><span t-att-class="this.props.class">b</span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -138,21 +145,24 @@ describe("style and class handling", () => {
 
   test("class on sub component, which is switched to another", async () => {
     class ChildA extends Component {
-      static template = xml`<div t-att-class="props.class">a</div>`;
+      static template = xml`<div t-att-class="this.props.class">a</div>`;
+      props = props();
     }
     class ChildB extends Component {
-      static template = xml`<span t-att-class="props.class">b</span>`;
+      static template = xml`<span t-att-class="this.props.class">b</span>`;
+      props = props();
     }
     class Child extends Component {
-      static template = xml`<ChildA class="props.class" t-if="props.child==='a'"/><ChildB class="props.class" t-else=""/>`;
+      static template = xml`<ChildA class="this.props.class" t-if="this.props.child==='a'"/><ChildB class="this.props.class" t-else=""/>`;
       static components = { ChildA, ChildB };
+      props = props();
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="'someclass'" child="state.child" />`;
+      static template = xml`<Child class="'someclass'" child="this.state.child" />`;
       static components = { Child };
 
-      state = useState({ child: "a" });
+      state = proxy({ child: "a" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -169,7 +179,7 @@ describe("style and class handling", () => {
   //   class Parent extends Component {
   //     static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
   //     static components = { Child };
-  //     state = useState({ a: true, b: false });
+  //     state = proxy({ a: true, b: false });
   //   }
   //   const widget = await mount(Parent, fixture);
   //   expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
@@ -182,7 +192,8 @@ describe("style and class handling", () => {
 
   test("class with extra whitespaces", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class"/>`;
+      static template = xml`<div t-att-class="this.props.class"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<Child class="'a  b c   d'"/>`;
@@ -194,7 +205,8 @@ describe("style and class handling", () => {
 
   test("class with extra whitespaces (variation)", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class"/>`;
+      static template = xml`<div t-att-class="this.props.class"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<p><Child class="'a  b c   d'"/></p>`;
@@ -208,8 +220,9 @@ describe("style and class handling", () => {
   test("t-att-class is properly added/removed on widget root el (v2)", async () => {
     let child: Child;
     class Child extends Component {
-      static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
-      state = useState({ d: true });
+      static template = xml`<span class="c" t-att-class="{ d: this.state.d, ...this.props.class }"/>`;
+      props = props();
+      state = proxy({ d: true });
       setup() {
         child = this;
       }
@@ -218,10 +231,10 @@ describe("style and class handling", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child class="{ b: state.b }" />
+          <Child class="{ b: this.state.b }" />
         </div>`;
       static components = { Child };
-      state = useState({ b: true });
+      state = proxy({ b: true });
     }
     const widget = await mount(Parent, fixture);
 
@@ -249,16 +262,17 @@ describe("style and class handling", () => {
   test("t-att-class is properly added/removed on widget root el (v3)", async () => {
     let child: Child;
     class Child extends Component {
-      static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
-      state = useState({ d: true });
+      static template = xml`<span class="c" t-att-class="{ d: this.state.d, ...this.props.class }"/>`;
+      props = props();
+      state = proxy({ d: true });
       setup() {
         child = this;
       }
     }
     class Parent extends Component {
-      static template = xml`<Child class="{ a: true, b: state.b }"/>`;
+      static template = xml`<Child class="{ a: true, b: this.state.b }"/>`;
       static components = { Child };
-      state = useState({ b: true });
+      state = proxy({ b: true });
     }
     const widget = await mount(Parent, fixture);
 
@@ -284,8 +298,8 @@ describe("style and class handling", () => {
 
   test("class on components do not interfere with user defined classes", async () => {
     class App extends Component {
-      static template = xml`<div t-att-class="{ c: state.c }" />`;
-      state = useState({ c: true });
+      static template = xml`<div t-att-class="{ c: this.state.c }" />`;
+      state = proxy({ c: true });
       setup() {
         onMounted(() => {
           fixture.querySelector("div")!.classList.add("user");
@@ -305,7 +319,8 @@ describe("style and class handling", () => {
   // TODO: adapt name
   test("style is properly added on widget root el", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div t-att-style="props.style"/>`;
+      static template = xml`<div t-att-style="this.props.style"/>`;
+      props = props();
     }
 
     class ParentWidget extends Component {
@@ -320,13 +335,14 @@ describe("style and class handling", () => {
   // TODO: t-att-style as object (like class)
   test.skip("dynamic t-att-style is properly added and updated on widget root el", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div t-att-style="{ 'font-size': '20px', ...props.style }"/>`;
+      static template = xml`<div t-att-style="{ 'font-size': '20px', ...this.props.style }"/>`;
+      props = props();
     }
 
     class ParentWidget extends Component {
-      static template = xml`<Child style="state.style"/>`;
+      static template = xml`<Child style="this.state.style"/>`;
       static components = { Child: SomeComponent };
-      state = useState({ style: { "font-size": "20px" } });
+      state = proxy({ style: { "font-size": "20px" } });
     }
     const widget = await mount(ParentWidget, fixture);
 
@@ -341,23 +357,23 @@ describe("style and class handling", () => {
   // TODO: does this test need to be moved? (class now a standard prop)
   test("error in subcomponent with class", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="props.class" t-esc="this.will.crash"/>`;
+      static template = xml`<div t-att-class="this.props.class" t-out="this.will.crash"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<Child class="'a'"/>`;
       static components = { Child };
     }
-    let error: OwlError;
-    const app = new App(Parent);
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 });

@@ -95,7 +95,6 @@ class VList {
           beforeRemove.call(ch1[i]);
         }
       }
-
       nodeSetTextContent.call(parent, "");
       nodeAppendChild.call(parent, _anchor);
       return;

@@ -13,7 +13,7 @@ beforeEach(() => {
 describe("t-call-block", () => {
   test("simple t-call-block with static text", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-call-block="myBlock()"/></div>`;
+      static template = xml`<div><t t-call-block="this.myBlock()"/></div>`;
       myBlock() {
         return text("hello");
       }

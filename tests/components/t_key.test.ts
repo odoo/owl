@@ -1,5 +1,5 @@
-import { snapshotEverything, makeTestFixture, nextTick, elem } from "../helpers";
-import { Component, mount, xml } from "../../src/index";
+import { snapshotEverything, makeTestFixture, render, nextTick, elem } from "../helpers";
+import { Component, mount, props, xml } from "../../src/index";
 
 snapshotEverything();
 
@@ -13,7 +13,8 @@ describe("t-key", () => {
   test("t-key on Component", async () => {
     let childInstance = null;
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
 
       setup() {
         childInstance = this;
@@ -22,7 +23,7 @@ describe("t-key", () => {
 
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-key="key" key="key" />`;
+      static template = xml`<Child t-key="this.key" key="this.key" />`;
 
       key = 1;
     }
@@ -32,7 +33,7 @@ describe("t-key", () => {
 
     const oldChild = childInstance;
     parent.key = 2;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>2</div>");
     expect(oldChild === childInstance).toBeFalsy();
@@ -41,7 +42,8 @@ describe("t-key", () => {
   test("t-key on Component as a function", async () => {
     let childInstance = null;
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
 
       setup() {
         childInstance = this;
@@ -52,7 +54,7 @@ describe("t-key", () => {
     let __key = 1;
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<span><Child t-key="key" key="key" /></span>`;
+      static template = xml`<span><Child t-key="this.key" key="this.key" /></span>`;
 
       get key() {
         keyCalls++;
@@ -66,7 +68,7 @@ describe("t-key", () => {
 
     const oldChild = childInstance;
     __key = 2;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span><div>2</div></span>");
     expect(oldChild === childInstance).toBeFalsy();
@@ -76,7 +78,8 @@ describe("t-key", () => {
   test("t-key on multiple Components", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
 
       setup() {
         childInstances.push(this);
@@ -86,8 +89,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <Child t-key="key1" key="key1" />
-        <Child t-key="key2" key="key2" />
+        <Child t-key="this.key1" key="this.key1" />
+        <Child t-key="this.key2" key="this.key2" />
       </span>`;
 
       key1 = 1;
@@ -99,7 +102,7 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(elem(parent).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
@@ -108,7 +111,8 @@ describe("t-key", () => {
   test("t-key on multiple Components with t-call 1", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
 
       setup() {
         childInstances.push(this);
@@ -118,8 +122,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate"><t t-set="key" t-value="key1" /></t>
-        <t t-call="calledTemplate"><t t-set="key" t-value="key2" /></t>
+        <t t-call="calledTemplate" key="this.key1" />
+        <t t-call="calledTemplate" key="this.key2" />
       </span>`;
 
       key1 = 1;
@@ -138,7 +142,7 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(elem(parent).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
@@ -147,7 +151,8 @@ describe("t-key", () => {
   test("t-key on multiple Components with t-call 2", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
 
       setup() {
         childInstances.push(this);
@@ -157,7 +162,7 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate" />
+        <t t-call="calledTemplate" key1="this.key1" key2="this.key2" />
       </span>`;
 
       key1 = 1;
@@ -176,7 +181,7 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(elem(parent).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
@@ -185,7 +190,8 @@ describe("t-key", () => {
   test("t-foreach with t-key switch component position", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
+      props = props();
       setup() {
         childInstances.push(this);
       }
@@ -194,8 +200,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-foreach="clist" t-as="c" t-key="c">
-          <Child key="c + key1" t-key="key1"/>
+        <t t-foreach="this.clist" t-as="c" t-key="c">
+          <Child key="c + this.key1" t-key="this.key1"/>
         </t>
       </span>`;
 
@@ -206,7 +212,7 @@ describe("t-key", () => {
     const parent = await mount(Parent, fixture);
     expect(elem(parent).innerHTML).toBe("<div>1key1</div><div>2key1</div>");
     parent.clist = [2, 1];
-    parent.render();
+    render(parent);
     await nextTick();
     expect(elem(parent).innerHTML).toBe("<div>2key1</div><div>1key1</div>");
     expect(childInstances.length).toBe(2);
@@ -214,7 +220,7 @@ describe("t-key", () => {
 
     parent.clist = [1, 2];
     parent.key1 = "key2";
-    parent.render();
+    render(parent);
     await nextTick();
     expect(elem(parent).innerHTML).toBe("<div>1key2</div><div>2key2</div>");
     expect(childInstances.length).toBe(2);

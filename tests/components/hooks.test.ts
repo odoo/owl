@@ -8,25 +8,15 @@ import {
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
-  useComponent,
-  useEffect,
-  useEnv,
-  useExternalListener,
-  useRef,
-  useState,
-  useChildSubEnv,
-  useSubEnv,
-  xml,
   OwlError,
+  props,
+  proxy,
+  signal,
+  useEffect,
+  useListener,
+  xml,
 } from "../../src/index";
-import {
-  elem,
-  logStep,
-  makeTestFixture,
-  nextAppError,
-  nextTick,
-  snapshotEverything,
-} from "../helpers";
+import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -36,29 +26,6 @@ beforeEach(() => {
 });
 
 describe("hooks", () => {
-  test("useRef hook: basic use", async () => {
-    let counter: Counter;
-    class Counter extends Component {
-      static template = xml`<div><button t-ref="button"><t t-esc="value"/></button></div>`;
-      button = useRef("button");
-      value = 0;
-      setup() {
-        counter = this;
-      }
-      increment() {
-        this.value++;
-        this.button.el!.innerHTML = String(this.value);
-      }
-    }
-    const mounted = mount(Counter, fixture);
-    expect(counter!.button.el).toBe(null);
-    await mounted;
-    expect(fixture.innerHTML).toBe("<div><button>0</button></div>");
-    expect(counter!.button.el).not.toBe(null);
-    expect(counter!.button.el).toBe(fixture.querySelector("button"));
-    counter!.increment();
-    expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
-  });
   // TODO: rename like next test (ensures willPatch/patched calls are symmetrical)
   test("two different call to willPatch/patched should work", async () => {
     const steps: string[] = [];
@@ -71,8 +38,8 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="state.value"/></div>`;
-      state = useState({ value: 1 });
+      static template = xml`<div>hey<t t-out="this.state.value"/></div>`;
+      state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
         useMyHook(2);
@@ -98,15 +65,15 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="state.value"/></div>`;
-      state = useState({ value: 1 });
+      static template = xml`<div>hey<t t-out="this.state.value"/></div>`;
+      state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
         useMyHook(2);
       }
     }
-    const app = new App(Test);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Test).mount(fixture);
     app.destroy();
     expect(steps).toEqual([
       "hook:mounted1",
@@ -117,32 +84,34 @@ describe("hooks", () => {
   });
 
   describe("autofocus hook", () => {
-    function useAutofocus(name: string) {
-      let ref = useRef(name);
+    function useAutofocus() {
+      let ref = signal<HTMLElement | null>(null);
       let isInDom = false;
       function updateFocus() {
-        if (!isInDom && ref.el) {
+        const el = ref();
+        if (!isInDom && el) {
           isInDom = true;
-          ref.el.focus();
-        } else if (isInDom && !ref.el) {
+          el.focus();
+        } else if (isInDom && !el) {
           isInDom = false;
         }
       }
+      // could be an effect
       onPatched(updateFocus);
       onMounted(updateFocus);
+
+      return ref;
     }
 
     test("simple input", async () => {
       class Test extends Component {
         static template = xml`
             <div>
-                <input t-ref="input1"/>
-                <input t-ref="input2"/>
+                <input/>
+                <input t-ref="this.input"/>
             </div>`;
 
-        setup() {
-          useAutofocus("input2");
-        }
+        input = useAutofocus();
       }
 
       await mount(Test, fixture);
@@ -155,14 +124,12 @@ describe("hooks", () => {
       class Test extends Component {
         static template = xml`
             <div>
-                <input t-ref="input1"/>
-                <t t-if="state.flag"><input t-ref="input2"/></t>
+                <input/>
+                <t t-if="this.state.flag"><input t-ref="this.input"/></t>
             </div>`;
 
-        state = useState({ flag: false });
-        setup() {
-          useAutofocus("input2");
-        }
+        state = proxy({ flag: false });
+        input = useAutofocus();
       }
 
       const component = await mount(Test, fixture);
@@ -174,178 +141,6 @@ describe("hooks", () => {
       const input2 = fixture.querySelectorAll("input")[1];
       expect(input2).toBe(document.activeElement);
     });
-  });
-
-  test("can use useEnv", async () => {
-    expect.assertions(3);
-    class Test extends Component {
-      static template = xml`<div><t t-esc="env.val"/></div>`;
-      setup() {
-        expect(useEnv()).toBe(this.env);
-      }
-    }
-    const env = { val: 1 };
-    await mount(Test, fixture, { env });
-    expect(fixture.innerHTML).toBe("<div>1</div>");
-  });
-
-  test("useSubEnv modifies user env", async () => {
-    class Test extends Component {
-      static template = xml`<div><t t-esc="env.val"/></div>`;
-      setup() {
-        useSubEnv({ val2: 1 });
-      }
-    }
-    const env = { val: 3 };
-    const component = await mount(Test, fixture, { env });
-    expect(fixture.innerHTML).toBe("<div>3</div>");
-    expect(component.env).toHaveProperty("val2");
-    expect(component.env).toHaveProperty("val");
-  });
-
-  test("useChildSubEnv does not pollute user env", async () => {
-    class Test extends Component {
-      static template = xml`<div><t t-esc="env.val"/></div>`;
-      setup() {
-        useChildSubEnv({ val2: 1 });
-      }
-    }
-    const env = { val: 3 };
-    const component = await mount(Test, fixture, { env });
-    expect(fixture.innerHTML).toBe("<div>3</div>");
-    expect(component.env).not.toHaveProperty("val2");
-    expect(component.env).toHaveProperty("val");
-  });
-
-  test("useSubEnv supports arbitrary descriptor", async () => {
-    let someVal = "maggot";
-    let someVal2 = "brain";
-
-    class Child extends Component {
-      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="env.someVal2" /></div>`;
-    }
-
-    class Test extends Component {
-      static template = xml`<Child />`;
-      static components = { Child };
-      setup() {
-        useSubEnv({
-          get someVal2() {
-            return someVal2;
-          },
-        });
-      }
-    }
-
-    const env = {
-      get someVal() {
-        return someVal;
-      },
-    };
-    const component = await mount(Test, fixture, { env });
-    expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
-    someVal = "brain";
-    someVal2 = "maggot";
-    component.render(true);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
-  });
-
-  test("useChildSubEnv supports arbitrary descriptor", async () => {
-    let someVal = "maggot";
-    let someVal2 = "brain";
-
-    class Child extends Component {
-      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="env.someVal2" /></div>`;
-    }
-
-    class Test extends Component {
-      static template = xml`<Child />`;
-      static components = { Child };
-      setup() {
-        useChildSubEnv({
-          get someVal2() {
-            return someVal2;
-          },
-        });
-      }
-    }
-    someVal = "maggot";
-    const env = {
-      get someVal() {
-        return someVal;
-      },
-    };
-    const component = await mount(Test, fixture, { env });
-    expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
-    someVal = "brain";
-    someVal2 = "maggot";
-    component.render(true);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
-  });
-
-  test("can use useComponent", async () => {
-    expect.assertions(2);
-    class Test extends Component {
-      static template = xml`<div></div>`;
-      setup() {
-        expect(useComponent()).toBe(this);
-      }
-    }
-    await mount(Test, fixture);
-  });
-
-  test("parent and child env (with useSubEnv)", async () => {
-    class Child extends Component {
-      static template = xml`<div><t t-esc="env.val"/></div>`;
-    }
-
-    class Parent extends Component {
-      static template = xml`<t t-esc="env.val"/><Child/>`;
-      static components = { Child };
-      setup() {
-        useSubEnv({ val: 5 });
-      }
-    }
-    const env = { val: 3 };
-    await mount(Parent, fixture, { env });
-    expect(fixture.innerHTML).toBe("5<div>5</div>");
-  });
-
-  test("parent and child env (with useChildSubEnv)", async () => {
-    class Child extends Component {
-      static template = xml`<div><t t-esc="env.val"/></div>`;
-    }
-
-    class Parent extends Component {
-      static template = xml`<t t-esc="env.val"/><Child/>`;
-      static components = { Child };
-      setup() {
-        useChildSubEnv({ val: 5 });
-      }
-    }
-    const env = { val: 3 };
-    await mount(Parent, fixture, { env });
-    expect(fixture.innerHTML).toBe("3<div>5</div>");
-  });
-
-  test("parent and child env (with useChildSubEnv then useSubEnv)", async () => {
-    class Child extends Component {
-      static template = xml`<div t-if="env.hasParent"><t t-esc="env.val"/></div>`;
-    }
-
-    class Parent extends Component {
-      static template = xml`<t t-esc="env.val"/><Child/>`;
-      static components = { Child };
-      setup() {
-        useChildSubEnv({ hasParent: true });
-        useSubEnv({ val: 5 });
-      }
-    }
-    const env = { val: 3 };
-    await mount(Parent, fixture, { env });
-    expect(fixture.innerHTML).toBe("5<div>5</div>");
   });
 
   test("can use onWillStart, onWillUpdateProps", async () => {
@@ -378,16 +173,17 @@ describe("hooks", () => {
       });
     }
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
       setup() {
         useMyHook();
         use2ndHook();
       }
     }
     class App extends Component {
-      static template = xml`<MyComponent value="state.value"/>`;
+      static template = xml`<MyComponent value="this.state.value"/>`;
       static components = { MyComponent };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
     }
 
     const app = await mount(App, fixture);
@@ -414,22 +210,24 @@ describe("hooks", () => {
     ]);
   });
 
-  test("useExternalListener", async () => {
+  test("useListener", async () => {
     let n = 0;
 
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
       setup() {
-        useExternalListener(window, "click", this.increment);
+        useListener(window, "click", this.increment);
+        window.dispatchEvent(new Event("click"));
       }
       increment() {
         n++;
       }
     }
     class App extends Component {
-      static template = xml`<MyComponent t-if="state.flag"/>`;
+      static template = xml`<MyComponent t-if="this.state.flag"/>`;
       static components = { MyComponent };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
 
     const app = await mount(App, fixture);
@@ -439,12 +237,35 @@ describe("hooks", () => {
     expect(n).toBe(0);
     app.state.flag = true;
     await nextTick();
-    window.dispatchEvent(new Event("click"));
     expect(n).toBe(1);
+    window.dispatchEvent(new Event("click"));
+    expect(n).toBe(2);
     app.state.flag = false;
     await nextTick();
     window.dispatchEvent(new Event("click"));
-    expect(n).toBe(1);
+    expect(n).toBe(2);
+  });
+
+  test("useListener work with references", async () => {
+    class MyComponent extends Component {
+      static template = xml`<span t-ref="this.span"><t t-out="this.value()"/></span>`;
+      value = signal(0);
+      span = signal(null);
+      setup() {
+        useListener(this.span, "click", () => this.increment());
+      }
+      increment() {
+        this.value.set(this.value() + 1);
+      }
+    }
+
+    await mount(MyComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<span>0</span>");
+    const span = fixture.getElementsByTagName("span")[0];
+    span.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>1</span>");
   });
 
   describe("useEffect hook", () => {
@@ -452,7 +273,7 @@ describe("hooks", () => {
       let cleanupRun = 0;
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           value: 0,
         });
         setup() {
@@ -491,21 +312,20 @@ describe("hooks", () => {
     test("effect can depend on stuff in dom", async () => {
       class MyComponent extends Component {
         static template = xml`
-          <t t-if="state.value">
-            <div t-ref="div"/>
+          <t t-if="this.state.value">
+            <div t-ref="this.ref"/>
           </t>`;
-        state = useState({
+        state = proxy({
           value: false,
         });
+        ref = signal<HTMLElement | null>(null);
         setup() {
-          const ref = useRef("div");
-          useEffect(
-            (el) => {
-              logStep("effect started:" + (el ? "EL" : "NULL"));
-              return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
-            },
-            () => [ref.el]
-          );
+          // could be effect()
+          useEffect(() => {
+            const el = this.ref();
+            logStep("effect started:" + (el ? "EL" : "NULL"));
+            return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
+          });
         }
       }
       const component = await mount(MyComponent, fixture);
@@ -520,32 +340,27 @@ describe("hooks", () => {
     test("dependencies prevent effects from rerunning when unchanged", async () => {
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           a: 0,
           b: 0,
         });
         setup() {
-          useEffect(
-            (a) => {
-              steps.push(`Effect a: ${a}`);
-              return () => steps.push(`cleaning up for a: ${a}`);
-            },
-            () => [this.state.a]
-          );
-          useEffect(
-            (b) => {
-              steps.push(`Effect b: ${b}`);
-              return () => steps.push(`cleaning up for b: ${b}`);
-            },
-            () => [this.state.b]
-          );
-          useEffect(
-            (a, b) => {
-              steps.push(`Effect ab: {a: ${a}, b: ${b}}`);
-              return () => steps.push(`cleaning up for ab: {a: ${a}, b: ${b}}`);
-            },
-            () => [this.state.a, this.state.b]
-          );
+          useEffect(() => {
+            let a = this.state.a;
+            steps.push(`Effect a: ${a}`);
+            return () => steps.push(`cleaning up for a: ${a}`);
+          });
+          useEffect(() => {
+            let b = this.state.b;
+            steps.push(`Effect b: ${b}`);
+            return () => steps.push(`cleaning up for b: ${b}`);
+          });
+          useEffect(() => {
+            let a = this.state.a;
+            let b = this.state.b;
+            steps.push(`Effect ab: {a: ${a}, b: ${b}}`);
+            return () => steps.push(`cleaning up for ab: {a: ${a}, b: ${b}}`);
+          });
         }
       }
       MyComponent.template = xml`<div/>`;
@@ -602,23 +417,21 @@ describe("hooks", () => {
       ]);
     });
 
-    test("effect with empty dependency list never reruns", async () => {
+    test("effect that depends on a value is rerun if value changes", async () => {
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           value: 0,
         });
         setup() {
-          useEffect(
-            () => {
-              steps.push(`value is ${this.state.value}`);
-              return () => steps.push(`cleaning up for ${this.state.value}`);
-            },
-            () => []
-          );
+          useEffect(() => {
+            let value = this.state.value;
+            steps.push(`value is ${value}`);
+            return () => steps.push(`cleaning up for ${value}`);
+          });
         }
       }
-      MyComponent.template = xml`<div t-esc="state.value"/>`;
+      MyComponent.template = xml`<div t-out="this.state.value"/>`;
 
       const component = await mount(MyComponent, fixture);
 
@@ -634,61 +447,11 @@ describe("hooks", () => {
       expect(steps).toEqual([
         "value is 0",
         "before state mutation",
-        // no cleanup or effect caused by mutation
+        "cleaning up for 0",
+        "value is 1",
         "after state mutation",
-        // Value being clean
         "cleaning up for 1",
       ]);
-    });
-
-    test("effect types are inferred from dependencies", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            (a, b) => {
-              expectType<number>(a);
-              expectType<string>(b);
-            },
-            () => [3, "hello"]
-          );
-        }
-      }
-    });
-
-    test("effect type allows an effect with partial dependencies parameters", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            (a) => {
-              expectType<number>(a);
-            },
-            () => [3, "hello"]
-          );
-        }
-      }
-    });
-
-    test("effect type allows an effect with no dependency parameter", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            () => {},
-            () => [3, "hello"]
-          );
-        }
-      }
     });
 
     test("properly behaves when the effect function throws", async () => {
@@ -699,29 +462,23 @@ describe("hooks", () => {
       class MyComponent extends Component {
         static template = xml`<div/>`;
         setup() {
-          useEffect(
-            () => {
-              throw new Error("Intentional error");
-            },
-            () => []
-          );
+          useEffect(() => {
+            throw new Error("Intentional error");
+          });
         }
       }
 
       let error: OwlError;
-      const app = new App(MyComponent);
-      const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
-      await mountProm;
-      expect(error!.cause.message).toBe("Intentional error");
-      // no console.error because the error has been caught in this test
+      try {
+        await mount(MyComponent, fixture);
+      } catch (e: any) {
+        error = e;
+      }
+      expect(error!.message).toBe("Intentional error");
       expect(console.error).toHaveBeenCalledTimes(0);
       console.error = originalconsoleError;
-      // 1 console.warn because app is destroyed
-      expect(console.warn).toHaveBeenCalledTimes(1);
+      expect(console.warn).toHaveBeenCalledTimes(0);
       console.warn = originalconsoleWarn;
     });
   });
 });
-
-function expectType<T>(t: T) {}

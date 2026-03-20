@@ -1,4 +1,34 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`t-esc is deprecated should warn 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-esc is deprecated t-out is actually called in t-esc's place 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
 
 exports[`t-out literal 1`] = `
 "function anonymous(app, bdom, helpers
@@ -8,7 +38,7 @@ exports[`t-out literal 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput('ok');
     return block1([], [b2]);
   }
@@ -21,7 +51,7 @@ exports[`t-out literal, no outside html element 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput('ok');
   }
 }"
@@ -31,18 +61,18 @@ exports[`t-out multiple calls to t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, zero } = helpers;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { zero, callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span>coucou</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    const b3 = block3();
-    ctx[zero] = b3;
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  function callBody1(ctx, node, key = "") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = "") {
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    const b2 = callTemplate(\`sub\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -56,9 +86,9 @@ exports[`t-out multiple calls to t-out 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx[zero];
-    const b3 = ctx[zero];
+  return function template(ctx, node, key = "") {
+    const b2 = ctx[zero]?.(node, key) || text("");
+    const b3 = ctx[zero]?.(node, key + \`__1\`) || text("");
     return block1([], [b2, b3]);
   }
 }"
@@ -72,7 +102,7 @@ exports[`t-out not escaping 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -87,7 +117,7 @@ exports[`t-out number literal 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(1);
     return block1([], [b2]);
   }
@@ -98,18 +128,18 @@ exports[`t-out t-out 0 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, zero } = helpers;
-  const callTemplate_1 = app.getTemplate(\`_basic-callee\`);
+  let { zero, callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div>zero</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    const b3 = block3();
-    ctx[zero] = b3;
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  function callBody1(ctx, node, key = "") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = "") {
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    const b2 = callTemplate(\`_basic-callee\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -123,8 +153,8 @@ exports[`t-out t-out 0 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx[zero];
+  return function template(ctx, node, key = "") {
+    const b2 = ctx[zero]?.(node, key) || text("");
     return block1([], [b2]);
   }
 }"
@@ -138,7 +168,7 @@ exports[`t-out t-out and another sibling node 1`] = `
   
   let block1 = createBlock(\`<span><span>hello</span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -149,18 +179,17 @@ exports[`t-out t-out bdom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { LazyValue, withDefault, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><span><block-child-0/></span></div>\`);
   let block2 = createBlock(\`<ol>set</ol>\`);
   
-  function value1(ctx, node, key = \\"\\") {
+  function value1(ctx, node, key = "") {
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     ctx[\`var\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = safeOutput(ctx['var']);
     return block1([], [b3]);
@@ -176,7 +205,7 @@ exports[`t-out t-out block 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['bdom']);
     return block1([], [b2]);
   }
@@ -191,7 +220,7 @@ exports[`t-out t-out escaped 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -206,7 +235,7 @@ exports[`t-out t-out markedup 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -221,7 +250,7 @@ exports[`t-out t-out on a node with a body, as a default 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b3 = text(\`nope\`);
     const b2 = safeOutput(ctx['var'], b3);
     return block1([], [b2]);
@@ -238,7 +267,7 @@ exports[`t-out t-out on a node with a dom node in body, as a default 1`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   let block3 = createBlock(\`<div>nope</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b3 = block3();
     const b2 = safeOutput(ctx['var'], b3);
     return block1([], [b2]);
@@ -254,7 +283,7 @@ exports[`t-out t-out switch escaped 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -269,7 +298,7 @@ exports[`t-out t-out switch escaped on markup 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -284,7 +313,7 @@ exports[`t-out t-out switch markup 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -295,20 +324,19 @@ exports[`t-out t-out switch markup on bdom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { LazyValue, withDefault, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<ol>set</ol>\`);
   let block3 = createBlock(\`<span><block-child-0/></span>\`);
   let block5 = createBlock(\`<span><block-child-0/></span>\`);
   
-  function value1(ctx, node, key = \\"\\") {
+  function value1(ctx, node, key = "") {
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b3, b5;
     ctx[\`bdom\`] = new LazyValue(value1, ctx, this, node, key);
     if (ctx['hasBdom']) {
@@ -331,7 +359,7 @@ exports[`t-out t-out switch markup on escaped 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -344,7 +372,7 @@ exports[`t-out t-out with a <t/> in body 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput(ctx['var']);
   }
 }"
@@ -358,7 +386,7 @@ exports[`t-out t-out with arbitrary object 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -373,7 +401,7 @@ exports[`t-out t-out with arbitrary object 2 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -388,7 +416,7 @@ exports[`t-out t-out with comment 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -401,7 +429,7 @@ exports[`t-out t-out with just a t-set t-value in body 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput(ctx['var']);
   }
 }"
@@ -413,7 +441,7 @@ exports[`t-out t-out with the 0 number 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput(ctx['var']);
   }
 }"
@@ -427,7 +455,7 @@ exports[`t-out t-out with the 0 number, in a p 1`] = `
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -440,7 +468,7 @@ exports[`t-out top level t-out with null 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput(ctx['var']);
   }
 }"
@@ -452,7 +480,7 @@ exports[`t-out top level t-out with undefined 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return safeOutput(ctx['var']);
   }
 }"
@@ -466,7 +494,7 @@ exports[`t-out variable 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -481,7 +509,7 @@ exports[`t-out with a String class 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
@@ -496,37 +524,7 @@ exports[`t-out with an extended String class 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = safeOutput(ctx['var']);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-raw is deprecated should warn 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = safeOutput(ctx['var']);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-raw is deprecated t-out is actually called in t-raw's place 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }

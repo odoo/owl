@@ -4,6 +4,7 @@ import {
   interpolate,
   INTERP_REGEXP,
   replaceDynamicParts,
+  translateStringFormat,
 } from "./inline_expressions";
 import {
   AST,
@@ -618,10 +619,15 @@ export class CodeGenerator {
     for (let key in ast.attrs) {
       let expr, attrName;
       if (key.startsWith("t-attf")) {
-        expr = interpolate(ast.attrs[key]);
-        const idx = block!.insertData(expr, "attr");
-
         attrName = key.slice(7);
+        let toInterpolate = ast.attrs[key];
+        if (this.translatableAttributes.includes(attrName)) {
+          const attrTranslationCtx = ast.attrsTranslationCtx?.[key] || ctx.translationCtx;
+          const translateFn = (s: string) => this.translateFn(s, attrTranslationCtx);
+          toInterpolate = translateStringFormat(toInterpolate, translateFn);
+        }
+        expr = interpolate(toInterpolate);
+        const idx = block!.insertData(expr, "attr");
         attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
         attrName = key === "t-att" ? null : key.slice(6);

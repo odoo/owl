@@ -201,6 +201,38 @@ describe("translation support", () => {
     await mount(SomeComponent, fixture);
     expect(fixture.outerHTML).toBe("<div><div><div></div><div></div></div></div>");
   });
+
+  test("translate t-attf-", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+          <div t-attf-title="  one {{ this.terms[0] }} two {{ this.terms[1] }} three {{ this.terms[2] }}  " />
+          <div t-attf-data-nope="not {{ this.terms[0] }} translated {{ this.terms[1] }} at all {{ this.terms[2] }}" />
+          <div t-attf-title="too much arguments {{ this.terms[0] }}" />
+          <div t-attf-title="not enough arguments {{ this.terms[0] }}" />
+      `;
+      terms: Array<string> = ["term1", "term2", "term3"];
+    }
+
+    const terms: { [term: string]: string } = {
+      "one {{0}} two {{1}} three {{2}}": "trois {{2}} un {{0}} deux {{1}}", // full feature
+      "too much arguments {{0}}": "trop d'arguments {{0}} et {{1}}", // translated has too much placeholders
+      "not enough arguments {{0}}": "pas assez consommé", // translated has not enough placeholders
+    };
+    const translateFn = (term: string) => {
+      return terms[term] || "should not be here";
+    };
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.children[0].outerHTML).toBe(
+      `<div title="trois term3 un term1 deux term2"></div>`
+    );
+    expect(fixture.children[1].outerHTML).toBe(
+      `<div data-nope="not term1 translated term2 at all term3"></div>`
+    );
+    expect(fixture.children[2].outerHTML).toBe(
+      `<div title="trop d'arguments term1 et undefined"></div>`
+    );
+    expect(fixture.children[3].outerHTML).toBe(`<div title="pas assez consommé"></div>`);
+  });
 });
 
 describe("translation context", () => {

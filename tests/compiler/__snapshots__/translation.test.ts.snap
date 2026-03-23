@@ -312,6 +312,30 @@ exports[`translation support t-translation with several children 1`] = `
 }"
 `;
 
+exports[`translation support translate t-attf- 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block2 = createBlock(\`<div block-attribute-0=\\"title\\"/>\`);
+  let block3 = createBlock(\`<div block-attribute-0=\\"data-nope\\"/>\`);
+  let block4 = createBlock(\`<div block-attribute-0=\\"title\\"/>\`);
+  let block5 = createBlock(\`<div block-attribute-0=\\"title\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = \`trois \${ctx['this'].terms[2]} un \${ctx['this'].terms[0]} deux \${ctx['this'].terms[1]}\`;
+    const b2 = block2([attr1]);
+    let attr2 = \`not \${ctx['this'].terms[0]} translated \${ctx['this'].terms[1]} at all \${ctx['this'].terms[2]}\`;
+    const b3 = block3([attr2]);
+    let attr3 = \`trop d'arguments \${ctx['this'].terms[0]} et \${undefined}\`;
+    const b4 = block4([attr3]);
+    let attr4 = \`pas assez consommé\`;
+    const b5 = block5([attr4]);
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
 exports[`translation support translation is done on the trimmed text, with extra spaces readded after 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

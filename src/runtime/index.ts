@@ -45,7 +45,7 @@ export { proxy, markRaw, toRaw } from "./reactivity/proxy";
 export { untrack, type ReactiveValue } from "./reactivity/computations";
 export { signal, type Signal } from "./reactivity/signal";
 export { computed } from "./reactivity/computed";
-export { effect } from "./reactivity/effect";
+export { effect, immediateEffect } from "./reactivity/effect";
 export { useEffect, useListener, useApp } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {

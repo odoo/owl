@@ -20,19 +20,19 @@ test("and", () => {
   const a = t.object({ a: t.string });
   const b = t.object({ b: t.number });
   expect(validateType({}, t.and([a, b]))).toMatchObject([
-    { message: "object value have missing keys", missingKeys: ["a"] },
-    { message: "object value have missing keys", missingKeys: ["b"] },
+    { message: "object value has missing keys", missingKeys: ["a"] },
+    { message: "object value has missing keys", missingKeys: ["b"] },
   ]);
   expect(validateType({ a: "abc" }, t.and([a, b]))).toMatchObject([
-    { message: "object value have missing keys", missingKeys: ["b"] },
+    { message: "object value has missing keys", missingKeys: ["b"] },
   ]);
   expect(validateType({ a: 123 }, t.and([a, b]))).toMatchObject([
     { message: "value is not a string", path: ["a"] },
-    { message: "object value have missing keys", missingKeys: ["b"] },
+    { message: "object value has missing keys", missingKeys: ["b"] },
   ]);
   expect(validateType({ a: "abc", b: 123 }, t.and([a, b]))).toEqual([]);
   expect(validateType({ b: 123 }, t.and([a, b]))).toMatchObject([
-    { message: "object value have missing keys", missingKeys: ["a"] },
+    { message: "object value has missing keys", missingKeys: ["a"] },
   ]);
   expect(validateType({ a: "abc", b: "abc" }, t.and([a, b]))).toMatchObject([
     { message: "value is not a number", path: ["b"] },
@@ -263,18 +263,18 @@ describe("object", () => {
       { message: "value is not a string", path: ["a"] },
     ]);
     expect(validateType({ b: 1 }, t.object({ a: t.string }))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
     expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string }))).toEqual([]);
   });
 
   test("shaped object with optional key", () => {
     expect(validateType({}, t.object({ a: t.number }))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
     expect(validateType({}, t.object({ "a?": t.number }))).toEqual([]);
     expect(validateType({}, t.object({ a: t.number, "b?": t.number }))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
     expect(validateType({ a: 1 }, t.object({ a: t.number, "b?": t.number }))).toEqual([]);
     expect(validateType({ a: 1, b: 1 }, t.object({ a: t.number, "b?": t.number }))).toMatchObject(
@@ -294,16 +294,16 @@ describe("object", () => {
     });
 
     expect(validateType({}, type)).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a", "b"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a", "b"] },
     ]);
     expect(validateType({ a: 1 }, type)).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["b"] },
     ]);
     expect(validateType({ a: 1, b: 1 }, type)).toMatchObject([
       { message: "value is not an object", path: ["b"] },
     ]);
     expect(validateType({ a: 1, b: {} }, type)).toMatchObject([
-      { message: "object value have missing keys", path: ["b"], missingKeys: ["c"] },
+      { message: "object value has missing keys", path: ["b"], missingKeys: ["c"] },
     ]);
     expect(validateType({ a: 1, b: { c: "" } }, type)).toEqual([]);
     expect(validateType({ a: "", b: { c: "" } }, type)).toMatchObject([
@@ -325,14 +325,14 @@ describe("object", () => {
       { message: "value is not an object", path: [] },
     ]);
     expect(validateType({}, t.object(["a", "b"]))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a", "b"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a", "b"] },
     ]);
     expect(validateType({ a: "abc" }, t.object(["a", "b"]))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["b"] },
     ]);
     expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123 }, t.object(["a", "b"]))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["b"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["b"] },
     ]);
     expect(validateType({ a: 123, b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123, b: 123 }, t.object(["a", "b"]))).toEqual([]);
@@ -340,7 +340,7 @@ describe("object", () => {
 
   test("keyed object with optional keys", () => {
     expect(validateType({}, t.object(["a", "b?"]))).toMatchObject([
-      { message: "object value have missing keys", path: [], missingKeys: ["a"] },
+      { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
     expect(validateType({ a: "abc" }, t.object(["a", "b?"]))).toEqual([]);
     expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b?"]))).toEqual([]);
@@ -418,6 +418,15 @@ test("record", () => {
     { message: "value is not a string", path: ["b"] },
   ]);
   expect(validateType({ a: 123, b: 123 }, t.record(t.number))).toEqual([]);
+});
+
+test("strictObject", () => {
+  expect(validateType("", t.strictObject({}))).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType(1, t.strictObject({}))).toMatchObject([{ message: "value is not an object" }]);
+  expect(validateType({}, t.strictObject({}))).toEqual([]);
+  expect(validateType({ a: 1 }, t.strictObject({}))).toMatchObject([{ message: "object value has unknown keys", unknownKeys: ["a"] }]);
+  expect(validateType({}, t.strictObject({ a: t.number }))).toMatchObject([{ message: "object value has missing keys", missingKeys: ["a"] }]);
+  expect(validateType({ a: 1 }, t.strictObject({ a: t.number }))).toEqual([]);
 });
 
 test("string", () => {
@@ -537,14 +546,14 @@ test("complex type", () => {
   expect(validateType([], complexType)).toMatchObject([{ message: "value is not an object" }]);
   expect(validateType(null, complexType)).toMatchObject([{ message: "value is not an object" }]);
   expect(validateType({}, complexType)).toMatchObject([
-    { message: "object value have missing keys", missingKeys: ["b"] },
+    { message: "object value has missing keys", missingKeys: ["b"] },
   ]);
   expect(validateType({ a: "" }, complexType)).toMatchObject([
     { message: "value is not a number", path: ["a"] },
-    { message: "object value have missing keys", missingKeys: ["b"], path: [] },
+    { message: "object value has missing keys", missingKeys: ["b"], path: [] },
   ]);
   expect(validateType({ a: 1 }, complexType)).toMatchObject([
-    { message: "object value have missing keys", missingKeys: ["b"] },
+    { message: "object value has missing keys", missingKeys: ["b"] },
   ]);
   expect(validateType({ b: {} }, complexType)).toMatchObject([
     { message: "value is not an array", path: ["b"] },

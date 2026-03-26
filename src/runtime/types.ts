@@ -133,7 +133,28 @@ function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
   return union(literals.map(literalType)) as any;
 }
 
-function validateObjectShape(context: ValidationContext, shape: Record<string, any>) {
+function validateObject(context: ValidationContext, schema: any, isStrict: boolean) {
+  if (
+    typeof context.value !== "object" ||
+    Array.isArray(context.value) ||
+    context.value === null
+  ) {
+    context.addIssue({ message: "value is not an object" });
+    return;
+  }
+  if (!schema) {
+    return;
+  }
+
+  const isShape = !Array.isArray(schema);
+  let shape: Record<string, any> = schema;
+  if (Array.isArray(schema)) {
+    shape = {};
+    for (const key of schema) {
+      shape[key] = null;
+    }
+  }
+
   const missingKeys: string[] = [];
   for (const key in shape) {
     const property = key.endsWith("?") ? key.slice(0, -1) : key;
@@ -143,28 +164,29 @@ function validateObjectShape(context: ValidationContext, shape: Record<string, a
       }
       continue;
     }
-    context.withKey(property).validate(shape[key]);
-  }
-  if (missingKeys.length) {
-    context.addIssue({
-      message: "object value have missing keys",
-      missingKeys,
-    });
-  }
-}
-
-function validateObjectKeys(context: ValidationContext, keys: string[]) {
-  const missingKeys = keys.filter((key) => {
-    if (key.endsWith("?")) {
-      return false;
+    if (isShape) {
+      context.withKey(property).validate(shape[key]);
     }
-    return !(key in context.value);
-  });
+  }
   if (missingKeys.length) {
     context.addIssue({
-      message: "object value have missing keys",
+      message: "object value has missing keys",
       missingKeys,
     });
+  }
+  if (isStrict) {
+    const unknownKeys: string[] = [];
+    for (const key in context.value) {
+      if (!(key in shape) && !(`${key}?` in shape)) {
+        unknownKeys.push(key);
+      }
+    }
+    if (unknownKeys.length) {
+      context.addIssue({
+        message: "object value has unknown keys",
+        unknownKeys,
+      });
+    }
   }
 }
 
@@ -174,24 +196,18 @@ function objectType<const Keys extends string[]>(
 ): ResolveOptionalEntries<KeyedObject<Keys>>;
 function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
 function objectType(schema = {}): Record<string, any> {
-  return function validateObject(context: ValidationContext) {
-    if (
-      typeof context.value !== "object" ||
-      Array.isArray(context.value) ||
-      context.value === null
-    ) {
-      context.addIssue({ message: "value is not an object" });
-      return;
-    }
-    if (!schema) {
-      return;
-    }
+  return function validateLooseObject(context: ValidationContext) {
+    validateObject(context, schema, false);
+  } as any;
+}
 
-    if (Array.isArray(schema)) {
-      validateObjectKeys(context, schema);
-    } else {
-      validateObjectShape(context, schema);
-    }
+function strictObjectType<const Keys extends string[]>(
+  keys: Keys
+): ResolveOptionalEntries<KeyedObject<Keys>>;
+function strictObjectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
+function strictObjectType(schema: any): Record<string, any> {
+  return function validateStrictObject(context: ValidationContext) {
+    validateObject(context, schema, true);
   } as any;
 }
 
@@ -296,6 +312,7 @@ export const types = {
   ref,
   selection: literalSelection,
   signal: reactiveValueType,
+  strictObject: strictObjectType,
   string: stringType,
   tuple: tuple,
 };

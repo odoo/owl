@@ -33,7 +33,7 @@ class VList {
     this.anchor = _anchor;
     nodeInsertBefore.call(parent, _anchor, afterNode);
     const l = children.length;
-    if (l) {
+    if (l !== 0) {
       const mount = children[0].mount;
       for (let i = 0; i < l; i++) {
         mount.call(children[i], parent, _anchor);
@@ -191,7 +191,7 @@ class VList {
       } else {
         for (let i = startIdx1; i <= endIdx1; i++) {
           let ch = ch1[i];
-          if (ch) {
+          if (ch !== null) {
             if (withBeforeRemove) {
               beforeRemove.call(ch);
             }
@@ -205,7 +205,7 @@ class VList {
   beforeRemove() {
     const children = this.children;
     const l = children.length;
-    if (l) {
+    if (l !== 0) {
       const beforeRemove = children[0].beforeRemove;
       for (let i = 0; i < l; i++) {
         beforeRemove.call(children[i]);
@@ -220,7 +220,7 @@ class VList {
     } else {
       const children = this.children;
       const l = children.length;
-      if (l) {
+      if (l !== 0) {
         const remove = children[0].remove;
         for (let i = 0; i < l; i++) {
           remove.call(children[i]);
@@ -245,7 +245,7 @@ export function list(children: VNode[]): VNode<VList> {
 }
 
 function createMapping(ch1: any[], startIdx1: number, endIdx2: number): { [key: string]: any } {
-  let mapping: any = {};
+  const mapping: any = {};
   for (let i = startIdx1; i <= endIdx2; i++) {
     mapping[ch1[i].key] = i;
   }

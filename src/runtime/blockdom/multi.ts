@@ -31,7 +31,7 @@ export class VMulti {
     const anchors = new Array(l);
     for (let i = 0; i < l; i++) {
       let child = children[i];
-      if (child) {
+      if (child !== undefined) {
         child.mount(parent, afterNode);
       } else {
         const childAnchor = document.createTextNode("");
@@ -49,7 +49,7 @@ export class VMulti {
     const anchors = this.anchors;
     for (let i = 0, l = children.length; i < l; i++) {
       let child = children[i];
-      if (child) {
+      if (child !== undefined) {
         child.moveBeforeDOMNode(node, parent);
       } else {
         const anchor = anchors![i];
@@ -61,14 +61,14 @@ export class VMulti {
   moveBeforeVNode(other: VMulti | null, afterNode: Node | null) {
     if (other) {
       const next = other!.children[0];
-      afterNode = (next ? next.firstNode() : other!.anchors![0]) || null;
+      afterNode = (next !== undefined ? next.firstNode() : other!.anchors![0]) || null;
     }
     const children = this.children;
     const parent = this.parentEl;
     const anchors = this.anchors;
     for (let i = 0, l = children.length; i < l; i++) {
       let child = children[i];
-      if (child) {
+      if (child !== undefined) {
         child.moveBeforeVNode(null, afterNode);
       } else {
         const anchor = anchors![i];
@@ -88,8 +88,8 @@ export class VMulti {
     for (let i = 0, l = children1.length; i < l; i++) {
       const vn1 = children1[i];
       const vn2 = children2[i];
-      if (vn1) {
-        if (vn2) {
+      if (vn1 !== undefined) {
+        if (vn2 !== undefined) {
           vn1.patch(vn2, withBeforeRemove);
         } else {
           const afterNode = vn1.firstNode()!;
@@ -102,7 +102,7 @@ export class VMulti {
           vn1.remove();
           children1[i] = undefined;
         }
-      } else if (vn2) {
+      } else if (vn2 !== undefined) {
         children1[i] = vn2;
         const anchor = anchors[i];
         vn2.mount(parentEl, anchor);
@@ -115,7 +115,7 @@ export class VMulti {
     const children = this.children;
     for (let i = 0, l = children.length; i < l; i++) {
       const child = children[i];
-      if (child) {
+      if (child !== undefined) {
         child.beforeRemove();
       }
     }
@@ -130,7 +130,7 @@ export class VMulti {
       const anchors = this.anchors;
       for (let i = 0, l = children.length; i < l; i++) {
         const child = children[i];
-        if (child) {
+        if (child !== undefined) {
           child.remove();
         } else {
           nodeRemoveChild.call(parentEl, anchors![i]);
@@ -141,7 +141,7 @@ export class VMulti {
 
   firstNode(): Node | undefined {
     const child = this.children[0];
-    return child ? child.firstNode() : this.anchors![0];
+    return child !== undefined ? child.firstNode() : this.anchors![0];
   }
 
   toString(): string {

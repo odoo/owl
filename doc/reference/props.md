@@ -318,7 +318,7 @@ class ComponentB extends owl.Component {
   };
 ```
 
-Note: the props validation code is done by using the [validate utility function](utils.md#validate).
+Note: the props validation code uses the [type validation system](types_validation.md).
 
 ### `slots` prop
 

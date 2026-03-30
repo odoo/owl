@@ -10,8 +10,8 @@
 ## Overview
 
 Owl was designed from the very beginning with asynchronous components. This comes
-from the `willStart` and the `willUpdateProps` lifecycle hooks. With these
-asynchronous hooks, it is possible to build complex highly concurrent applications.
+from the `willStart` lifecycle hook. With this asynchronous hook, it is possible
+to build complex highly concurrent applications.
 
 Owl concurrent mode has several benefits: it makes it possible to delay the
 rendering until some asynchronous operation is complete, it makes it possible
@@ -39,10 +39,10 @@ This phase represent the process of rendering a template, in memory, which creat
 a virtual representation of the desired component html). The output of this phase is a
 virtual DOM.
 
-It is asynchronous: each subcomponents needs to either be created (so, `willStart`
-will need to be called), or updated (which is done with the `willUpdateProps`
-method). This is completely a recursive process: a component is the root of a
-component tree, and each sub component needs to be (virtually) rendered.
+It is asynchronous: each sub component needs to either be created (so, `willStart`
+will need to be called), or updated. This is completely a recursive process: a
+component is the root of a component tree, and each sub component needs to be
+(virtually) rendered.
 
 ### Patching
 
@@ -116,8 +116,7 @@ Here is what Owl will do:
 1. because of a state change, the method `render` is called on `C`
 2. template `C` is rendered again
    - component `D` is updated:
-     1. hook `willUpdateProps` is called on `D` (async)
-     2. template `D` is rerendered
+     1. template `D` is rerendered
    - component `F` is created:
      1. hook `willStart` is called on `F` (async)
      2. template `F` is rendered

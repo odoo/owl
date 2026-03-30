@@ -1,4 +1,4 @@
-# 🦉 Templates 🦉
+# 🦉 Template Syntax 🦉
 
 ## Content
 
@@ -35,8 +35,8 @@ component system, there are additional directives specific to Owl (such as `t-on
 <div>
     <span t-if="somecondition">Some string</span>
     <ul t-else="">
-        <li t-foreach="messages" t-as="message">
-            <t t-esc="message"/>
+        <li t-foreach="this.messages" t-as="message" t-key="message_index">
+            <t t-out="message"/>
         </li>
     </ul>
 </div>
@@ -58,8 +58,7 @@ For reference, here is a list of all standard QWeb directives:
 
 | Name                           | Description                                                             |
 | ------------------------------ | ----------------------------------------------------------------------- |
-| `t-esc`                        | [Outputting safely a value](#outputting-data)                           |
-| `t-out`                        | [Outputting value, possibly without escaping](#outputting-data)         |
+| `t-out`                        | [Outputting data](#outputting-data)                                     |
 | `t-set`, `t-value`             | [Setting variables](#setting-variables)                                 |
 | `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                                |
 | `t-foreach`, `t-as`            | [Loops](#loops)                                                         |
@@ -73,17 +72,16 @@ For reference, here is a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                                   | Description                                                     |
-| -------------------------------------- | --------------------------------------------------------------- |
-| `t-component`, `t-props`               | [Defining a sub component](component.md#sub-components)         |
-| `t-ref`                                | [Setting a reference to a dom node or a sub component](refs.md) |
-| `t-key`                                | [Defining a key (to help virtual dom reconciliation)](#loops)   |
-| `t-on-*`                               | [Event handling](event_handling.md)                             |
-| `t-portal`                             | [Portal](portal.md)                                             |
-| `t-slot`, `t-set-slot`, `t-slot-scope` | [Rendering a slot](slots.md)                                    |
-| `t-model`                              | [Form input bindings](input_bindings.md)                        |
-| `t-tag`                                | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
-| `t-custom-*`                           | [Rendering nodes with custom directives](#custom-directives)    |
+| Name                                        | Description                                                     |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| `t-component`, `t-props`                    | [Defining a sub component](component.md#sub-components)         |
+| `t-ref`                                     | [Setting a reference to a dom node or a sub component](refs.md) |
+| `t-key`                                     | [Defining a key (to help virtual dom reconciliation)](#loops)   |
+| `t-on-*`                                    | [Event handling](event_handling.md)                             |
+| `t-call-slot`, `t-set-slot`, `t-slot-scope` | [Rendering a slot](slots.md)                                    |
+| `t-model`                                   | [Form bindings](form_bindings.md)                               |
+| `t-tag`                                     | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
+| `t-custom-*`                                | [Rendering nodes with custom directives](#custom-directives)    |
 
 ## QWeb Template Reference
 
@@ -119,14 +117,14 @@ It is useful to explain the various rules that apply on these expressions:
    <div><p t-if="console.log(1)">NOT valid</p></div>
    ```
 
-2. it can use anything in the rendering context (which typically contains the properties of the component):
+2. it can use anything in the rendering context. Component properties and methods are accessed via `this`:
 
    ```xml
-   <p t-if="user.birthday === today()">Happy bithday!</p>
+   <p t-if="this.user.birthday === this.today()">Happy bithday!</p>
    ```
 
-   is valid, and will read the `user` object from the context, and call the
-   `today` function.
+   is valid, and will read the `user` object from the component, and call the
+   `today` method.
 
 3. it can use a few special operators to avoid using symbols such as `<`, `>`,
    `&` or `|`. This is useful to make sure that we still write valid XML.
@@ -156,23 +154,21 @@ Normal, regular html nodes are rendered into themselves:
 
 ### Outputting Data
 
-The `t-esc` directive is necessary whenever you want to add a dynamic text
-expression in a template. The text is escaped to avoid security issues.
+The `t-out` directive is used to output a dynamic value in a template. By
+default, the value is escaped to avoid security issues.
 
 ```xml
-<p><t t-esc="value"/></p>
+<p><t t-out="this.value"/></p>
 ```
 
-rendered with the value `value` set to `42` in the rendering context yields:
+rendered with `value` set to `42` yields:
 
 ```html
 <p>42</p>
 ```
 
-The `t-out` directive is almost the same as `t-esc`, but possibly without the
-escaping. The difference is that the value received by the `t-out` directive
-will only be not-escaped if it has been marked as such, using the `markup`
-utility function:
+If the value is a string containing HTML, it will be escaped. To inject raw
+HTML, the value must be marked as safe using the `markup` utility function:
 
 For example, in the following component:
 
@@ -181,17 +177,16 @@ const { markup, Component, xml } = owl;
 
 class SomeComponent extends Component {
   static template = xml`
-    <t t-out="value1"/>
-    <t t-out="value2"/>`;
+    <t t-out="this.value1"/>
+    <t t-out="this.value2"/>`;
 
   value1 = "<div>some text 1</div>";
   value2 = markup("<div>some text 2</div>");
 }
 ```
 
-The first `t-out` will act as a `t-esc` directive, which means that the content
-of `value1` will be escaped. However, since `value2` has been tagged as a markup,
-this will be injected as html.
+The first `t-out` will escape the content of `value1`. However, since `value2`
+has been tagged as a markup, it will be injected as html.
 
 `markup` can also be used as a tag function, allowing the interpolated values to
 be safely escaped:
@@ -213,11 +208,11 @@ This is done via the `t-set` directive, which takes the name of the variable to 
 
    ```xml
    <t t-set="foo" t-value="2 + 1"/>
-   <t t-esc="foo"/>
+   <t t-out="foo"/>
    ```
 
    will print `3`. Note that the evaluation is done at rendering time, not at
-   compilte time.
+   compile time.
 
 2. if there is no `t-value` attribute, the node’s body is saved and its value is
    set as the variable’s value:
@@ -226,10 +221,10 @@ This is done via the `t-set` directive, which takes the name of the variable to 
    <t t-set="foo">
        <li>ok</li>
    </t>
-   <t t-esc="foo"/>
+   <t t-out="foo"/>
    ```
 
-   will generate `&lt;li&gt;ok&lt;/li&gt;` (the content is escaped as we used the `t-esc` directive)
+   will generate `&lt;li&gt;ok&lt;/li&gt;` (the content is escaped by default)
 
 The `t-set` directive acts like a regular variable in most programming language.
 It is lexically scoped (inner nodes are sub scopes), can be shadowed, ...
@@ -278,8 +273,8 @@ Extra conditional branching directives `t-elif` and `t-else` are also available:
 
 ```xml
 <div>
-    <p t-if="user.birthday == today()">Happy bithday!</p>
-    <p t-elif="user.login == 'root'">Welcome master!</p>
+    <p t-if="this.user.birthday == this.today()">Happy bithday!</p>
+    <p t-elif="this.user.login == 'root'">Welcome master!</p>
     <p t-else="">Welcome!</p>
 </div>
 ```
@@ -363,7 +358,7 @@ for the current item of the iteration:
 
 ```xml
 <t t-foreach="[1, 2, 3]" t-as="i" t-key="i">
-    <p><t t-esc="i"/></p>
+    <p><t t-out="i"/></p>
 </t>
 ```
 
@@ -379,7 +374,7 @@ Like conditions, `t-foreach` applies to the element bearing the directive’s at
 
 ```xml
 <p t-foreach="[1, 2, 3]" t-as="i" t-key="i">
-    <t t-esc="i"/>
+    <t t-out="i"/>
 </p>
 ```
 
@@ -436,7 +431,7 @@ Consider the following situation: we have a list of two items `[{text: "a"}, {te
 and we render them in this template:
 
 ```xml
-<p t-foreach="items" t-as="item" t-key="item_index"><t t-esc="item.text"/></p>
+<p t-foreach="this.items" t-as="item" t-key="item_index"><t t-out="item.text"/></p>
 ```
 
 The result will be two `<p>` tags with text `a` and `b`. Now, if we swap them,
@@ -460,7 +455,7 @@ The above example could be modified by adding an ID: `[{id: 1, text: "a"}, {id: 
 Then, the template could look like this:
 
 ```xml
-<p t-foreach="items" t-as="item" t-key="item.id"><t t-esc="item.text"/></p>
+<p t-foreach="this.items" t-as="item" t-key="item.id"><t t-out="item.text"/></p>
 ```
 
 The `t-key` directive is useful for lists (`t-foreach`). A key should be
@@ -471,16 +466,16 @@ Also, the key can be set on a `t` tag or on its children. The following variatio
 are all equivalent:
 
 ```xml
-<p t-foreach="items" t-as="item" t-key="item.id">
-  <t t-esc="item.text"/>
+<p t-foreach="this.items" t-as="item" t-key="item.id">
+  <t t-out="item.text"/>
 </p>
 
-<t t-foreach="items" t-as="item" t-key="item.id">
-  <p t-esc="item.text"/>
+<t t-foreach="this.items" t-as="item" t-key="item.id">
+  <p t-out="item.text"/>
 </t>
 
-<t t-foreach="items" t-as="item">
-  <p t-key="item.id" t-esc="item.text"/>
+<t t-foreach="this.items" t-as="item">
+  <p t-key="item.id" t-out="item.text"/>
 </t>
 ```
 
@@ -526,7 +521,7 @@ magic variable `0`:
 ```xml
 <t t-name="other-template">
     This template was called with content:
-    <t t-raw="0"/>
+    <t t-out="0"/>
 </t>
 
 <div t-name="main-template">
@@ -603,7 +598,7 @@ will print 42 to the console.
 
 ### Custom Directives
 
-Owl 2 supports the declaration of custom directives. To use them, an Object of functions needs to be configured on the owl APP:
+Owl supports the declaration of custom directives. To use them, an Object of functions needs to be configured on the owl App:
 
 ```js
  new App(..., {
@@ -632,7 +627,7 @@ will be replaced by :
 
 ## Fragments
 
-Owl 2 supports templates with an arbitrary number of root elements, or even just
+Owl supports templates with an arbitrary number of root elements, or even just
 a text node. So, the following templates are all valid:
 
 ```xml
@@ -669,8 +664,8 @@ const { Component, xml } = owl;
 class MyComponent extends Component {
   static template = xml`
       <div>
-          <span t-if="somecondition">text</span>
-          <button t-on-click="someMethod">Click</button>
+          <span t-if="this.somecondition">text</span>
+          <button t-on-click="this.someMethod">Click</button>
       </div>
   `;
 
@@ -692,10 +687,10 @@ class Node extends Component {
   static template = xml`
         <g>
             <circle t-att-cx="props.x" t-att-cy="props.y" r="4" fill="black"/>
-            <text t-att-x="props.x - 5" t-att-y="props.y + 18"><t t-esc="props.node.label"/></text>
+            <text t-att-x="props.x - 5" t-att-y="props.y + 18"><t t-out="props.node.label"/></text>
             <t t-set="childx" t-value="props.x + 100"/>
             <t t-set="height" t-value="props.height/(props.node.children || []).length"/>
-            <t t-foreach="props.node.children || []" t-as="child">
+            <t t-foreach="props.node.children || []" t-as="child" t-key="child_index">
                 <t t-set="childy" t-value="props.y + child_index*height"/>
                 <line t-att-x1="props.x" t-att-y1="props.y" t-att-x2="childx" t-att-y2="childy" stroke="black" />
                 <Node x="childx" y="childy" node="child" height="height"/>

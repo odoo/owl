@@ -81,51 +81,41 @@ This example demonstrates Owl's reactivity: `todos` is a signal, `remaining`
 is a computed value that updates automatically, and the UI reacts to changes
 without manual subscription management.
 
-## Design Principles
+## Documentation
 
-Owl is built on principles that make it powerful yet approachable:
-
-**Explicit over Implicit**
-
-Reactiveness is explicit — you read signals by calling them (`this.count()`),
-making dependencies visible and bugs easier to trace. No hidden magic.
-
-**Composable Architecture**
-
-Plugins provide a structured way to share state and services across components.
-They compose naturally and support full type inference.
-
-**Scales with You**
-
-Start simple with inline templates and signals. Grow into a large codebase
-with external templates, registries, and plugins. Owl powers Odoo's
-multi-million-line codebase — it's proven at scale.
-
-**Developer Experience**
-
-First-class TypeScript support, comprehensive error messages in dev mode,
-and a browser devtools extension for debugging.
-
-## Resources
+The documentation below is for **Owl 3**. For the Owl 2 documentation, see the
+[owl-2.x branch](https://github.com/odoo/owl/tree/owl-2.x).
 
 ### Getting Started
 
 - **[Playground](https://odoo.github.io/owl/playground)** — Interactive examples and live coding
-- **[Owl 3.x Release Notes](release_notes.md)** — Complete guide to all changes
 - [Tutorial: Getting Started](https://odoo.github.io/owl/playground#getting_started) — Learn Owl fundamentals step by step
 - [Tutorial: Todo List](https://odoo.github.io/owl/playground#todo_list) — Build a full TodoMVC app
 - [Tutorial: Hibou OS](https://odoo.github.io/owl/playground#hibou_os) — Build a desktop-like interface
 
-### Reference Documentation
+### Reference
 
-- [Overview](doc/readme.md)
-- [App](doc/reference/app.md) | [Component](doc/reference/component.md)
-- [Reactivity](doc/reference/reactivity.md) | [Hooks](doc/reference/hooks.md)
-- [Templates](doc/reference/templates.md) | [Props](doc/reference/props.md)
-- [Slots](doc/reference/slots.md)
+- [API Reference](doc/readme.md) — A complete list of everything exported by the Owl library
+- [App](doc/reference/app.md) — Configure and mount an Owl application to the DOM
+- [Component](doc/reference/component.md) — Define components with lifecycle methods and static properties
+- [Error Handling](doc/reference/error_handling.md) — Catch and recover from errors in components
+- [Event Handling](doc/reference/event_handling.md) — Handle DOM events with t-on directives
+- [Form Bindings](doc/reference/form_bindings.md) — Bind form inputs to reactive state with t-model
+- [Hooks](doc/reference/hooks.md) — Use lifecycle hooks and other built-in hooks in components
+- [Plugins](doc/reference/plugins.md) — Share state and services across components with type-safe plugins
+- [Props](doc/reference/props.md) — Pass data to child components with validation and defaults
+- [Reactivity](doc/reference/reactivity.md) — Manage state with signals, computed values, and reactive objects
+- [Refs](doc/reference/refs.md) — Access DOM elements from components with t-ref
+- [Resources and Registries](doc/reference/resources_and_registries.md) — Ordered reactive collections for shared data
+- [Slots](doc/reference/slots.md) — Compose components with named and dynamic slot content
+- [Template Syntax](doc/reference/template_syntax.md) — Write XML templates with QWeb directives
+- [Translations](doc/reference/translations.md) — Translate templates and dynamic strings
+- [Types Validation](doc/reference/types_validation.md) — Validate data structures at runtime with a declarative schema
 
-### Understanding Owl
+### Misc
 
+- [Owl 3.x Release Notes](release_notes.md) — Complete guide to all changes in Owl 3
+- [Design Principles](doc/miscellaneous/design_principles.md)
 - [Why we built Owl](doc/miscellaneous/why_owl.md)
 - [Architecture Notes](doc/miscellaneous/architecture.md)
 - [Comparison with React/Vue](doc/miscellaneous/comparison.md)

@@ -35,11 +35,11 @@ An important information to notice is that the content of the slot is rendered i
 the parent context, not in the navbar. As such, it can access values and methods
 from the parent component.
 
-Here is how the `Navbar` component could be defined, with the `t-slot` directive:
+Here is how the `Navbar` component could be defined, with the `t-call-slot` directive:
 
 ```xml
 <div class="navbar">
-  <t t-slot="default"/>
+  <t t-call-slot="default"/>
   <ul>
     <!-- rest of the navbar here -->
   </ul>
@@ -56,11 +56,11 @@ like this:
 ```xml
 <div class="info-box">
   <div class="info-box-title">
-    <t t-slot="title"/>
-    <span class="info-box-close-button" t-on-click="close">X</span>
+    <t t-call-slot="title"/>
+    <span class="info-box-close-button" t-on-click="this.close">X</span>
   </div>
   <div class="info-box-content">
-    <t t-slot="content"/>
+    <t t-call-slot="content"/>
   </div>
 </div>
 ```
@@ -98,7 +98,7 @@ part of the content of the `default` slot. For example:
 </div>
 
 <div t-name="Child">
-  <t t-slot="default"/>
+  <t t-call-slot="default"/>
 </div>
 ```
 
@@ -125,22 +125,22 @@ Slots can define a default content, in case the parent did not define them:
 </div>
 
 <span t-name="Child">
-  <t t-slot="default">default content</t>
+  <t t-call-slot="default">default content</t>
 </span>
 <!-- will be rendered as: <div><span>default content</span></div> -->
 ```
 
 ## Dynamic Slots
 
-The `t-slot` directive is actually able to use any expressions, using string
+The `t-call-slot` directive is able to use any expressions, using string
 interpolation:
 
 ```xml
- <t t-slot="{{current}}" />
+ <t t-call-slot="{{current}}" />
 ```
 
 This will evaluate the `current` expression, and insert the corresponding slot
-at the place of the `t-slot` directive.
+at the place of the `t-call-slot` directive.
 
 ## Slots and props
 
@@ -174,19 +174,19 @@ class Notebook extends Component {
   static template = xml`
     <div class="notebook">
       <div class="tabs">
-        <t t-foreach="tabNames" t-as="tab" t-key="tab_index">
-          <span t-att-class="{active:tab_index === activeTab}" t-on-click="() => state.activeTab=tab_index">
-            <t t-esc="props.slots[tab].title"/>
+        <t t-foreach="this.tabNames" t-as="tab" t-key="tab_index">
+          <span t-att-class="{active:tab_index === this.state.activeTab}" t-on-click="() => this.state.activeTab=tab_index">
+            <t t-out="this.props.slots[tab].title"/>
           </span>
         </t>
       </div>
       <div class="page">
-        <t t-slot="{{currentSlot}}"/>
+        <t t-call-slot="{{this.currentSlot}}"/>
       </div>
     </div>`;
 
   setup() {
-    this.state = useState({ activeTab: 0 });
+    this.state = proxy({ activeTab: 0 });
     this.tabNames = Object.keys(this.props.slots);
   }
 
@@ -228,8 +228,8 @@ everything given by the child component:
 <MyComponent>
     <t t-set-slot="foo" t-slot-scope="scope">
         content
-        <t t-esc="scope.bool"/>
-        <t t-esc="scope.num"/>
+        <t t-out="scope.bool"/>
+        <t t-out="scope.num"/>
     </t>
 </MyComponent>
 ```
@@ -237,13 +237,13 @@ everything given by the child component:
 And the child component that includes the slot can provide values like this:
 
 ```xml
-<t t-slot="foo" bool="other_var" num="5">
+<t t-call-slot="foo" bool="other_var" num="5">
 ```
 
 or this:
 
 ```xml
-<t t-slot="foo" t-props="someObject">
+<t t-call-slot="foo" t-props="someObject">
 ```
 
 In the case of the default slot, you may declare the slot scope directly on the
@@ -252,8 +252,8 @@ component itself:
 ```xml
 <MyComponent t-slot-scope="scope">
     content
-    <t t-esc="scope.bool"/>
-    <t t-esc="scope.num"/>
+    <t t-out="scope.bool"/>
+    <t t-out="scope.num"/>
 </MyComponent>
 ```
 

@@ -78,7 +78,7 @@ additional tools, we made a lot of effort to make the most of the web platform.
 
 For example, Owl uses the standard `xml` parser that comes with every browser.
 Because of that, Owl did not have to write its own template parser. Another
-example is the [`xml`](../reference/templates.md#inline-templates) tag helper function, which makes use of
+example is the [`xml`](../reference/template_syntax.md#inline-templates) tag helper function, which makes use of
 native template literals to allow in a natural way to write `xml` templates
 directly in the javascript code. This can be easily integrated with editor
 plugins to have autocompletion inside the template.
@@ -126,7 +126,7 @@ structured than a template language. Note that the tooling is quite impressive:
 there is a syntax highlighter for jsx here on github!
 
 By comparison, here is the equivalent Owl component, written with the
-[`xml`](../reference/templates.md#inline-templates) tag helper:
+[`xml`](../reference/template_syntax.md#inline-templates) tag helper:
 
 ```js
 class Clock extends Component {
@@ -142,13 +142,12 @@ class Clock extends Component {
 ## Asynchronous Rendering
 
 This is actually a big difference between OWL and React/Vue: components in OWL
-are totally asynchronous. They have two asynchronous hooks in their lifecycle:
+are totally asynchronous. They have an asynchronous hook in their lifecycle:
 
 - `willStart` (before the component starts rendering)
-- `willUpdateProps` (before new props are set)
 
-Both these methods can be implemented and return a promise. The rendering will
-then wait for these promises to be completed before patching the DOM. This is
+This method can be implemented and return a promise. The rendering will
+then wait for the promise to be completed before patching the DOM. This is
 useful for some use cases: for example, a component may want to fetch an external
 library (a calendar component may need a specialized calendar rendering library),
 in its willStart hook.

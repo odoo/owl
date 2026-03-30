@@ -1,0 +1,12 @@
+<templates>
+  <t t-name="hibou.Hibou">
+    <div class="desktop">
+      <div class="desktop-area">
+        <t t-foreach="this.wm.windows()" t-as="win" t-key="win.id">
+          <ManagedWindow window="win"/>
+        </t>
+      </div>
+      <Taskbar/>
+    </div>
+  </t>
+</templates>

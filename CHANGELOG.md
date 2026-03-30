@@ -53,7 +53,7 @@ All changes are documented here in no particular order.
 
 - finer grained reactivity: owl 2 tracks change per key/component
 - finer grained reactivity: sub components can reobserve state ([doc](doc/reference/reactivity.md))
-- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#reactive))
+- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#proxy))
 - new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
 - new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
 
@@ -308,7 +308,7 @@ prepended in something, maybe a `div`. Remember that you the root component
 can have multiple roots
 
 Documentation:
-- [Fragments](doc/reference/templates.md#fragments)
+- [Fragments](doc/reference/template_syntax.md#fragments)
 - [Mounting a component](doc/reference/app.md#mount-helper)
 
 
@@ -522,7 +522,7 @@ us so we can study this usecase.
 In Owl, a call to `useSubEnv` would define a new environment for the children
 AND the component. It is very useful, but in some cases, one only need to update
 the children component environment. This can now be done with a new hook:
-[`useChildSubEnv`](doc/reference/hooks.md#usesubenv-and-usechildsubenv)
+[`useChildSubEnv`](doc/reference/hooks.md)
 
 ### 28. `env` is now frozen
 
@@ -593,7 +593,7 @@ So, the following template works for components:
   hello
 ```
 
-Documentation: [Fragments](doc/reference/templates.md#fragments)
+Documentation: [Fragments](doc/reference/template_syntax.md#fragments)
 
 ### 32. `renderToString` on QWeb has been removed
 
@@ -731,7 +731,7 @@ Otherwise, it will be escaped (just like `t-esc`).
 Migration: replace all `t-raw` uses by `t-out`, and uses the `markup` function
 to mark all the js values.
 
-Documentation: [Outputting data](doc/reference/templates.md#outputting-data)
+Documentation: [Outputting data](doc/reference/template_syntax.md#outputting-data)
 
 ## 39. `browser` object has been removed
 

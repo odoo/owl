@@ -51,12 +51,13 @@ that render its content, and a fallback if an error happened.
 ```js
 class ErrorBoundary extends Component {
   static template = xml`
-    <t t-if="state.error" t-slot="fallback">An error occurred</t>
-    <t t-else="" t-slot="default"/>`;
+    <t t-if="this.hasError()" t-call-slot="fallback">An error occurred</t>
+    <t t-else="" t-call-slot="default"/>`;
+
+  hasError = signal(false);
 
   setup() {
-    this.state = useState({ error: false });
-    onError(() => (this.state.error = true));
+    onError(() => this.hasError.set(true));
   }
 }
 ```
@@ -72,4 +73,4 @@ Using the `ErrorBoundary` is then simple simple:
 
 Note that we need to be careful here: the fallback UI should not throw any
 error, otherwise we risk going into an infinite loop (also, see the page on
-[slots](slots.md) for more information on the `t-slot` directive).
+[slots](slots.md) for more information on slots).

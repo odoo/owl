@@ -418,6 +418,7 @@
         <div class="welcome-links">
           <a href="https://odoo.github.io/owl/" target="_blank" rel="noopener noreferrer">Website</a>
           <a href="https://github.com/odoo/owl" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/odoo/owl/tree/master#documentation" target="_blank" rel="noopener noreferrer">Documentation</a>
           <a href="https://github.com/odoo/owl/blob/master/release_notes.md" target="_blank" rel="noopener noreferrer">Release Notes (v3.0.0)</a>
         </div>
 

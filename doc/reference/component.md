@@ -8,10 +8,7 @@
 - [Lifecycle](#lifecycle)
   - [`setup`](#setup)
   - [`willStart`](#willstart)
-  - [`willRender`](#willrender)
-  - [`rendered`](#rendered)
   - [`mounted`](#mounted)
-  - [`willUpdateProps`](#willupdateprops)
   - [`willPatch`](#willpatch)
   - [`patched`](#patched)
   - [`willUnmount`](#willunmount)
@@ -24,60 +21,51 @@
 ## Overview
 
 An Owl component is a small class which represents some part of the user interface.
-It is part of a component tree, and has an [environment](environment.md) (`env`),
-which is propagated from a parent to its children.
+It is part of a component tree.
 
 OWL components are defined by subclassing the `Component` class. For example,
 here is how a `Counter` component could be implemented:
 
 ```javascript
-const { Component, xml, useState } = owl;
+const { Component, xml, signal } = owl;
 
 class Counter extends Component {
   static template = xml`
-    <button t-on-click="increment">
-      Click Me! [<t t-esc="state.value"/>]
+    <button t-on-click="this.increment">
+      Click Me! [<t t-out="this.count()"/>]
     </button>`;
 
-  state = useState({ value: 0 });
+  count = signal(0);
 
   increment() {
-    this.state.value++;
+    this.count.set(this.count() + 1);
   }
 }
 ```
 
-In this example, we use the `xml` helper to define inline templates, and the
-`useState` hook, which returns a reactive version of its argument (see the page
-on reactivity).
+In this example, we use the `xml` helper to define inline templates, and a
+`signal` to hold reactive state (see the page on [reactivity](reactivity.md)).
 
 ## Properties and methods
 
-The `Component` class has a very small API.
+The `Component` base class has a very small API. It does not define any
+instance properties by default — it is up to each component to declare what
+it needs.
 
-- **`env (object)`**: the component [environment](environment.md)
+To access props given by the parent, a component must explicitly import them
+using the `props` function. The result can be stored on any property name:
 
-- **`props (object)`**: this is an object containing all the [props](props.md) given by
-  the parent to a child component
+```js
+class MyComponent extends Component {
+  static template = xml`<span t-out="this.myProps.name"/>`;
 
-  Note that `props` are owned by the parent, not by the component.
-  As such, it should not ever be modified by the component (otherwise you risk
-  unintended effects, since the parent may not be aware of the change)!!
+  myProps = props({ name: t.string });
+}
+```
 
-  The `props` can be modified dynamically by the parent. In that case, the
-  component will go through the following lifecycle methods: `willUpdateProps`,
-  `willPatch` and `patched`.
-
-* **`render(deep[=false])`**: calling this method directly will cause a rerender. Note
-  that with the reactivity system, this should be rare to have to do it manually.
-  Also, the rendering operation is asynchronous, so the DOM will only be updated
-  slightly later (at the next animation frame, if no component delays the
-  rendering)
-
-  By default, the render initiated by this method will stop at each child
-  component if their props are (shallow) equal. To force a render to update
-  all child components, one can use the optional `deep` argument. Note that the
-  value of the `deep` argument needs to be a boolean, not a truthy value.
+Note that props are owned by the parent, not by the component. As such, they
+should not be modified by the component. See the [props page](props.md) for
+more information.
 
 ## Static Properties
 
@@ -89,36 +77,8 @@ The `Component` class has a very small API.
   the classes of any sub components needed by the template.
 
   ```js
-  class ParentComponent extends owl.Component {
+  class ParentComponent extends Component {
     static components = { SubComponent };
-  }
-  ```
-
-* **`props (object, optional)`**: if given, this is an object that describes the
-  type and shape of the (actual) props given to the component. If Owl mode is
-  `dev`, this will be used to validate the props each time the component is
-  created/updated. See [Props Validation](props.md#props-validation) for more information.
-
-  ```js
-  class Counter extends owl.Component {
-    static props = {
-      initialValue: Number,
-      optional: true,
-    };
-  }
-  ```
-
-- **`defaultProps (object, optional)`**: if given, this object define default
-  values for (top-level) props. Whenever `props` are given to the object, they
-  will be altered to add default value (if missing). Note that it does not
-  change the initial object, a new object will be created instead. See
-  [default props](props.md#default-props) for more information
-
-  ```js
-  class Counter extends owl.Component {
-    static defaultProps = {
-      initialValue: 0,
-    };
   }
   ```
 
@@ -128,19 +88,16 @@ A solid and robust component system needs a complete lifecycle system to help
 developers write components. Here is a complete description of the lifecycle of
 a Owl component:
 
-| Method                                  | Hook                | Description                                                            |
-| --------------------------------------- | ------------------- | ---------------------------------------------------------------------- |
-| **[setup](#setup)**                     | none                | setup                                                                  |
-| **[willStart](#willstart)**             | `onWillStart`       | async, before first rendering                                          |
-| **[willRender](#willrender)**           | `onWillRender`      | just before component is rendered                                      |
-| **[rendered](#rendered)**               | `onRendered`        | just after component is rendered                                       |
-| **[mounted](#mounted)**                 | `onMounted`         | just after component is rendered and added to the DOM                  |
-| **[willUpdateProps](#willupdateprops)** | `onWillUpdateProps` | async, before props update                                             |
-| **[willPatch](#willpatch)**             | `onWillPatch`       | just before the DOM is patched                                         |
-| **[patched](#patched)**                 | `onPatched`         | just after the DOM is patched                                          |
-| **[willUnmount](#willunmount)**         | `onWillUnmount`     | just before removing component from DOM                                |
-| **[willDestroy](#willdestroy)**         | `onWillDestroy`     | just before component is destroyed                                     |
-| **[error](#onerror)**                   | `onError`           | catch and handle errors (see [error handling page](error_handling.md)) |
+| Method                          | Hook            | Description                                                            |
+| ------------------------------- | --------------- | ---------------------------------------------------------------------- |
+| **[setup](#setup)**             | none            | setup                                                                  |
+| **[willStart](#willstart)**     | `onWillStart`   | async, before first rendering                                          |
+| **[mounted](#mounted)**         | `onMounted`     | just after component is rendered and added to the DOM                  |
+| **[willPatch](#willpatch)**     | `onWillPatch`   | just before the DOM is patched                                         |
+| **[patched](#patched)**         | `onPatched`     | just after the DOM is patched                                          |
+| **[willUnmount](#willunmount)** | `onWillUnmount` | just before removing component from DOM                                |
+| **[willDestroy](#willdestroy)** | `onWillDestroy` | just before component is destroyed                                     |
+| **[error](#onerror)**           | `onError`       | catch and handle errors (see [error handling page](error_handling.md)) |
 
 ### `setup`
 
@@ -184,42 +141,6 @@ should be made to make this method as fast as possible.
 Note that if there are more than one `onWillStart` registered callback, then they
 will all be run in parallel.
 
-### `willRender`
-
-It is uncommon but it may happen that one need to execute code just before a
-component is rendered (more precisely, when its compiled template function is executed).
-To do that, one can use the `onWillRender` hook:
-
-```javascript
-  setup() {
-    onWillRender(() => {
-      // do something
-    });
-  }
-```
-
-`willRender` hooks are called just before rendering templates, parent first,
-then children.
-
-### `rendered`
-
-It is uncommon but it may happen that one need to execute code just after a
-component is rendered (more precisely, when its compiled template function is executed).
-To do that, one can use the `onRendered` hook:
-
-```javascript
-  setup() {
-    onRendered(() => {
-      // do something
-    });
-  }
-```
-
-`rendered` hooks are called just after rendering templates, parent first,
-then children. Note that at this moment, the actual DOM may not exist yet (if
-it is the first rendering), or is not updated yet. This will be dom in the next
-animation frame as soon as all the components are ready.
-
 ### `mounted`
 
 The `mounted` hook is called each time a component is attached to the
@@ -248,30 +169,6 @@ this moment:
   }
 ```
 
-### `willUpdateProps`
-
-The `willUpdateProps` is an asynchronous hook, called just before new props
-are set. This is useful if the component needs to perform an asynchronous task,
-depending on the props (for example, assuming that the props are
-some record Id, fetching the record data).
-
-The `onWillUpdateProps` hook is used to register a function that will be executed at
-this moment:
-
-```javascript
-  setup() {
-    onWillUpdateProps(nextProps => {
-      return this.loadData({id: nextProps.id});
-    });
-  }
-```
-
-Notice that it receives the next props for the component.
-
-This hook is not called during the first render (but `willStart` is called
-and performs a similar job). Also, as most of the hooks, it is called in the
-usual order: parents first, then children.
-
 ### `willPatch`
 
 The willPatch hook is called just before the DOM patching process starts.
@@ -299,7 +196,7 @@ The `willPatch` is called in the usual parent->children order.
 ### `patched`
 
 This hook is called whenever a component did actually update its DOM (most
-likely via a change in its state/props or environment).
+likely via a change in its state or props).
 
 This method is not called on the initial render. It is useful to interact
 with the DOM (for example, through an external library) whenever the
@@ -396,7 +293,7 @@ the sub component class in its static `components` object:
 
 ```js
 class Child extends Component {
-  static template = xml`<div>child component <t t-esc="props.value"/></div>`;
+  static template = xml`<div>child component <t t-out="this.props.value"/></div>`;
 }
 
 class Parent extends Component {
@@ -428,9 +325,9 @@ class B extends Component {
   static template = xml`<span>child b</span>`;
 }
 class Parent extends Component {
-  static template = xml`<t t-component="myComponent"/>`;
+  static template = xml`<t t-component="this.myComponent"/>`;
 
-  state = useState({ child: "a" });
+  state = proxy({ child: "a" });
 
   get myComponent() {
     return this.state.child === "a" ? A : B;

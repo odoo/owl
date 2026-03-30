@@ -7,7 +7,6 @@ functions are all available in the `owl.utils` namespace.
 
 - [`whenReady`](#whenready): executing code when DOM is ready
 - [`EventBus`](#eventbus): a simple EventBus
-- [`validate`](#validate): a validation function
 - [`batched`](#batched): batch function calls
 
 ## `whenReady`
@@ -41,27 +40,6 @@ const bus = new EventBus();
 bus.addEventListener("event", () => console.log("something happened"));
 
 bus.trigger("event"); // 'something happened' is logged
-```
-
-## `validate`
-
-The `validate` function is a function that validates if a given object satisfies a
-specified schema. It is actually used by Owl itself to perform
-[props validation](props.md#props-validation). For example:
-
-```js
-validate(
-  { a: "hey" },
-  {
-    id: Number,
-    url: [Boolean, { type: Array, element: Number }],
-  }
-);
-
-// throws an error with the following information:
-//    - unknown key 'a',
-//    - 'id' is missing (should be a number),
-//    - 'url' is missing (should be a boolean or list of numbers),
 ```
 
 ## `batched`

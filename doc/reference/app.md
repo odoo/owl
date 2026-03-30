@@ -66,7 +66,7 @@ The `config` object is an object with some of the following keys:
 - **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning
   whenever it encounters a component that does not provide a [static props description](props.md#props-validation).
 - **`customDirectives (object)`**: if given, the corresponding function on the object will be called
-  on the template custom directives: `t-custom-*` (see [Custom Directives](templates.md#custom-directives)).
+  on the template custom directives: `t-custom-*` (see [Custom Directives](template_syntax.md#custom-directives)).
 - **`globalValues (object)`**: Global object of elements available at compilations.
 
 ## `mount` helper
@@ -149,7 +149,7 @@ const { mount } = owl;
 Dev mode activates some additional checks and developer amenities:
 
 - [Props validation](./props.md#props-validation) is performed
-- [t-foreach](./templates.md#loops) loops check for key unicity
+- [t-foreach](./template_syntax.md#loops) loops check for key unicity
 - Lifecycle hooks are wrapped to report their errors in a more developer-friendly way
-- onWillStart and onWillUpdateProps will emit a warning in the console when they
-  take longer than 3 seconds in an effort to ease debugging the presence of deadlocks
+- onWillStart will emit a warning in the console when it takes longer than 3
+  seconds in an effort to ease debugging the presence of deadlocks

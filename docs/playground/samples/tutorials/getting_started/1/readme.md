@@ -24,16 +24,20 @@ Here is what you need to do:
 
 ### Hints
 
-**Signals** are Owl's core reactivity primitive. A signal wraps a value and
-automatically triggers UI updates when it changes. Import `signal` from
-`@odoo/owl` and create one as a class property:
+A **signal** is a reactive container for a value. You create one with `signal(initialValue)`,
+read it by calling it as a function (`signal()`), and update it with `.set(newValue)`.
+Whenever a signal's value changes, Owl automatically re-renders every component
+that read that signal during its last render — you never have to manually
+trigger an update. See the [Signals](https://github.com/odoo/owl/blob/master/doc/reference/reactivity.md#signals)
+section for more details.
+
+Import `signal` from `@odoo/owl` and create one as a class property:
 
 ```js
 count = signal(0);
 ```
 
-To read a signal's value, call it as a function: `this.count()`. To update it,
-use `.set(...)`:
+To read the value, call the signal: `this.count()`. To update it, use `.set(...)`:
 
 ```js
 this.count.set(this.count() + 1);

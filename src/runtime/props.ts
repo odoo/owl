@@ -48,6 +48,7 @@ export function props<Shape extends {}, Defaults>(
 ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
 export function props(type?: any, defaults?: any): Props<{}> {
   const { node, app, componentName } = getContext("component");
+  Object.assign(node.defaultProps, defaults);
 
   function getProp(key: string) {
     if (node.props[key] === undefined && defaults) {
@@ -80,12 +81,31 @@ export function props(type?: any, defaults?: any): Props<{}> {
       });
     }
   } else {
-    applyPropGetters(Object.keys(node.props).filter((k) => k.charCodeAt(0) !== 1));
-    node.willUpdateProps.push((np: Record<string, any>) => {
-      for (let key in result) {
+    const getKeys = (props: Record<string, any>) => {
+      const keys: string[] = [];
+      for (const k in props) {
+        if (k.charCodeAt(0) !== 1) {
+          keys.push(k);
+        }
+      }
+      if (defaults) {
+        for (const k in defaults) {
+          if (!(k in props)) {
+            keys.push(k);
+          }
+        }
+      }
+      return keys;
+    };
+
+    let keys = getKeys(node.props);
+    applyPropGetters(keys);
+    node.willUpdateProps.push((np: any) => {
+      for (const key of keys) {
         Reflect.deleteProperty(result, key);
       }
-      applyPropGetters(Object.keys(np).filter((k) => k.charCodeAt(0) !== 1));
+      keys = getKeys(np);
+      applyPropGetters(keys);
     });
   }
 

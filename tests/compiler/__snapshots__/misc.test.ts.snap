@@ -174,18 +174,18 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, prepareList, withKey, createRef, callTemplate, createComponent } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['selectProject'](ctx['project'])).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
-  const hdlr_fn3 = (ctx, ev) => (ctx['toggleMore']).call(ctx['this'], ev);
-  const hdlr_fn4 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
-  const hdlr_fn5 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
-  const hdlr_fn6 = (ctx, ev) => (ctx['clearSearch']).call(ctx['this'], ev);
-  const hdlr_fn7 = (ctx, ev) => (ctx['updateTriggerDisplay']).call(ctx['this'], ev);
-  const hdlr_fn8 = (ctx, ev) => (ctx['triggerAll']).call(ctx['this'], ev);
-  const hdlr_fn9 = (ctx, ev) => (ctx['triggerNone']).call(ctx['this'], ev);
-  const hdlr_fn10 = (ctx, ev) => (ctx['triggerDefault']).call(ctx['this'], ev);
-  const hdlr_fn11 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
+  let { safeOutput, prepareList, callHandler, withKey, createRef, callTemplate, createComponent } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['selectProject'](ctx['project']), ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx, ev);
+  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['toggleMore'], ctx, ev);
+  const hdlr_fn4 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx, ev);
+  const hdlr_fn5 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx, ev);
+  const hdlr_fn6 = (ctx, ev) => callHandler(ctx['clearSearch'], ctx, ev);
+  const hdlr_fn7 = (ctx, ev) => callHandler(ctx['updateTriggerDisplay'], ctx, ev);
+  const hdlr_fn8 = (ctx, ev) => callHandler(ctx['triggerAll'], ctx, ev);
+  const hdlr_fn9 = (ctx, ev) => callHandler(ctx['triggerNone'], ctx, ev);
+  const hdlr_fn10 = (ctx, ev) => callHandler(ctx['triggerDefault'], ctx, ev);
+  const hdlr_fn11 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx, ev);
   const comp1 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","search"]);
   

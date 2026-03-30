@@ -553,7 +553,8 @@ export class CodeGenerator {
       const rest = compiled.slice(bareArrowMatch[0].length);
       hoistedExpr = `(ctx,${bareArrowMatch[1]})=>${rest}`;
     } else {
-      hoistedExpr = `(ctx, ev) => (${compiled}).call(ctx['this'], ev)`;
+      this.helpers.add("callHandler");
+      hoistedExpr = `(ctx, ev) => callHandler(${compiled}, ctx, ev)`;
     }
 
     const id = generateId("hdlr_fn");

@@ -4,7 +4,8 @@ exports[`shadow_dom can bind event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].add).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].add, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   

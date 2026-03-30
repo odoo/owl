@@ -52,7 +52,9 @@ describe("event handling", () => {
     await mount(Parent, fixture);
     expect([]).toBeLogged();
     fixture.querySelector("button")!.click();
-    expect(["Cannot read properties of undefined (reading 'call')"]).toBeLogged();
+    expect([
+      `Invalid handler expression: the \`t-on\` expression should evaluate to a function, but got 'undefined'. Did you mean to use an arrow function? (e.g. \`t-on-click="() => expr"\`)`,
+    ]).toBeLogged();
   });
 
   test("support for callable expression in event handler", async () => {

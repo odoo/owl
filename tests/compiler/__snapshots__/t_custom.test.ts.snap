@@ -4,7 +4,8 @@ exports[`t-custom can use t-custom directive on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].click).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].click, ctx, ev);
   
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
@@ -19,7 +20,8 @@ exports[`t-custom can use t-custom directive with modifiers on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].click).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].click, ctx, ev);
   
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   

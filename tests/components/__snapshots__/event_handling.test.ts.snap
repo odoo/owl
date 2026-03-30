@@ -4,7 +4,8 @@ exports[`event handling Invalid handler throws an error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].dosomething).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].dosomething, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">click</button>\`);
   
@@ -19,7 +20,8 @@ exports[`event handling handler is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].click).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].click, ctx, ev);
   
   let block1 = createBlock(\`<span block-handler-0="click"/>\`);
   
@@ -34,8 +36,8 @@ exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createComponent, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].inc).call(ctx['this'], ev);
+  let { callHandler, createComponent, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-child-1/></span>\`);
@@ -66,7 +68,8 @@ exports[`event handling handler works when app is mounted in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].inc).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
   
   let block1 = createBlock(\`<span block-handler-0="click">click me</span>\`);
   
@@ -100,7 +103,8 @@ exports[`event handling input blur event is not called if component is destroyed
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].blur).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].blur, ctx, ev);
   
   let block1 = createBlock(\`<input block-handler-0="blur"/>\`);
   
@@ -141,8 +145,8 @@ exports[`event handling support for callable expression in event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].obj.onInput).call(ctx['this'], ev);
+  let { safeOutput, callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].obj.onInput, ctx, ev);
   
   let block1 = createBlock(\`<div><block-child-0/><input type="text" block-handler-0="input"/></div>\`);
   

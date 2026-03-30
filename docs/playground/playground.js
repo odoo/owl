@@ -81,17 +81,6 @@ class Playground extends Component {
       if (el) el.value = val;
     });
 
-    useEffect(() => {
-      const project = this.project.activeProject();
-      if (project && project.tutorial && project.tutorialId) {
-        history.replaceState(null, "", "#" + project.tutorialId);
-      } else {
-        if (window.location.hash) {
-          history.replaceState(null, "", window.location.pathname + window.location.search);
-        }
-      }
-    });
-
     this.hashData = null;
     this.hashTutorial = null;
     if (window.location.hash) {
@@ -146,6 +135,20 @@ class Playground extends Component {
           "Hello World"
         );
       }
+    });
+
+    this.hashHandled = false;
+    useEffect(() => {
+      const project = this.project.activeProject();
+      if (!project) return;
+      if (project.tutorial && project.tutorialId) {
+        history.replaceState(null, "", "#" + project.tutorialId);
+      } else if (this.hashHandled) {
+        if (window.location.hash) {
+          history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+      }
+      this.hashHandled = true;
     });
 
     this.exportStandaloneApp = debounce(this.exportStandaloneApp, 250, true);

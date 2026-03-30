@@ -1537,7 +1537,7 @@ body {
   justify-content: center;
   flex: 1 1 0%;
   min-height: 0;
-  padding: 28px 40px 120px;
+  padding: 120px 40px 28px;
   gap: 0;
   max-width: 600px;
   margin: 0 auto;
@@ -1715,6 +1715,28 @@ body {
 .welcome-link:hover svg {
   opacity: 1;
   transform: translate(1px, -1px);
+}
+
+.welcome-links {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  animation: welcomeFadeIn 0.7s 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.welcome-links a {
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  color: #9a98b8;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.welcome-links a:hover {
+  color: #2d2b55;
+  text-decoration: underline;
 }
 
 /* ---- keyboard shortcut hint ---- */

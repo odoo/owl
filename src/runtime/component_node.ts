@@ -31,6 +31,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   forceNextRender: boolean = false;
   parentKey: string | null;
   props: Record<string, any>;
+  defaultProps: Record<string, any> = {};
 
   renderFn: Function;
   parent: ComponentNode | null;
@@ -215,6 +216,11 @@ export class ComponentNode implements VNode<ComponentNode> {
 
   async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
     props = Object.assign({}, props);
+    for (const key in this.defaultProps) {
+      if (props[key] === undefined) {
+        props[key] = this.defaultProps[key];
+      }
+    }
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;

@@ -1,4 +1,4 @@
-import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
+import { Component, mount, onWillUpdateProps, props, proxy, signal, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -585,4 +585,33 @@ test("arrow function props re-render when captured variable changes", async () =
      "Parent:patched",
    ]
   `);
+});
+
+test("no props validation and default props", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.width"/> / <t t-out="this.props.height"/>`;
+    props = props(null as any, { width: 1, height: 1 });
+  }
+
+  const height = signal<number | undefined>(undefined);
+  const width = signal<number | undefined>(123);
+
+  class Parent extends Component {
+    static template = xml`<Child height="this.height()" width="this.width()"/>`;
+    static components = { Child };
+
+    height = height;
+    width = width;
+  }
+
+  await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("123 / 1");
+
+  height.set(123);
+  await nextTick();
+  expect(fixture.innerHTML).toBe("123 / 123");
+
+  width.set(undefined);
+  await nextTick();
+  expect(fixture.innerHTML).toBe("1 / 123");
 });

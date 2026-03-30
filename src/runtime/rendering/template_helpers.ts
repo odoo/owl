@@ -166,6 +166,16 @@ function createRef(ref: any) {
   };
 }
 
+function callHandler(fn: any, ctx: any, ev: Event) {
+  if (typeof fn !== "function") {
+    throw new OwlError(
+      `Invalid handler expression: the \`t-on\` expression should evaluate to a function, but got '${typeof fn}'. ` +
+        `Did you mean to use an arrow function? (e.g. \`t-on-click="() => expr"\`)`
+    );
+  }
+  fn.call(ctx["this"], ev);
+}
+
 function modelExpr(value: any) {
   if (typeof value !== "function" || typeof value.set !== "function") {
     throw new OwlError(
@@ -281,4 +291,5 @@ export const helpers = {
   modelExpr,
   createComponent,
   callTemplate,
+  callHandler,
 };

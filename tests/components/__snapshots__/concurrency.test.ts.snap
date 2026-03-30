@@ -96,8 +96,8 @@ exports[`another scenario with delayed rendering 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1477,8 +1477,8 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1546,8 +1546,8 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block3 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1595,8 +1595,8 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1645,8 +1645,8 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1693,8 +1693,8 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1893,8 +1893,8 @@ exports[`rendering component again in next microtick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createComponent } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  let { callHandler, createComponent } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><button block-handler-0="click">Click</button><block-child-0/></div>\`);
@@ -1987,8 +1987,8 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
   
@@ -2006,8 +2006,8 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
   let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
   

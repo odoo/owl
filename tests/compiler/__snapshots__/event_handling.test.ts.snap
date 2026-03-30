@@ -4,7 +4,8 @@ exports[`t-on can bind event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['add']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['add'], ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -106,8 +107,9 @@ exports[`t-on can bind two event handlers 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['handleClick']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['handleDblClick']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['handleClick'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['handleDblClick'], ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click" block-handler-1="dblclick">Click</button>\`);
   
@@ -123,7 +125,8 @@ exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['add']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['add'], ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -138,8 +141,8 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['add']).call(ctx['this'], ev);
+  let { prepareList, callHandler, withKey } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['add'], ctx, ev);
   
   let block2 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -174,7 +177,8 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['add']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['add'], ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -213,7 +217,8 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].add).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].add, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -228,7 +233,8 @@ exports[`t-on receive event in first argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['add']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['add'], ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
@@ -243,8 +249,9 @@ exports[`t-on t-on modifiers (native listener) basic support for native listener
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['divClicked']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['btnClicked']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['divClicked'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['btnClicked'], ctx, ev);
   
   let block1 = createBlock(\`<div class="myClass" block-handler-0="click"><button block-handler-1="click">Button</button></div>\`);
   
@@ -260,8 +267,8 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onClick']).call(ctx['this'], ev);
+  let { callHandler, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onClick'], ctx, ev);
   
   let block1 = createBlock(\`<div><button block-handler-0="click"><block-child-0/></button></div>\`);
   
@@ -277,8 +284,9 @@ exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onCapture']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['doSomething']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onCapture'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['doSomething'], ctx, ev);
   
   let block1 = createBlock(\`<div block-handler-0="click.capture"><button block-handler-1="click">Button</button></div>\`);
   
@@ -294,7 +302,8 @@ exports[`t-on t-on modifiers (native listener) t-on with .passive and .capture m
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
   
   let block1 = createBlock(\`<div block-handler-0="click.passive.capture"><button>Button</button></div>\`);
   
@@ -309,7 +318,8 @@ exports[`t-on t-on modifiers (native listener) t-on with .passive modifier 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click.passive">Button</button>\`);
   
@@ -338,7 +348,8 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifi
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onClick']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onClick'], ctx, ev);
   
   let block1 = createBlock(\`<div><button block-handler-0="click.prevent.self"><span>Button</span></button></div>\`);
   
@@ -353,9 +364,10 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop mod
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onClickPrevented']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['onClickStopped']).call(ctx['this'], ev);
-  const hdlr_fn3 = (ctx, ev) => (ctx['onClickPreventedAndStopped']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onClickPrevented'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['onClickStopped'], ctx, ev);
+  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['onClickPreventedAndStopped'], ctx, ev);
   
   let block1 = createBlock(\`<div><button block-handler-0="click.prevent">Button 1</button><button block-handler-1="click.stop">Button 2</button><button block-handler-2="click.prevent.stop">Button 3</button></div>\`);
   
@@ -399,7 +411,8 @@ exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifi
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onClick']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onClick'], ctx, ev);
   
   let block1 = createBlock(\`<div><button block-handler-0="click.self.prevent"><span>Button</span></button></div>\`);
   
@@ -414,8 +427,9 @@ exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['onClick']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['onClickSelf']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['onClick'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['onClickSelf'], ctx, ev);
   
   let block1 = createBlock(\`<div><button block-handler-0="click"><span>Button</span></button><button block-handler-1="click.self"><span>Button</span></button></div>\`);
   
@@ -431,8 +445,9 @@ exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['divClicked']).call(ctx['this'], ev);
-  const hdlr_fn2 = (ctx, ev) => (ctx['btnClicked']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['divClicked'], ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['btnClicked'], ctx, ev);
   
   let block1 = createBlock(\`<div block-handler-0="click.synthetic"><button block-handler-1="click.synthetic">Button</button></div>\`);
   
@@ -523,7 +538,8 @@ exports[`t-on t-on with t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const hdlr_fn1 = (ctx, ev) => (ctx['update']).call(ctx['this'], ev);
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['update'], ctx, ev);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   

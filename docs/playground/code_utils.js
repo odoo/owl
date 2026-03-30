@@ -131,11 +131,14 @@ function isInsideComponentClass(doc, position) {
   return insideComponentClass;
 }
 
-function getOwlImportChanges(doc, symbolName) {
+function getOwlImportChanges(doc, symbolName, cursorPos) {
   const importRegex = /import\s*\{([^}]*)\}\s*from\s*["']@odoo\/owl["'];?/;
   const match = importRegex.exec(doc);
 
   if (match) {
+    // Don't modify the import if the cursor is inside it (user is typing there)
+    if (cursorPos >= match.index && cursorPos <= match.index + match[0].length) return null;
+
     const importsStr = match[1];
     const imports = importsStr
       .split(",")
@@ -164,7 +167,7 @@ function owlCompletionSource(context) {
       type: item.type,
       info: "OWL " + item.type,
       apply: (view, completion, from, to) => {
-        const importChange = getOwlImportChanges(doc, item.label);
+        const importChange = getOwlImportChanges(doc, item.label, from);
         const textChange = { from, to, insert: item.label };
 
         if (importChange) {
@@ -179,7 +182,7 @@ function owlCompletionSource(context) {
       type: item.type,
       info: item.info,
       apply: (view, completion, from, to) => {
-        const importChange = getOwlImportChanges(doc, item.importSymbol);
+        const importChange = getOwlImportChanges(doc, item.importSymbol, from);
 
         if (importChange) {
           const insertLength = importChange.insert.length;

@@ -606,3 +606,31 @@ exports[`do not crash when binding anonymous function prop with bind suffix 2`] 
   }
 }"
 `;
+
+exports[`no props validation and default props 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["height","width"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({height: ctx['this'].height(),width: ctx['this'].width()}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`no props validation and default props 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.width);
+    const b3 = text(\` / \`);
+    const b4 = safeOutput(ctx['this'].props.height);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;

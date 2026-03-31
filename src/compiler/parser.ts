@@ -52,6 +52,7 @@ interface TModelInfo {
   shouldNumberize: boolean;
   hasDynamicChildren: boolean;
   specialInitTargetAttr: string | null;
+  isProxy: boolean;
 }
 
 export interface ASTDomNode extends BaseAST {
@@ -406,6 +407,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const hasTrimMod = attr.includes(".trim");
       const hasLazyMod = hasTrimMod || attr.includes(".lazy");
       const hasNumberMod = attr.includes(".number");
+      const hasProxyMod = attr.includes(".proxy");
       const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
 
       model = {
@@ -416,6 +418,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         hasDynamicChildren: false,
         shouldTrim: hasTrimMod,
         shouldNumberize: hasNumberMod,
+        isProxy: hasProxyMod,
       };
       if (isSelect) {
         // don't pollute the original ctx

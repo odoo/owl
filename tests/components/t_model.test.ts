@@ -1,5 +1,5 @@
 import { Component } from "../../src/runtime/component";
-import { computed, mount, signal, xml } from "../../src/index";
+import { computed, mount, proxy, signal, xml } from "../../src/index";
 import { editInput, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -739,5 +739,214 @@ describe("t-model directive", () => {
     expect(fixture.querySelector("input:checked")!.getAttribute("id")).toBe("beam");
     divEl.click();
     expect(steps).toEqual(["group: scotty", "group: beam", "group: beam"]);
+  });
+});
+
+describe("t-model.proxy directive", () => {
+  test("basic use, on an input", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy="this.state.text"/>
+          <span><t t-out="this.state.text"/></span>
+        </div>`;
+      state = proxy({ text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+  });
+
+  test("on an input with bracket expression", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy="this.state['text']"/>
+          <span><t t-out="this.state.text"/></span>
+        </div>`;
+      state = proxy({ text: "" });
+    }
+
+    const comp = await mount(SomeComponent, fixture);
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+  });
+
+  test("on a textarea", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>
+            <textarea t-model.proxy="this.state.text"/>
+            <span><t t-out="this.state.text"/></span>
+        </div>`;
+      state = proxy({ text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><textarea></textarea><span></span></div>");
+
+    const textarea = fixture.querySelector("textarea")!;
+    await editInput(textarea, "test");
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><textarea></textarea><span>test</span></div>");
+  });
+
+  test("on an input, type=checkbox", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>
+            <input type="checkbox" t-model.proxy="this.state.flag"/>
+            <span>
+                <t t-if="this.state.flag">yes</t>
+                <t t-else="">no</t>
+            </span>
+        </div>`;
+      state = proxy({ flag: false });
+    }
+
+    const comp = await mount(SomeComponent, fixture);
+    expect(fixture.innerHTML).toBe('<div><input type="checkbox"><span>no</span></div>');
+
+    let input = fixture.querySelector("input")!;
+    input.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div><input type="checkbox"><span>yes</span></div>');
+    expect(comp.state.flag).toBe(true);
+
+    input.click();
+    await nextTick();
+    expect(comp.state.flag).toBe(false);
+  });
+
+  test("on an input type=radio", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>
+            <input type="radio" id="one" value="One" t-model.proxy="this.state.choice"/>
+            <input type="radio" id="two" value="Two" t-model.proxy="this.state.choice"/>
+            <span>Choice: <t t-out="this.state.choice"/></span>
+        </div>`;
+      state = proxy({ choice: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: </span></div>'
+    );
+
+    const firstInput = fixture.querySelectorAll("input")[0];
+    firstInput.click();
+    await nextTick();
+    expect(comp.state.choice).toBe("One");
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: One</span></div>'
+    );
+  });
+
+  test("on a select", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>
+            <select t-model.proxy="this.state.color">
+                <option value="">Please select one</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+            </select>
+            <span>Choice: <t t-out="this.state.color"/></span>
+        </div>`;
+      state = proxy({ color: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><select><option value="">Please select one</option><option value="red">Red</option><option value="blue">Blue</option></select><span>Choice: </span></div>'
+    );
+
+    const select = fixture.querySelector("select")!;
+    select.value = "red";
+    select.dispatchEvent(new Event("change"));
+    await nextTick();
+
+    expect(comp.state.color).toBe("red");
+    expect(fixture.innerHTML).toBe(
+      '<div><select><option value="">Please select one</option><option value="red">Red</option><option value="blue">Blue</option></select><span>Choice: red</span></div>'
+    );
+  });
+
+  test("with .trim modifier", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy.trim="this.state.text"/>
+          <span><t t-out="this.state.text"/></span>
+        </div>`;
+      state = proxy({ text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "  hello  ");
+    expect(comp.state.text).toBe("hello");
+  });
+
+  test("with .number modifier", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy.number="this.state.num"/>
+          <span><t t-out="this.state.num"/></span>
+        </div>`;
+      state = proxy({ num: 0 as string | number });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "42");
+    expect(comp.state.num).toBe(42);
+  });
+
+  test("with .lazy modifier", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy.lazy="this.state.text"/>
+          <span><t t-out="this.state.text"/></span>
+        </div>`;
+      state = proxy({ text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    const input = fixture.querySelector("input")!;
+    input.value = "hello";
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    // .lazy means only change event triggers update
+    expect(comp.state.text).toBe("");
+
+    input.dispatchEvent(new Event("change"));
+    await nextTick();
+    expect(comp.state.text).toBe("hello");
+  });
+
+  test("deeply nested path", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model.proxy="this.state.a.b"/>
+          <span><t t-out="this.state.a.b"/></span>
+        </div>`;
+      state = proxy({ a: { b: "" } });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "deep");
+    expect(comp.state.a.b).toBe("deep");
+    expect(fixture.innerHTML).toBe("<div><input><span>deep</span></div>");
   });
 });

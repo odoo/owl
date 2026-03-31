@@ -640,12 +640,23 @@ export class CodeGenerator {
         shouldTrim,
         targetAttr,
         specialInitTargetAttr,
+        isProxy,
       } = ast.model;
 
-      const expression = compileExpr(expr);
-      const exprId = generateId("expr");
-      this.helpers.add("modelExpr");
-      this.define(exprId, `modelExpr(${expression})`);
+      let readExpr: string;
+      let writeExpr: (value: string) => string;
+      if (isProxy) {
+        const expression = compileExpr(expr);
+        readExpr = expression;
+        writeExpr = (value) => `${expression} = ${value}`;
+      } else {
+        const exprId = generateId("expr");
+        const expression = compileExpr(expr);
+        this.helpers.add("modelExpr");
+        this.define(exprId, `modelExpr(${expression})`);
+        readExpr = `${exprId}()`;
+        writeExpr = (value) => `${exprId}.set(${value})`;
+      }
 
       let idx: number;
       if (specialInitTargetAttr) {
@@ -657,14 +668,14 @@ export class CodeGenerator {
             targetExpr = compileExpr(dynamicTgExpr);
           }
         }
-        idx = block!.insertData(`${exprId}() === ${targetExpr}`, "prop");
+        idx = block!.insertData(`${readExpr} === ${targetExpr}`, "prop");
         attrs[`block-property-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
         const bValueId = generateId("bValue");
         tModelSelectedExpr = `${bValueId}`;
-        this.define(tModelSelectedExpr, `${exprId}()`);
+        this.define(tModelSelectedExpr, readExpr);
       } else {
-        idx = block!.insertData(`${exprId}()`, "prop");
+        idx = block!.insertData(readExpr, "prop");
         attrs[`block-property-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -672,7 +683,7 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ctx, ev) => { ${exprId}.set(${valueCode}); }, ctx]`;
+      const handler = `[(ctx, ev) => { ${writeExpr(valueCode)}; }, ctx]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }

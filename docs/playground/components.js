@@ -15,11 +15,13 @@ import {
 import { createOwlCompletions, parseMarkdown } from "./code_utils.js";
 import { getFileType, LANGUAGES, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import {
+  abbreviationTracker,
   acceptCompletion,
   basicSetup,
   Compartment,
   EditorState,
   EditorView,
+  expandAbbreviation,
   indentLess,
   indentMore,
   indentUnit,
@@ -363,7 +365,7 @@ class CodeEditor extends Component {
           keymap.of([
             {
               key: "Tab",
-              run: (view) => acceptCompletion(view) || indentMore(view),
+              run: (view) => acceptCompletion(view) || expandAbbreviation(view) || indentMore(view),
               shift: indentLess,
             },
             {
@@ -385,6 +387,7 @@ class CodeEditor extends Component {
         EditorState.tabSize.of(tabSize),
         ...(lang === "md" ? [EditorView.lineWrapping] : []),
         ...(lang === "js" ? [createOwlCompletions()] : []),
+        ...(lang === "xml" ? [abbreviationTracker()] : []),
         this.fontSizeCompartment.of(
           EditorView.theme({ "&": { fontSize: this.settings.fontSize() + "px" } })
         ),

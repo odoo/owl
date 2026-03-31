@@ -30,6 +30,7 @@ const requiredPackages = [
   "@codemirror/theme-one-dark",
   "@codemirror/view",
   "codemirror",
+  "@emmetio/codemirror6-plugin",
 ];
 
 console.log("Checking CodeMirror dependencies...");
@@ -73,6 +74,7 @@ export { xml } from "@codemirror/lang-xml";
 export { markdown } from "@codemirror/lang-markdown";
 export { oneDark } from "@codemirror/theme-one-dark";
 export { basicSetup } from "codemirror";
+export { abbreviationTracker, expandAbbreviation } from "@emmetio/codemirror6-plugin";
 `;
 
 const tempEntry = path.resolve(rootDir, "temp_codemirror_entry.mjs");

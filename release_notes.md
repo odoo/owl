@@ -1330,6 +1330,30 @@ class C extends Component {
 }
 ```
 
+#### t-model.proxy
+
+In addition to signals, `t-model` also supports reactive proxies via the `.proxy`
+modifier. This is useful when working with `proxy()` objects, where values are
+read and written as plain properties rather than through signal accessors:
+
+```js
+class C extends Component {
+  static template = xml`<input t-model.proxy="this.state.value"/>`;
+
+  state = proxy({ value: "" });
+}
+```
+
+The `.proxy` modifier generates code that reads and assigns to the expression
+directly (e.g. `this.state.value` / `this.state.value = ...`), rather than going
+through a signal interface. It can be combined with the usual modifiers:
+
+```xml
+<input t-model.proxy.trim="this.state.name"/>
+<input t-model.proxy.number="this.state.count"/>
+<input t-model.proxy.lazy="this.state.text"/>
+```
+
 ### onWillRender and onRendered are removed
 
 The `onWillRender` and `onRendered` hooks have been removed for several reasons:

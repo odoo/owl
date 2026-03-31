@@ -689,3 +689,180 @@ exports[`t-model directive with expression having a changing key 1`] = `
   }
 }"
 `;
+
+exports[`t-model.proxy directive basic use, on an input 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.text;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.text = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.text);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive deeply nested path 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.a.b;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.a.b = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.a.b);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive on a select 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-property-0="value" block-handler-1="change"><option value="">Please select one</option><option value="red">Red</option><option value="blue">Blue</option></select><span>Choice: <block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.color;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.color = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.color);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive on a textarea 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><textarea block-property-0="value" block-handler-1="input"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.text;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.text = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.text);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive on an input type=radio 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input type="radio" id="one" value="One" block-property-0="checked" block-handler-1="click"/><input type="radio" id="two" value="Two" block-property-2="checked" block-handler-3="click"/><span>Choice: <block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.choice === 'One';
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.choice = ev.target.value; }, ctx];
+    let prop2 = ctx['this'].state.choice === 'Two';
+    let hdlr2 = [(ctx, ev) => { ctx['this'].state.choice = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.choice);
+    return block1([prop1, hdlr1, prop2, hdlr2], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive on an input with bracket expression 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state['text'];
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state['text'] = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.text);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive on an input, type=checkbox 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><input type="checkbox" block-property-0="checked" block-handler-1="input"/><span><block-child-0/><block-child-1/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    let prop1 = ctx['this'].state.flag;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.flag = ev.target.checked; }, ctx];
+    if (ctx['this'].state.flag) {
+      b2 = text(\`yes\`);
+    } else {
+      b3 = text(\`no\`);
+    }
+    return block1([prop1, hdlr1], [b2, b3]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive with .lazy modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="change"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.text;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.text = ev.target.value; }, ctx];
+    const b2 = safeOutput(ctx['this'].state.text);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive with .number modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.num;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.num = toNumber(ev.target.value); }, ctx];
+    const b2 = safeOutput(ctx['this'].state.num);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-model.proxy directive with .trim modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="change"/><span><block-child-0/></span></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let prop1 = ctx['this'].state.text;
+    let hdlr1 = [(ctx, ev) => { ctx['this'].state.text = ev.target.value.trim(); }, ctx];
+    const b2 = safeOutput(ctx['this'].state.text);
+    return block1([prop1, hdlr1], [b2]);
+  }
+}"
+`;

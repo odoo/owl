@@ -411,6 +411,9 @@ class ProjectPlugin extends Plugin {
     this.activeProjectId.set(id);
     const project = this.projects().find((p) => p.id === id);
     this.code.loadFiles(project.fileNames, project.files, project.editorState);
+    if (project.tutorial && project.currentStep !== undefined) {
+      this.tutorialCurrentStepSignal.set(project.currentStep);
+    }
     if (this.ranProjects.has(id)) {
       this.code.run();
     }
@@ -697,8 +700,17 @@ class ProjectPlugin extends Plugin {
     const wasRunning = this.code.runCode() !== null;
 
     const solutionFiles = step.solution;
-    project.files = { ...project.files, ...solutionFiles };
-    project.fileNames = [...new Set([...project.fileNames, ...Object.keys(solutionFiles)])];
+    const filesToRemove = [];
+    for (const [key, value] of Object.entries(solutionFiles)) {
+      if (value === null) {
+        filesToRemove.push(key);
+        delete project.files[key];
+      } else {
+        project.files[key] = value;
+      }
+    }
+    const allNames = [...new Set([...project.fileNames, ...Object.keys(solutionFiles)])];
+    project.fileNames = allNames.filter((name) => !filesToRemove.includes(name));
 
     if (project.stepModifiedFiles) {
       delete project.stepModifiedFiles[stepIndex];

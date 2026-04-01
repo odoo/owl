@@ -5,8 +5,15 @@ todos (adding, deleting) and managing the UI (rendering, autofocus). As an
 application grows, this becomes harder to maintain.
 
 Owl 3 introduces **plugins** — reusable units of code that encapsulate logic
-independently from any component. In this step, you will extract the todo
-list management into a `TodoListPlugin`.
+independently from any component. A plugin can hold reactive state (like our
+todo list), provide a service (like a notification system or a storage layer),
+or both. They allow you to separate business logic from UI code, and to share
+that logic across multiple components. See the
+[Plugins documentation](https://github.com/odoo/owl/blob/master/doc/reference/plugins.md)
+for more details.
+
+In this step, you will extract the todo list management into a
+`TodoListPlugin`.
 
 Here is what you need to do:
 
@@ -69,3 +76,9 @@ Plugins are a powerful way to organize code in Owl. They decouple business
 logic from the component tree, making it easier to test, reuse, and reason
 about. A plugin does not need to know which component uses it, and a component
 does not need to know how the plugin works internally.
+
+## Bonus Exercises
+
+- Validate the `text` argument in `addTodo` using the `assertType` function
+  from Owl: `assertType(text, t.string)`. This ensures the plugin's API is
+  called correctly and helps catch bugs early.

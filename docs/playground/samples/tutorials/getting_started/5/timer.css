@@ -1,0 +1,15 @@
+.root {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timer {
+    display: inline-block;
+    font-size: 24px;
+    font-family: monospace;
+    padding: 4px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

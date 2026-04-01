@@ -1,0 +1,12 @@
+<templates>
+  <t t-name="hibou.WindowManager">
+    <div class="desktop-area">
+      <t t-foreach="this.wm.windows()" t-as="win" t-key="win.id">
+        <Window title="win.title" x="win.x" y="win.y" zIndex="win.zIndex"
+                component="win.component"
+                onClose="() => this.wm.close(win.id)"
+                t-on-mousedown.capture="() => this.wm.activate(win.id)"/>
+      </t>
+    </div>
+  </t>
+</templates>

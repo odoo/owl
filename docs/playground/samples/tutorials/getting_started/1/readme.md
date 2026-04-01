@@ -6,7 +6,9 @@ building small, focused exercises. Each step introduces one concept and builds
 on what you learned before.
 
 Use the navigation bar above the editor to move between steps. Each step
-includes hints and a solution you can reveal if you get stuck. Let's begin!
+includes hints and a solution you can reveal if you get stuck. You can also
+refer to the [Owl documentation](https://github.com/odoo/owl/tree/master#documentation)
+at any time. Let's begin!
 
 ---
 

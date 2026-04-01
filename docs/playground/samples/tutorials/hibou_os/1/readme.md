@@ -10,7 +10,7 @@ includes hints and a solution you can reveal if you get stuck. Let's begin!
 
 ---
 
-## Step 1: The Desktop
+## Step 1: Setting the Stage
 
 In this first step, you will create the basic layout: a desktop area that
 fills the screen, and a taskbar at the bottom with a few app icons.
@@ -24,6 +24,8 @@ Here is what you need to do:
 - The taskbar should show a few app icons (you can use emoji for now):
   🕐 Clock, 📝 Notepad, 🧮 Calculator
 - The `Hibou` component should import and use the `Taskbar`
+- Add a tooltip on each taskbar button (using the `title` attribute) to show
+  the app name on hover
 
 ### Hints
 
@@ -55,6 +57,3 @@ Each taskbar icon can be a simple button with an emoji:
 <button class="taskbar-icon">🕐</button>
 ```
 
-## Bonus Exercises
-
-- Add a hover effect on the taskbar icons.

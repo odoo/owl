@@ -2,7 +2,7 @@ import { Component, mount, xml, signal, computed } from "@odoo/owl";
 
 class Root extends Component {
     static template = xml`
-      <div style="padding: 20px; display: flex; flex-direction: column; gap: 10px; width: 300px;">
+      <div class="form">
         <input t-model="this.name" placeholder="Name"/>
         <input t-model="this.email" placeholder="Email"/>
         <div t-out="this.isValid() ? 'Valid' : 'Invalid'"/>

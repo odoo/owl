@@ -65,24 +65,60 @@ async function parseMarkdown(content) {
 }
 
 const OWL_IMPORTS = [
+  // Core
+  { label: "App", type: "class" },
   { label: "Component", type: "class" },
   { label: "mount", type: "function" },
   { label: "xml", type: "function" },
+  { label: "status", type: "function" },
+
+  // Reactivity
   { label: "signal", type: "function" },
   { label: "computed", type: "function" },
   { label: "effect", type: "function" },
-  { label: "useEffect", type: "function" },
-  { label: "Plugin", type: "class" },
-  { label: "plugin", type: "function" },
-  { label: "props", type: "function" },
-  { label: "providePlugins", type: "function" },
-  { label: "onMounted", type: "function" },
+  { label: "proxy", type: "function" },
+  { label: "markRaw", type: "function" },
+  { label: "toRaw", type: "function" },
+  { label: "untrack", type: "function" },
+
+  // Lifecycle hooks
   { label: "onWillStart", type: "function" },
-  { label: "onWillDestroy", type: "function" },
+  { label: "onMounted", type: "function" },
   { label: "onWillPatch", type: "function" },
   { label: "onPatched", type: "function" },
   { label: "onWillUnmount", type: "function" },
+  { label: "onWillDestroy", type: "function" },
+  { label: "onError", type: "function" },
+
+  // Other hooks
+  { label: "useEffect", type: "function" },
   { label: "useListener", type: "function" },
+  { label: "useApp", type: "function" },
+
+  // Props
+  { label: "props", type: "function" },
+
+  // Plugins
+  { label: "Plugin", type: "class" },
+  { label: "plugin", type: "function" },
+  { label: "providePlugins", type: "function" },
+  { label: "config", type: "function" },
+
+  // Resources and Registries
+  { label: "Resource", type: "class" },
+  { label: "useResource", type: "function" },
+  { label: "Registry", type: "class" },
+
+  // Type validation
+  { label: "types", type: "variable" },
+  { label: "validateType", type: "function" },
+  { label: "assertType", type: "function" },
+
+  // Utilities
+  { label: "EventBus", type: "class" },
+  { label: "markup", type: "function" },
+  { label: "whenReady", type: "function" },
+  { label: "useContext", type: "function" },
 ];
 
 const OWL_SNIPPETS = [

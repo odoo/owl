@@ -12,6 +12,8 @@ Here is what you need to do:
 - It should accept the following props: `name` (string), `description` (string),
   `price` (number), and `image` (optional string — a unicode emoji)
 - Define and validate these props using the `props` and `types` helpers
+- Define a **default value** for the `image` prop (e.g. `"📦"`) so that
+  products without an image still display something
 - Import `ProductCard` in `main.js` and use it to display the hardcoded products
 
 ### Hints
@@ -49,6 +51,19 @@ The `types` helper supports many other types:
 - `t.signal()`
 - `t.array(t.string)`
 
+The `props` function accepts a second argument for **default values**:
+
+```js
+props = props({
+    name: t.string,
+    "image?": t.string,
+}, {
+    image: "📦",
+});
+```
+
+When the parent does not provide the `image` prop, it will default to `"📦"`.
+
 To pass props from a parent template, use JS expressions as attribute values:
 
 ```xml
@@ -57,7 +72,6 @@ To pass props from a parent template, use JS expressions as attribute values:
 
 ## Bonus Exercises
 
-- Display a default emoji (e.g. `📦`) when no `image` prop is provided.
 - Move the products into a list in a separate file (`products.js`), import it
   in `main.js`, and iterate over it in the template with `t-foreach`.
 - Refactor `ProductCard` to receive a single `product` prop (an object) instead

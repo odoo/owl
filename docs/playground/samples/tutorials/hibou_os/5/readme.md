@@ -3,11 +3,19 @@
 Right now, windows are managed manually with individual signals in the `Hibou`
 component. This does not scale — imagine managing 10 different apps this way.
 
-In this step, you will extract window management into a
-`WindowManagerPlugin`. It will track open windows, assign positions, and let
-any component open or close a window. You will also create a `ManagedWindow`
-component that reads its configuration from the plugin and renders the right
-app inside a `Window` using `t-component`.
+In this step, you will learn two key ideas:
+
+1. **Plugins for state management** — extracting the window list into a
+   `WindowManagerPlugin` so any component can open or close a window without
+   prop drilling.
+2. **`t-component` for dynamic rendering** — the `ManagedWindow` uses
+   `t-component` to instantiate a component class stored in a variable.
+   This is how you write generic code that renders different components
+   depending on data, without the parent having to know in advance which
+   component to use.
+
+**Note:** this is a larger step — take your time, and refer to the hints
+below as needed.
 
 Here is what you need to do:
 
@@ -26,8 +34,10 @@ Here is what you need to do:
   render a `ManagedWindow` for each
 - Update the `Taskbar` to use the plugin directly (instead of callback props)
   to open windows
-- Create a simple `ClockApp` component in `apps/` that displays the current
-  time (you can reuse the Clock logic)
+- For now, you can use a simple placeholder component for the app content
+  (e.g. a component that just displays "Hello!")
+- Try clicking the 🕐 icon multiple times — you should see multiple windows
+  open, each at a slightly different position
 
 ### Hints
 
@@ -86,17 +96,16 @@ In `Hibou`, iterate over the windows:
 </t>
 ```
 
-In the `Taskbar`, use the plugin directly:
+In the `Taskbar`, use the plugin directly to open windows:
 
 ```js
 import { plugin } from "@odoo/owl";
 import { WindowManagerPlugin } from "./window_manager_plugin";
-import { ClockApp } from "../apps/clock_app";
 
 wm = plugin(WindowManagerPlugin);
 
-openClock() {
-    this.wm.open("Clock", ClockApp);
+openApp() {
+    this.wm.open("My App", SomePlaceholderComponent);
 }
 ```
 

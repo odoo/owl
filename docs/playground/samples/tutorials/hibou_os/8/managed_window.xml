@@ -1,0 +1,9 @@
+<templates>
+  <t t-name="hibou.ManagedWindow">
+    <Window title="this.props.window.title" x="this.props.window.x" y="this.props.window.y"
+            zIndex="this.props.window.zIndex" onClose="() => this.wm.close(this.props.window.id)"
+            t-on-mousedown.capture="() => this.wm.activate(this.props.window.id)">
+      <t t-component="this.props.window.component"/>
+    </Window>
+  </t>
+</templates>

@@ -17,6 +17,8 @@ Here is what you need to do:
   directly to the signal
 - Update the props definition in `TodoItem` to validate `completed` as
   `t.signal()` instead of `t.boolean`
+- Click on the checkboxes to verify that the strikethrough styling now updates
+  correctly
 
 ### Hints
 

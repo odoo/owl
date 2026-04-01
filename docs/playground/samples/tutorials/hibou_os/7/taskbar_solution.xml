@@ -1,0 +1,18 @@
+<templates>
+  <t t-name="hibou.Taskbar">
+    <div class="taskbar">
+      <div class="taskbar-apps">
+        <t t-foreach="this.props.apps" t-as="app" t-key="app.name">
+          <button class="taskbar-icon" t-att-title="app.name"
+                  t-on-click="() => this.wm.open(app.name, app.window)"
+                  t-out="app.icon"/>
+        </t>
+      </div>
+      <div class="systray">
+        <t t-foreach="this.systrayItems" t-as="item" t-key="item_index">
+          <t t-component="item"/>
+        </t>
+      </div>
+    </div>
+  </t>
+</templates>

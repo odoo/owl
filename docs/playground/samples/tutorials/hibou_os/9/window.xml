@@ -1,0 +1,14 @@
+<templates>
+  <t t-name="hibou.Window">
+    <div class="window" t-att-style="'z-index:' + (this.props.zIndex ? this.props.zIndex() : 1) + ';top:' + (this.props.y || 60) + 'px;left:' + (this.props.x || 60) + 'px'">
+      <div class="window-titlebar">
+        <span class="window-title" t-out="this.props.title"/>
+        <button class="window-close" t-on-click="() => this.props.onClose?.()">✕</button>
+      </div>
+      <div class="window-body">
+        <t t-if="this.props.component" t-component="this.props.component"/>
+        <t t-else="" t-call-slot="default"/>
+      </div>
+    </div>
+  </t>
+</templates>

@@ -96,3 +96,8 @@ expressions inside a slot refer to the parent component's properties and
 methods, not the Window's. This is what makes slots powerful — the Window
 component does not need to know anything about the content it displays.
 
+## Bonus Exercises
+
+- Add an optional `closable` boolean prop (default `true`) to the Window
+  component. When `false`, the close button should be hidden (use `t-if`).
+

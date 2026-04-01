@@ -1,0 +1,12 @@
+<templates>
+  <t t-name="tutorial.Counter">
+    <div class="counter">
+      <h2>Counter</h2>
+      <p class="count">Count: <strong><t t-out="this.count()"/></strong></p>
+      <div class="buttons">
+        <button t-on-click="this.decrement">-</button>
+        <button t-on-click="this.increment">+</button>
+      </div>
+    </div>
+  </t>
+</templates>

@@ -1,0 +1,19 @@
+.browser-app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .browser-url {
+        padding: 6px 10px;
+        font-size: 13px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        outline: none;
+        font-family: monospace;
+    }
+
+    iframe {
+        flex: 1;
+        border: none;
+    }
+}

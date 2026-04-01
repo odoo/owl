@@ -1,0 +1,27 @@
+.workspace-switcher {
+    display: flex;
+    gap: 4px;
+    margin-left: 16px;
+
+    button {
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        &:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+}

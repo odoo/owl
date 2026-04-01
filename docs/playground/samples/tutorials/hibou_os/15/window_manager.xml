@@ -1,0 +1,18 @@
+<templates>
+  <t t-name="hibou.WindowManager">
+    <div class="workspaces-container">
+      <div class="workspaces-cube" t-att-style="this.cubeStyle()">
+        <t t-foreach="[1, 2, 3]" t-as="ws" t-key="ws">
+          <div class="workspace-face">
+            <t t-foreach="this.windowsForWorkspace(ws)" t-as="win" t-key="win.id">
+              <Window title="win.title" x="win.x" y="win.y" zIndex="win.zIndex"
+                      component="win.component" width="win.width" height="win.height"
+                      onClose="() => this.wm.close(win.id)"
+                      t-on-mousedown.capture="() => this.wm.activate(win.id)"/>
+            </t>
+          </div>
+        </t>
+      </div>
+    </div>
+  </t>
+</templates>

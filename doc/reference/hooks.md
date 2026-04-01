@@ -107,7 +107,7 @@ is necessary, since Owl needs to react to a change in state.
 ### `useRef`
 
 The `useRef` hook is useful when we need a way to interact with some inside part
-of a component, rendered by Owl. It only work on a html element tagged by the
+of a component, rendered by Owl. It only work on a HTML element tagged by the
 `t-ref` directive:
 
 ```xml
@@ -227,12 +227,12 @@ function useSomething() {
 
 This hook will run a callback when a component is mounted and patched, and
 will run a cleanup function before patching and before unmounting the
-the component (only if some dependencies have changed).
+component (only if some dependencies have changed).
 
 It has almost the same API as the React `useEffect` hook, except that the dependencies
 are defined by a function instead of just the dependencies.
 
-The `useEffect` hook takes two function: the effect function and the dependency
+The `useEffect` hook takes two functions: the effect function and the dependency
 function. The effect function perform some task and return (optionally) a cleanup
 function. The dependency function returns a list of dependencies, these dependencies
 are passed as parameters in the effect function . If any of these

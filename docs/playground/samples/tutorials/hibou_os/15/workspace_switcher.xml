@@ -1,0 +1,11 @@
+<templates>
+  <t t-name="hibou.WorkspaceSwitcher">
+    <div class="workspace-switcher">
+      <t t-foreach="[1, 2, 3]" t-as="n" t-key="n">
+        <button t-att-class="{ active: this.wm.currentWorkspace() === n }"
+                t-on-click="() => this.wm.setWorkspace(n)"
+                t-out="n"/>
+      </t>
+    </div>
+  </t>
+</templates>

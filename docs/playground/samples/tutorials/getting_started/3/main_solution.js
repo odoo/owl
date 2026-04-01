@@ -7,7 +7,7 @@ class Root extends Component {
       <div class="product-grid">
         <ProductCard name="this.headphone.name" description="this.headphone.description" price="this.headphone.price" image="this.headphone.image"/>
         <ProductCard name="this.keyboard.name" description="this.keyboard.description" price="this.keyboard.price" image="this.keyboard.image"/>
-        <ProductCard name="this.webcam.name" description="this.webcam.description" price="this.webcam.price" image="this.webcam.image"/>
+        <ProductCard name="this.webcam.name" description="this.webcam.description" price="this.webcam.price"/>
       </div>`;
 
     headphone = {
@@ -26,7 +26,6 @@ class Root extends Component {
         name: "Webcam HD",
         description: "1080p webcam with microphone",
         price: 59.99,
-        image: "📷",
     };
 }
 

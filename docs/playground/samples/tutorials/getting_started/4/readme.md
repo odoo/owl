@@ -42,4 +42,5 @@ To read a computed value in the template, call it like a signal:
 ## Bonus Exercises
 
 - Add visual styling: display "Valid" in green and "Invalid" in red.
-- Add a "Submit" button that is disabled when the form is invalid.
+- Add a "Submit" button that is disabled when the form is invalid
+  (use `t-att-disabled`).

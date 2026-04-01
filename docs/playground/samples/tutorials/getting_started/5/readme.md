@@ -47,3 +47,5 @@ The most commonly used hooks are:
 
 - Add a "Pause / Resume" button that stops and restarts the interval.
 - Add a "Reset" button that sets the value back to 0.
+- Create a `Clock` component that displays the current time (`HH:MM:SS`),
+  updated every second.

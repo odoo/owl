@@ -10,6 +10,9 @@ Here is what you need to do:
 - Extract the `Counter` component into its own file `counter.js` and export it
 - Create a `Root` component in `main.js` that imports and uses `Counter` twice
 - Register `Counter` in the static `components` object of `Root`
+- Move the template of `Counter` into its own file: `counter.xml`. Reference
+  it using `static template = "tutorial.Counter"` (the template name must
+  match the `t-name` in the XML file)
 - Add a `counter` CSS class on the root `<div>` of the Counter template and
   create a `counter.css` file to style it (inline-block, margin, padding, border).
   A component is a reusable unit of UI: js, xml and css.
@@ -39,8 +42,25 @@ class Root extends Component {
 
 Each `<Counter />` instance will have its own independent state.
 
-## Bonus Exercises
+To move a template to its own XML file, create a `counter.xml` with a
+`t-name` attribute, and reference it by name in the component:
 
-- Move the template of `Counter` into its own template file: `counter.xml`.
-  You can reference it using `static template = "Counter"` (the template name
-  must match).
+```xml
+<templates>
+  <t t-name="tutorial.Counter">
+    ...
+  </t>
+</templates>
+```
+
+```js
+static template = "tutorial.Counter";
+```
+
+**Template naming convention:** template names should follow the pattern
+`addon_name.ComponentName` (e.g. `tutorial.Counter`). This avoids collisions
+when multiple addons define components with the same template name.
+
+**File naming convention:** use snake_case for file names. A component
+`MyComponent` goes into `my_component.js`, with its template in
+`my_component.xml` and its styles in `my_component.css`.

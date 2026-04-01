@@ -19,7 +19,6 @@ class Root extends Component {
         name: "Webcam HD",
         description: "1080p webcam with microphone",
         price: 59.99,
-        image: "📷",
     };
 }
 

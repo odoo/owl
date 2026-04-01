@@ -544,6 +544,26 @@ body {
   padding-left: 40px;
 }
 
+.folder-files .folder-row {
+  padding-left: 36px;
+}
+
+.folder-files .folder-files .file-entry {
+  padding-left: 56px;
+}
+
+.folder-files .folder-files .folder-row {
+  padding-left: 52px;
+}
+
+.folder-files .folder-files .folder-files .file-entry {
+  padding-left: 72px;
+}
+
+.folder-files .folder-files .folder-files .folder-row {
+  padding-left: 68px;
+}
+
 .folder-empty {
   padding: 6px 12px 6px 40px;
   font-size: 11px;

@@ -276,6 +276,27 @@
     </div>
   </div>
 
+  <t t-name="Explorer.FolderContent">
+    <t t-foreach="subtree.folders" t-as="folder" t-key="folder[0]">
+      <div class="folder-entry">
+        <div class="folder-row" t-on-click="() => this.toggleFolder(folder[1].path)" t-on-contextmenu.prevent.stop="(ev) => this.showFolderContextMenu(ev, proj, folder[1].path)">
+          <span class="chevron" t-att-class="{open: this.isFolderExpanded(folder[1].path)}"/>
+          <span class="folder-name" t-out="folder[0]"/>
+        </div>
+        <div class="folder-files" t-if="this.isFolderExpanded(folder[1].path)">
+          <t t-call="Explorer.FolderContent" subtree="folder[1]" proj="proj"/>
+        </div>
+      </div>
+    </t>
+    <t t-foreach="subtree.files" t-as="file" t-key="file.fullName">
+      <div class="file-entry" t-att-class="{active: this.project.activeProjectId() === proj.id and this.code.currentFile() === file.fullName}" t-on-click.stop="() => this.selectFile(proj.id, file.fullName)" t-on-dblclick.stop="() => this.editFile(proj.id, file.fullName)" t-on-contextmenu.prevent.stop="(ev) => this.showFileContextMenu(ev, proj, file.fullName)" t-att-title="file.fullName">
+        <span class="file-icon" t-att-class="file.iconClass"/>
+        <span class="file-name" t-out="file.name"/>
+        <a class="file-companion-btn" t-if="this.getCompanionFile(proj, file.fullName)" t-on-click.stop="() => this.splitWithCompanion(proj.id, file.fullName)" title="Open in split view"><span class="companion-icon"/></a>
+      </div>
+    </t>
+  </t>
+
   <div t-name="Explorer" class="sidebar-section" t-on-contextmenu.prevent.stop="(ev) => this.showSidebarContextMenu(ev)">
     <div class="sidebar-header sidebar-header-clickable" t-att-class="{active: this.view.showProjectManager()}" t-on-click="this.toggleProjectManager">
       <span>Projects</span>
@@ -289,36 +310,7 @@
             <a class="project-delete-btn" t-if="this.canDeleteProject(proj)" t-on-click.stop="() => this.deleteProject(proj)" title="Delete"><span class="delete-icon"/></a>
           </div>
           <div class="project-files" t-if="this.isExpanded(proj.id)">
-            <t t-set="fileTree" t-value="this.getProjectFilesWithFolders(proj)"/>
-            
-            <t t-foreach="fileTree.folders" t-as="folder" t-key="folder[0]">
-              <div class="folder-entry">
-              <div class="folder-row" t-on-click="() => this.toggleFolder(folder[0])" t-on-contextmenu.prevent.stop="(ev) => this.showFolderContextMenu(ev, proj, folder[0])">
-                <span class="chevron" t-att-class="{open: this.isFolderExpanded(folder[0])}"/>
-                <span class="folder-name" t-out="folder[0]"/>
-              </div>
-              <div class="folder-files" t-if="this.isFolderExpanded(folder[0])">
-                <t t-if="folder[1].length === 0">
-                  <div class="folder-empty">No files</div>
-                </t>
-                <t t-foreach="folder[1]" t-as="file" t-key="file.fullName">
-                  <div class="file-entry" t-att-class="{active: this.project.activeProjectId() === proj.id and this.code.currentFile() === file.fullName}" t-on-click.stop="() => this.selectFile(proj.id, file.fullName)" t-on-dblclick.stop="() => this.editFile(proj.id, file.fullName)" t-on-contextmenu.prevent.stop="(ev) => this.showFileContextMenu(ev, proj, file.fullName)" t-att-title="file.fullName">
-                    <span class="file-icon" t-att-class="file.iconClass"/>
-                    <span class="file-name" t-out="file.name"/>
-                    <a class="file-companion-btn" t-if="this.getCompanionFile(proj, file.fullName)" t-on-click.stop="() => this.splitWithCompanion(proj.id, file.fullName)" title="Open in split view"><span class="companion-icon"/></a>
-                  </div>
-                </t>
-              </div>
-              </div>
-            </t>
-            
-            <t t-foreach="fileTree.rootFiles" t-as="file" t-key="file.name">
-              <div class="file-entry" t-att-class="{active: this.project.activeProjectId() === proj.id and this.code.currentFile() === file.name}" t-on-click.stop="() => this.selectFile(proj.id, file.name)" t-on-dblclick.stop="() => this.editFile(proj.id, file.name)" t-on-contextmenu.prevent.stop="(ev) => this.showFileContextMenu(ev, proj, file.name)" t-att-title="file.name">
-                <span class="file-icon" t-att-class="file.iconClass"/>
-                <span class="file-name" t-out="file.name"/>
-                <a class="file-companion-btn" t-if="this.getCompanionFile(proj, file.name)" t-on-click.stop="() => this.splitWithCompanion(proj.id, file.name)" title="Open in split view"><span class="companion-icon"/></a>
-              </div>
-            </t>
+            <t t-call="Explorer.FolderContent" subtree="this.getProjectFilesWithFolders(proj)" proj="proj"/>
           </div>
         </div>
       </t>

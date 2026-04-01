@@ -1,0 +1,8 @@
+<templates>
+  <t t-name="hibou.Hibou">
+    <div class="desktop">
+      <WindowManager/>
+      <Taskbar/>
+    </div>
+  </t>
+</templates>

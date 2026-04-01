@@ -1,7 +1,10 @@
 ## Persisting Data
 
 Our todo list works well, but all data is lost when the page is refreshed. In
-this step, you will add persistence using `localStorage`.
+this step, you will add persistence using
+[`localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+— a browser API that stores key-value pairs as strings, persisted across
+page reloads.
 
 To keep things decoupled, we will create a generic `StoragePlugin` that handles
 reading and writing to `localStorage`. The `TodoListPlugin` will then use it

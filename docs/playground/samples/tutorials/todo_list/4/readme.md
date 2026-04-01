@@ -43,8 +43,3 @@ In the template:
 
 Note that the signal is `null` before mounting — that is why we need
 `onMounted` to safely access the DOM element.
-
-## Bonus Exercises
-
-- After adding a todo, re-focus the input so the user can immediately type
-  the next one.

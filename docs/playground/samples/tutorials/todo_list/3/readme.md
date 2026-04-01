@@ -42,6 +42,12 @@ You can then style it in CSS using nested syntax:
 
 ## Notes
 
+Once you have the strikethrough styling in place, try clicking a checkbox.
+You will notice that the text does not toggle between strikethrough and
+normal — the UI does not react to the change. Try to understand why: the
+`completed` field is a plain boolean, and Owl has no way to know it changed.
+Don't worry, we will fix this in a later step by making it reactive.
+
 In Odoo code, you would typically use Bootstrap classes for styling instead
 of writing custom CSS.
 

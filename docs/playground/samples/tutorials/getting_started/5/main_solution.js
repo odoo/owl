@@ -4,11 +4,9 @@ import { Timer } from "./timer";
 class Root extends Component {
     static components = { Timer };
     static template = xml`
-      <div style="padding: 20px;">
-        <h3>Timer (+1)</h3>
-        <Timer increment="1"/>
-        <h3>Timer (+2)</h3>
-        <Timer increment="2"/>
+      <div class="root">
+        <div>Timer (+1): <Timer increment="1"/></div>
+        <div>Timer (+2): <Timer increment="2"/></div>
       </div>`;
 }
 

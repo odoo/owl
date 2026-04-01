@@ -3,7 +3,7 @@ import { Component, xml, props, types as t } from "@odoo/owl";
 export class ProductCard extends Component {
     static template = xml`
       <div class="product-card">
-        <span t-out="this.props.image or '📦'"/>
+        <span t-out="this.props.image"/>
         <div>
           <div t-out="this.props.name"/>
           <div t-out="this.props.description"/>
@@ -16,5 +16,7 @@ export class ProductCard extends Component {
         description: t.string,
         price: t.number,
         "image?": t.string,
+    }, {
+        image: "📦",
     });
 }

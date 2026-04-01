@@ -1,0 +1,9 @@
+<templates>
+  <t t-name="hibou.WindowManager">
+    <div class="desktop-area">
+      <t t-foreach="this.wm.windows()" t-as="win" t-key="win.id">
+        <ManagedWindow window="win"/>
+      </t>
+    </div>
+  </t>
+</templates>

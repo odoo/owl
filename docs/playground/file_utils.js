@@ -30,40 +30,54 @@ function makeFileEntry(name) {
   return { name, type, iconClass: FILE_ICON_CLASSES[type] || "" };
 }
 
+/**
+ * Parses a flat list of file entries into a recursive tree of folders and files.
+ *
+ * Returns: { folders: [[name, { path, folders, files }], ...], files: [...] }
+ *  - folders: sorted array of [folderName, subtree] pairs
+ *  - files: sorted array of file entries at this level (with fullName)
+ */
 function parseFilePaths(files) {
-  const folders = new Map();
-  const rootFiles = [];
   const hiddenFiles = [".gitkeep"];
 
-  for (const file of files) {
-    const parts = file.name.split("/");
-    if (parts.length === 1) {
-      if (!hiddenFiles.includes(file.name)) {
-        rootFiles.push(file);
-      }
-    } else {
-      const folderName = parts[0];
-      const fileNameInFolder = parts.slice(1).join("/");
-      if (!folders.has(folderName)) {
-        folders.set(folderName, []);
-      }
-      if (!hiddenFiles.includes(fileNameInFolder)) {
-        folders.get(folderName).push({
-          ...file,
-          name: fileNameInFolder,
-          fullName: file.name,
-        });
+  function buildTree(fileList, prefix) {
+    const folderMap = new Map();
+    const localFiles = [];
+
+    for (const file of fileList) {
+      const parts = file.name.split("/");
+      if (parts.length === 1) {
+        if (!hiddenFiles.includes(file.name)) {
+          localFiles.push({ ...file, fullName: prefix + file.name });
+        }
+      } else {
+        const folderName = parts[0];
+        if (!folderMap.has(folderName)) {
+          folderMap.set(folderName, []);
+        }
+        const rest = parts.slice(1).join("/");
+        if (!hiddenFiles.includes(rest)) {
+          folderMap.get(folderName).push({
+            ...file,
+            name: rest,
+          });
+        }
       }
     }
+
+    const folders = [...folderMap.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([name, children]) => {
+        const folderPath = prefix + name;
+        return [name, { path: folderPath, ...buildTree(children, folderPath + "/") }];
+      });
+
+    localFiles.sort((a, b) => a.name.localeCompare(b.name));
+
+    return { folders, files: localFiles };
   }
 
-  const sortedFolders = [...folders.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  for (const [, folderFiles] of sortedFolders) {
-    folderFiles.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  rootFiles.sort((a, b) => a.name.localeCompare(b.name));
-
-  return { folders: sortedFolders, rootFiles };
+  return buildTree(files, "");
 }
 
 export {

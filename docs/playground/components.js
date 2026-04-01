@@ -1660,6 +1660,13 @@ class ContentView extends Component {
               return resolved ? `${prefix}${quote}${resolved}${quote}` : match;
             }
           )
+          .replace(
+            /\bimport\s*(['"])(\.+\/[^'"]+)\1/g,
+            (match, quote, specifier) => {
+              const resolved = resolveImport(specifier, fromFile, urlMap);
+              return resolved ? `import ${quote}${resolved}${quote}` : match;
+            }
+          )
           .replace(/\bimport\s*\(\s*(['"])(\.+\/[^'"]+)\1\s*\)/g, (match, quote, specifier) => {
             const resolved = resolveImport(specifier, fromFile, urlMap);
             return resolved ? `import(${quote}${resolved}${quote})` : match;

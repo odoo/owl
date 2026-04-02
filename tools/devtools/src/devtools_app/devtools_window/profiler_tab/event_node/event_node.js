@@ -1,15 +1,20 @@
 import { minimizeKey } from "../../../../utils";
-import { useStore } from "../../../store/store";
+import { StorePlugin } from "../../../store/store";
+import { ComponentsPlugin } from "../../../store/components_plugin";
+import { ProfilerPlugin } from "../../../store/profiler_plugin";
 
-const { Component } = owl;
+const { Component, plugin, props, types: t } = owl;
 
 export class EventNode extends Component {
   static template = "devtools.EventNode";
-
   static components = { EventNode };
 
+  props = props({ event: t.object() });
+
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
+    this.profiler = plugin(ProfilerPlugin);
   }
 
   get eventPadding() {
@@ -21,12 +26,12 @@ export class EventNode extends Component {
       {
         title: "Expand children",
         show: true,
-        action: () => this.store.toggleEventAndChildren(this.props.event, true),
+        action: () => this.profiler.toggleEventAndChildren(this.props.event, true),
       },
       {
         title: "Fold all children",
         show: true,
-        action: () => this.store.toggleEventAndChildren(this.props.event, false),
+        action: () => this.profiler.toggleEventAndChildren(this.props.event, false),
       },
       {
         title: "Fold direct children",
@@ -41,13 +46,13 @@ export class EventNode extends Component {
       {
         title: "Inspect source code",
         show: true,
-        action: () => this.store.inspectComponent("source", this.props.event.path),
+        action: () => this.components.inspectComponent("source", this.props.event.path),
       },
       {
         title: "Store as global variable",
         show: this.props.event.path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
+          this.components.logObjectInConsole([
             ...this.props.event.path,
             { type: "item", value: "component" },
           ]),
@@ -55,18 +60,18 @@ export class EventNode extends Component {
       {
         title: "Inspect in Elements tab",
         show: this.props.event.path.length !== 1,
-        action: () => this.store.inspectComponent("DOM", this.props.event.path),
+        action: () => this.components.inspectComponent("DOM", this.props.event.path),
       },
       {
         title: "Force rerender",
         show: this.props.event.path.length !== 1,
-        action: () => this.store.refreshComponent(this.props.event.path),
+        action: () => this.components.refreshComponent(this.props.event.path),
       },
       {
         title: "Store observed states as global variable",
         show: this.props.event.path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
+          this.components.logObjectInConsole([
             ...this.props.event.path,
             { type: "item", value: "subscriptions" },
           ]),
@@ -74,17 +79,17 @@ export class EventNode extends Component {
       {
         title: "Inspect compiled template",
         show: this.props.event.path.length !== 1,
-        action: () => this.store.inspectComponent("compiled template", this.props.event.path),
+        action: () => this.components.inspectComponent("compiled template", this.props.event.path),
       },
       {
         title: "Log raw template",
         show: this.props.event.path.length !== 1,
-        action: () => this.store.inspectComponent("raw template", this.props.event.path),
+        action: () => this.components.inspectComponent("raw template", this.props.event.path),
       },
       {
         title: "Store as global variable",
         show: this.props.event.path.length === 1,
-        action: () => this.store.logObjectInConsole([...this.props.event.path]),
+        action: () => this.components.logObjectInConsole([...this.props.event.path]),
       },
     ];
   }

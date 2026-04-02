@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.EventSearchBar" owl="1">
+  <t t-name="devtools.EventSearchBar">
     <div class="search-bar-wrapper">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
-      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-att-value="store.eventSearch.search"/>
-      <t t-if="store.eventSearch.search.length > 0">
-        <i class="fa fa-times lg-icon utility-icon pe-2" t-on-click.stop="clearSearch"></i>
+      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="this.updateSearch" t-att-value="this.store.eventSearch.search"/>
+      <t t-if="this.store.eventSearch.search.length > 0">
+        <i class="fa fa-times lg-icon utility-icon pe-2" t-on-click.stop="this.clearSearch"></i>
       </t>
     </div>
   </t>

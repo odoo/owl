@@ -193,6 +193,32 @@
       };
     }
 
+    // Returns the OWL version string for the given app
+    getAppVersion(app) {
+      return app.__proto__.constructor?.version || "<2.0.8";
+    }
+
+    // Returns a normalized array of root ComponentNodes for the given app.
+    // OWL 2: main root at index 0, subRoots at index 1+.
+    // OWL 3: all roots from app.roots.
+    getRoots(app) {
+      const version = this.getAppVersion(app);
+      if (version.startsWith("3")) {
+        return [...app.roots].map((root) => root.node);
+      }
+      // OWL 2: main root at index 0, subRoots at index 1+
+      const roots = [];
+      if (app.root) {
+        roots.push(app.root);
+      }
+      if (app.subRoots) {
+        for (const subRoot of app.subRoots) {
+          roots.push(subRoot);
+        }
+      }
+      return roots;
+    }
+
     initDevtools(frame = "top") {
       if (!this.devtoolsInit) {
         document.addEventListener("mouseover", this.HTMLSelector, { capture: true });
@@ -246,11 +272,12 @@
     patchAppMethods() {
       let app;
       for (const appItem of this.apps) {
-        if (appItem.root) {
+        if (this.getRoots(appItem).length > 0) {
           app = appItem;
+          break;
         }
       }
-      if (!app.root) {
+      if (!app || this.getRoots(app).length === 0) {
         return;
       }
       const self = this;
@@ -357,8 +384,10 @@
         original_Render.call(this, ...arguments);
       };
       // Signals when a component is destroyed
-      const originalDestroy = app.root.constructor.prototype._destroy;
-      app.root.constructor.prototype._destroy = function () {
+      // All component nodes share the same prototype, so patching one suffices
+      const firstRoot = this.getRoots(app)[0];
+      const originalDestroy = firstRoot.constructor.prototype._destroy;
+      firstRoot.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
           const event = {
@@ -1133,8 +1162,11 @@
       let node;
       // If the path is longer and its first item is indeed an app number, it is a regular path
       if (!isNaN(path[0])) {
-        // The second element in the path will always be the root of the app
-        node = [...this.apps][path[0]]?.root;
+        // The second element in the path is the root index
+        const app = [...this.apps][path[0]];
+        if (!app) return null;
+        const roots = this.getRoots(app);
+        node = roots[parseInt(path[1], 10)];
         if (!node) {
           return null;
         }
@@ -1153,11 +1185,15 @@
         // are a series of component names and indexes separated by slashes
       } else {
         const simplifiedPathArray = path[0].split("/");
-        node = [...this.apps][simplifiedPathArray[0]]?.root;
-        if (node.name !== simplifiedPathArray[1]) {
+        const app = [...this.apps][simplifiedPathArray[0]];
+        if (!app) return null;
+        const roots = this.getRoots(app);
+        const rootIndex = parseInt(simplifiedPathArray[1], 10);
+        node = roots[rootIndex];
+        if (!node || node.name !== simplifiedPathArray[2]) {
           return null;
         }
-        for (let i = 2; i < simplifiedPathArray.length; i += 2) {
+        for (let i = 3; i < simplifiedPathArray.length; i += 2) {
           const key = Reflect.ownKeys(node.children)[simplifiedPathArray[i]];
           node = node.children[key];
           if (node.name !== simplifiedPathArray[i + 1]) {
@@ -1179,16 +1215,24 @@
         path = this.getElementPath($0);
       }
       component.path = path;
-      let node = this.getComponentNode(path) || [...this.apps].find((app) => app.root)?.root;
+      let node = this.getComponentNode(path);
+      if (!node) {
+        // Fallback: find the first available root
+        for (const app of this.apps) {
+          const roots = this.getRoots(app);
+          if (roots.length > 0) {
+            node = roots[0];
+            break;
+          }
+        }
+      }
       if (!node) {
         return null;
       }
       // A path with only the app index indicates that the component is an App instead
       const isApp = path.length === 1;
       if (isApp) {
-        component.version = node.__proto__.constructor?.version
-          ? node.__proto__.constructor.version
-          : "<2.0.8";
+        component.version = this.getAppVersion(node);
       }
       // Load props of the component
       const props = isApp ? node.props : node.component.props;
@@ -1201,7 +1245,7 @@
       const propsPath = isApp
         ? [...path, { type: "item", value: "props" }]
         : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
-      Reflect.ownKeys(props)
+      Reflect.ownKeys(props || {})
         .sort(compareKeys)
         .forEach((key) => {
           let oldBranch = oldTree?.props.children[component.props.children.length];
@@ -1219,7 +1263,7 @@
           }
         });
       // Load env of the component
-      const env = isApp ? node.env : node.component.env;
+      const env = (isApp ? node.env : node.component.env) || {};
       component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
       const envPath = isApp
         ? [...path, { type: "item", value: "env" }]
@@ -1341,9 +1385,12 @@
       component.instance.children.push(instancePrototype);
 
       // Load subscriptions of the component
-      if (isApp) {
+      const appVersion = this.getAppVersion([...this.apps][path[0]]);
+      const isOwl3 = appVersion.startsWith("3");
+      if (isApp || isOwl3) {
+        // OWL 3 does not have node.subscriptions
         component.subscriptions = {
-          toggled: oldTree ? oldTree.subscriptions.toggled : true,
+          toggled: oldTree ? oldTree.subscriptions?.toggled : true,
           children: [],
         };
       } else {
@@ -1527,9 +1574,9 @@
     }
     // Triggers the highlight effect around the specified component.
     highlightComponent(path) {
-      // Try to highlight the root component of the app if function called on an app
+      // Try to highlight the first root component of the app if function called on an app
       if (path.length === 1) {
-        path.push("root");
+        path.push("0");
       }
       let component = this.getComponentNode(path);
       if (!component) {
@@ -1570,7 +1617,10 @@
             component.root.render();
           }
         } else if (objectType === "env") {
-          [...this.apps][path[0]].root.render(true);
+          const roots = this.getRoots([...this.apps][path[0]]);
+          for (const rootNode of roots) {
+            rootNode.render(true);
+          }
         }
       }
     }
@@ -1615,17 +1665,25 @@
         // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
         for (const elem of parentsList) {
           for (const [index, app] of appsArray.entries()) {
-            const inspectedPath = this.searchElement(app.root, ["root"], elem);
-            if (inspectedPath) {
-              inspectedPath.unshift(index.toString());
-              return inspectedPath;
+            const roots = this.getRoots(app);
+            for (const [rootIdx, rootNode] of roots.entries()) {
+              const inspectedPath = this.searchElement(rootNode, [rootIdx.toString()], elem);
+              if (inspectedPath) {
+                inspectedPath.unshift(index.toString());
+                return inspectedPath;
+              }
             }
           }
         }
       }
       // If nothing was found, return the path of the first root component found in the apps
-      const appIndex = [...this.apps].findIndex((app) => app.root);
-      return [appIndex.toString(), "root"];
+      const appsArray = [...this.apps];
+      for (const [appIndex, app] of appsArray.entries()) {
+        if (this.getRoots(app).length > 0) {
+          return [appIndex.toString(), "0"];
+        }
+      }
+      return ["0", "0"];
     }
     // Returns the tree of components of the inspected page in a parsed format
     // Use inspectedPath to specify the path of the selected component
@@ -1648,41 +1706,43 @@
           toggled: true,
           selected: false,
           highlighted: false,
-          version: app.__proto__.constructor?.version
-            ? app.__proto__.constructor.version
-            : "<2.0.8",
+          version: this.getAppVersion(app),
           children: [],
         };
-        if (app.root) {
+        if (oldTree) {
+          appNode.toggled = oldTree.toggled;
+        }
+        // If no path is provided, it defaults to the target of the inspect element action
+        if (!inspectedPath) {
+          inspectedPath = this.getElementPath($0);
+        }
+        if (inspectedPath.join("/") === index.toString()) {
+          appNode.selected = true;
+        }
+        const roots = this.getRoots(app);
+        roots.forEach((rootNode, rootIdx) => {
           const root = {
-            name: app.root.component.constructor.name,
-            path: [index.toString(), "root"],
-            key: "",
+            name: rootNode.component.constructor.name,
+            path: [index.toString(), rootIdx.toString()],
+            key: rootIdx.toString(),
             depth: 1,
             toggled: true,
             selected: false,
             highlighted: false,
           };
-          if (oldTree) {
-            appNode.toggled = oldTree.toggled;
-            oldTree = oldTree.children[0];
+          const oldChild = oldTree?.children?.[rootIdx];
+          if (oldChild) {
+            root.toggled = oldChild.toggled;
           }
-          if (oldTree) {
-            root.toggled = oldTree.toggled;
-          }
-          // If no path is provided, it defaults to the target of the inspect element action
-          if (!inspectedPath) {
-            inspectedPath = this.getElementPath($0);
-          }
-          if (inspectedPath.join("/") === index.toString()) {
-            appNode.selected = true;
-            root.highlighted = true;
-          } else if (inspectedPath.join("/") === index.toString() + "/root") {
+          const rootPathString = index.toString() + "/" + rootIdx.toString();
+          if (inspectedPath.join("/") === rootPathString) {
             root.selected = true;
+          } else if (appNode.selected) {
+            root.highlighted = true;
           }
-          root.children = this.fillTree(app.root, root, inspectedPath.join("/"), oldTree);
+          root.children = this.fillTree(rootNode, root, inspectedPath.join("/"), oldChild);
           appNode.children.push(root);
-        }
+        });
         return appNode;
       });
       const component = this.getComponentDetails(inspectedPath, oldDetails);
@@ -1761,9 +1821,14 @@
           path.unshift(componentNode.parentKey);
         }
       }
-      path.unshift("root");
+      // Walk to the root node (the one with no parent or whose parent has no parentKey)
+      let rootNode = componentNode.parent || componentNode;
+      const app = rootNode.app;
+      const roots = this.getRoots(app);
+      const rootIndex = roots.indexOf(rootNode);
+      path.unshift(rootIndex.toString());
       const appsArray = [...this.apps];
-      let index = appsArray.findIndex((app) => app === componentNode.app);
+      let index = appsArray.findIndex((a) => a === app);
       path.unshift(index.toString());
       return path;
     }
@@ -1779,9 +1844,14 @@
           )}/${path}`;
         }
       }
+      // Walk to the root and find its index
+      let rootNode = componentNode.parent || componentNode;
+      const app = rootNode.app;
+      const roots = this.getRoots(app);
+      const rootIndex = roots.indexOf(rootNode);
       const appsArray = [...this.apps];
-      let index = appsArray.findIndex((app) => app === componentNode.app);
-      path = index.toString() + (path.length ? `/${path}` : "");
+      let appIndex = appsArray.findIndex((a) => a === app);
+      path = appIndex.toString() + "/" + rootIndex.toString() + (path.length ? `/${path}` : "");
       return path;
     }
     // Store the object into a temp window variable and log it to the console

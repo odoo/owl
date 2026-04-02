@@ -112,10 +112,11 @@ export class StorePlugin extends Plugin {
       app.children.forEach((child) => deselectComponent(child));
     });
     let component;
+    // path[0] = app index, path[1] = root index, path[2..] = child keys
     if (path.length === 1) {
       component = this.apps()[path[0]];
     } else {
-      component = this.apps()[path[0]].children[0];
+      component = this.apps()[path[0]].children[parseInt(path[1], 10)];
     }
     for (let i = 2; i < path.length; i++) {
       component.toggled = true;
@@ -215,7 +216,7 @@ export class StorePlugin extends Plugin {
   toggleComponentParents(path) {
     let cp = path.slice(2);
     this.apps()[path[0]].toggled = true;
-    let component = this.apps()[path[0]].children[0];
+    let component = this.apps()[path[0]].children[parseInt(path[1], 10)];
     for (const key of cp) {
       component.toggled = true;
       component = component.children.find((child) => child.key === key);
@@ -228,7 +229,7 @@ export class StorePlugin extends Plugin {
     if (path.length < 2) {
       component = this.apps()[path[0]];
     } else {
-      component = this.apps()[path[0]].children[0];
+      component = this.apps()[path[0]].children[parseInt(path[1], 10)];
     }
     let cp = path.slice(2);
     for (const key of cp) {

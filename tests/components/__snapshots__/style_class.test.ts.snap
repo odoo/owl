@@ -573,6 +573,34 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 }"
 `;
 
+exports[`style and class handling t-att-style is cleared when interpolated prop becomes undefined 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span block-attribute-0="style">text</span>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].getStyle();
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`style and class handling t-att-style is cleared when value becomes undefined 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].state.style;
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`style and class handling t-att-style with object value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

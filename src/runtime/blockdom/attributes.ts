@@ -150,33 +150,6 @@ function toClassObj(expr: string | number | { [c: string]: any }) {
   }
 }
 
-export function setClass(this: HTMLElement, val: any) {
-  val = val === "" ? {} : toClassObj(val);
-  // add classes
-  const cl = this.classList;
-  for (let c in val) {
-    tokenListAdd.call(cl, c);
-  }
-}
-
-export function updateClass(this: HTMLElement, val: any, oldVal: any) {
-  oldVal = oldVal === "" ? {} : toClassObj(oldVal);
-  val = val === "" ? {} : toClassObj(val);
-  const cl = this.classList;
-  // remove classes
-  for (let c in oldVal) {
-    if (!(c in val)) {
-      tokenListRemove.call(cl, c);
-    }
-  }
-  // add classes
-  for (let c in val) {
-    if (!(c in oldVal)) {
-      tokenListAdd.call(cl, c);
-    }
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Style
 // ---------------------------------------------------------------------------
@@ -212,7 +185,7 @@ function toStyleObj(expr: string | { [prop: string]: any }): { [prop: string]: s
         }
         const prop = trim.call(part.slice(0, colonIdx));
         const value = trim.call(part.slice(colonIdx + 1));
-        if (prop && value) {
+        if (prop && value && value !== "undefined") {
           result[prop] = value;
         }
       }
@@ -231,6 +204,36 @@ function toStyleObj(expr: string | { [prop: string]: any }): { [prop: string]: s
   }
 }
 
+// ---------------------------------------------------------------------------
+// Class
+// ---------------------------------------------------------------------------
+
+export function setClass(this: HTMLElement, val: any) {
+  val = val === "" ? {} : toClassObj(val);
+  for (let k in val) {
+    tokenListAdd.call(this.classList, k);
+  }
+}
+
+export function updateClass(this: HTMLElement, val: any, oldVal: any) {
+  oldVal = oldVal === "" ? {} : toClassObj(oldVal);
+  val = val === "" ? {} : toClassObj(val);
+  for (let k in oldVal) {
+    if (!(k in val)) {
+      tokenListRemove.call(this.classList, k);
+    }
+  }
+  for (let k in val) {
+    if (val[k] !== oldVal[k]) {
+      tokenListAdd.call(this.classList, k);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Style setters
+// ---------------------------------------------------------------------------
+
 export function setStyle(this: HTMLElement, val: any) {
   val = val === "" ? {} : toStyleObj(val);
   const style = this.style;
@@ -243,16 +246,17 @@ export function updateStyle(this: HTMLElement, val: any, oldVal: any) {
   oldVal = oldVal === "" ? {} : toStyleObj(oldVal);
   val = val === "" ? {} : toStyleObj(val);
   const style = this.style;
-  // remove old styles
   for (let prop in oldVal) {
     if (!(prop in val)) {
       style.removeProperty(prop);
     }
   }
-  // set new/changed styles
   for (let prop in val) {
     if (val[prop] !== oldVal[prop]) {
       style.setProperty(prop, val[prop]);
     }
+  }
+  if (!style.cssText) {
+    removeAttribute.call(this, "style");
   }
 }

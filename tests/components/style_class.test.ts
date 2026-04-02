@@ -424,6 +424,38 @@ describe("style and class handling", () => {
     expect(div.style.fontWeight).toBe("");
   });
 
+  test("t-att-style is cleared when value becomes undefined", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: "color: orange;" as any });
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("orange");
+
+    widget.state.style = undefined;
+    await nextTick();
+    expect(div.style.color).toBe("");
+    expect(div.hasAttribute("style")).toBe(false);
+  });
+
+  test("t-att-style is cleared when interpolated prop becomes undefined", async () => {
+    class App extends Component {
+      static template = xml`<span t-att-style="this.getStyle()">text</span>`;
+      state = proxy({ color: "orange" as any });
+      getStyle() {
+        return `color: ${this.state.color}`;
+      }
+    }
+    const widget = await mount(App, fixture);
+    const span = fixture.querySelector("span")!;
+    expect(span.style.color).toBe("orange");
+
+    widget.state.color = undefined;
+    await nextTick();
+    expect(span.style.color).toBe("");
+  });
+
   // TODO: does this test need to be moved? (class now a standard prop)
   test("error in subcomponent with class", async () => {
     class Child extends Component {

@@ -1,12 +1,12 @@
-import { useStore } from "../../../store/store";
+import { StorePlugin } from "../../../store/store";
 
-const { Component } = owl;
+const { Component, plugin } = owl;
 
 export class EventSearchBar extends Component {
   static template = "devtools.EventSearchBar";
 
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
   }
 
   // On keyup

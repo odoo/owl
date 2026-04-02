@@ -1,20 +1,18 @@
-/** @odoo-module **/
+import { StorePlugin } from "../../store/store";
 
-import { useStore } from "../../store/store";
-
-const { Component } = owl;
+const { Component, plugin, props, types: t } = owl;
 
 export class Tab extends Component {
-  static props = ["tabName"];
-
   static template = "devtools.Tab";
 
+  props = props({ tabName: t.string });
+
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
   }
 
   get active() {
-    return this.props.tabName === this.store.page;
+    return this.props.tabName === this.store.page();
   }
 
   get name() {

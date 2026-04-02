@@ -193,6 +193,32 @@
       };
     }
 
+    // Returns the OWL version string for the given app
+    getAppVersion(app) {
+      return app.__proto__.constructor?.version || "<2.0.8";
+    }
+
+    // Returns a normalized array of root ComponentNodes for the given app.
+    // OWL 2: main root at index 0, subRoots at index 1+.
+    // OWL 3: all roots from app.roots.
+    getRoots(app) {
+      const version = this.getAppVersion(app);
+      if (version.startsWith("3")) {
+        return [...app.roots].map((root) => root.node);
+      }
+      // OWL 2: main root at index 0, subRoots at index 1+
+      const roots = [];
+      if (app.root) {
+        roots.push(app.root);
+      }
+      if (app.subRoots) {
+        for (const subRoot of app.subRoots) {
+          roots.push(subRoot);
+        }
+      }
+      return roots;
+    }
+
     initDevtools(frame = "top") {
       if (!this.devtoolsInit) {
         document.addEventListener("mouseover", this.HTMLSelector, { capture: true });
@@ -246,35 +272,49 @@
     patchAppMethods() {
       let app;
       for (const appItem of this.apps) {
-        if (appItem.root) {
+        if (this.getRoots(appItem).length > 0) {
           app = appItem;
+          break;
         }
       }
-      if (!app.root) {
+      if (!app || this.getRoots(app).length === 0) {
         return;
       }
       const self = this;
       const originalFlush = app.scheduler.constructor.prototype.flush;
       let inFlush = false;
-      let _render = false;
+      // Per-fiber symbol to track whether _render() was actually called for this
+      // fiber's render() invocation. A shared boolean flag is unreliable in OWL 3
+      // because setCounter(0) → flush() → other fibers' render() can all run
+      // synchronously inside one render() call, resetting a shared flag before
+      // the outer render() reads it back.
+      const renderCalledKey = Symbol("owlDevtoolsRenderCalled");
       app.scheduler.constructor.prototype.flush = function () {
-        // Used to know when a render is triggered inside the flush method or not
+        // Used to know when a render is triggered inside the flush method or not.
+        // Save/restore rather than hard-reset to false so recursive flush() calls
+        // (which occur in OWL 3 when setCounter(0) fires flush() from inside
+        // _render()) do not prematurely clear the flag for the outer caller.
+        const wasInFlush = inFlush;
         inFlush = true;
         originalFlush.call(this, ...arguments);
-        inFlush = false;
+        inFlush = wasInFlush;
       };
       const originalRender = self.Fiber.prototype.render;
       self.Fiber.prototype.render = function () {
         const id = self.eventId++;
-        _render = false;
+        // Reset the per-fiber flag before calling the original render.
+        this[renderCalledKey] = false;
         let flushed = false;
         // We know if a render comes from flush before calling the render method
         if (this instanceof self.RootFiber && inFlush) {
           flushed = true;
         }
 
-        // patch the renderFn function from the node to only measure the time
-        // spent in the template, not in additional work, such as flushing scheduler
+        // Patch the renderFn to measure time and detect that an actual render
+        // happened (as opposed to a delayed render where renderFn is never called).
+        // This works for both OWL 2 (where _render() calls renderFn) and OWL 3
+        // (where render() calls renderFn directly — there is no _render() method).
+        const fiber = this;
         const node = this.node;
         const nodeRenderFn = node.renderFn;
         let time = 0;
@@ -284,12 +324,19 @@
           time = performance.now() - before;
           // unpatch the node render function
           node.renderFn = nodeRenderFn;
+          // Mark the fiber: renderFn was actually invoked (not a delayed render).
+          fiber[renderCalledKey] = true;
           return result;
         };
 
         originalRender.call(this, ...arguments);
-        if (_render && self.traceRenderings && this instanceof self.RootFiber) {
-          console.groupCollapsed(`Rendering <${this.node.name}>`);
+        // OWL 3: ComponentNode has no .name getter; use component.constructor.name instead.
+        // The ?? fallback keeps OWL 2 compatibility where node.name was a direct property.
+        const nodeName = this.node.component?.constructor?.name ?? this.node.name ?? "";
+        // Read the per-fiber flag: true means renderFn was called for this fiber.
+        const didRender = this[renderCalledKey];
+        if (didRender && self.traceRenderings && this instanceof self.RootFiber) {
+          console.groupCollapsed(`Rendering <${nodeName}>`);
           console.trace();
           console.groupEnd();
         }
@@ -299,19 +346,19 @@
           if (flushed) {
             self.eventsBatch.push({
               type: "render (flushed)",
-              component: this.node.name,
+              component: nodeName,
               key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
               id: id,
             });
-            // if _render is called, it is a proper render (and not a delayed one)
-          } else if (_render) {
+            // if renderFn was called, it is a proper render (and not a delayed one)
+          } else if (didRender) {
             // A render on a RootFiber is a root render and can propagate other renders to its children
             if (this instanceof self.RootFiber) {
               self.eventsBatch.push({
                 type: this.deep ? "render (deep)" : "render",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
@@ -321,7 +368,7 @@
             } else if (this.node.status === 0) {
               self.eventsBatch.push({
                 type: "create",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
@@ -331,18 +378,18 @@
             } else {
               self.eventsBatch.push({
                 type: "update",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
                 id: id,
               });
             }
-            // _render has not been called so it is a delayed render that could be flushed later on
+            // renderFn not called: it is a delayed render that could be flushed later on
           } else {
             self.eventsBatch.push({
               type: "render (delayed)",
-              component: this.node.name,
+              component: nodeName,
               key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
@@ -351,20 +398,19 @@
           }
         }
       };
-      const original_Render = self.Fiber.prototype._render;
-      self.Fiber.prototype._render = function () {
-        _render = true;
-        original_Render.call(this, ...arguments);
-      };
       // Signals when a component is destroyed
-      const originalDestroy = app.root.constructor.prototype._destroy;
-      app.root.constructor.prototype._destroy = function () {
+      // All component nodes share the same prototype, so patching one suffices
+      const firstRoot = this.getRoots(app)[0];
+      const originalDestroy = firstRoot.constructor.prototype._destroy;
+      firstRoot.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
+          // OWL 3: ComponentNode has no .name; use component.constructor.name.
+          // parentKey is string|null in OWL 3; normalise null to "" for validation.
           const event = {
             type: "destroy",
-            component: this.name,
-            key: this.parentKey,
+            component: this.component?.constructor?.name ?? this.name ?? "",
+            key: this.parentKey ?? "",
             path: path,
             time: 0,
             id: self.eventId++,
@@ -446,6 +492,15 @@
       }
       this.traceRenderings = value;
       return this.traceRenderings;
+    }
+
+    // Returns whether subscription tracing is supported in the current OWL version.
+    supportsSubscriptionTracing() {
+      const apps = [...this.apps];
+      if (!apps.length) {
+        return false;
+      }
+      return !this.getAppVersion(apps[0]).startsWith("3");
     }
 
     toggleSubscriptionTracing(value) {
@@ -629,14 +684,25 @@
     HTMLSelector = (ev) => {
       if (this.enabledSelector) {
         const target = ev.target;
-        if (!this.currentSelectedElement || !target.isEqualNode(this.currentSelectedElement)) {
-          const path = this.getElementPath(target);
-          this.highlightComponent(path);
+        if (this.currentSelectedElement !== target) {
           this.currentSelectedElement = target;
-          window.top.postMessage({
-            source: "owl-devtools",
-            type: "SelectElement",
-            data: path,
+          // Throttle to one computation per animation frame: if the mouse crosses several
+          // elements in the same frame we only process the last one.
+          if (this._selectorRafId) {
+            cancelAnimationFrame(this._selectorRafId);
+          }
+          this._selectorRafId = requestAnimationFrame(() => {
+            this._selectorRafId = null;
+            if (!this.enabledSelector) {
+              return;
+            }
+            const path = this.getElementPath(this.currentSelectedElement);
+            this.highlightComponent(path);
+            window.top.postMessage({
+              source: "owl-devtools",
+              type: "SelectElement",
+              data: path,
+            });
           });
         }
       } else {
@@ -654,6 +720,10 @@
     // Diasble the HTML selector tool
     disableHTMLSelector = (ev = undefined) => {
       this.enabledSelector = false;
+      if (this._selectorRafId) {
+        cancelAnimationFrame(this._selectorRafId);
+        this._selectorRafId = null;
+      }
       if (ev) {
         if (!ev.isTrusted) {
           return;
@@ -706,6 +776,13 @@
               obj = "Exception: " + e.toString();
             }
             break;
+          case "signal":
+          case "computed":
+            obj = obj[key.value]();
+            break;
+          case "proxy":
+            obj = obj[key.value];
+            break;
           case "prototype getter":
           case "set entry":
           case "map entry":
@@ -754,6 +831,28 @@
         return this.getObject(componentNode, path.slice(index));
       }
       return "Exception: component not found";
+    }
+
+    isSignal(obj) {
+      if (typeof obj !== "function") return false;
+      for (const sym of Object.getOwnPropertySymbols(obj)) {
+        if (sym.toString() === "Symbol(Atom)" && obj[sym]?.type === "signal") return true;
+      }
+      return false;
+    }
+
+    isComputed(obj) {
+      if (typeof obj !== "function") return false;
+      for (const sym of Object.getOwnPropertySymbols(obj)) {
+        if (sym.toString() === "Symbol(Atom)" && obj[sym] && obj[sym].type !== "signal")
+          return true;
+      }
+      return false;
+    }
+
+    isReactiveProxy(obj) {
+      if (typeof obj !== "object" || obj === null) return false;
+      return this.toRaw(obj) !== obj;
     }
 
     // Returns a modified version of an object node that has compatible format with the devtools ObjectTreeElement component
@@ -905,19 +1004,25 @@
         ).target;
         path = path.slice(3);
       } else {
-        // Everything here is in component if it is not an app so remove this key of the path in the former case
-        if (objPathIndex > 1) {
+        // OWL 2 non-app paths have a "component" intermediate key to skip; OWL 3 props paths do not.
+        if (objPathIndex > 1 && path[0]?.value === "component") {
           path.shift();
         }
         // the value is either "props" or "env" here
-        if (objType !== "instance" && objType !== "hook") {
-          obj = oldTree[path[0].value].children;
-          path.shift();
-          // there is nothing otherwise but extension side it is in instance
-        } else if (objType === "instance") {
+        if (objType === "instance") {
           obj = oldTree.instance.children;
-        } else {
+        } else if (objType === "reactiveValue") {
+          obj = oldTree.reactiveValues.children;
+        } else if (objType === "hook") {
           obj = oldTree.hooks.children;
+          path.shift();
+        } else if (objType === "props") {
+          // Always use oldTree.props: OWL 3 may use "defaultProps" as the path key but all
+          // props are stored together under oldTree.props in the serialized tree.
+          obj = oldTree.props.children;
+          path.shift();
+        } else {
+          obj = oldTree[path[0].value].children;
           path.shift();
         }
         // the first element here is directly in an array instead of a children array
@@ -1133,8 +1238,11 @@
       let node;
       // If the path is longer and its first item is indeed an app number, it is a regular path
       if (!isNaN(path[0])) {
-        // The second element in the path will always be the root of the app
-        node = [...this.apps][path[0]]?.root;
+        // The second element in the path is the root index
+        const app = [...this.apps][path[0]];
+        if (!app) return null;
+        const roots = this.getRoots(app);
+        node = roots[parseInt(path[1], 10)];
         if (!node) {
           return null;
         }
@@ -1153,14 +1261,18 @@
         // are a series of component names and indexes separated by slashes
       } else {
         const simplifiedPathArray = path[0].split("/");
-        node = [...this.apps][simplifiedPathArray[0]]?.root;
-        if (node.name !== simplifiedPathArray[1]) {
+        const app = [...this.apps][simplifiedPathArray[0]];
+        if (!app) return null;
+        const roots = this.getRoots(app);
+        const rootIndex = parseInt(simplifiedPathArray[1], 10);
+        node = roots[rootIndex];
+        if (!node || this.getNodeName(node) !== simplifiedPathArray[2]) {
           return null;
         }
-        for (let i = 2; i < simplifiedPathArray.length; i += 2) {
+        for (let i = 3; i < simplifiedPathArray.length; i += 2) {
           const key = Reflect.ownKeys(node.children)[simplifiedPathArray[i]];
           node = node.children[key];
-          if (node.name !== simplifiedPathArray[i + 1]) {
+          if (this.getNodeName(node) !== simplifiedPathArray[i + 1]) {
             return null;
           }
         }
@@ -1179,38 +1291,54 @@
         path = this.getElementPath($0);
       }
       component.path = path;
-      let node = this.getComponentNode(path) || [...this.apps].find((app) => app.root)?.root;
+      let node = this.getComponentNode(path);
+      if (!node) {
+        // Fallback: find the first available root
+        for (const app of this.apps) {
+          const roots = this.getRoots(app);
+          if (roots.length > 0) {
+            node = roots[0];
+            break;
+          }
+        }
+      }
       if (!node) {
         return null;
       }
       // A path with only the app index indicates that the component is an App instead
       const isApp = path.length === 1;
       if (isApp) {
-        component.version = node.__proto__.constructor?.version
-          ? node.__proto__.constructor.version
-          : "<2.0.8";
+        component.version = this.getAppVersion(node);
       }
       // Load props of the component
-      const props = isApp ? node.props : node.component.props;
       component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: [] };
       component.name = isApp
         ? node?.name
           ? `App (${node.name})`
           : "App " + (Number(path[0]) + 1)
         : node.component.constructor.name;
-      const propsPath = isApp
-        ? [...path, { type: "item", value: "props" }]
-        : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
-      Reflect.ownKeys(props)
-        .sort(compareKeys)
-        .forEach((key) => {
+      const appVersion = this.getAppVersion([...this.apps][path[0]]);
+      const isOwl3 = appVersion.startsWith("3");
+      if (isOwl3) {
+        // In Owl 3, component.props uses getters that wrap node.props/defaultProps. Read the raw
+        // values directly from the ComponentNode so they display as plain values, not functions.
+        const rawProps = node.props || {};
+        const defaults = node.defaultProps || {};
+        const allPropKeys = [
+          ...new Set([...Reflect.ownKeys(rawProps), ...Reflect.ownKeys(defaults)]),
+        ].sort(compareKeys);
+        allPropKeys.forEach((key) => {
+          const inRaw = key in rawProps && rawProps[key] !== undefined;
+          const parentObj = inRaw ? rawProps : defaults;
+          const parentPathKey = inRaw ? "props" : "defaultProps";
+          const keyPropsPath = [...path, { type: "item", value: parentPathKey }];
           let oldBranch = oldTree?.props.children[component.props.children.length];
           const property = this.serializeObjectChild(
-            props,
+            parentObj,
             { type: "item", value: key, childIndex: component.props.children.length },
             0,
             "props",
-            propsPath,
+            keyPropsPath,
             oldBranch,
             oldTree
           );
@@ -1218,63 +1346,89 @@
             component.props.children.push(property);
           }
         });
+      } else {
+        const props = isApp ? node.props : node.component.props;
+        const propsPath = isApp
+          ? [...path, { type: "item", value: "props" }]
+          : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
+        Reflect.ownKeys(props || {})
+          .sort(compareKeys)
+          .forEach((key) => {
+            let oldBranch = oldTree?.props.children[component.props.children.length];
+            const property = this.serializeObjectChild(
+              props,
+              { type: "item", value: key, childIndex: component.props.children.length },
+              0,
+              "props",
+              propsPath,
+              oldBranch,
+              oldTree
+            );
+            if (property) {
+              component.props.children.push(property);
+            }
+          });
+      }
+      let obj;
       // Load env of the component
       const env = isApp ? node.env : node.component.env;
-      component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
-      const envPath = isApp
-        ? [...path, { type: "item", value: "env" }]
-        : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
-      Reflect.ownKeys(env)
-        .sort(compareKeys)
-        .forEach((key) => {
-          let oldBranch = oldTree?.env.children[component.env.children.length];
-          const envElement = this.serializeObjectChild(
-            env,
-            { type: "item", value: key, childIndex: component.env.children.length },
-            0,
-            "env",
-            envPath,
-            oldBranch,
-            oldTree
-          );
-          if (envElement) {
-            component.env.children.push(envElement);
+      if (env) {
+        component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
+        const envPath = isApp
+          ? [...path, { type: "item", value: "env" }]
+          : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
+        Reflect.ownKeys(env)
+          .sort(compareKeys)
+          .forEach((key) => {
+            let oldBranch = oldTree?.env.children[component.env.children.length];
+            const envElement = this.serializeObjectChild(
+              env,
+              { type: "item", value: key, childIndex: component.env.children.length },
+              0,
+              "env",
+              envPath,
+              oldBranch,
+              oldTree
+            );
+            if (envElement) {
+              component.env.children.push(envElement);
+            }
+          });
+        // Load env getters
+        let obj = Object.getPrototypeOf(env);
+        Reflect.ownKeys(obj).forEach((key) => {
+          if (
+            key !== "__proto__" &&
+            Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
+          ) {
+            let child = {
+              name: key,
+              depth: 0,
+              toggled: false,
+              objectType: "env",
+              path: [
+                ...envPath,
+                { type: "prototype getter", value: key, childIndex: component.env.children.length },
+              ],
+              contentType: "getter",
+              content: "(...)",
+              hasChildren: false,
+              children: [],
+            };
+            component.env.children.push(child);
           }
         });
-      // Load env getters
-      let obj = Object.getPrototypeOf(env);
-      Reflect.ownKeys(obj).forEach((key) => {
-        if (
-          key !== "__proto__" &&
-          Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-        ) {
-          let child = {
-            name: key,
-            depth: 0,
-            toggled: false,
-            objectType: "env",
-            path: [
-              ...envPath,
-              { type: "prototype getter", value: key, childIndex: component.env.children.length },
-            ],
-            contentType: "getter",
-            content: "(...)",
-            hasChildren: false,
-            children: [],
-          };
-          component.env.children.push(child);
-        }
-      });
-      const envPrototype = this.serializeObjectChild(
-        env,
-        { type: "prototype", childIndex: component.env.children.length },
-        0,
-        "env",
-        envPath,
-        oldTree?.env[component.env.children.length],
-        oldTree
-      );
-      component.env.children.push(envPrototype);
+        const envPrototype = this.serializeObjectChild(
+          env,
+          { type: "prototype", childIndex: component.env.children.length },
+          0,
+          "env",
+          envPath,
+          oldTree?.env[component.env.children.length],
+          oldTree
+        );
+        component.env.children.push(envPrototype);
+      }
       // Load instance of the component
       const instance = isApp ? node : node.component;
       component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: [] };
@@ -1340,10 +1494,90 @@
       );
       component.instance.children.push(instancePrototype);
 
-      // Load subscriptions of the component
-      if (isApp) {
+      // Load reactive values of the component (owl v3 only): signals, computed, and reactive proxies
+      component.reactiveValues = {
+        toggled: oldTree ? (oldTree.reactiveValues?.toggled ?? true) : true,
+        children: [],
+      };
+      if (isOwl3 && !isApp) {
+        Reflect.ownKeys(instance)
+          .sort(compareKeys)
+          .forEach((key) => {
+            if (["env", "props"].includes(key)) return;
+            const val = instance[key];
+            let pathType, reactiveValue;
+            if (this.isSignal(val)) {
+              pathType = "signal";
+              reactiveValue = this.toRaw(val());
+            } else if (this.isComputed(val)) {
+              pathType = "computed";
+              reactiveValue = this.toRaw(val());
+            } else if (this.isReactiveProxy(val)) {
+              pathType = "proxy";
+              reactiveValue = this.toRaw(val);
+            } else {
+              return;
+            }
+            const childIndex = component.reactiveValues.children.length;
+            const reactivePath = [...instancePath, { type: pathType, value: key, childIndex }];
+            let contentType, hasChildren;
+            if (reactiveValue === null || reactiveValue === undefined) {
+              contentType = reactiveValue === null ? "object" : "undefined";
+              hasChildren = false;
+            } else if (reactiveValue instanceof Map) {
+              contentType = "map";
+              hasChildren = true;
+            } else if (reactiveValue instanceof Set) {
+              contentType = "set";
+              hasChildren = true;
+            } else if (Array.isArray(reactiveValue)) {
+              contentType = "array";
+              hasChildren = reactiveValue.length > 0;
+            } else if (typeof reactiveValue === "function") {
+              contentType = "function";
+              hasChildren = true;
+            } else if (typeof reactiveValue === "object") {
+              contentType = "object";
+              hasChildren =
+                Object.keys(reactiveValue).length > 0 ||
+                Object.getOwnPropertySymbols(reactiveValue).length > 0;
+            } else {
+              contentType = typeof reactiveValue;
+              hasChildren = false;
+            }
+            const oldBranch = oldTree?.reactiveValues?.children[childIndex];
+            const reactiveNode = {
+              name: `${typeof key === "symbol" ? key.toString() : key} (${pathType[0].toUpperCase() + pathType.slice(1)})`,
+              depth: 0,
+              toggled: oldBranch?.toggled ?? false,
+              objectType: "reactiveValue",
+              contentType,
+              content:
+                reactiveValue == null
+                  ? reactiveValue === null
+                    ? "null"
+                    : "undefined"
+                  : this.serializer.serializeContent(reactiveValue, contentType),
+              hasChildren,
+              path: reactivePath,
+              children: [],
+            };
+            if (reactiveNode.toggled) {
+              reactiveNode.children = this.loadObjectChildren(
+                reactivePath,
+                0,
+                contentType,
+                "reactiveValue",
+                oldTree
+              );
+            }
+            component.reactiveValues.children.push(reactiveNode);
+          });
+      }
+      if (isApp || isOwl3) {
+        // OWL 3 does not have node.subscriptions
         component.subscriptions = {
-          toggled: oldTree ? oldTree.subscriptions.toggled : true,
+          toggled: oldTree ? oldTree.subscriptions?.toggled : true,
           children: [],
         };
       } else {
@@ -1527,9 +1761,9 @@
     }
     // Triggers the highlight effect around the specified component.
     highlightComponent(path) {
-      // Try to highlight the root component of the app if function called on an app
+      // Try to highlight the first root component of the app if function called on an app
       if (path.length === 1) {
-        path.push("root");
+        path.push("0");
       }
       let component = this.getComponentNode(path);
       if (!component) {
@@ -1570,7 +1804,10 @@
             component.root.render();
           }
         } else if (objectType === "env") {
-          [...this.apps][path[0]].root.render(true);
+          const roots = this.getRoots([...this.apps][path[0]]);
+          for (const rootNode of roots) {
+            rootNode.render(true);
+          }
         }
       }
     }
@@ -1581,41 +1818,35 @@
         return null;
       }
       const results = this.getDOMElementsRecursive(node);
-      let hasElementInChildren = false;
+      let containsElement = false;
       for (const result of results) {
-        if (result.isEqualNode(element)) {
+        if (result === element) {
           return path;
         }
         if (result.contains(element)) {
-          hasElementInChildren = true;
+          containsElement = true;
         }
       }
-      if (hasElementInChildren) {
+      if (containsElement) {
         for (const [key, child] of Object.entries(node.children)) {
           const result = this.searchElement(child, path.concat([key]), element);
           if (result) {
             return result;
           }
         }
+        // Element is inside this component's DOM but not owned by any child component.
+        return path;
       }
       return null;
     }
     // Returns the path to the component which is currently being inspected
     getElementPath(element) {
       if (element) {
-        // Create an array with the html element and all its successive parents
-        const parentsList = [element];
-        if (element.tagName !== "BODY") {
-          while (element && element?.parentElement?.tagName !== "BODY") {
-            element = element.parentElement;
-            parentsList.push(element);
-          }
-        }
         const appsArray = [...this.apps];
-        // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
-        for (const elem of parentsList) {
-          for (const [index, app] of appsArray.entries()) {
-            const inspectedPath = this.searchElement(app.root, ["root"], elem);
+        for (const [index, app] of appsArray.entries()) {
+          const roots = this.getRoots(app);
+          for (const [rootIdx, rootNode] of roots.entries()) {
+            const inspectedPath = this.searchElement(rootNode, [rootIdx.toString()], element);
             if (inspectedPath) {
               inspectedPath.unshift(index.toString());
               return inspectedPath;
@@ -1624,8 +1855,13 @@
         }
       }
       // If nothing was found, return the path of the first root component found in the apps
-      const appIndex = [...this.apps].findIndex((app) => app.root);
-      return [appIndex.toString(), "root"];
+      const appsArray = [...this.apps];
+      for (const [appIndex, app] of appsArray.entries()) {
+        if (this.getRoots(app).length > 0) {
+          return [appIndex.toString(), "0"];
+        }
+      }
+      return ["0", "0"];
     }
     // Returns the tree of components of the inspected page in a parsed format
     // Use inspectedPath to specify the path of the selected component
@@ -1648,41 +1884,43 @@
           toggled: true,
           selected: false,
           highlighted: false,
-          version: app.__proto__.constructor?.version
-            ? app.__proto__.constructor.version
-            : "<2.0.8",
+          version: this.getAppVersion(app),
           children: [],
         };
-        if (app.root) {
+        if (oldTree) {
+          appNode.toggled = oldTree.toggled;
+        }
+        // If no path is provided, it defaults to the target of the inspect element action
+        if (!inspectedPath) {
+          inspectedPath = this.getElementPath($0);
+        }
+        if (inspectedPath.join("/") === index.toString()) {
+          appNode.selected = true;
+        }
+        const roots = this.getRoots(app);
+        roots.forEach((rootNode, rootIdx) => {
           const root = {
-            name: app.root.component.constructor.name,
-            path: [index.toString(), "root"],
-            key: "",
+            name: rootNode.component.constructor.name,
+            path: [index.toString(), rootIdx.toString()],
+            key: rootIdx.toString(),
             depth: 1,
             toggled: true,
             selected: false,
             highlighted: false,
           };
-          if (oldTree) {
-            appNode.toggled = oldTree.toggled;
-            oldTree = oldTree.children[0];
+          const oldChild = oldTree?.children?.[rootIdx];
+          if (oldChild) {
+            root.toggled = oldChild.toggled;
           }
-          if (oldTree) {
-            root.toggled = oldTree.toggled;
-          }
-          // If no path is provided, it defaults to the target of the inspect element action
-          if (!inspectedPath) {
-            inspectedPath = this.getElementPath($0);
-          }
-          if (inspectedPath.join("/") === index.toString()) {
-            appNode.selected = true;
-            root.highlighted = true;
-          } else if (inspectedPath.join("/") === index.toString() + "/root") {
+          const rootPathString = index.toString() + "/" + rootIdx.toString();
+          if (inspectedPath.join("/") === rootPathString) {
             root.selected = true;
+          } else if (appNode.selected) {
+            root.highlighted = true;
           }
-          root.children = this.fillTree(app.root, root, inspectedPath.join("/"), oldTree);
+          root.children = this.fillTree(rootNode, root, inspectedPath.join("/"), oldChild);
           appNode.children.push(root);
-        }
+        });
         return appNode;
       });
       const component = this.getComponentDetails(inspectedPath, oldDetails);
@@ -1738,8 +1976,14 @@
           result.hasChildren = false;
           result.visible = true;
           const index = path.findIndex((key) => typeof key !== "string");
+          const componentNode = this.getComponentNode(
+            index <= 1 ? [path[0]] : path.slice(0, index)
+          );
+          // For subscription targets the key is always "target"; use targetName for a meaningful name
+          if (result.name === "target" && parent?.keys !== undefined && componentNode) {
+            result.name = this.targetName(parent.target, componentNode);
+          }
           if (index > 1) {
-            const componentNode = this.getComponentNode(path.slice(0, index));
             result.path = [this.getComponentSimplifiedPath(componentNode)].concat(
               path.slice(index)
             );
@@ -1761,27 +2005,42 @@
           path.unshift(componentNode.parentKey);
         }
       }
-      path.unshift("root");
+      // Walk to the root node (the one with no parent or whose parent has no parentKey)
+      let rootNode = componentNode.parent || componentNode;
+      const app = rootNode.app;
+      const roots = this.getRoots(app);
+      const rootIndex = roots.indexOf(rootNode);
+      path.unshift(rootIndex.toString());
       const appsArray = [...this.apps];
-      let index = appsArray.findIndex((app) => app === componentNode.app);
+      let index = appsArray.findIndex((a) => a === app);
       path.unshift(index.toString());
       return path;
     }
+    // Returns the display name of a component node, compatible with both owl v2 and v3
+    getNodeName(node) {
+      return node.component?.constructor?.name ?? node.name ?? "";
+    }
+
     // Returns the simplified path of the given component node (using component names and indexes)
     getComponentSimplifiedPath(componentNode) {
-      let path = componentNode.name;
+      let path = this.getNodeName(componentNode);
       if (componentNode.parentKey) {
         while (componentNode.parent) {
           const previousKey = componentNode.parentKey;
           componentNode = componentNode.parent;
-          path = `${componentNode.name}/${Reflect.ownKeys(componentNode.children).indexOf(
-            previousKey
-          )}/${path}`;
+          path = `${this.getNodeName(componentNode)}/${Reflect.ownKeys(
+            componentNode.children
+          ).indexOf(previousKey)}/${path}`;
         }
       }
+      // Walk to the root and find its index
+      let rootNode = componentNode.parent || componentNode;
+      const app = rootNode.app;
+      const roots = this.getRoots(app);
+      const rootIndex = roots.indexOf(rootNode);
       const appsArray = [...this.apps];
-      let index = appsArray.findIndex((app) => app === componentNode.app);
-      path = index.toString() + (path.length ? `/${path}` : "");
+      let appIndex = appsArray.findIndex((a) => a === app);
+      path = appIndex.toString() + "/" + rootIndex.toString() + (path.length ? `/${path}` : "");
       return path;
     }
     // Store the object into a temp window variable and log it to the console

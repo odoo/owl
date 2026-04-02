@@ -1,15 +1,19 @@
 /** @odoo-module **/
 
-const { Component, onWillRender } = owl;
+const { Component, computed, props, types: t } = owl;
 
 export class HighlightText extends Component {
+  static template = "utils.HighlightText";
+  static highlightClass = "highlight-search";
+
+  props = props({ originalText: t.string, searchValue: t.string });
+
   setup() {
-    onWillRender(() => {
+    this.splitText = computed(() => {
       const splitText = this.splitFuzzySearch(this.props.originalText, this.props.searchValue);
-      this.splitText =
-        this.props.searchValue.length && splitText.length > 1
-          ? splitText
-          : [this.props.originalText];
+      return this.props.searchValue.length && splitText.length > 1
+        ? splitText
+        : [this.props.originalText];
     });
   }
 
@@ -42,9 +46,3 @@ export class HighlightText extends Component {
     return splits;
   }
 }
-HighlightText.template = "utils.HighlightText";
-HighlightText.props = {
-  originalText: String,
-  searchValue: String,
-};
-HighlightText.highlightClass = "highlight-search";

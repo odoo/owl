@@ -1,45 +1,48 @@
 /** @odoo-module **/
 
 import { isElementInCenterViewport, minimizeKey, browserInstance } from "../../../../utils";
-import { useStore } from "../../../store/store";
+import { StorePlugin } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, useRef, useState, useEffect, onMounted } = owl;
+const { Component, signal, proxy, useEffect, onMounted, plugin, props, types: t } = owl;
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
-
   static components = { TreeElement, HighlightText };
 
+  props = props({ component: t.object() });
+
   setup() {
-    this.state = useState({
+    this.state = proxy({
       searched: false,
     });
-    this.store = useStore();
-    this.element = useRef("element");
+    this.store = plugin(StorePlugin);
+    this.element = signal(null);
     this.stringifiedPath = JSON.stringify(this.props.component.path);
     // Scroll to the selected element when it changes
     onMounted(() => {
       if (this.props.component.selected) {
-        this.element.el.scrollIntoView({ block: "center", behavior: "auto" });
+        this.element()?.scrollIntoView({ block: "center", behavior: "auto" });
       }
     });
-    useEffect(
-      (selected) => {
-        if (selected) {
-          if (!isElementInCenterViewport(this.element.el)) {
-            this.element.el.scrollIntoView({ block: "center", behavior: "smooth" });
-          }
+    useEffect(() => {
+      const selected = this.props.component.selected;
+      const el = this.element();
+      if (selected && el) {
+        if (!isElementInCenterViewport(el)) {
+          el.scrollIntoView({ block: "center", behavior: "smooth" });
         }
-        this.store.selectedElement = this.element.el;
-      },
-      () => [this.props.component.selected]
-    );
+      }
+      if (el) {
+        this.store.selectedElement.set(el);
+      }
+    });
     // Effect to apply a short highlight effect to the component when it is rendered
-    useEffect(
-      () => {
-        if (this.store.renderPaths.has(this.stringifiedPath)) {
-          const treeElement = this.element.el;
+    useEffect(() => {
+      const size = this.store.renderPaths().size;
+      if (this.store.renderPaths().has(this.stringifiedPath)) {
+        const treeElement = this.element();
+        if (treeElement) {
           treeElement.classList.add("render-highlight");
           setTimeout(() => {
             treeElement.classList.add("highlight-fade");
@@ -50,20 +53,17 @@ export class TreeElement extends Component {
             }, 500);
           }, 50);
         }
-      },
-      () => [this.store.renderPaths.size]
-    );
+      }
+    });
     // Used to know when the component is in the search bar results
-    useEffect(
-      (searchResults) => {
-        if (searchResults.includes(this.props.component.path)) {
-          this.state.searched = true;
-        } else {
-          this.state.searched = false;
-        }
-      },
-      () => [this.store.componentSearch.searchResults]
-    );
+    useEffect(() => {
+      const searchResults = this.store.searchResults();
+      if (searchResults.includes(this.props.component.path)) {
+        this.state.searched = true;
+      } else {
+        this.state.searched = false;
+      }
+    });
   }
 
   get componentPadding() {
@@ -141,12 +141,12 @@ export class TreeElement extends Component {
       },
       {
         title: "Don't fold component by default",
-        show: this.store.settings.componentsToggleBlacklist.has(this.props.component.name),
+        show: this.store.componentsToggleBlacklist().has(this.props.component.name),
         action: () => this.toggleComponentToBlacklist(),
       },
       {
         title: "Fold component by default",
-        show: !this.store.settings.componentsToggleBlacklist.has(this.props.component.name),
+        show: !this.store.componentsToggleBlacklist().has(this.props.component.name),
         action: () => this.toggleComponentToBlacklist(),
       },
     ];
@@ -163,7 +163,7 @@ export class TreeElement extends Component {
 
   // Used to select the component node
   toggleComponent() {
-    if (this.store.settings.toggleOnSelected) {
+    if (this.store.toggleOnSelected()) {
       this.toggleDisplay();
     }
     if (!this.props.component.selected) {
@@ -174,24 +174,24 @@ export class TreeElement extends Component {
   // Adds the component name to the components toggle blacklist if not already present
   // Else, remove it from the blacklist
   toggleComponentToBlacklist() {
-    if (this.store.settings.componentsToggleBlacklist.has(this.props.component.name)) {
+    if (this.store.componentsToggleBlacklist().has(this.props.component.name)) {
       if (!this.props.component.toggled) {
         this.props.component.toggled = !this.props.component.toggled;
       }
-      this.store.settings.componentsToggleBlacklist.delete(this.props.component.name);
+      this.store.componentsToggleBlacklist().delete(this.props.component.name);
       browserInstance.storage.local.set({
         owlDevtoolsComponentsToggleBlacklist: Array.from(
-          this.store.settings.componentsToggleBlacklist
+          this.store.componentsToggleBlacklist()
         ),
       });
     } else {
       if (this.props.component.toggled) {
         this.props.component.toggled = !this.props.component.toggled;
       }
-      this.store.settings.componentsToggleBlacklist.add(this.props.component.name);
+      this.store.componentsToggleBlacklist().add(this.props.component.name);
       browserInstance.storage.local.set({
         owlDevtoolsComponentsToggleBlacklist: Array.from(
-          this.store.settings.componentsToggleBlacklist
+          this.store.componentsToggleBlacklist()
         ),
       });
     }

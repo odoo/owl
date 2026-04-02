@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.ProfilerTab" owl="1">
+  <t t-name="devtools.ProfilerTab">
     <div class="position-relative overflow-hidden d-flex flex-column h-100">
       <div class="panel-top d-flex align-items-center">
-        <i title="Start/Stop Recording" class="fa fa-circle profiler-icon p-2" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
+        <i title="Start/Stop Recording" class="fa fa-circle profiler-icon p-2" t-attf-style="color: {{this.store.activeRecorder() ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
         <i title="Clear events" class="fa fa-ban profiler-icon p-2" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
         <div class="icons-separator"/>
-        <select class="form-select form-select-sm custom-select pointer-icon border-0" t-on-change="selectDisplayMode">
-          <option t-att-selected="store.eventsTreeView" value="Tree">Tree view</option>
-          <option t-att-selected="!store.eventsTreeView" value="List">Events log</option>
+        <select class="form-select form-select-sm custom-select pointer-icon border-0" t-on-change="this.selectDisplayMode">
+          <option t-att-selected="this.store.eventsTreeView()" value="Tree">Tree view</option>
+          <option t-att-selected="!this.store.eventsTreeView()" value="List">Events log</option>
         </select>
-        <i title="Collapse All" class="fa fa-list p-2 profiler-icon" t-on-click="() => this.store.collapseAll()" t-attf-style="{{store.eventsTreeView ? '' : 'display: none;'}}"></i>
+        <i title="Collapse All" class="fa fa-list p-2 profiler-icon" t-on-click="() => this.store.collapseAll()" t-attf-style="{{this.store.eventsTreeView() ? '' : 'display: none;'}}"></i>
         <div class="icons-separator"/>
         <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace renderings in console">
-          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace Renderings
+          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.store.traceRenderings()" t-on-input="() => this.store.toggleTracing()"/> Trace Renderings
         </label>
         <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace subscriptions in console (warning: it is VERY verbose)">
-          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="store.traceSubscriptions" t-on-input="() => this.store.toggleSubscriptionTracing()"/> Trace Subscriptions
+          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.store.traceSubscriptions()" t-on-input="() => this.store.toggleSubscriptionTracing()"/> Trace Subscriptions
         </label>
         <!-- <EventSearchBar/> -->
       </div>
       <div class="events-container h-100 font-monospace">
-        <t t-if="showHelp()">
+        <t t-if="this.showHelp()">
           <div class="status-message d-flex justify-content-center align-items-center">
             <div>
               Click on the <i class="fa fa-circle" style="font-size: 0.8em;"></i> button to start recording events.
@@ -29,13 +29,13 @@
           </div>
         </t>
         <t t-else="">
-          <t t-if="store.eventsTreeView">
-            <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
+          <t t-if="this.store.eventsTreeView()">
+            <t t-foreach="this.store.eventsTree()" t-as="event" t-key="event.id">
               <EventNode event="event"/>
             </t>
           </t>
           <t t-else="">
-            <t t-foreach="store.events" t-as="event" t-key="event_index">
+            <t t-foreach="this.store.events()" t-as="event" t-key="event_index">
               <Event event="event"/>
             </t>
           </t>

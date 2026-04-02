@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
-const { Component, onWillUnmount, useExternalListener } = owl;
+const { Component, onWillDestroy, useListener, plugin } = owl;
 import { TreeElement } from "./tree_element/tree_element";
 import { DetailsWindow } from "./details_window/details_window";
 import { ComponentSearchBar } from "./component_search_bar/component_search_bar";
-import { useStore } from "../../store/store";
+import { StorePlugin } from "../../store/store";
 
 export class ComponentsTab extends Component {
   static template = "devtools.ComponentsTab";
@@ -12,12 +12,12 @@ export class ComponentsTab extends Component {
   static components = { TreeElement, DetailsWindow, ComponentSearchBar };
 
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
     this.flushRendersTimeout = false;
-    useExternalListener(document, "keydown", this.onKeyboardEvent);
-    useExternalListener(window, "resize", this.onWindowResize);
+    useListener(document, "keydown", this.onKeyboardEvent.bind(this));
+    useListener(window, "resize", this.onWindowResize);
 
-    onWillUnmount(() => {
+    onWillDestroy(() => {
       window.removeEventListener("mousemove", this.onMouseMove);
       window.removeEventListener("mouseup", this.onMouseUp);
     });
@@ -56,9 +56,8 @@ export class ComponentsTab extends Component {
   onMouseMove = (event) => {
     const minWidth = (147 / window.innerWidth) * 100;
     const maxWidth = 100 - (100 / window.innerWidth) * 100;
-    this.store.splitPosition = Math.max(
-      Math.min((event.clientX / window.innerWidth) * 100, maxWidth),
-      minWidth
+    this.store.splitPosition.set(
+      Math.max(Math.min((event.clientX / window.innerWidth) * 100, maxWidth), minWidth)
     );
   };
 
@@ -71,7 +70,7 @@ export class ComponentsTab extends Component {
   onWindowResize = () => {
     const minWidth = (147 / window.innerWidth) * 100;
     if (minWidth <= 100) {
-      this.store.splitPosition = Math.max(this.store.splitPosition, minWidth);
+      this.store.splitPosition.set(Math.max(this.store.splitPosition(), minWidth));
     }
   };
 }

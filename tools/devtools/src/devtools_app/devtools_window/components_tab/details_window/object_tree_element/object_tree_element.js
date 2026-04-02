@@ -1,29 +1,27 @@
-import { useStore } from "../../../../store/store";
+import { StorePlugin } from "../../../../store/store";
 
-const { Component, useState, useEffect, useRef } = owl;
+const { Component, proxy, useEffect, signal, plugin, props, types: t } = owl;
 
 export class ObjectTreeElement extends Component {
   static template = "devtools.ObjectTreeElement";
-
   static components = { ObjectTreeElement };
 
+  props = props({ object: t.object(), "class?": t.string, "index?": t.number });
+
   setup() {
-    this.state = useState({
+    this.state = proxy({
       editMode: false,
       menuTop: 0,
       menuLeft: 0,
     });
-    const inputRef = useRef("input");
-    this.store = useStore();
-    useEffect(
-      (editMode) => {
-        // Focus on the input when it is created
-        if (editMode) {
-          inputRef.el.select();
-        }
-      },
-      () => [this.state.editMode]
-    );
+    this.inputRef = signal(null);
+    this.store = plugin(StorePlugin);
+    useEffect(() => {
+      // Focus on the input when it is created
+      if (this.state.editMode) {
+        this.inputRef()?.select();
+      }
+    });
   }
 
   get pathAsString() {

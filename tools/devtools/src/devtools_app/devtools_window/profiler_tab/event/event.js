@@ -1,13 +1,15 @@
 import { minimizeKey } from "../../../../utils";
-import { useStore } from "../../../store/store";
+import { StorePlugin } from "../../../store/store";
 
-const { Component } = owl;
+const { Component, plugin, props, types: t } = owl;
 
 export class Event extends Component {
   static template = "devtools.Event";
 
+  props = props({ event: t.object() });
+
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
   }
 
   // Formatting for displaying the key of the component

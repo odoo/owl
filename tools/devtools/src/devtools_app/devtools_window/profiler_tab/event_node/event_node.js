@@ -1,15 +1,16 @@
 import { minimizeKey } from "../../../../utils";
-import { useStore } from "../../../store/store";
+import { StorePlugin } from "../../../store/store";
 
-const { Component } = owl;
+const { Component, plugin, props, types: t } = owl;
 
 export class EventNode extends Component {
   static template = "devtools.EventNode";
-
   static components = { EventNode };
 
+  props = props({ event: t.object() });
+
   setup() {
-    this.store = useStore();
+    this.store = plugin(StorePlugin);
   }
 
   get eventPadding() {

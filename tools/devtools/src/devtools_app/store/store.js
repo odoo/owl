@@ -1,32 +1,42 @@
-const { reactive, useState, toRaw } = owl;
+const { Plugin, signal, proxy, toRaw } = owl;
 import { fuzzySearch, IS_FIREFOX, getActiveTabURL, browserInstance } from "../../utils";
 import globalHook from "../../page_scripts/owl_devtools_global_hook";
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
-export const store = reactive({
-  devtoolsId: 0,
-  settings: {
-    expandByDefault: true,
-    toggleOnSelected: false,
-    darkmode: false,
-    componentsToggleBlacklist: new Set(),
-  },
-  contextMenu: null,
-  isFirefox: IS_FIREFOX,
-  frameUrls: ["top"],
-  activeFrame: "top",
-  page: "ComponentsTab",
-  events: [],
-  eventsTreeView: true,
-  eventsTree: [],
-  activeRecorder: false,
-  owlStatus: true,
-  extensionContextStatus: true,
-  splitPosition: window.innerWidth > window.innerHeight ? 45 : 60,
-  apps: [],
-  traceRenderings: false,
-  traceSubscriptions: false,
-  activeComponent: {
+export class StorePlugin extends Plugin {
+  // --- Primitive state ---
+  devtoolsId = signal(0);
+  contextMenu = signal(null);
+  page = signal("ComponentsTab");
+  activeFrame = signal("top");
+  frameUrls = signal(["top"]);
+  eventsTreeView = signal(true);
+  activeRecorder = signal(false);
+  owlStatus = signal(true);
+  extensionContextStatus = signal(true);
+  splitPosition = signal(window.innerWidth > window.innerHeight ? 45 : 60);
+  traceRenderings = signal(false);
+  traceSubscriptions = signal(false);
+  selectedElement = signal(null);
+
+  // --- Settings (flattened) ---
+  expandByDefault = signal(true);
+  toggleOnSelected = signal(false);
+  darkMode = signal(false);
+  componentsToggleBlacklist = signal.Set(new Set());
+
+  // --- Component search state (flattened) ---
+  searchText = signal("");
+  searchResults = signal([]);
+  searchIndex = signal(0);
+  activeSelector = signal(false);
+
+  // --- Deep reactive state (signal + proxy for nested mutation tracking) ---
+  apps = signal(proxy([]));
+  events = signal(proxy([]));
+  eventsTree = signal(proxy([]));
+  observedVariables = signal(proxy([]));
+  activeComponent = signal(proxy({
     path: ["0"],
     name: "App",
     subscriptions: { toggled: true, children: [] },
@@ -35,95 +45,77 @@ export const store = reactive({
     instance: { toggled: true, children: [] },
     hooks: { toggled: true, children: [] },
     version: "1.0",
-  },
-  selectedElement: null,
-  observedVariables: [],
-  componentSearch: {
-    search: "",
-    searchResults: [],
-    searchIndex: 0,
-    activeSelector: false,
-    getNextSearch() {
-      if (this.searchIndex > -1 && this.searchIndex < this.searchResults.length - 1) {
-        store.setSearchIndex(this.searchIndex + 1);
-      } else if (this.searchIndex === this.searchResults.length - 1) {
-        store.setSearchIndex(0);
-      }
-    },
-    getPrevSearch() {
-      if (this.searchIndex > 0) {
-        store.setSearchIndex(this.searchIndex - 1);
-      } else if (this.searchIndex === 0) {
-        store.setSearchIndex(this.searchResults.length - 1);
-      }
-    },
-  },
-  // eventSearch: {
-  //   search: "",
-  //   searchResults: [],
-  //   filters: [],
-  // },
-  renderPaths: new Set(),
+  }));
+  renderPaths = signal.Set(new Set());
+
+  // --- Non-reactive ---
+  isFirefox = IS_FIREFOX;
+
+  setup() {
+    this._init();
+    this._setupPortListener();
+  }
+
+  // -------------------------------------------------------------------------
+  // Tab / context menu
+  // -------------------------------------------------------------------------
 
   // Used to navigate between the Components tab and the Events tab
   switchTab(componentName) {
-    this.page = componentName;
-    this.componentSearch.activeSelector = false;
-    evalFunctionInWindow("disableHTMLSelector", [], this.activeFrame);
-  },
+    this.page.set(componentName);
+    this.activeSelector.set(false);
+    evalFunctionInWindow("disableHTMLSelector", [], this.activeFrame());
+  }
 
   openContextMenu(event, items) {
-    this.contextMenu = {
-      position: {
-        x: event.clientX,
-        y: event.clientY,
-      },
+    this.contextMenu.set({
+      position: { x: event.clientX, y: event.clientY },
       items,
-    };
-  },
+    });
+  }
 
-  // Load all data related to the components tree using the global hook loaded on the page
+  // -------------------------------------------------------------------------
+  // Components tree
+  // -------------------------------------------------------------------------
+
+  // Load all data related to the components tree using the global hook loaded on the page.
   // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree
-  // when generating the new one
+  // when generating the new one.
   async loadComponentsTree(fromOld) {
     if (IS_FIREFOX) {
-      await evalInWindow("window.$0 = $0;", this.activeFrame);
+      await evalInWindow("window.$0 = $0;", this.activeFrame());
     }
     const [apps, details] = await evalFunctionInWindow(
       "getComponentsTree",
-      fromOld && this.activeComponent
-        ? [this.activeComponent.path, this.apps, this.activeComponent]
+      fromOld && this.activeComponent()
+        ? [this.activeComponent().path, this.apps(), this.activeComponent()]
         : [],
-      this.activeFrame
+      this.activeFrame()
     );
-    this.apps = apps ? apps : [];
-    if (!fromOld && this.settings.expandByDefault) {
-      this.apps.forEach((tree) => expandNodes(tree, true));
+    this.apps.set(proxy(apps || []));
+    if (!fromOld && this.expandByDefault()) {
+      this.apps().forEach((tree) => expandNodes(tree, this.componentsToggleBlacklist()));
     }
     keepEnvLit(details);
-    this.activeComponent = details;
-    if (this.componentSearch.search.length) {
-      this.updateSearch(this.componentSearch.search);
+    this.activeComponent.set(proxy(details));
+    if (this.searchText().length) {
+      this.updateSearch(this.searchText());
     }
-  },
+  }
 
   // Select a component by retrieving its details from the page based on its path
   async selectComponent(path) {
     // Deselect all components
-    this.apps.forEach((app) => {
+    this.apps().forEach((app) => {
       app.selected = false;
       app.highlighted = false;
-      app.children.forEach((child) => {
-        deselectComponent(child);
-      });
+      app.children.forEach((child) => deselectComponent(child));
     });
     let component;
-    // element is the app here
     if (path.length === 1) {
-      component = this.apps[path[0]];
-      // the second element in the path is always the root of the app so no need to check
+      component = this.apps()[path[0]];
     } else {
-      component = this.apps[path[0]].children[0];
+      component = this.apps()[path[0]].children[0];
     }
     for (let i = 2; i < path.length; i++) {
       component.toggled = true;
@@ -140,127 +132,144 @@ export const store = reactive({
     const details = await evalFunctionInWindow(
       "getComponentDetails",
       [component.path],
-      this.activeFrame
+      this.activeFrame()
     );
     if (!details) {
       await this.loadComponentsTree(false);
     } else {
       keepEnvLit(details);
-      this.activeComponent = details;
+      this.activeComponent.set(proxy(details));
     }
-    if (this.page !== "ComponentsTab") {
+    if (this.page() !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
     }
-  },
+  }
+
+  // -------------------------------------------------------------------------
+  // Component search
+  // -------------------------------------------------------------------------
 
   // Update the search state value with the current search string and trigger the search
   updateSearch(search) {
-    this.componentSearch.search = search;
-    this.componentSearch.searchResults = [];
-    this.apps.forEach((app) => this.getComponentSearchResults(search, app));
-    if (this.componentSearch.searchResults.length > 0) {
-      this.componentSearch.searchIndex = 0;
-      this.selectComponent(this.componentSearch.searchResults[0]);
-      this.apps.forEach((app) => foldNodes(app));
-      for (const result of this.componentSearch.searchResults) {
+    this.searchText.set(search);
+    this.searchResults.set([]);
+    const results = [];
+    this.apps().forEach((app) => this._getComponentSearchResults(search, app, results));
+    this.searchResults.set(results);
+    if (results.length > 0) {
+      this.searchIndex.set(0);
+      this.selectComponent(results[0]);
+      this.apps().forEach((app) => foldNodes(app));
+      for (const result of results) {
         this.toggleComponentParents(result);
       }
     } else {
-      this.componentSearch.searchIndex = -1;
+      this.searchIndex.set(-1);
     }
-  },
+  }
 
   // Search for results in the components tree given the current search string (in a fuzzy way)
-  getComponentSearchResults(search, node) {
+  _getComponentSearchResults(search, node, results) {
     if (search.length < 1) {
       return;
     }
     if (fuzzySearch(node.name, search)) {
-      this.componentSearch.searchResults.push(node.path);
+      results.push(node.path);
     }
     if (node.children) {
-      node.children.forEach((child) => this.getComponentSearchResults(search, child));
+      node.children.forEach((child) => this._getComponentSearchResults(search, child, results));
     }
-  },
+  }
 
-  // Same but only record the component names for events
-  // getComponentNameSearchResults(search, node) {
-  //   if (search.length < 1) return;
-  //   if (fuzzySearch(node.name, search)) {
-  //     if(!this.eventSearch.searchResults.includes(node.name))
-  //       this.eventSearch.searchResults.push(node.name);
-  //   }
-  //   if (node.children) {
-  //     node.children.forEach((child) => this.getComponentNameSearchResults(search, child));
-  //   }
-  // },
+  getNextSearch() {
+    const index = this.searchIndex();
+    const results = this.searchResults();
+    if (index > -1 && index < results.length - 1) {
+      this.setSearchIndex(index + 1);
+    } else if (index === results.length - 1) {
+      this.setSearchIndex(0);
+    }
+  }
 
-  // updateEventSearch(search){
-  //   this.eventSearch.search = search;
-  //   this.eventSearch.searchResults = [];
-  //   this.apps.forEach((app) => this.getComponentNameSearchResults(search, app));
-  //   [""]
-  // },
+  getPrevSearch() {
+    const index = this.searchIndex();
+    const results = this.searchResults();
+    if (index > 0) {
+      this.setSearchIndex(index - 1);
+    } else if (index === 0) {
+      this.setSearchIndex(results.length - 1);
+    }
+  }
+
+  // Set the search index to the provided one in order to select the current searched component
+  setSearchIndex(index) {
+    this.searchIndex.set(index);
+    this.selectComponent(this.searchResults()[index]);
+  }
+
+  // -------------------------------------------------------------------------
+  // Tree navigation
+  // -------------------------------------------------------------------------
 
   // Toggle all parent components of the specified one to make sure it is visible in the tree
   toggleComponentParents(path) {
     let cp = path.slice(2);
-    this.apps[path[0]].toggled = true;
-    let component = this.apps[path[0]].children[0];
+    this.apps()[path[0]].toggled = true;
+    let component = this.apps()[path[0]].children[0];
     for (const key of cp) {
       component.toggled = true;
       component = component.children.find((child) => child.key === key);
     }
-  },
+  }
 
   // Returns access to the specified component in the tree
   getComponentByPath(path) {
     let component;
     if (path.length < 2) {
-      component = this.apps[path[0]];
+      component = this.apps()[path[0]];
     } else {
-      component = this.apps[path[0]].children[0];
+      component = this.apps()[path[0]].children[0];
     }
     let cp = path.slice(2);
     for (const key of cp) {
       component = component.children.find((child) => child.key === key);
     }
     return component;
-  },
+  }
 
-  // expand/fold the component and its children based on toggle
+  // Expand/fold the component and its children based on toggle
   toggleComponentAndChildren(component, toggle) {
     if (toggle) {
       expandNodes(component);
     } else {
       foldNodes(component);
     }
-  },
+  }
 
   foldDirectChildren(element) {
     for (const child of element.children) {
       child.toggled = false;
     }
-  },
+  }
 
-  // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose
-  // The resulting behaviour is the same as in the Elements tab of the chrome devtools
+  // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose.
+  // The resulting behaviour is the same as in the Elements tab of the chrome devtools.
   toggleOrSelectPrevElement(toggle) {
     if (toggle) {
-      const component = this.getComponentByPath(this.activeComponent.path);
+      const component = this.getComponentByPath(this.activeComponent().path);
       if (component.children.length > 0 && component.toggled) {
         component.toggled = false;
-      } else if (this.activeComponent.path.length > 1) {
-        this.selectComponent(this.activeComponent.path.slice(0, -1));
+      } else if (this.activeComponent().path.length > 1) {
+        this.selectComponent(this.activeComponent().path.slice(0, -1));
       }
       return;
     }
-    const parentPath = [...this.activeComponent.path];
+    const parentPath = [...this.activeComponent().path];
     const key = parentPath.pop();
-    // If component is an app, find descendant with the highest successive children indexes of the app above
-    // or do nothing if there is no app above
+    // If component is an app, find descendant with the highest successive children indexes
+    // of the app above, or do nothing if there is no app above
     if (parentPath.length === 0) {
-      const parent = this.apps;
+      const parent = this.apps();
       const index = Number(key);
       if (index > 0) {
         let sibling = parent[index - 1];
@@ -282,12 +291,12 @@ export const store = reactive({
         this.selectComponent(parent.path);
       }
     }
-  },
+  }
 
-  // Action related to the right(toggle)/down(not toggle) arrow keys for navigation purpose
-  // The resulting behaviour is the same as in the Elements tab of the chrome devtools
+  // Action related to the right(toggle)/down(not toggle) arrow keys for navigation purpose.
+  // The resulting behaviour is the same as in the Elements tab of the chrome devtools.
   toggleOrSelectNextElement(toggle) {
-    let component = this.getComponentByPath(this.activeComponent.path);
+    let component = this.getComponentByPath(this.activeComponent().path);
     if (toggle) {
       if (!component.children.length) {
         return;
@@ -300,13 +309,13 @@ export const store = reactive({
     if (component.toggled && component.children.length) {
       this.selectComponent(component.children[0].path);
     } else {
-      const parentPath = [...this.activeComponent.path];
+      const parentPath = [...this.activeComponent().path];
       while (true) {
         const key = parentPath.pop();
         if (parentPath.length === 0) {
           const index = Number(key);
-          if (index < this.apps.length - 1) {
-            this.selectComponent(this.apps[index + 1].path);
+          if (index < this.apps().length - 1) {
+            this.selectComponent(this.apps()[index + 1].path);
           }
           return;
         }
@@ -318,22 +327,20 @@ export const store = reactive({
         }
       }
     }
-  },
+  }
 
-  // Set the search index to the provided one in order to select the current searched component
-  setSearchIndex(index) {
-    this.componentSearch.searchIndex = index;
-    this.selectComponent(this.componentSearch.searchResults[index]);
-  },
+  // -------------------------------------------------------------------------
+  // Object tree / details
+  // -------------------------------------------------------------------------
 
   // Replace the (...) content of a getter with the value returned by the corresponding get method
   async loadGetterContent(obj) {
-    const result = await evalFunctionInWindow("loadGetterContent", [obj], this.activeFrame);
+    const result = await evalFunctionInWindow("loadGetterContent", [obj], this.activeFrame());
     Object.keys(obj).forEach((key) => {
       obj[key] = result[key];
     });
     obj.children = [];
-  },
+  }
 
   // Expand the children of the input object property and load it from page if necessary
   async toggleObjectTreeElementsDisplay(obj) {
@@ -346,52 +353,82 @@ export const store = reactive({
     if (obj.hasChildren && obj.children.length === 0) {
       const children = await evalFunctionInWindow(
         "loadObjectChildren",
-        [obj.path, obj.depth, obj.contentType, obj.objectType, this.activeComponent],
-        this.activeFrame
+        [obj.path, obj.depth, obj.contentType, obj.objectType, this.activeComponent()],
+        this.activeFrame()
       );
       obj.children = children;
     }
     obj.toggled = !obj.toggled;
-  },
-
-  // Toggle the selector tool which is used to select a component based on the hovered Dom element
-  toggleSelector() {
-    this.componentSearch.activeSelector = !this.componentSearch.activeSelector;
-    evalFunctionInWindow(
-      this.componentSearch.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector",
-      [],
-      this.activeFrame
-    );
-  },
+  }
 
   // Update the value of the given object with the new provided one
   editObjectTreeElement(path, value, objectType) {
-    evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame);
-  },
+    evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame());
+  }
 
-  // toggle the tracing mode which will record all root render events and send their trace in the console
+  // -------------------------------------------------------------------------
+  // Selector / highlight
+  // -------------------------------------------------------------------------
+
+  // Toggle the selector tool which is used to select a component based on the hovered DOM element
+  toggleSelector() {
+    this.activeSelector.set(!this.activeSelector());
+    evalFunctionInWindow(
+      this.activeSelector() ? "enableHTMLSelector" : "disableHTMLSelector",
+      [],
+      this.activeFrame()
+    );
+  }
+
+  // Trigger the highlight on the component in the page
+  highlightComponent(path) {
+    evalFunctionInWindow("highlightComponent", [path], this.activeFrame());
+  }
+
+  // Remove all the highlight boxes created above the html elements in the page to show components
+  removeHighlights() {
+    if (this.owlStatus() && !this.invalidContext) {
+      evalFunctionInWindow("removeHighlights", [], this.activeFrame());
+    }
+  }
+
+  // Center the view around the currently selected component
+  onActiveComponentClick() {
+    this.selectedElement()?.scrollIntoView({ block: "center", behavior: "smooth" });
+    copyToClipboard(this.activeComponent().name);
+  }
+
+  // -------------------------------------------------------------------------
+  // Tracing
+  // -------------------------------------------------------------------------
+
+  // Toggle the tracing mode which will record all root render events and send their trace in the console
   async toggleTracing() {
-    this.traceRenderings = await evalFunctionInWindow(
-      "toggleTracing",
-      [!this.traceRenderings],
-      this.activeFrame
+    this.traceRenderings.set(
+      await evalFunctionInWindow("toggleTracing", [!this.traceRenderings()], this.activeFrame())
     );
-  },
+  }
 
-  // toggle subscriptions tracing mode which will record all new subscriptions
+  // Toggle subscriptions tracing mode which will record all new subscriptions
   async toggleSubscriptionTracing() {
-    this.traceSubscriptions = await evalFunctionInWindow(
-      "toggleSubscriptionTracing",
-      [!this.traceSubscriptions],
-      this.activeFrame
+    this.traceSubscriptions.set(
+      await evalFunctionInWindow(
+        "toggleSubscriptionTracing",
+        [!this.traceSubscriptions()],
+        this.activeFrame()
+      )
     );
-  },
+  }
+
+  // -------------------------------------------------------------------------
+  // Frames
+  // -------------------------------------------------------------------------
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
   async updateIFrameList() {
     const frames = await evalFunctionInWindow("getIFrameUrls");
-    this.frameUrls = ["top"];
-    if (this.activeFrame !== "top") {
+    this.frameUrls.set(["top"]);
+    if (this.activeFrame() !== "top") {
       this.selectFrame("top");
     }
     for (const frame of frames) {
@@ -405,43 +442,45 @@ export const store = reactive({
           await loadScripts(frame);
         }
         evalFunctionInWindow("initDevtools", [frame], frame);
-        if (!this.frameUrls.includes(frame)) {
-          this.frameUrls = [...this.frameUrls, frame];
+        if (!this.frameUrls().includes(frame)) {
+          this.frameUrls.set([...this.frameUrls(), frame]);
         }
       }
     }
-  },
-
-  // Remove all the highlight boxes created above the html elements in the page to show components
-  removeHighlights() {
-    if (this.owlStatus && !this.invalidContext) {
-      evalFunctionInWindow("removeHighlights", [], this.activeFrame);
-    }
-  },
+  }
 
   // Reset the context of all values in the devtools tab and load the one from the given frame
   selectFrame(frame) {
     this.removeHighlights();
-    evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
-    evalFunctionInWindow("toggleTracing", [false], this.activeFrame);
-    evalFunctionInWindow("toggleSubscriptionTracing", [false], this.activeFrame);
-    this.events = [];
-    this.eventsTree = [];
-    this.activeFrame = frame;
-    store.loadComponentsTree(false);
+    evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame());
+    evalFunctionInWindow("toggleTracing", [false], this.activeFrame());
+    evalFunctionInWindow("toggleSubscriptionTracing", [false], this.activeFrame());
+    this.events.set(proxy([]));
+    this.eventsTree.set(proxy([]));
+    this.activeFrame.set(frame);
+    this.loadComponentsTree(false);
     evalFunctionInWindow(
       "toggleEventsRecording",
-      [this.activeRecorder, this.events.length],
-      this.activeFrame
+      [this.activeRecorder(), this.events().length],
+      this.activeFrame()
     );
-    evalFunctionInWindow("toggleTracing", [this.traceRenderings], this.activeFrame);
-    evalFunctionInWindow("toggleSubscriptionTracing", [this.traceSubscriptions], this.activeFrame);
-  },
+    evalFunctionInWindow("toggleTracing", [this.traceRenderings()], this.activeFrame());
+    evalFunctionInWindow(
+      "toggleSubscriptionTracing",
+      [this.traceSubscriptions()],
+      this.activeFrame()
+    );
+  }
 
-  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporally accurate list
+  // -------------------------------------------------------------------------
+  // Events / profiler
+  // -------------------------------------------------------------------------
+
+  // Constructs the tree that represents the currently recorded events to see them as a tree
+  // instead of a temporally accurate list
   buildEventsTree() {
     let tree = [];
-    for (const event of this.events) {
+    for (const event of this.events()) {
       let eventNode = Object.assign({}, event);
       eventNode.children = [];
       eventNode.toggled = true;
@@ -449,16 +488,13 @@ export const store = reactive({
         eventNode.depth = 0;
         tree.push(eventNode);
       } else {
-        // This is litteraly an array.find but which starts searching from the end of the array
         for (let i = tree.length - 1; i >= 0; i--) {
           if (arraysEqual(eventNode.origin.path, tree[i].path)) {
-            // path from the origin event (root render) to the direct parent of the current event
             const relativePath = eventNode.path.slice(
               tree[i].path.length,
               eventNode.path.length - 1
             );
             let parent = tree[i];
-            // find the direct parent in the tree
             for (const key of relativePath) {
               parent = parent.children.find((child) => child.key === key);
             }
@@ -469,420 +505,426 @@ export const store = reactive({
         }
       }
     }
-    this.eventsTree = tree;
-  },
+    this.eventsTree.set(proxy(tree));
+  }
 
-  // expand/fold the event tree node based on toggle
+  // Expand/fold the event tree node based on toggle
   toggleEventAndChildren(event, toggle) {
     if (toggle) {
       expandNodes(event);
     } else {
       foldNodes(event);
     }
-  },
+  }
 
   collapseAll() {
-    for (let event of this.eventsTree) {
+    for (let event of this.eventsTree()) {
       event.toggled = false;
     }
-  },
+  }
 
-  // Reset all the relevant data about the page currently stored
-  async resetData() {
-    await loadSettings();
-    this.loadComponentsTree(false);
-    this.events = [];
-    this.eventsTree = [];
-    this.activeRecorder = false;
-    evalFunctionInWindow("toggleEventsRecording", [false, 0]);
-    this.traceRenderings = false;
-    evalFunctionInWindow("toggleTracing", [false]);
-    this.traceSubscriptions = false;
-    evalFunctionInWindow("toggleSubscriptionTracing", [false]);
-    this.updateIFrameList();
-  },
+  // Toggle the recording of events in the page
+  async toggleRecording() {
+    this.activeRecorder.set(
+      await evalFunctionInWindow(
+        "toggleEventsRecording",
+        [!this.activeRecorder(), this.events().length],
+        this.activeFrame()
+      )
+    );
+  }
+
+  // Reset all events data
+  clearEventsConsole() {
+    this.events.set(proxy([]));
+    this.eventsTree.set(proxy([]));
+    evalFunctionInWindow("resetEvents", [], this.activeFrame());
+  }
+
+  // Handle and store a batch of events coming from the page
+  _loadEvents(events) {
+    if (!Array.isArray(events)) {
+      return;
+    }
+    for (const event of events) {
+      // Check if the event data has the right shape for security purpose
+      if (
+        !isObjectWithShape(event, {
+          type: "string",
+          component: "string",
+          key: "string",
+          path: "object",
+          time: "number",
+          id: "number",
+        }) ||
+        !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))
+      ) {
+        return;
+      }
+      event.origin = null;
+      event.toggled = false;
+      event.isLast = false;
+      // Logic to retrace the origin of the event if it is not a root render event
+      if (!event.type.includes("render")) {
+        const evts = this.events();
+        for (let i = evts.length - 1; i >= 0; i--) {
+          if (!evts[i].origin && event.path.join("/").includes(evts[i].path.join("/"))) {
+            event.origin = toRaw(evts[i]);
+            break;
+          }
+          if (
+            evts[i].origin &&
+            event.path.join("/").includes(evts[i].origin.path.join("/"))
+          ) {
+            event.origin = toRaw(evts[i].origin);
+            break;
+          }
+        }
+      }
+      // Add the event to the events tree immediately when the events view is in tree mode
+      if (this.eventsTreeView()) {
+        let eventNode = Object.assign({}, event);
+        eventNode.children = [];
+        eventNode.toggled = true;
+        if (!eventNode.origin) {
+          eventNode.depth = 0;
+          this.eventsTree().push(eventNode);
+        } else {
+          const tree = this.eventsTree();
+          for (let i = tree.length - 1; i >= 0; i--) {
+            if (eventNode.origin.path.join("/") === tree[i].path.join("/")) {
+              const relativePath = eventNode.path.slice(
+                tree[i].path.length,
+                eventNode.path.length - 1
+              );
+              let parent = tree[i];
+              for (const key of relativePath) {
+                parent = parent.children.find((child) => child.key === key);
+              }
+              eventNode.depth = parent.depth + 1;
+              parent.children.push(eventNode);
+              break;
+            }
+          }
+        }
+      }
+      // Make sure we add the event while keeping the whole list ordered by id
+      this._addEventSorted(event);
+    }
+    const evts = this.events();
+    evts[evts.length - 1].isLast = true;
+  }
+
+  // A binary search algorithm to efficiently add an event in the events array while keeping it sorted
+  _addEventSorted(item) {
+    const evts = this.events();
+    let low = 0;
+    let high = evts.length;
+    while (low < high) {
+      let mid = Math.floor((low + high) / 2);
+      if (evts[mid].id < item.id) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    evts.splice(low, 0, item);
+  }
+
+  // -------------------------------------------------------------------------
+  // Inspect / debug
+  // -------------------------------------------------------------------------
 
   // Triggers manually the rendering of the selected component
-  refreshComponent(path = this.activeComponent.path) {
-    evalFunctionInWindow("refreshComponent", [path], this.activeFrame);
-  },
+  refreshComponent(path = this.activeComponent().path) {
+    evalFunctionInWindow("refreshComponent", [path], this.activeFrame());
+  }
 
   // Allows to log any object in the console, defaults to the active component (or app)
   logObjectInConsole(path) {
     if (!path) {
-      if (this.activeComponent.path.length > 1) {
-        path = [...this.activeComponent.path, { type: "item", value: "component" }];
+      if (this.activeComponent().path.length > 1) {
+        path = [...this.activeComponent().path, { type: "item", value: "component" }];
       } else {
-        path = this.activeComponent.path;
+        path = this.activeComponent().path;
       }
     }
-    evalFunctionInWindow("sendObjectToConsole", [path], this.activeFrame);
-  },
+    evalFunctionInWindow("sendObjectToConsole", [path], this.activeFrame());
+  }
 
-  // inspect the source code of the object given by its path
+  // Inspect the source code of the object given by its path
   async inspectFunctionSource(path) {
-    await evalFunctionInWindow("inspectFunctionSource", [path], this.activeFrame);
+    await evalFunctionInWindow("inspectFunctionSource", [path], this.activeFrame());
     if (IS_FIREFOX) {
-      await evalInWindow("inspect(window.$temp);", this.activeFrame);
+      await evalInWindow("inspect(window.$temp);", this.activeFrame());
     }
-  },
+  }
 
   // Inspect the given component's data based on the given type
-  async inspectComponent(type, path = this.activeComponent.path) {
+  async inspectComponent(type, path = this.activeComponent().path) {
     switch (type) {
       case "DOM":
-        await evalFunctionInWindow("inspectComponentDOM", [path], this.activeFrame);
+        await evalFunctionInWindow("inspectComponentDOM", [path], this.activeFrame());
         break;
       case "source":
         if (path.length > 1) {
           await evalFunctionInWindow(
             "inspectFunctionSource",
-            [
-              [
-                ...path,
-                { type: "item", value: "component" },
-                { type: "item", value: "constructor" },
-              ],
-            ],
-            this.activeFrame
+            [[...path, { type: "item", value: "component" }, { type: "item", value: "constructor" }]],
+            this.activeFrame()
           );
         } else {
           await evalFunctionInWindow(
             "inspectFunctionSource",
             [[...path, { type: "item", value: "constructor" }]],
-            this.activeFrame
+            this.activeFrame()
           );
         }
         break;
       case "compiled template":
-        await evalFunctionInWindow("inspectComponentCompiledTemplate", [path], this.activeFrame);
+        await evalFunctionInWindow("inspectComponentCompiledTemplate", [path], this.activeFrame());
         break;
       case "raw template":
-        await evalFunctionInWindow("inspectComponentRawTemplate", [path], this.activeFrame);
+        await evalFunctionInWindow("inspectComponentRawTemplate", [path], this.activeFrame());
         break;
     }
     if (IS_FIREFOX && type !== "raw template") {
-      await evalInWindow("inspect(window.$temp);", this.activeFrame);
+      await evalInWindow("inspect(window.$temp);", this.activeFrame());
     }
-  },
+  }
 
   async injectBreakpoint(hook, path, instanceOnly = false, condition = "1") {
     path = [...path];
     await evalFunctionInWindow(
       "injectBreakpoint",
       [hook, path, instanceOnly, condition],
-      this.activeFrame
+      this.activeFrame()
     );
     await this.loadComponentsTree(true);
-  },
+  }
 
   async removeBreakpoints() {
-    await evalFunctionInWindow("removeBreakpoints", [], this.activeFrame);
+    await evalFunctionInWindow("removeBreakpoints", [], this.activeFrame());
     await this.loadComponentsTree(true);
-  },
+  }
 
   async observeVariable(path) {
-    this.observedVariables.push({ path: [...path], visible: false });
-    this.observedVariables = await evalFunctionInWindow(
+    this.observedVariables().push({ path: [...path], visible: false });
+    const result = await evalFunctionInWindow(
       "getObservedVariables",
-      [store.observedVariables],
-      store.activeFrame
+      [[...this.observedVariables()]],
+      this.activeFrame()
     );
+    this.observedVariables.set(proxy(result));
     await browserInstance.storage.local.set({
-      observedVariables: toRaw(this.observedVariables).map((o) => o.path),
+      observedVariables: toRaw(this.observedVariables()).map((o) => o.path),
     });
-  },
+  }
 
   clearObservedVariable(index) {
     if (index !== undefined) {
-      this.observedVariables.splice(index, 1);
+      this.observedVariables().splice(index, 1);
     } else {
-      this.observedVariables = [];
+      this.observedVariables.set(proxy([]));
     }
-    browserInstance.storage.local.set({ observedVariables: toRaw(this.observedVariables) });
-  },
+    browserInstance.storage.local.set({ observedVariables: toRaw(this.observedVariables()) });
+  }
 
-  // Trigger the highlight on the component in the page
-  highlightComponent(path) {
-    evalFunctionInWindow("highlightComponent", [path], this.activeFrame);
-  },
-
-  // Center the view around the currently selected component
-  onActiveComponentClick() {
-    this.selectedElement.scrollIntoView({ block: "center", behavior: "smooth" });
-    copyToClipboard(this.activeComponent.name);
-  },
-
-  // Toggle the recording of events in the page
-  async toggleRecording() {
-    this.activeRecorder = await evalFunctionInWindow(
-      "toggleEventsRecording",
-      [!this.activeRecorder, this.events.length],
-      this.activeFrame
-    );
-  },
-
-  // Reset all events data
-  clearEventsConsole() {
-    this.events = [];
-    this.eventsTree = [];
-    evalFunctionInWindow("resetEvents", [], this.activeFrame);
-  },
-
-  // Refresh the whole extension
-  async refreshExtension() {
-    await loadScripts();
-    await this.resetData();
-  },
+  // -------------------------------------------------------------------------
+  // Settings / UI
+  // -------------------------------------------------------------------------
 
   // Toggle dark mode in the extension and store result in the storage
   toggleDarkMode() {
-    this.settings.darkMode = !this.settings.darkMode;
-    if (this.settings.darkMode) {
+    this.darkMode.set(!this.darkMode());
+    if (this.darkMode()) {
       document.querySelector("html").classList.add("dark-mode");
     } else {
       document.querySelector("html").classList.remove("dark-mode");
     }
-    browserInstance.storage.local.set({ owlDevtoolsDarkMode: this.settings.darkMode });
-  },
+    browserInstance.storage.local.set({ owlDevtoolsDarkMode: this.darkMode() });
+  }
 
   openDocumentation() {
     browserInstance.runtime.sendMessage({ type: "openDoc" });
-  },
-});
-
-// Instantiate the store
-export function useStore() {
-  return useState(store);
-}
-
-init();
-
-async function init() {
-  store.devtoolsId = await getTabURL();
-
-  evalFunctionInWindow("initDevtools", []);
-
-  await loadSettings();
-
-  // We want to load the base components tree when the devtools tab is first opened
-  store.loadComponentsTree(false);
-
-  // We also want to detect the different iframes at first loading of the devtools tab
-  store.updateIFrameList();
-
-  // Global listeners to close the currently shown context menu when the user clicks or opens another
-  document.addEventListener("click", () => (store.contextMenu = null), { capture: true });
-  document.addEventListener("contextmenu", () => (store.contextMenu = null), { capture: true });
-  window.addEventListener("blur", () => (store.contextMenu = null), { capture: true });
-
-  // Make sure the events recorder is at its initial state in every frame
-  for (const frame of store.frameUrls) {
-    evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
   }
 
-  browserInstance.runtime.sendMessage({ type: "newDevtoolsPanel", id: store.devtoolsId });
+  // Refresh the whole extension
+  async refreshExtension() {
+    await loadScripts();
+    await this._resetData();
+  }
 
-  // Heartbeat message to test whether the extension context is still valid or not
-  setInterval(() => {
-    if (store.extensionContextStatus) {
-      try {
-        browserInstance.runtime.sendMessage({ type: "keepAlive", id: store.devtoolsId });
-      } catch (e) {
-        store.extensionContextStatus = false;
-      }
+  // Reset all the relevant data about the page currently stored
+  async _resetData() {
+    await this._loadSettings();
+    this.loadComponentsTree(false);
+    this.events.set(proxy([]));
+    this.eventsTree.set(proxy([]));
+    this.activeRecorder.set(false);
+    evalFunctionInWindow("toggleEventsRecording", [false, 0]);
+    this.traceRenderings.set(false);
+    evalFunctionInWindow("toggleTracing", [false]);
+    this.traceSubscriptions.set(false);
+    evalFunctionInWindow("toggleSubscriptionTracing", [false]);
+    this.updateIFrameList();
+  }
+
+  // -------------------------------------------------------------------------
+  // Initialization (private)
+  // -------------------------------------------------------------------------
+
+  async _init() {
+    this.devtoolsId.set(await getTabURL());
+
+    evalFunctionInWindow("initDevtools", []);
+
+    await this._loadSettings();
+
+    // We want to load the base components tree when the devtools tab is first opened
+    this.loadComponentsTree(false);
+    // We also want to detect the different iframes at first loading of the devtools tab
+    this.updateIFrameList();
+
+    // Global listeners to close the currently shown context menu when the user clicks or opens another
+    document.addEventListener("click", () => this.contextMenu.set(null), { capture: true });
+    document.addEventListener("contextmenu", () => this.contextMenu.set(null), { capture: true });
+    window.addEventListener("blur", () => this.contextMenu.set(null), { capture: true });
+
+    // Make sure the events recorder is at its initial state in every frame
+    for (const frame of this.frameUrls()) {
+      evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
     }
-  }, 500);
-  // Refresh observed variables values every 200 ms
-  setInterval(async () => {
-    if (store.owlStatus) {
-      store.observedVariables = await evalFunctionInWindow(
-        "getObservedVariables",
-        [[...store.observedVariables]],
-        store.activeFrame
-      );
-    }
-  }, 200);
-}
 
-let rootRendersTimeout = false;
-// Connect to the port to communicate to the background script
-browserInstance.runtime.onConnect.addListener((port) => {
-  if (port.name === "OwlDevtoolsPort_" + store.devtoolsId) {
-    port.onMessage.addListener(async (msg) => {
-      // Reload the tree after checking if the scripts are loaded when this message is received
-      if (msg.type === "Reload") {
-        store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
-        if (store.owlStatus) {
-          evalFunctionInWindow("initDevtools", []);
-          await store.resetData();
-        }
-      }
-      // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
-      if (msg.type === "FrameReady") {
-        store.updateIFrameList();
-        store.owlStatus = true;
-        await store.resetData();
-      }
-      // We need to reload the components tree when the set of apps in the page is modified
-      if (msg.type === "RefreshApps") {
-        store.loadComponentsTree(true);
-      }
-      // When message of type Complete is received, overwrite the component tree with the new one from page
-      // A Complete message is sent everytime a root render is triggered on the page
-      if (msg.type === "Complete") {
-        if (msg.origin.frame !== store.activeFrame) {
-          return;
-        }
-        if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
-          return;
-        }
-        // This determines which components will have a short highlight effect in the tree to indicate they have been rendered
-        store.renderPaths.add(JSON.stringify(msg.data));
-        clearTimeout(rootRendersTimeout);
-        rootRendersTimeout = setTimeout(() => {
-          store.renderPaths.clear();
-        }, 100);
-        store.loadComponentsTree(true);
-      }
-      // Select the component based on the path received with the SelectElement message
-      if (msg.type === "SelectElement") {
-        if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
-          return;
-        }
-        store.selectComponent(msg.data);
-      }
-      // Stop the DOM element selector tool upon receiving the StopSelector message
-      if (msg.type === "StopSelector") {
-        store.componentSearch.activeSelector = false;
-      }
+    browserInstance.runtime.sendMessage({ type: "newDevtoolsPanel", id: this.devtoolsId() });
 
-      // Logic for recording an event when the event message is received
-      if (msg.type === "Event") {
-        let events = msg.data;
-        loadEvents(events);
-      }
-
-      // If we know a new iframe has been added to the page, load scripts into it and update the
-      // frames list if it has been directly loaded.
-      if (msg.type === "NewIFrame") {
-        const isLoaded = await loadScripts(msg.data);
-        if (isLoaded) {
-          store.updateIFrameList();
+    // Heartbeat message to test whether the extension context is still valid or not
+    setInterval(() => {
+      if (this.extensionContextStatus()) {
+        try {
+          browserInstance.runtime.sendMessage({ type: "keepAlive", id: this.devtoolsId() });
+        } catch (e) {
+          this.extensionContextStatus.set(false);
         }
+      }
+    }, 500);
+
+    // Refresh observed variables values every 200 ms
+    setInterval(async () => {
+      if (this.owlStatus()) {
+        const result = await evalFunctionInWindow(
+          "getObservedVariables",
+          [[...this.observedVariables()]],
+          this.activeFrame()
+        );
+        this.observedVariables.set(proxy(result));
+      }
+    }, 200);
+  }
+
+  // Connect to the port to communicate to the background script
+  _setupPortListener() {
+    let rootRendersTimeout = false;
+    browserInstance.runtime.onConnect.addListener((port) => {
+      if (port.name === "OwlDevtoolsPort_" + this.devtoolsId()) {
+        port.onMessage.addListener(async (msg) => {
+          // Reload the tree after checking if the scripts are loaded when this message is received
+          if (msg.type === "Reload") {
+            this.owlStatus.set(
+              await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;")
+            );
+            if (this.owlStatus()) {
+              evalFunctionInWindow("initDevtools", []);
+              await this._resetData();
+            }
+          }
+          // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
+          if (msg.type === "FrameReady") {
+            this.updateIFrameList();
+            this.owlStatus.set(true);
+            await this._resetData();
+          }
+          // We need to reload the components tree when the set of apps in the page is modified
+          if (msg.type === "RefreshApps") {
+            this.loadComponentsTree(true);
+          }
+          // When message of type Complete is received, overwrite the component tree with the new one from page.
+          // A Complete message is sent everytime a root render is triggered on the page.
+          if (msg.type === "Complete") {
+            if (msg.origin.frame !== this.activeFrame()) {
+              return;
+            }
+            if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+              return;
+            }
+            // This determines which components will have a short highlight effect in the tree
+            // to indicate they have been rendered
+            this.renderPaths().add(JSON.stringify(msg.data));
+            clearTimeout(rootRendersTimeout);
+            rootRendersTimeout = setTimeout(() => {
+              this.renderPaths().clear();
+            }, 100);
+            this.loadComponentsTree(true);
+          }
+          // Select the component based on the path received with the SelectElement message
+          if (msg.type === "SelectElement") {
+            if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+              return;
+            }
+            this.selectComponent(msg.data);
+          }
+          // Stop the DOM element selector tool upon receiving the StopSelector message
+          if (msg.type === "StopSelector") {
+            this.activeSelector.set(false);
+          }
+          // Logic for recording an event when the event message is received
+          if (msg.type === "Event") {
+            this._loadEvents(msg.data);
+          }
+          // If we know a new iframe has been added to the page, load scripts into it and update the
+          // frames list if it has been directly loaded.
+          if (msg.type === "NewIFrame") {
+            const isLoaded = await loadScripts(msg.data);
+            if (isLoaded) {
+              this.updateIFrameList();
+            }
+          }
+        });
       }
     });
   }
-});
 
-// Load all settings from the chrome sync storage
-async function loadSettings() {
-  let storage = await browserInstance.storage.local.get();
-  // Darkmode
-  if (storage.owlDevtoolsDarkMode === undefined) {
-    // Load dark mode based on the global settings of the chrome devtools
-    darkMode = browserInstance.devtools.panels.themeName === "dark";
-  } else {
-    darkMode = storage.owlDevtoolsDarkMode;
-  }
-  store.settings.darkMode = darkMode;
-  if (darkMode) {
-    document.querySelector("html").classList.add("dark-mode");
-  } else {
-    document.querySelector("html").classList.remove("dark-mode");
-  }
-  // Components toggle blacklist
-  if (storage.owlDevtoolsComponentsToggleBlacklist !== undefined) {
-    store.settings.componentsToggleBlacklist = new Set(
-      storage.owlDevtoolsComponentsToggleBlacklist
-    );
-  }
-  // Observed variables
-  if (storage.observedVariables) {
-    store.observedVariables = [];
-    for (const path of storage.observedVariables) {
-      store.observedVariables.push({
-        path: [...path],
-        visible: false,
-      });
+  // Load all settings from the chrome sync storage
+  async _loadSettings() {
+    let storage = await browserInstance.storage.local.get();
+    let dm;
+    if (storage.owlDevtoolsDarkMode === undefined) {
+      dm = browserInstance.devtools.panels.themeName === "dark";
+    } else {
+      dm = storage.owlDevtoolsDarkMode;
+    }
+    this.darkMode.set(dm);
+    if (dm) {
+      document.querySelector("html").classList.add("dark-mode");
+    } else {
+      document.querySelector("html").classList.remove("dark-mode");
+    }
+    if (storage.owlDevtoolsComponentsToggleBlacklist !== undefined) {
+      this.componentsToggleBlacklist.set(new Set(storage.owlDevtoolsComponentsToggleBlacklist));
+    }
+    if (storage.observedVariables) {
+      const vars = [];
+      for (const path of storage.observedVariables) {
+        vars.push({ path: [...path], visible: false });
+      }
+      this.observedVariables.set(proxy(vars));
     }
   }
 }
 
-// Function to handle and store a batch of events coming from the page
-function loadEvents(events) {
-  if (!Array.isArray(events)) {
-    return;
-  }
-  for (const event of events) {
-    // Check if the event data has the right shape for security purpose
-    if (
-      !isObjectWithShape(event, {
-        type: "string",
-        component: "string",
-        key: "string",
-        path: "object",
-        time: "number",
-        id: "number",
-      }) ||
-      !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))
-    ) {
-      return;
-    }
-    event.origin = null;
-    event.toggled = false;
-    event.isLast = false;
-    // Logic to retrace the origin of the event if it is not a root render event
-    if (!event.type.includes("render")) {
-      for (let i = store.events.length - 1; i >= 0; i--) {
-        if (
-          !store.events[i].origin &&
-          event.path.join("/").includes(store.events[i].path.join("/"))
-        ) {
-          event.origin = toRaw(store.events[i]);
-          break;
-        }
-        if (
-          store.events[i].origin &&
-          event.path.join("/").includes(store.events[i].origin.path.join("/"))
-        ) {
-          event.origin = toRaw(store.events[i].origin);
-          break;
-        }
-      }
-    }
-    // Add the event to the events tree immediatly when the events view is in tree mode
-    if (store.eventsTreeView) {
-      let eventNode = Object.assign({}, event);
-      eventNode.children = [];
-      eventNode.toggled = true;
-      if (!eventNode.origin) {
-        eventNode.depth = 0;
-        store.eventsTree.push(eventNode);
-      } else {
-        // Similar to when we're constructing the whole tree
-        for (let i = store.eventsTree.length - 1; i >= 0; i--) {
-          if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
-            const relativePath = eventNode.path.slice(
-              store.eventsTree[i].path.length,
-              eventNode.path.length - 1
-            );
-            let parent = store.eventsTree[i];
-            for (const key of relativePath) {
-              parent = parent.children.find((child) => child.key === key);
-            }
-            eventNode.depth = parent.depth + 1;
-            parent.children.push(eventNode);
-            break;
-          }
-        }
-      }
-    }
-    // Make sure we add the event while keeping the whole list ordered by id
-    addEventSorted(event);
-  }
-  store.events[store.events.length - 1].isLast = true;
-}
+// -------------------------------------------------------------------------
+// Standalone helper functions
+// -------------------------------------------------------------------------
 
 // Deselect component and remove highlight on all children
 function deselectComponent(component) {
@@ -891,32 +933,6 @@ function deselectComponent(component) {
   for (const child of component.children) {
     deselectComponent(child);
   }
-}
-
-// Used to check if the given object has the right shape
-function isObjectWithShape(obj, shape) {
-  if (typeof obj !== "object" || Array.isArray(obj)) {
-    return false;
-  }
-
-  return Object.keys(shape).every(
-    (key) => obj.hasOwnProperty(key) && typeof obj[key] === shape[key]
-  );
-}
-
-// A binary search algorith to efficiently add an event in the events array while keeping it sorted
-function addEventSorted(item) {
-  let low = 0;
-  let high = store.events.length;
-  while (low < high) {
-    let mid = Math.floor((low + high) / 2);
-    if (store.events[mid].id < item.id) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  store.events.splice(low, 0, item);
 }
 
 // Apply highlight recursively to all children of a selected component
@@ -928,20 +944,29 @@ function highlightChildren(component) {
 }
 
 // Expand the node given in entry and all of its children
-function expandNodes(node, blacklist = false) {
-  if (blacklist && store.settings.componentsToggleBlacklist.has(node.name)) {
+function expandNodes(node, blacklistSet = null) {
+  if (blacklistSet && blacklistSet.has(node.name)) {
     node.toggled = false;
   } else {
     node.toggled = true;
   }
   for (const child of node.children) {
-    expandNodes(child, blacklist);
+    expandNodes(child, blacklistSet);
+  }
+}
+
+// Fold the node given in entry and all of its children
+function foldNodes(node) {
+  node.toggled = false;
+  for (const child of node.children) {
+    foldNodes(child);
   }
 }
 
 // This function transforms the env part of the details such that all env keys are not
 // greyed out in the UI at their first occurence
 function keepEnvLit(details) {
+  if (!details) return;
   let alreadyMet = new Set();
   for (let i = 0; i < details.env.children.length; i++) {
     if (i < details.env.children.length - 1) {
@@ -964,12 +989,21 @@ function keepEnvLit(details) {
   }
 }
 
-// Fold the node given in entry and all of its children
-function foldNodes(node) {
-  node.toggled = false;
-  for (const child of node.children) {
-    foldNodes(child);
+// Used to check if the given object has the right shape
+function isObjectWithShape(obj, shape) {
+  if (typeof obj !== "object" || Array.isArray(obj)) {
+    return false;
   }
+  return Object.keys(shape).every(
+    (key) => obj.hasOwnProperty(key) && typeof obj[key] === shape[key]
+  );
+}
+
+function arraysEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  return arr1.every((val, i) => val === arr2[i]);
 }
 
 // Load the scripts in the specified frame
@@ -977,18 +1011,8 @@ async function loadScripts(frameUrl) {
   return await evalInWindow(globalHook, frameUrl);
 }
 
-// Shallow array equality
-function arraysEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) {
-    // Check if the arrays are of the same length
-    return false;
-  }
-  return arr1.every((val, i) => val === arr2[i]); // Compare each element of the arrays
-}
-
 async function getTabURL() {
   if (IS_FIREFOX) {
-    // It is not possible to run getActiveTabURL inside the devtools when using firefox so we ask the background to execute it instead
     const response = await browserInstance.runtime.sendMessage({ type: "getActiveTabURL" });
     return response.result;
   } else {
@@ -997,7 +1021,7 @@ async function getTabURL() {
 }
 
 // General method for executing functions from the loaded scripts in the right frame of the page
-// using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
+// using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Takes the function's args as an array.
 async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
   const stringifiedArgs = [...args].map((arg) => {
     arg = JSON.stringify(arg);
@@ -1057,11 +1081,11 @@ async function evalInWindow(code, frameUrl = "top") {
   });
 }
 
+// This is crappy but it seems like document.execCommand is the only remaining way to
+// copy text to clipboard in a devtools extension (even though it is marked as deprecated)
+// since navigator.clipboard.writeText has permission issues inside iframes (and the devtools
+// panel is mounted inside an iframe)
 function copyToClipboard(text) {
-  // This is crappy but it seems like document.execCommand is the only remaining way to
-  // copy text to clipboard in a devtools extension (even though it is marked as deprecated)
-  // since navigator.clipboard.writeText has permission issues inside iframes (and the devtools
-  // panel is mounted inside an iframe)
   const textarea = document.createElement("textarea");
   textarea.value = text;
   textarea.style.opacity = "0";

@@ -12,7 +12,7 @@ import {
   untrack,
   useEffect,
 } from "../owl.js";
-import { createOwlCompletions, parseMarkdown } from "./code_utils.js";
+import { createOwlCompletions, parseMarkdown, xmlTagRename } from "./code_utils.js";
 import { getFileType, LANGUAGES, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import {
   abbreviationTracker,
@@ -365,7 +365,10 @@ class CodeEditor extends Component {
           keymap.of([
             {
               key: "Tab",
-              run: (view) => acceptCompletion(view) || expandAbbreviation(view) || indentMore(view),
+              run: (view) =>
+                acceptCompletion(view) ||
+                (lang === "xml" && expandAbbreviation(view)) ||
+                indentMore(view),
               shift: indentLess,
             },
             {
@@ -387,7 +390,7 @@ class CodeEditor extends Component {
         EditorState.tabSize.of(tabSize),
         ...(lang === "md" ? [EditorView.lineWrapping] : []),
         ...(lang === "js" ? [createOwlCompletions()] : []),
-        ...(lang === "xml" ? [abbreviationTracker()] : []),
+        ...(lang === "xml" ? [abbreviationTracker(), xmlTagRename()] : []),
         this.fontSizeCompartment.of(
           EditorView.theme({ "&": { fontSize: this.settings.fontSize() + "px" } })
         ),
@@ -1028,6 +1031,47 @@ class Explorer extends Component {
     this.collapsedFolders.set(collapsed);
   }
 
+  onDragStartFile(ev, fullName) {
+    if (fullName === "main.js") {
+      ev.preventDefault();
+      return;
+    }
+    ev.dataTransfer.setData("text/plain", fullName);
+    ev.dataTransfer.effectAllowed = "move";
+  }
+
+  onDragOverFolder(ev) {
+    ev.dataTransfer.dropEffect = "move";
+    const row = ev.currentTarget;
+    row.classList.add("drop-target");
+  }
+
+  onDragLeaveFolder(ev) {
+    const row = ev.currentTarget;
+    if (!row.contains(ev.relatedTarget)) {
+      row.classList.remove("drop-target");
+    }
+  }
+
+  onDropOnFolder(ev, proj, folderPath) {
+    ev.currentTarget.classList.remove("drop-target");
+    const sourcePath = ev.dataTransfer.getData("text/plain");
+    if (!sourcePath) return;
+
+    if (this.project.activeProjectId() !== proj.id) return;
+
+    const fileName = sourcePath.split("/").pop();
+    const targetPath = folderPath ? `${folderPath}/${fileName}` : fileName;
+
+    if (targetPath === sourcePath) return;
+
+    // Check if target already exists
+    const files = this.code.files();
+    if (files.some((f) => f.name === targetPath)) return;
+
+    this.project.renameFileInProject(sourcePath, targetPath);
+  }
+
   selectFile(projId, fileName) {
     if (this.project.activeProjectId() !== projId) {
       const set = new Set(this.project.collapsedProjects());
@@ -1114,14 +1158,15 @@ class Explorer extends Component {
     if (this.project.activeProjectId() !== projId) return;
     const files = this.code.files();
     const existingFiles = files.map((f) => f.name);
+    const isMainJs = fileName === "main.js";
     this.dialog.showDialog(FileDialog, {
       fileName,
       existingFiles,
-      canDelete: files.length > 1,
-      onRename: (newName) => {
+      canDelete: !isMainJs && files.length > 1,
+      onRename: isMainJs ? null : (newName) => {
         this.project.renameFileInProject(fileName, newName);
       },
-      onDelete: () => {
+      onDelete: isMainJs ? null : () => {
         this.project.deleteFileFromProject(fileName);
       },
     });
@@ -1312,7 +1357,7 @@ export class ${componentName} extends Component {
   showFileContextMenu(ev, proj, fileName) {
     ev.stopPropagation();
     const files = proj.id === this.project.activeProjectId() ? this.code.files() : proj.fileNames;
-    const canDelete = files.length > 1;
+    const canDelete = fileName !== "main.js" && files.length > 1;
     this.fileContextMenu.set({
       visible: true,
       project: proj,
@@ -1353,6 +1398,7 @@ export class ${componentName} extends Component {
   fileContextMenuDelete() {
     const { project: proj, fileName } = this.fileContextMenu();
     this.hideContextMenu();
+    if (fileName === "main.js") return;
     if (this.project.activeProjectId() !== proj.id) {
       this.project.switchProject(proj.id);
     }

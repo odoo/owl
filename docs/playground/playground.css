@@ -531,6 +531,17 @@ body {
   color: #c9d1d9;
 }
 
+.folder-row.drop-target,
+.file-entry.drop-target {
+  background: rgba(64, 150, 255, 0.15);
+  outline: 1px dashed rgba(64, 150, 255, 0.5);
+}
+
+.project-files.drop-target {
+  outline: 1px dashed rgba(64, 150, 255, 0.5);
+  outline-offset: -1px;
+}
+
 .folder-name {
   font-weight: 500;
 }

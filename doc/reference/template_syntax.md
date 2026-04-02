@@ -334,6 +334,33 @@ Note that it can be combined with normal class attribute:
 <div class="a" t-att-class="{'b': true}"/> <!-- result: <div class="a b"></div> -->
 ```
 
+### Dynamic style attribute
+
+Similarly, `t-att-style` supports an object notation, with keys being CSS property
+names (in either kebab-case or camelCase) and values being the corresponding CSS
+values:
+
+```xml
+<div t-att-style="{'color': 'red', 'font-size': '20px'}"/>
+<!-- result: <div style="color: red; font-size: 20px;"></div> -->
+
+<div t-att-style="{ fontSize: '20px' }"/>
+<!-- result: <div style="font-size: 20px;"></div> -->
+```
+
+It can also be combined with a normal static style attribute:
+
+```xml
+<div style="color: red;" t-att-style="{ fontSize: '20px' }"/>
+<!-- result: <div style="color: red; font-size: 20px;"></div> -->
+```
+
+String values are supported as well:
+
+```xml
+<div t-att-style="'color: red; font-size: 20px;'"/>
+```
+
 ### Dynamic tag names
 
 When writing generic components or templates, the specific concrete tag for an

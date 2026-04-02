@@ -283,34 +283,15 @@ class Playground extends Component {
 
   async exportStandaloneApp() {
     const snapshot = this.code.getSnapshot();
-    const fileList = this.code.files();
-    let jsContent = "";
-    let cssContent = "";
-    let xmlContent = "";
-    for (const f of fileList) {
-      const content = snapshot[f.name] || "";
-      if (f.type === "js") {
-        jsContent += content + "\n";
-      } else if (f.type === "css") {
-        cssContent += content + "\n";
-      } else if (f.type === "xml") {
-        const inner = content.replace(/<\/?templates>/g, "").trim();
-        if (inner) xmlContent += inner + "\n";
-      }
-    }
-    xmlContent = `<templates>\n${xmlContent}</templates>`;
-
     await loadJS("libs/jszip.min.js");
     const zip = new JSZip();
-    zip.file("app.py", await loadFile("./standalone_app/app.py"));
-    zip.file("index.html", await loadFile("./standalone_app/index.html"));
-    zip.file("owl.js", await loadFile("../owl.js"));
-    zip.file("app.js", `const TEMPLATES = await (await fetch('app.xml')).text();\n${jsContent}`);
-    zip.file("app.css", cssContent);
-    zip.file("app.xml", xmlContent);
-
+    for (const [fileName, content] of Object.entries(snapshot)) {
+      zip.file(fileName, content);
+    }
     await loadJS("libs/FileSaver.min.js");
-    saveAs(await zip.generateAsync({ type: "blob" }), "app.zip");
+    const project = this.project.activeProject();
+    const zipName = (project ? project.name : "app").replace(/[^a-zA-Z0-9_-]/g, "_") + ".zip";
+    saveAs(await zip.generateAsync({ type: "blob" }), zipName);
   }
 }
 

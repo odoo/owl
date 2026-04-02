@@ -1,5 +1,13 @@
 import { OwlError } from "../../common/owl_error";
-import { attrsSetter, attrsUpdater, createAttrUpdater, setClass, setStyle, updateClass, updateStyle } from "./attributes";
+import {
+  attrsSetter,
+  attrsUpdater,
+  createAttrUpdater,
+  setClass,
+  setStyle,
+  updateClass,
+  updateStyle,
+} from "./attributes";
 import { config } from "./config";
 import { createEventHandler } from "./events";
 import type { VNode } from "./index";

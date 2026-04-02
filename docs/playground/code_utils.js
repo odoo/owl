@@ -1,4 +1,10 @@
-import { autocompletion, snippet } from "./libs/codemirror.bundle.js";
+import {
+  Annotation,
+  autocompletion,
+  EditorView,
+  snippet,
+  syntaxTree,
+} from "./libs/codemirror.bundle.js";
 import { loadJS } from "./utils.js";
 
 let markedLoaded = null;
@@ -195,6 +201,8 @@ function owlCompletionSource(context) {
   if (!word || (word.from === word.to && !context.explicit)) return null;
 
   const doc = context.state.doc.toString();
+  if (word.from > 0 && doc[word.from - 1] === ".") return null;
+
   const insideComponent = isInsideComponentClass(doc, word.from);
 
   const options = [
@@ -260,4 +268,50 @@ function createOwlCompletions() {
   });
 }
 
-export { createOwlCompletions, OWL_IMPORTS, OWL_SNIPPETS, parseMarkdown, SETUP_SNIPPET };
+const syncTagRename = Annotation.define();
+
+function xmlTagRename() {
+  return EditorView.updateListener.of((update) => {
+    if (!update.docChanged) return;
+    if (update.transactions.some((tr) => tr.annotation(syncTagRename))) return;
+    for (const tr of update.transactions) {
+      if (!tr.docChanged) continue;
+      const tree = syntaxTree(tr.startState);
+      const mirrorChanges = [];
+      tr.changes.iterChangedRanges((fromA, toA, fromB, toB) => {
+        let node = tree.resolveInner(fromA, 1);
+        if (node.name !== "TagName") node = tree.resolveInner(fromA, -1);
+        if (node.name !== "TagName") return;
+        const tagNode = node.parent;
+        if (!tagNode) return;
+        const element = tagNode.parent;
+        if (!element || element.name !== "Element") return;
+        const isOpen = tagNode.name === "OpenTag";
+        const isClose = tagNode.name === "CloseTag";
+        if (!isOpen && !isClose) return;
+        const pairTag = isOpen ? element.getChild("CloseTag") : element.getChild("OpenTag");
+        if (!pairTag) return;
+        const pairName = pairTag.getChild("TagName");
+        if (!pairName) return;
+        const oldName = tr.startState.sliceDoc(node.from, node.to);
+        const newName =
+          oldName.slice(0, fromA - node.from) +
+          tr.newDoc.sliceString(fromB, toB) +
+          oldName.slice(toA - node.from);
+        mirrorChanges.push({
+          from: tr.changes.mapPos(pairName.from),
+          to: tr.changes.mapPos(pairName.to),
+          insert: newName,
+        });
+      });
+      if (mirrorChanges.length > 0) {
+        update.view.dispatch({
+          changes: mirrorChanges,
+          annotations: syncTagRename.of(true),
+        });
+      }
+    }
+  });
+}
+
+export { createOwlCompletions, OWL_IMPORTS, OWL_SNIPPETS, parseMarkdown, SETUP_SNIPPET, xmlTagRename };

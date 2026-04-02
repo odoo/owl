@@ -296,29 +296,56 @@ exports[`style and class handling component class and parent class combine toget
 }"
 `;
 
-exports[`style and class handling dynamic t-att-style is properly added and updated on widget root el 1`] = `
-"function anonymous(bdom, helpers
+exports[`style and class handling component static style and dynamic t-att-style combine together 1`] = `
+"function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"style\\"/>\`);
+  return function template(ctx, node, key = "") {
+    return comp1({style: 'font-weight: bold;'}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`style and class handling component static style and dynamic t-att-style combine together 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = {'font-size':'20px',...ctx['this'].props.style};
-    return block1([d1]);
+  let block1 = createBlock(\`<div style="color: red;" block-attribute-0="style">child</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].props.style;
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`style and class handling dynamic t-att-style is properly added and updated on widget root el 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({style: ctx['this'].state.style}, key + \`__1\`, node, this, null);
   }
 }"
 `;
 
 exports[`style and class handling dynamic t-att-style is properly added and updated on widget root el 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {style: ctx['state'].style}, key + \`__1\`, node, ctx);
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = {'font-size':'20px',...ctx['this'].props.style};
+    return block1([attr1]);
   }
 }"
 `;
@@ -435,6 +462,33 @@ exports[`style and class handling no class is set is parent does not give it as 
 }"
 `;
 
+exports[`style and class handling static style and dynamic t-att-style with object combine together 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({style: {fontSize:ctx['this'].state.size}}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`style and class handling static style and dynamic t-att-style with object combine together 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div style="color: red;" block-attribute-0="style">child</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = {fontWeight:'bold',...ctx['this'].props.style};
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`style and class handling style is properly added on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -514,6 +568,34 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   
   return function template(ctx, node, key = "") {
     let attr1 = {d:ctx['this'].state.d,...ctx['this'].props.class};
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`style and class handling t-att-style with object value 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].state.style;
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`style and class handling t-att-style with string value 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].state.style;
     return block1([attr1]);
   }
 }"

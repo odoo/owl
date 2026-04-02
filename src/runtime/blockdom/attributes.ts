@@ -44,6 +44,8 @@ export function attrsSetter(this: HTMLElement, attrs: any) {
   if (isArray(attrs)) {
     if (attrs[0] === "class") {
       setClass.call(this, attrs[1]);
+    } else if (attrs[0] === "style") {
+      setStyle.call(this, attrs[1]);
     } else {
       setAttribute.call(this, attrs[0], attrs[1]);
     }
@@ -51,6 +53,8 @@ export function attrsSetter(this: HTMLElement, attrs: any) {
     for (let k in attrs) {
       if (k === "class") {
         setClass.call(this, attrs[k]);
+      } else if (k === "style") {
+        setStyle.call(this, attrs[k]);
       } else {
         setAttribute.call(this, k, attrs[k]);
       }
@@ -68,6 +72,8 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
       }
       if (name === "class") {
         updateClass.call(this, val, oldAttrs[1]);
+      } else if (name === "style") {
+        updateStyle.call(this, val, oldAttrs[1]);
       } else {
         setAttribute.call(this, name, val);
       }
@@ -80,6 +86,8 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
       if (!(k in attrs)) {
         if (k === "class") {
           updateClass.call(this, "", oldAttrs[k]);
+        } else if (k === "style") {
+          updateStyle.call(this, "", oldAttrs[k]);
         } else {
           removeAttribute.call(this, k);
         }
@@ -90,6 +98,8 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
       if (val !== oldAttrs[k]) {
         if (k === "class") {
           updateClass.call(this, val, oldAttrs[k]);
+        } else if (k === "style") {
+          updateStyle.call(this, val, oldAttrs[k]);
         } else {
           setAttribute.call(this, k, val);
         }
@@ -163,6 +173,86 @@ export function updateClass(this: HTMLElement, val: any, oldVal: any) {
   for (let c in val) {
     if (!(c in oldVal)) {
       tokenListAdd.call(cl, c);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Style
+// ---------------------------------------------------------------------------
+
+const CSS_PROP_CACHE: { [key: string]: string } = {};
+
+function toKebabCase(prop: string): string {
+  if (prop in CSS_PROP_CACHE) {
+    return CSS_PROP_CACHE[prop];
+  }
+  const result = prop.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+  CSS_PROP_CACHE[prop] = result;
+  return result;
+}
+
+function toStyleObj(expr: string | { [prop: string]: any }): { [prop: string]: string } {
+  const result: { [prop: string]: string } = {};
+  switch (typeof expr) {
+    case "string": {
+      const str = trim.call(expr);
+      if (!str) {
+        return {};
+      }
+      const parts = str.split(";");
+      for (let part of parts) {
+        part = trim.call(part);
+        if (!part) {
+          continue;
+        }
+        const colonIdx = part.indexOf(":");
+        if (colonIdx === -1) {
+          continue;
+        }
+        const prop = trim.call(part.slice(0, colonIdx));
+        const value = trim.call(part.slice(colonIdx + 1));
+        if (prop && value) {
+          result[prop] = value;
+        }
+      }
+      return result;
+    }
+    case "object":
+      for (let prop in expr as any) {
+        const value = (expr as any)[prop];
+        if (value || value === 0) {
+          result[toKebabCase(prop)] = String(value);
+        }
+      }
+      return result;
+    default:
+      return {};
+  }
+}
+
+export function setStyle(this: HTMLElement, val: any) {
+  val = val === "" ? {} : toStyleObj(val);
+  const style = this.style;
+  for (let prop in val) {
+    style.setProperty(prop, val[prop]);
+  }
+}
+
+export function updateStyle(this: HTMLElement, val: any, oldVal: any) {
+  oldVal = oldVal === "" ? {} : toStyleObj(oldVal);
+  val = val === "" ? {} : toStyleObj(val);
+  const style = this.style;
+  // remove old styles
+  for (let prop in oldVal) {
+    if (!(prop in val)) {
+      style.removeProperty(prop);
+    }
+  }
+  // set new/changed styles
+  for (let prop in val) {
+    if (val[prop] !== oldVal[prop]) {
+      style.setProperty(prop, val[prop]);
     }
   }
 }

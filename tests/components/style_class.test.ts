@@ -331,9 +331,7 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<div style="font-weight: bold;"></div>`);
   });
 
-  // TODO: adapt name
-  // TODO: t-att-style as object (like class)
-  test.skip("dynamic t-att-style is properly added and updated on widget root el", async () => {
+  test("dynamic t-att-style is properly added and updated on widget root el", async () => {
     class SomeComponent extends Component {
       static template = xml`<div t-att-style="{ 'font-size': '20px', ...this.props.style }"/>`;
       props = props();
@@ -346,12 +344,84 @@ describe("style and class handling", () => {
     }
     const widget = await mount(ParentWidget, fixture);
 
-    expect(fixture.innerHTML).toBe(`<div t-att-style="font-size: 20px;"></div>`);
+    expect(fixture.querySelector("div")!.style.fontSize).toBe("20px");
 
-    widget.state.style["font-size"] = "30px";
+    widget.state.style = { "font-size": "30px" };
     await nextTick();
 
-    expect(fixture.innerHTML).toBe(`<div style="font-size: 30px;"></div>`);
+    expect(fixture.querySelector("div")!.style.fontSize).toBe("30px");
+  });
+
+  test("component static style and dynamic t-att-style combine together", async () => {
+    class Child extends Component {
+      static template = xml`<div style="color: red;" t-att-style="this.props.style">child</div>`;
+      props = props();
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child style="'font-weight: bold;'" />`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.fontWeight).toBe("bold");
+  });
+
+  test("static style and dynamic t-att-style with object combine together", async () => {
+    class Child extends Component {
+      static template = xml`<div style="color: red;" t-att-style="{ fontWeight: 'bold', ...this.props.style }">child</div>`;
+      props = props();
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child style="{ fontSize: this.state.size }" />`;
+      static components = { Child };
+      state = proxy({ size: "20px" });
+    }
+    const widget = await mount(Parent, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.fontWeight).toBe("bold");
+    expect(div.style.fontSize).toBe("20px");
+
+    widget.state.size = "30px";
+    await nextTick();
+    expect(div.style.fontSize).toBe("30px");
+    expect(div.style.color).toBe("red");
+    expect(div.style.fontWeight).toBe("bold");
+  });
+
+  test("t-att-style with string value", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: "color: red; font-weight: bold;" });
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.fontWeight).toBe("bold");
+
+    widget.state.style = "color: blue;";
+    await nextTick();
+    expect(div.style.color).toBe("blue");
+    expect(div.style.fontWeight).toBe("");
+  });
+
+  test("t-att-style with object value", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: { color: "red", "font-weight": "bold" } as any });
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.fontWeight).toBe("bold");
+
+    widget.state.style = { color: "blue" };
+    await nextTick();
+    expect(div.style.color).toBe("blue");
+    expect(div.style.fontWeight).toBe("");
   });
 
   // TODO: does this test need to be moved? (class now a standard prop)

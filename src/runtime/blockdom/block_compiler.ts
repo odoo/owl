@@ -1,5 +1,5 @@
 import { OwlError } from "../../common/owl_error";
-import { attrsSetter, attrsUpdater, createAttrUpdater, setClass, updateClass } from "./attributes";
+import { attrsSetter, attrsUpdater, createAttrUpdater, setClass, setStyle, updateClass, updateStyle } from "./attributes";
 import { config } from "./config";
 import { createEventHandler } from "./events";
 import type { VNode } from "./index";
@@ -402,6 +402,9 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
         if (info.name === "class") {
           setter = setClass;
           updater = updateClass;
+        } else if (info.name === "style") {
+          setter = setStyle;
+          updater = updateStyle;
         } else {
           setter = createAttrUpdater(info.name!);
           updater = setter;

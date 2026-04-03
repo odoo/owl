@@ -1570,6 +1570,12 @@ class ContentView extends Component {
     }
   }
 
+  onHibouClick(ev) {
+    ev.currentTarget.classList.remove("spin");
+    void ev.currentTarget.offsetWidth;
+    ev.currentTarget.classList.add("spin");
+  }
+
   async startTutorial(tutorial) {
     await this.templatePlugin.openTutorial(tutorial);
     this.view.setShowProjectManager(false);

@@ -1591,6 +1591,14 @@ body {
     0 8px 24px rgba(45, 43, 85, 0.15);
   animation: welcomeFadeIn 0.7s 0.1s cubic-bezier(0.23, 1, 0.32, 1) both;
   position: relative;
+  cursor: pointer;
+}
+.welcome-icon.spin {
+  animation: hibouSpin 1.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes hibouSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 .welcome-icon::after {
   content: "";

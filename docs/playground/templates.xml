@@ -375,7 +375,7 @@
       <div class="content-iframe" t-ref="this.content" t-att-class="{hidden: this.displayWelcome()}"/>
       <div class="welcome" t-if="this.displayWelcome()">
 
-        <div class="welcome-icon">🦉</div>
+        <div class="welcome-icon" t-on-click="this.onHibouClick" title="Hoot Hoot!">🦉</div>
 
         <div class="welcome-header">
           <div class="welcome-title">OWL Playground</div>

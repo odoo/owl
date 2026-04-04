@@ -36,7 +36,10 @@
     "check-formatting": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
     "lint": "eslint packages/owl/src/**/*.ts packages/owl/tests/**/*.ts",
     "release": "node tools/release.cjs",
-    "compile_templates": "node tools/compile_owl_templates.mjs"
+    "compile_templates": "node tools/compile_owl_templates.mjs",
+    "benchmark": "npx tsx tools/benchmark/run_node.ts",
+    "benchmark:compare": "npx tsx tools/benchmark/compare.ts",
+    "benchmark:server": "cd tools/benchmark && npm run dev"
   },
   "repository": {
     "type": "git",

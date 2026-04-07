@@ -1054,7 +1054,19 @@ class Explorer extends Component {
   }
 
   onDropOnFolder(ev, proj, folderPath) {
+    ev.preventDefault();
+    ev.stopPropagation();
+
     ev.currentTarget.classList.remove("drop-target");
+
+    let parent = ev.currentTarget.parentElement;
+    while (parent) {
+      if (parent.classList.contains("drop-target")) {
+        parent.classList.remove("drop-target");
+      }
+      parent = parent.parentElement;
+    }
+
     const sourcePath = ev.dataTransfer.getData("text/plain");
     if (!sourcePath) return;
 

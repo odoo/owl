@@ -33,7 +33,7 @@ class CanvasPaint extends Component {
   draw() {
     if (!this.canvas()) return;
     const ctx = this.canvas().getContext("2d");
-    ctx.clearRect(0, 0, ctx.width, ctx.height);
+    ctx.clearRect(0, 0, this.canvas().width, this.canvas().height);
     for (const pt of this.points()) {
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 10, 0, 2 * Math.PI);

@@ -346,6 +346,7 @@
       <div class="context-menu-overlay" t-on-click="this.hideContextMenu"/>
       <div class="context-menu" t-att-style="this.folderContextMenuStyle()">
         <a class="context-menu-item" t-on-click="() => this.folderContextMenuNewFile()">New file</a>
+        <a class="context-menu-item" t-on-click="() => this.folderContextMenuNewFolder()">New folder</a>
         <a class="context-menu-item" t-on-click="() => this.folderContextMenuNewComponent()">New component</a>
         <a class="context-menu-item danger" t-on-click="() => this.folderContextMenuDelete()">Delete folder</a>
       </div>

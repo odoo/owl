@@ -1467,6 +1467,23 @@ export class ${componentName} extends Component {
     });
   }
 
+  folderContextMenuNewFolder() {
+    const { project: proj, folder } = this.folderContextMenu();
+    this.hideContextMenu();
+    if (this.project.activeProjectId() !== proj.id) {
+      this.project.switchProject(proj.id);
+    }
+    const files = this.code.files();
+    const existingFiles = files.map((f) => f.name);
+    this.dialog.showDialog(NewFolderDialog, {
+      existingFiles,
+      onConfirm: (folderName) => {
+        const placeholderFile = `${folder}/${folderName}/.gitkeep`;
+        this.project.addFileToProject(placeholderFile, false);
+      },
+    });
+  }
+
   folderContextMenuNewComponent() {
     const { project: proj, folder } = this.folderContextMenu();
     this.hideContextMenu();

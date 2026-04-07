@@ -770,7 +770,7 @@ class NewFolderDialog extends Component {
       this.error.set("Name is required");
       return;
     }
-    if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(name)) {
+    if (!/^[a-zA-Z][a-zA-Z0-9_/]*$/.test(name)) {
       this.error.set(
         "Name must start with a letter and contain only letters, numbers, and underscores"
       );

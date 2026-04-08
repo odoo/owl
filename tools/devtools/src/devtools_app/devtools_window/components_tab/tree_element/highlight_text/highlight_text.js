@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-const { Component, computed, props, types: t } = owl;
+const { Component, props, types: t } = owl;
 
 export class HighlightText extends Component {
   static template = "utils.HighlightText";
@@ -8,13 +8,11 @@ export class HighlightText extends Component {
 
   props = props({ originalText: t.string, searchValue: t.string });
 
-  setup() {
-    this.splitText = computed(() => {
-      const splitText = this.splitFuzzySearch(this.props.originalText, this.props.searchValue);
-      return this.props.searchValue.length && splitText.length > 1
-        ? splitText
-        : [this.props.originalText];
-    });
+  splitText() {
+    const splitText = this.splitFuzzySearch(this.props.originalText, this.props.searchValue);
+    return this.props.searchValue.length && splitText.length > 1
+      ? splitText
+      : [this.props.originalText];
   }
 
   // Logic to split the text to highlight it according to a fuzzy search pattern

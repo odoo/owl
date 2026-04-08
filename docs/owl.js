@@ -127,10 +127,16 @@ function toggler(key, child) {
     return new VToggler(key, child);
 }
 
-const { setAttribute: elemSetAttribute, removeAttribute } = Element.prototype;
-const tokenList = DOMTokenList.prototype;
-const tokenListAdd = tokenList.add;
-const tokenListRemove = tokenList.remove;
+let elemSetAttribute;
+let removeAttribute;
+let tokenListAdd;
+let tokenListRemove;
+if (typeof Element !== "undefined") {
+    ({ setAttribute: elemSetAttribute, removeAttribute } = Element.prototype);
+    const tokenList = DOMTokenList.prototype;
+    tokenListAdd = tokenList.add;
+    tokenListRemove = tokenList.remove;
+}
 const isArray = Array.isArray;
 const { split, trim } = String.prototype;
 const wordRegexp = /\s+/;
@@ -162,6 +168,9 @@ function attrsSetter(attrs) {
         if (attrs[0] === "class") {
             setClass.call(this, attrs[1]);
         }
+        else if (attrs[0] === "style") {
+            setStyle.call(this, attrs[1]);
+        }
         else {
             setAttribute.call(this, attrs[0], attrs[1]);
         }
@@ -170,6 +179,9 @@ function attrsSetter(attrs) {
         for (let k in attrs) {
             if (k === "class") {
                 setClass.call(this, attrs[k]);
+            }
+            else if (k === "style") {
+                setStyle.call(this, attrs[k]);
             }
             else {
                 setAttribute.call(this, k, attrs[k]);
@@ -188,6 +200,9 @@ function attrsUpdater(attrs, oldAttrs) {
             if (name === "class") {
                 updateClass.call(this, val, oldAttrs[1]);
             }
+            else if (name === "style") {
+                updateStyle.call(this, val, oldAttrs[1]);
+            }
             else {
                 setAttribute.call(this, name, val);
             }
@@ -203,6 +218,9 @@ function attrsUpdater(attrs, oldAttrs) {
                 if (k === "class") {
                     updateClass.call(this, "", oldAttrs[k]);
                 }
+                else if (k === "style") {
+                    updateStyle.call(this, "", oldAttrs[k]);
+                }
                 else {
                     removeAttribute.call(this, k);
                 }
@@ -213,6 +231,9 @@ function attrsUpdater(attrs, oldAttrs) {
             if (val !== oldAttrs[k]) {
                 if (k === "class") {
                     updateClass.call(this, val, oldAttrs[k]);
+                }
+                else if (k === "style") {
+                    updateStyle.call(this, val, oldAttrs[k]);
                 }
                 else {
                     setAttribute.call(this, k, val);
@@ -261,29 +282,105 @@ function toClassObj(expr) {
             return { [expr]: true };
     }
 }
+// ---------------------------------------------------------------------------
+// Style
+// ---------------------------------------------------------------------------
+const CSS_PROP_CACHE = {};
+function toKebabCase(prop) {
+    if (prop in CSS_PROP_CACHE) {
+        return CSS_PROP_CACHE[prop];
+    }
+    const result = prop.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+    CSS_PROP_CACHE[prop] = result;
+    return result;
+}
+function toStyleObj(expr) {
+    const result = {};
+    switch (typeof expr) {
+        case "string": {
+            const str = trim.call(expr);
+            if (!str) {
+                return {};
+            }
+            const parts = str.split(";");
+            for (let part of parts) {
+                part = trim.call(part);
+                if (!part) {
+                    continue;
+                }
+                const colonIdx = part.indexOf(":");
+                if (colonIdx === -1) {
+                    continue;
+                }
+                const prop = trim.call(part.slice(0, colonIdx));
+                const value = trim.call(part.slice(colonIdx + 1));
+                if (prop && value && value !== "undefined") {
+                    result[prop] = value;
+                }
+            }
+            return result;
+        }
+        case "object":
+            for (let prop in expr) {
+                const value = expr[prop];
+                if (value || value === 0) {
+                    result[toKebabCase(prop)] = String(value);
+                }
+            }
+            return result;
+        default:
+            return {};
+    }
+}
+// ---------------------------------------------------------------------------
+// Class
+// ---------------------------------------------------------------------------
 function setClass(val) {
     val = val === "" ? {} : toClassObj(val);
-    // add classes
-    const cl = this.classList;
-    for (let c in val) {
-        tokenListAdd.call(cl, c);
+    for (let k in val) {
+        tokenListAdd.call(this.classList, k);
     }
 }
 function updateClass(val, oldVal) {
     oldVal = oldVal === "" ? {} : toClassObj(oldVal);
     val = val === "" ? {} : toClassObj(val);
-    const cl = this.classList;
-    // remove classes
-    for (let c in oldVal) {
-        if (!(c in val)) {
-            tokenListRemove.call(cl, c);
+    for (let k in oldVal) {
+        if (!(k in val)) {
+            tokenListRemove.call(this.classList, k);
         }
     }
-    // add classes
-    for (let c in val) {
-        if (!(c in oldVal)) {
-            tokenListAdd.call(cl, c);
+    for (let k in val) {
+        if (val[k] !== oldVal[k]) {
+            tokenListAdd.call(this.classList, k);
         }
+    }
+}
+// ---------------------------------------------------------------------------
+// Style setters
+// ---------------------------------------------------------------------------
+function setStyle(val) {
+    val = val === "" ? {} : toStyleObj(val);
+    const style = this.style;
+    for (let prop in val) {
+        style.setProperty(prop, val[prop]);
+    }
+}
+function updateStyle(val, oldVal) {
+    oldVal = oldVal === "" ? {} : toStyleObj(oldVal);
+    val = val === "" ? {} : toStyleObj(val);
+    const style = this.style;
+    for (let prop in oldVal) {
+        if (!(prop in val)) {
+            style.removeProperty(prop);
+        }
+    }
+    for (let prop in val) {
+        if (val[prop] !== oldVal[prop]) {
+            style.setProperty(prop, val[prop]);
+        }
+    }
+    if (!style.cssText) {
+        removeAttribute.call(this, "style");
     }
 }
 
@@ -506,10 +603,15 @@ function setupSyntheticEvent(evName, eventKey, capture = false, passive = false)
 }
 
 const getDescriptor$3 = (o, p) => Object.getOwnPropertyDescriptor(o, p);
-const nodeProto$4 = Node.prototype;
-const nodeInsertBefore$3 = nodeProto$4.insertBefore;
-const nodeSetTextContent$1 = getDescriptor$3(nodeProto$4, "textContent").set;
-const nodeRemoveChild$3 = nodeProto$4.removeChild;
+let nodeInsertBefore$3;
+let nodeSetTextContent$1;
+let nodeRemoveChild$3;
+if (typeof Node !== "undefined") {
+    const nodeProto = Node.prototype;
+    nodeInsertBefore$3 = nodeProto.insertBefore;
+    nodeSetTextContent$1 = getDescriptor$3(nodeProto, "textContent").set;
+    nodeRemoveChild$3 = nodeProto.removeChild;
+}
 // -----------------------------------------------------------------------------
 // Multi NODE
 // -----------------------------------------------------------------------------
@@ -649,11 +751,15 @@ function multi(children) {
 }
 
 const getDescriptor$2 = (o, p) => Object.getOwnPropertyDescriptor(o, p);
-const nodeProto$3 = Node.prototype;
-const characterDataProto$1 = CharacterData.prototype;
-const nodeInsertBefore$2 = nodeProto$3.insertBefore;
-const characterDataSetData$1 = getDescriptor$2(characterDataProto$1, "data").set;
-const nodeRemoveChild$2 = nodeProto$3.removeChild;
+let nodeInsertBefore$2;
+let characterDataSetData$1;
+let nodeRemoveChild$2;
+if (typeof Node !== "undefined") {
+    const nodeProto = Node.prototype;
+    nodeInsertBefore$2 = nodeProto.insertBefore;
+    nodeRemoveChild$2 = nodeProto.removeChild;
+    characterDataSetData$1 = getDescriptor$2(CharacterData.prototype, "data").set;
+}
 class VSimpleNode {
     text;
     parentEl;
@@ -684,7 +790,7 @@ class VSimpleNode {
         return this.text;
     }
 }
-let VText$1 = class VText extends VSimpleNode {
+class VText extends VSimpleNode {
     mount(parent, afterNode) {
         this.mountNode(document.createTextNode(toText(this.text)), parent, afterNode);
     }
@@ -695,7 +801,7 @@ let VText$1 = class VText extends VSimpleNode {
             this.text = text2;
         }
     }
-};
+}
 class VComment extends VSimpleNode {
     mount(parent, afterNode) {
         this.mountNode(document.createComment(toText(this.text)), parent, afterNode);
@@ -703,7 +809,7 @@ class VComment extends VSimpleNode {
     patch() { }
 }
 function text(str) {
-    return new VText$1(str);
+    return new VText(str);
 }
 function comment(str) {
     return new VComment(str);
@@ -722,12 +828,18 @@ function toText(value) {
 }
 
 const getDescriptor$1 = (o, p) => Object.getOwnPropertyDescriptor(o, p);
-const nodeProto$2 = Node.prototype;
-const elementProto = Element.prototype;
-const characterDataProto = CharacterData.prototype;
-const characterDataSetData = getDescriptor$1(characterDataProto, "data").set;
-const nodeGetFirstChild = getDescriptor$1(nodeProto$2, "firstChild").get;
-const nodeGetNextSibling = getDescriptor$1(nodeProto$2, "nextSibling").get;
+let nodeProto;
+let elementProto;
+let characterDataSetData;
+let nodeGetFirstChild;
+let nodeGetNextSibling;
+if (typeof Node !== "undefined") {
+    nodeProto = Node.prototype;
+    elementProto = Element.prototype;
+    characterDataSetData = getDescriptor$1(CharacterData.prototype, "data").set;
+    nodeGetFirstChild = getDescriptor$1(nodeProto, "firstChild").get;
+    nodeGetNextSibling = getDescriptor$1(nodeProto, "nextSibling").get;
+}
 const NO_OP = () => { };
 function makePropSetter(name) {
     return function setProp(value) {
@@ -1022,6 +1134,10 @@ function updateCtx(ctx, tree) {
                     setter = setClass;
                     updater = updateClass;
                 }
+                else if (info.name === "style") {
+                    setter = setStyle;
+                    updater = updateStyle;
+                }
                 else {
                     setter = createAttrUpdater(info.name);
                     updater = setter;
@@ -1107,8 +1223,8 @@ function createBlockClass(template, ctx) {
         (((c.afterRefIdx ?? 0) & 0x7fff) << 16));
     // these values are defined here to make them faster to lookup in the class
     // block scope
-    const nodeCloneNode = nodeProto$2.cloneNode;
-    const nodeInsertBefore = nodeProto$2.insertBefore;
+    const nodeCloneNode = nodeProto.cloneNode;
+    const nodeInsertBefore = nodeProto.insertBefore;
     const elementRemove = elementProto.remove;
     class Block {
         el;
@@ -1256,11 +1372,17 @@ function setText(value) {
 }
 
 const getDescriptor = (o, p) => Object.getOwnPropertyDescriptor(o, p);
-const nodeProto$1 = Node.prototype;
-const nodeInsertBefore$1 = nodeProto$1.insertBefore;
-const nodeAppendChild = nodeProto$1.appendChild;
-const nodeRemoveChild$1 = nodeProto$1.removeChild;
-const nodeSetTextContent = getDescriptor(nodeProto$1, "textContent").set;
+let nodeInsertBefore$1;
+let nodeAppendChild;
+let nodeRemoveChild$1;
+let nodeSetTextContent;
+if (typeof Node !== "undefined") {
+    const nodeProto = Node.prototype;
+    nodeInsertBefore$1 = nodeProto.insertBefore;
+    nodeAppendChild = nodeProto.appendChild;
+    nodeRemoveChild$1 = nodeProto.removeChild;
+    nodeSetTextContent = getDescriptor(nodeProto, "textContent").set;
+}
 // -----------------------------------------------------------------------------
 // List Node
 // -----------------------------------------------------------------------------
@@ -1476,9 +1598,13 @@ function createMapping(ch1, startIdx1, endIdx2) {
     return mapping;
 }
 
-const nodeProto = Node.prototype;
-const nodeInsertBefore = nodeProto.insertBefore;
-const nodeRemoveChild = nodeProto.removeChild;
+let nodeInsertBefore;
+let nodeRemoveChild;
+if (typeof Node !== "undefined") {
+    const nodeProto = Node.prototype;
+    nodeInsertBefore = nodeProto.insertBefore;
+    nodeRemoveChild = nodeProto.removeChild;
+}
 class VHtml {
     html;
     parentEl;
@@ -1734,127 +1860,6 @@ class Component {
     setup() { }
 }
 
-// Maps fibers to thrown errors
-const fibersInError = new WeakMap();
-const nodeErrorHandlers = new WeakMap();
-function destroyApp(app, error) {
-    try {
-        app.destroy();
-    }
-    catch (e) {
-        // mute all errors here because we are in a corrupted state anyway
-    }
-    const e = Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
-        cause: error,
-    });
-    return e;
-}
-function _handleError(node, error) {
-    if (!node) {
-        return false;
-    }
-    const fiber = node.fiber;
-    if (fiber) {
-        fibersInError.set(fiber, error);
-    }
-    const errorHandlers = nodeErrorHandlers.get(node);
-    if (errorHandlers) {
-        let handled = false;
-        // execute in the opposite order
-        const finalize = () => destroyApp(node.app, error);
-        for (let i = errorHandlers.length - 1; i >= 0; i--) {
-            try {
-                errorHandlers[i](error, finalize);
-                handled = true;
-                break;
-            }
-            catch (e) {
-                error = e;
-            }
-        }
-        if (handled) {
-            return true;
-        }
-    }
-    return _handleError(node.parent, error);
-}
-function handleError(params) {
-    let { error } = params;
-    const node = "node" in params ? params.node : params.fiber.node;
-    const fiber = "fiber" in params ? params.fiber : node.fiber;
-    if (fiber) {
-        // resets the fibers on components if possible. This is important so that
-        // new renderings can be properly included in the initial one, if any.
-        let current = fiber;
-        do {
-            current.node.fiber = current;
-            fibersInError.set(current, error);
-            current = current.parent;
-        } while (current);
-        fibersInError.set(fiber.root, error);
-    }
-    const handled = _handleError(node, error);
-    if (!handled) {
-        throw destroyApp(node.app, error);
-    }
-}
-
-// -----------------------------------------------------------------------------
-//  hooks
-// -----------------------------------------------------------------------------
-function decorate(node, f, hookName) {
-    const result = f.bind(node.component);
-    if (node.app.dev) {
-        const suffix = f.name ? ` <${f.name}>` : "";
-        Reflect.defineProperty(result, "name", {
-            value: hookName + suffix,
-        });
-    }
-    return result;
-}
-function onWillStart(fn) {
-    const { node } = getContext("component");
-    node.willStart.push(decorate(node, fn, "onWillStart"));
-}
-function onWillUpdateProps(fn) {
-    const { node } = getContext("component");
-    node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
-}
-function onMounted(fn) {
-    const { node } = getContext("component");
-    node.mounted.push(decorate(node, fn, "onMounted"));
-}
-function onWillPatch(fn) {
-    const { node } = getContext("component");
-    node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
-}
-function onPatched(fn) {
-    const { node } = getContext("component");
-    node.patched.push(decorate(node, fn, "onPatched"));
-}
-function onWillUnmount(fn) {
-    const { node } = getContext("component");
-    node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
-}
-function onWillDestroy(fn) {
-    const context = getContext();
-    if (context.type === "component") {
-        context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
-    }
-    else {
-        context.manager.onDestroyCb.push(fn);
-    }
-}
-function onError(callback) {
-    const { node } = getContext("component");
-    let handlers = nodeErrorHandlers.get(node);
-    if (!handlers) {
-        handlers = [];
-        nodeErrorHandlers.set(node, handlers);
-    }
-    handlers.push(callback.bind(node.component));
-}
-
 var ComputationState;
 (function (ComputationState) {
     ComputationState[ComputationState["EXECUTED"] = 0] = "EXECUTED";
@@ -1992,405 +1997,68 @@ function untrack(fn) {
     return result;
 }
 
-const anyType = function validateAny() { };
-const booleanType = function validateBoolean(context) {
-    if (typeof context.value !== "boolean") {
-        context.addIssue({ message: "value is not a boolean" });
+// Maps fibers to thrown errors
+const fibersInError = new WeakMap();
+const nodeErrorHandlers = new WeakMap();
+function destroyApp(app, error) {
+    try {
+        app.destroy();
     }
-};
-const numberType = function validateNumber(context) {
-    if (typeof context.value !== "number") {
-        context.addIssue({ message: "value is not a number" });
+    catch (e) {
+        // mute all errors here because we are in a corrupted state anyway
     }
-};
-const stringType = function validateString(context) {
-    if (typeof context.value !== "string") {
-        context.addIssue({ message: "value is not a string" });
-    }
-};
-function arrayType(elementType) {
-    return function validateArray(context) {
-        if (!Array.isArray(context.value)) {
-            context.addIssue({ message: "value is not an array" });
-            return;
-        }
-        if (!elementType) {
-            return;
-        }
-        for (let index = 0; index < context.value.length; index++) {
-            context.withKey(index).validate(elementType);
-        }
-    };
-}
-function constructorType(constructor) {
-    return function validateConstructor(context) {
-        if (!(typeof context.value === "function") ||
-            !(context.value === constructor || context.value.prototype instanceof constructor)) {
-            context.addIssue({ message: `value is not '${constructor.name}' or an extension` });
-        }
-    };
-}
-function customValidator(type, validator, errorMessage = "value does not match custom validation") {
-    return function validateCustom(context) {
-        context.validate(type);
-        if (!context.isValid) {
-            return;
-        }
-        if (!validator(context.value)) {
-            context.addIssue({ message: errorMessage });
-        }
-    };
-}
-function functionType(parameters = [], result = undefined) {
-    return function validateFunction(context) {
-        if (typeof context.value !== "function") {
-            context.addIssue({ message: "value is not a function" });
-        }
-    };
-}
-function instanceType(constructor) {
-    return function validateInstanceType(context) {
-        if (!(context.value instanceof constructor)) {
-            context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
-        }
-    };
-}
-function intersection(types) {
-    return function validateIntersection(context) {
-        for (const type of types) {
-            context.validate(type);
-        }
-    };
-}
-function literalType(literal) {
-    return function validateLiteral(context) {
-        if (context.value !== literal) {
-            context.addIssue({
-                message: `value is not equal to ${typeof literal === "string" ? `'${literal}'` : literal}`,
-            });
-        }
-    };
-}
-function literalSelection(literals) {
-    return union(literals.map(literalType));
-}
-function validateObjectShape(context, shape) {
-    const missingKeys = [];
-    for (const key in shape) {
-        const property = key.endsWith("?") ? key.slice(0, -1) : key;
-        if (context.value[property] === undefined) {
-            if (!key.endsWith("?")) {
-                missingKeys.push(property);
-            }
-            continue;
-        }
-        context.withKey(property).validate(shape[key]);
-    }
-    if (missingKeys.length) {
-        context.addIssue({
-            message: "object value have missing keys",
-            missingKeys,
-        });
-    }
-}
-function validateObjectKeys(context, keys) {
-    const missingKeys = keys.filter((key) => {
-        if (key.endsWith("?")) {
-            return false;
-        }
-        return !(key in context.value);
+    const e = Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
+        cause: error,
     });
-    if (missingKeys.length) {
-        context.addIssue({
-            message: "object value have missing keys",
-            missingKeys,
-        });
+    return e;
+}
+function _handleError(node, error) {
+    if (!node) {
+        return false;
     }
-}
-function objectType(schema = {}) {
-    return function validateObject(context) {
-        if (typeof context.value !== "object" ||
-            Array.isArray(context.value) ||
-            context.value === null) {
-            context.addIssue({ message: "value is not an object" });
-            return;
-        }
-        if (!schema) {
-            return;
-        }
-        if (Array.isArray(schema)) {
-            validateObjectKeys(context, schema);
-        }
-        else {
-            validateObjectShape(context, schema);
-        }
-    };
-}
-function promiseType(type) {
-    return function validatePromise(context) {
-        if (!(context.value instanceof Promise)) {
-            context.addIssue({ message: "value is not a promise" });
-        }
-    };
-}
-function recordType(valueType) {
-    return function validateRecord(context) {
-        if (typeof context.value !== "object" ||
-            Array.isArray(context.value) ||
-            context.value === null) {
-            context.addIssue({ message: "value is not an object" });
-            return;
-        }
-        if (!valueType) {
-            return;
-        }
-        for (const key in context.value) {
-            context.withKey(key).validate(valueType);
-        }
-    };
-}
-function tuple(types) {
-    return function validateTuple(context) {
-        if (!Array.isArray(context.value)) {
-            context.addIssue({ message: "value is not an array" });
-            return;
-        }
-        if (context.value.length !== types.length) {
-            context.addIssue({ message: "tuple value does not have the correct length" });
-            return;
-        }
-        for (let index = 0; index < types.length; index++) {
-            context.withKey(index).validate(types[index]);
-        }
-    };
-}
-function union(types) {
-    return function validateUnion(context) {
-        let firstIssueIndex = 0;
-        const subIssues = [];
-        for (const type of types) {
-            const subContext = context.withIssues(subIssues);
-            subContext.validate(type);
-            if (subIssues.length === firstIssueIndex || subContext.issueDepth > 0) {
-                context.mergeIssues(subIssues.slice(firstIssueIndex));
-                return;
+    const fiber = node.fiber;
+    if (fiber) {
+        fibersInError.set(fiber, error);
+    }
+    const errorHandlers = nodeErrorHandlers.get(node);
+    if (errorHandlers) {
+        let handled = false;
+        // execute in the opposite order
+        const finalize = () => destroyApp(node.app, error);
+        for (let i = errorHandlers.length - 1; i >= 0; i--) {
+            try {
+                errorHandlers[i](error, finalize);
+                handled = true;
+                break;
             }
-            firstIssueIndex = subIssues.length;
-        }
-        context.addIssue({
-            message: "value does not match union type",
-            subIssues,
-        });
-    };
-}
-function reactiveValueType(type) {
-    return function validateReactiveValue(context) {
-        if (typeof context.value !== "function" || !context.value[atomSymbol]) {
-            context.addIssue({ message: "value is not a reactive value" });
-        }
-    };
-}
-function ref(type) {
-    return union([literalType(null), instanceType(type)]);
-}
-const types = {
-    and: intersection,
-    any: anyType,
-    array: arrayType,
-    boolean: booleanType,
-    constructor: constructorType,
-    customValidator: customValidator,
-    function: functionType,
-    instanceOf: instanceType,
-    literal: literalType,
-    number: numberType,
-    object: objectType,
-    or: union,
-    promise: promiseType,
-    record: recordType,
-    ref,
-    selection: literalSelection,
-    signal: reactiveValueType,
-    string: stringType,
-    tuple: tuple,
-};
-
-function assertType(value, validation, errorMessage = "Value does not match the type") {
-    const issues = validateType(value, validation);
-    if (issues.length) {
-        const issueStrings = JSON.stringify(issues, (key, value) => {
-            if (typeof value === "function") {
-                return value.name;
+            catch (e) {
+                error = e;
             }
-            return value;
-        }, 2);
-        throw new OwlError(`${errorMessage}\n${issueStrings}`);
+        }
+        if (handled) {
+            return true;
+        }
     }
+    return _handleError(node.parent, error);
 }
-function createContext$1(issues, value, path, parent) {
-    return {
-        issueDepth: 0,
-        path,
-        value,
-        get isValid() {
-            return !issues.length;
-        },
-        addIssue(issue) {
-            issues.push({
-                received: this.value,
-                path: this.path,
-                ...issue,
-            });
-        },
-        mergeIssues(newIssues) {
-            issues.push(...newIssues);
-        },
-        validate(type) {
-            type(this);
-            if (!this.isValid && parent) {
-                parent.issueDepth = this.issueDepth + 1;
-            }
-        },
-        withIssues(issues) {
-            return createContext$1(issues, this.value, this.path, this);
-        },
-        withKey(key) {
-            return createContext$1(issues, this.value[key], this.path.concat(key), this);
-        },
-    };
-}
-function validateType(value, validation) {
-    const issues = [];
-    validation(createContext$1(issues, value, []));
-    return issues;
-}
-
-function validateObjectWithDefaults(schema, defaultValues) {
-    const keys = Array.isArray(schema) ? schema : Object.keys(schema);
-    const mandatoryDefaultedKeys = keys.filter((key) => !key.endsWith("?") && key in defaultValues);
-    return (context) => {
-        if (mandatoryDefaultedKeys.length) {
-            context.addIssue({
-                message: "props have default values on mandatory keys",
-                keys: mandatoryDefaultedKeys,
-            });
-        }
-        context.validate(types.object(schema));
-    };
-}
-function props(type, defaults) {
-    const { node, app, componentName } = getContext("component");
-    function getProp(key) {
-        if (node.props[key] === undefined && defaults) {
-            return defaults[key];
-        }
-        return node.props[key];
+function handleError(params) {
+    let { error } = params;
+    const node = "node" in params ? params.node : params.fiber.node;
+    const fiber = "fiber" in params ? params.fiber : node.fiber;
+    if (fiber) {
+        // resets the fibers on components if possible. This is important so that
+        // new renderings can be properly included in the initial one, if any.
+        let current = fiber;
+        do {
+            current.node.fiber = current;
+            fibersInError.set(current, error);
+            current = current.parent;
+        } while (current);
+        fibersInError.set(fiber.root, error);
     }
-    const result = Object.create(null);
-    function applyPropGetters(keys) {
-        for (const key of keys) {
-            Reflect.defineProperty(result, key, {
-                enumerable: true,
-                get: getProp.bind(null, key),
-            });
-        }
-    }
-    if (type) {
-        const keys = (Array.isArray(type) ? type : Object.keys(type)).map((key) => key.endsWith("?") ? key.slice(0, -1) : key);
-        applyPropGetters(keys);
-        if (app.dev) {
-            const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
-            assertType(node.props, validation, `Invalid component props (${componentName})`);
-            node.willUpdateProps.push((np) => {
-                assertType(np, validation, `Invalid component props (${componentName})`);
-            });
-        }
-    }
-    else {
-        applyPropGetters(Object.keys(node.props).filter((k) => k.charCodeAt(0) !== 1));
-        node.willUpdateProps.push((np) => {
-            for (let key in result) {
-                Reflect.deleteProperty(result, key);
-            }
-            applyPropGetters(Object.keys(np).filter((k) => k.charCodeAt(0) !== 1));
-        });
-    }
-    return result;
-}
-
-const VText = text("").constructor;
-class VPortal extends VText {
-    content;
-    selector;
-    target = null;
-    constructor(selector, content) {
-        super("");
-        this.selector = selector;
-        this.content = content;
-    }
-    mount(parent, anchor) {
-        super.mount(parent, anchor);
-        this.target = document.querySelector(this.selector);
-        if (this.target) {
-            this.content.mount(this.target, null);
-        }
-        else {
-            this.content.mount(parent, anchor);
-        }
-    }
-    beforeRemove() {
-        this.content.beforeRemove();
-    }
-    remove() {
-        if (this.content) {
-            super.remove();
-            this.content.remove();
-            this.content = null;
-        }
-    }
-    patch(other) {
-        super.patch(other);
-        if (this.content) {
-            this.content.patch(other.content, true);
-        }
-        else {
-            this.content = other.content;
-            this.content.mount(this.target, null);
-        }
-    }
-}
-/**
- * kind of similar to <t t-slot="default"/>, but it wraps it around a VPortal
- */
-function portalTemplate(app, bdom, helpers) {
-    let { callSlot } = helpers;
-    return function template(ctx, node, key = "") {
-        return new VPortal(ctx.this.props.target, callSlot(ctx, node, key, "default", false, null));
-    };
-}
-class Portal extends Component {
-    static template = "__portal__";
-    props = props({
-        target: types.string,
-    });
-    setup() {
-        const node = this.__owl__;
-        onMounted(() => {
-            const portal = node.bdom;
-            if (!portal.target) {
-                const target = document.querySelector(node.props.target);
-                if (target) {
-                    portal.content.moveBeforeDOMNode(target.firstChild, target);
-                }
-                else {
-                    throw new OwlError("invalid portal target");
-                }
-            }
-        });
-        onWillUnmount(() => {
-            const portal = node.bdom;
-            portal.remove();
-        });
+    const handled = _handleError(node, error);
+    if (!handled) {
+        throw destroyApp(node.app, error);
     }
 }
 
@@ -2668,6 +2336,7 @@ class ComponentNode {
     forceNextRender = false;
     parentKey;
     props;
+    defaultProps = {};
     renderFn;
     parent;
     children = Object.create(null);
@@ -2831,6 +2500,11 @@ class ComponentNode {
     }
     async updateAndRender(props, parentFiber) {
         props = Object.assign({}, props);
+        for (const key in this.defaultProps) {
+            if (props[key] === undefined) {
+                props[key] = this.defaultProps[key];
+            }
+        }
         // update
         const fiber = makeChildFiber(this, parentFiber);
         this.fiber = fiber;
@@ -3459,6 +3133,13 @@ function createRef(ref) {
         }
     };
 }
+function callHandler(fn, ctx, ev) {
+    if (typeof fn !== "function") {
+        throw new OwlError(`Invalid handler expression: the \`t-on\` expression should evaluate to a function, but got '${typeof fn}'. ` +
+            `Did you mean to use an arrow function? (e.g. \`t-on-click="() => expr"\`)`);
+    }
+    fn.call(ctx["this"], ev);
+}
 function modelExpr(value) {
     if (typeof value !== "function" || typeof value.set !== "function") {
         throw new OwlError(`Invalid t-model expression: expression should evaluate to a function with a 'set' method defined on it`);
@@ -3553,8 +3234,8 @@ const helpers = {
     createRef,
     modelExpr,
     createComponent,
-    Portal,
     callTemplate,
+    callHandler,
 };
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
@@ -3662,7 +3343,6 @@ function xml(...args) {
     return name;
 }
 xml.nextId = 1;
-TemplateSet.registerTemplate("__portal__", portalTemplate);
 
 /**
  * Owl QWeb Expression Parser
@@ -3997,7 +3677,10 @@ const zero = Symbol("zero");
 const whitespaceRE = /\s+/g;
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
 // of HTML (as we will parse it as xml later)
-const xmlDoc = document.implementation.createDocument(null, null, null);
+let xmlDoc;
+if (typeof document !== "undefined") {
+    xmlDoc = document.implementation.createDocument(null, null, null);
+}
 const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic", "passive"]);
 let nextDataIds = {};
 function generateId(prefix = "") {
@@ -4096,7 +3779,7 @@ class BlockDescription {
         return t.innerHTML;
     }
 }
-function createContext(parentCtx, params) {
+function createContext$1(parentCtx, params) {
     return Object.assign({
         block: null,
         index: 0,
@@ -4264,7 +3947,7 @@ class CodeGenerator {
         const target = new CodeTarget(name, on);
         this.targets.push(target);
         this.target = target;
-        this.compileAST(ast, createContext(ctx));
+        this.compileAST(ast, createContext$1(ctx));
         this.target = initialTarget;
         return name;
     }
@@ -4358,8 +4041,6 @@ class CodeGenerator {
                 return this.compileTTranslation(ast, ctx);
             case 16 /* ASTType.TTranslationContext */:
                 return this.compileTTranslationContext(ast, ctx);
-            case 17 /* ASTType.TPortal */:
-                return this.compileTPortal(ast, ctx);
         }
     }
     compileDebug(ast, ctx) {
@@ -4445,7 +4126,8 @@ class CodeGenerator {
             hoistedExpr = `(ctx,${bareArrowMatch[1]})=>${rest}`;
         }
         else {
-            hoistedExpr = `(ctx, ev) => (${compiled}).call(ctx['this'], ev)`;
+            this.helpers.add("callHandler");
+            hoistedExpr = `(ctx, ev) => callHandler(${compiled}, ctx, ev)`;
         }
         const id = generateId("hdlr_fn");
         this.staticDefs.push({ id, expr: hoistedExpr });
@@ -4523,11 +4205,22 @@ class CodeGenerator {
         // t-model
         let tModelSelectedExpr;
         if (ast.model) {
-            const { hasDynamicChildren, expr, eventType, shouldNumberize, shouldTrim, targetAttr, specialInitTargetAttr, } = ast.model;
-            const expression = compileExpr(expr);
-            const exprId = generateId("expr");
-            this.helpers.add("modelExpr");
-            this.define(exprId, `modelExpr(${expression})`);
+            const { hasDynamicChildren, expr, eventType, shouldNumberize, shouldTrim, targetAttr, specialInitTargetAttr, isProxy, } = ast.model;
+            let readExpr;
+            let writeExpr;
+            if (isProxy) {
+                const expression = compileExpr(expr);
+                readExpr = expression;
+                writeExpr = (value) => `${expression} = ${value}`;
+            }
+            else {
+                const exprId = generateId("expr");
+                const expression = compileExpr(expr);
+                this.helpers.add("modelExpr");
+                this.define(exprId, `modelExpr(${expression})`);
+                readExpr = `${exprId}()`;
+                writeExpr = (value) => `${exprId}.set(${value})`;
+            }
             let idx;
             if (specialInitTargetAttr) {
                 let targetExpr = targetAttr in attrs && `'${attrs[targetAttr]}'`;
@@ -4538,23 +4231,23 @@ class CodeGenerator {
                         targetExpr = compileExpr(dynamicTgExpr);
                     }
                 }
-                idx = block.insertData(`${exprId}() === ${targetExpr}`, "prop");
+                idx = block.insertData(`${readExpr} === ${targetExpr}`, "prop");
                 attrs[`block-property-${idx}`] = specialInitTargetAttr;
             }
             else if (hasDynamicChildren) {
                 const bValueId = generateId("bValue");
                 tModelSelectedExpr = `${bValueId}`;
-                this.define(tModelSelectedExpr, `${exprId}()`);
+                this.define(tModelSelectedExpr, readExpr);
             }
             else {
-                idx = block.insertData(`${exprId}()`, "prop");
+                idx = block.insertData(readExpr, "prop");
                 attrs[`block-property-${idx}`] = targetAttr;
             }
             this.helpers.add("toNumber");
             let valueCode = `ev.target.${targetAttr}`;
             valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
             valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
-            const handler = `[(ctx, ev) => { ${exprId}.set(${valueCode}); }, ctx]`;
+            const handler = `[(ctx, ev) => { ${writeExpr(valueCode)}; }, ctx]`;
             idx = block.insertData(handler, "hdlr");
             attrs[`block-handler-${idx}`] = eventType;
         }
@@ -4588,7 +4281,7 @@ class CodeGenerator {
             const children = ast.content;
             for (let i = 0; i < children.length; i++) {
                 const child = ast.content[i];
-                const subCtx = createContext(ctx, {
+                const subCtx = createContext$1(ctx, {
                     block,
                     index: block.childNumber,
                     forceNewBlock: false,
@@ -4644,7 +4337,7 @@ class CodeGenerator {
         else if (ast.body) {
             let bodyValue = null;
             bodyValue = BlockDescription.nextBlockId;
-            const subCtx = createContext(ctx);
+            const subCtx = createContext$1(ctx);
             this.compileAST({ type: 3 /* ASTType.Multi */, content: ast.body }, subCtx);
             this.helpers.add("safeOutput");
             blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
@@ -4659,7 +4352,7 @@ class CodeGenerator {
     compileTIfBranch(content, block, ctx) {
         this.target.indentLevel++;
         let childN = block.children.length;
-        this.compileAST(content, createContext(ctx, { block, index: ctx.index }));
+        this.compileAST(content, createContext$1(ctx, { block, index: ctx.index }));
         if (block.children.length > childN) {
             // we have some content => need to insert an anchor at correct index
             this.insertAnchor(block, childN);
@@ -4755,7 +4448,7 @@ class CodeGenerator {
             this.addLine(`if (keys${block.id}.has(String(key${this.target.loopLevel}))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`);
             this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
         }
-        const subCtx = createContext(ctx, { block, index: loopVar });
+        const subCtx = createContext$1(ctx, { block, index: loopVar });
         this.compileAST(ast.body, subCtx);
         this.target.indentLevel--;
         this.target.loopLevel--;
@@ -4767,7 +4460,7 @@ class CodeGenerator {
     compileTKey(ast, ctx) {
         const tKeyExpr = generateId("tKey_");
         this.define(tKeyExpr, compileExpr(ast.expr));
-        ctx = createContext(ctx, {
+        ctx = createContext$1(ctx, {
             tKeyExpr,
             block: ctx.block,
             index: ctx.index,
@@ -4794,7 +4487,7 @@ class CodeGenerator {
         for (let i = 0, l = ast.content.length; i < l; i++) {
             const child = ast.content[i];
             const forceNewBlock = !child.hasNoRepresentation;
-            const subCtx = createContext(ctx, {
+            const subCtx = createContext$1(ctx, {
                 block,
                 index,
                 forceNewBlock,
@@ -4847,12 +4540,11 @@ class CodeGenerator {
         if (ast.context) {
             const dynCtxVar = generateId("ctx");
             this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
-            if (ast.attrs) {
-                ctxExpr = `Object.assign({}, ${dynCtxVar}${attrs.length ? ", " + ctxString : ""})`;
+            if (attrs.length) {
+                ctxExpr = `Object.assign({this: ${dynCtxVar}}, ${ctxString})`;
             }
             else {
-                const thisCtx = `{this: ${dynCtxVar}, __owl__: this.__owl__}`;
-                ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
+                ctxExpr = `{this: ${dynCtxVar}}`;
             }
         }
         else {
@@ -5180,26 +4872,6 @@ class CodeGenerator {
         }
         return null;
     }
-    compileTPortal(ast, ctx) {
-        this.helpers.add("Portal");
-        let { block } = ctx;
-        const name = this.compileInNewTarget("slot", ast.content, ctx);
-        let id = generateId("comp");
-        this.helpers.add("createComponent");
-        this.staticDefs.push({
-            id,
-            expr: `createComponent(app, null, false, true, false, false)`,
-        });
-        const target = compileExpr(ast.target);
-        const key = this.generateComponentKey();
-        const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ctx}}}, ${key}, node, ctx, Portal)`;
-        if (block) {
-            this.insertAnchor(block);
-        }
-        block = this.createBlock(block, "multi", ctx);
-        this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
-        return block.varName;
-    }
 }
 
 // -----------------------------------------------------------------------------
@@ -5235,7 +4907,6 @@ function parseNode(node, ctx) {
         parseTDebugLog(node, ctx) ||
         parseTForEach(node, ctx) ||
         parseTIf(node, ctx) ||
-        parseTPortal(node, ctx) ||
         parseTTranslation(node, ctx) ||
         parseTTranslationContext(node, ctx) ||
         parseTCall(node, ctx) ||
@@ -5382,6 +5053,7 @@ function parseDOMNode(node, ctx) {
             const hasTrimMod = attr.includes(".trim");
             const hasLazyMod = hasTrimMod || attr.includes(".lazy");
             const hasNumberMod = attr.includes(".number");
+            const hasProxyMod = attr.includes(".proxy");
             const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
             model = {
                 expr: value,
@@ -5391,6 +5063,7 @@ function parseDOMNode(node, ctx) {
                 hasDynamicChildren: false,
                 shouldTrim: hasTrimMod,
                 shouldNumberize: hasNumberMod,
+                isProxy: hasProxyMod,
             };
             if (isSelect) {
                 // don't pollute the original ctx
@@ -5862,28 +5535,6 @@ function parseTTranslationContext(node, ctx) {
     return wrapInTTranslationContextAST(result, translationCtx);
 }
 // -----------------------------------------------------------------------------
-// Portal
-// -----------------------------------------------------------------------------
-function parseTPortal(node, ctx) {
-    if (!node.hasAttribute("t-portal")) {
-        return null;
-    }
-    const target = node.getAttribute("t-portal");
-    node.removeAttribute("t-portal");
-    const content = parseNode(node, ctx);
-    if (!content) {
-        return {
-            type: 0 /* ASTType.Text */,
-            value: "",
-        };
-    }
-    return {
-        type: 17 /* ASTType.TPortal */,
-        target,
-        content,
-    };
-}
-// -----------------------------------------------------------------------------
 // helpers
 // -----------------------------------------------------------------------------
 /**
@@ -6021,7 +5672,7 @@ function compile(template, options = {
 }
 
 // do not modify manually. This file is generated by the release script.
-const version = "3.0.0-alpha";
+const version = "3.0.0-alpha.22";
 
 function effect(fn) {
     const computation = createComputation(() => {
@@ -6165,10 +5816,14 @@ function startPlugins(manager, plugins) {
 // -----------------------------------------------------------------------------
 //  Scheduler
 // -----------------------------------------------------------------------------
+let requestAnimationFrame;
+if (typeof window !== "undefined") {
+    requestAnimationFrame = window.requestAnimationFrame.bind(window);
+}
 class Scheduler {
     // capture the value of requestAnimationFrame as soon as possible, to avoid
     // interactions with other code, such as test frameworks that override them
-    static requestAnimationFrame = window.requestAnimationFrame.bind(window);
+    static requestAnimationFrame = requestAnimationFrame;
     tasks = new Set();
     requestAnimationFrame;
     frame = 0;
@@ -6257,7 +5912,9 @@ class Scheduler {
 
 let hasBeenLogged = false;
 const apps = new Set();
-window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
+if (typeof window !== "undefined") {
+    window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
+}
 class App extends TemplateSet {
     static validateTarget = validateTarget;
     static apps = apps;
@@ -6405,6 +6062,62 @@ const mainEventHandler = (data, ev, currentTarget) => {
     return stopped;
 };
 
+// -----------------------------------------------------------------------------
+//  hooks
+// -----------------------------------------------------------------------------
+function decorate(node, f, hookName) {
+    const result = f.bind(node.component);
+    if (node.app.dev) {
+        const suffix = f.name ? ` <${f.name}>` : "";
+        Reflect.defineProperty(result, "name", {
+            value: hookName + suffix,
+        });
+    }
+    return result;
+}
+function onWillStart(fn) {
+    const { node } = getContext("component");
+    node.willStart.push(decorate(node, fn, "onWillStart"));
+}
+function onWillUpdateProps(fn) {
+    const { node } = getContext("component");
+    node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
+}
+function onMounted(fn) {
+    const { node } = getContext("component");
+    node.mounted.push(decorate(node, fn, "onMounted"));
+}
+function onWillPatch(fn) {
+    const { node } = getContext("component");
+    node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
+}
+function onPatched(fn) {
+    const { node } = getContext("component");
+    node.patched.push(decorate(node, fn, "onPatched"));
+}
+function onWillUnmount(fn) {
+    const { node } = getContext("component");
+    node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
+}
+function onWillDestroy(fn) {
+    const context = getContext();
+    if (context.type === "component") {
+        context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
+    }
+    else {
+        context.manager.onDestroyCb.push(fn);
+    }
+}
+function onError(callback) {
+    const { node } = getContext("component");
+    let handlers = nodeErrorHandlers.get(node);
+    if (!handlers) {
+        handlers = [];
+        nodeErrorHandlers.set(node, handlers);
+    }
+    handlers.push(callback.bind(node.component));
+}
+
 function computed(getter, options = {}) {
     const computation = createComputation(() => {
         const newValue = getter();
@@ -6482,6 +6195,56 @@ signal.Array = signalArray;
 signal.Map = signalMap;
 signal.Object = signalObject;
 signal.Set = signalSet;
+
+function assertType(value, validation, errorMessage = "Value does not match the type") {
+    const issues = validateType(value, validation);
+    if (issues.length) {
+        const issueStrings = JSON.stringify(issues, (key, value) => {
+            if (typeof value === "function") {
+                return value.name;
+            }
+            return value;
+        }, 2);
+        throw new OwlError(`${errorMessage}\n${issueStrings}`);
+    }
+}
+function createContext(issues, value, path, parent) {
+    return {
+        issueDepth: 0,
+        path,
+        value,
+        get isValid() {
+            return !issues.length;
+        },
+        addIssue(issue) {
+            issues.push({
+                received: this.value,
+                path: this.path,
+                ...issue,
+            });
+        },
+        mergeIssues(newIssues) {
+            issues.push(...newIssues);
+        },
+        validate(type) {
+            type(this);
+            if (!this.isValid && parent) {
+                parent.issueDepth = this.issueDepth + 1;
+            }
+        },
+        withIssues(issues) {
+            return createContext(issues, this.value, this.path, this);
+        },
+        withKey(key) {
+            return createContext(issues, this.value[key], this.path.concat(key), this);
+        },
+    };
+}
+function validateType(value, validation) {
+    const issues = [];
+    validation(createContext(issues, value, []));
+    return issues;
+}
 
 class Resource {
     _items = signal.Array([]);
@@ -6566,6 +6329,310 @@ class Registry {
     has(key) {
         return key in this._map();
     }
+}
+
+const anyType = function validateAny() { };
+const booleanType = function validateBoolean(context) {
+    if (typeof context.value !== "boolean") {
+        context.addIssue({ message: "value is not a boolean" });
+    }
+};
+const numberType = function validateNumber(context) {
+    if (typeof context.value !== "number") {
+        context.addIssue({ message: "value is not a number" });
+    }
+};
+const stringType = function validateString(context) {
+    if (typeof context.value !== "string") {
+        context.addIssue({ message: "value is not a string" });
+    }
+};
+function arrayType(elementType) {
+    return function validateArray(context) {
+        if (!Array.isArray(context.value)) {
+            context.addIssue({ message: "value is not an array" });
+            return;
+        }
+        if (!elementType) {
+            return;
+        }
+        for (let index = 0; index < context.value.length; index++) {
+            context.withKey(index).validate(elementType);
+        }
+    };
+}
+function constructorType(constructor) {
+    return function validateConstructor(context) {
+        if (!(typeof context.value === "function") ||
+            !(context.value === constructor || context.value.prototype instanceof constructor)) {
+            context.addIssue({ message: `value is not '${constructor.name}' or an extension` });
+        }
+    };
+}
+function customValidator(type, validator, errorMessage = "value does not match custom validation") {
+    return function validateCustom(context) {
+        context.validate(type);
+        if (!context.isValid) {
+            return;
+        }
+        if (!validator(context.value)) {
+            context.addIssue({ message: errorMessage });
+        }
+    };
+}
+function functionType(parameters = [], result = undefined) {
+    return function validateFunction(context) {
+        if (typeof context.value !== "function") {
+            context.addIssue({ message: "value is not a function" });
+        }
+    };
+}
+function instanceType(constructor) {
+    return function validateInstanceType(context) {
+        if (!(context.value instanceof constructor)) {
+            context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
+        }
+    };
+}
+function intersection(types) {
+    return function validateIntersection(context) {
+        for (const type of types) {
+            context.validate(type);
+        }
+    };
+}
+function literalType(literal) {
+    return function validateLiteral(context) {
+        if (context.value !== literal) {
+            context.addIssue({
+                message: `value is not equal to ${typeof literal === "string" ? `'${literal}'` : literal}`,
+            });
+        }
+    };
+}
+function literalSelection(literals) {
+    return union(literals.map(literalType));
+}
+function validateObject(context, schema, isStrict) {
+    if (typeof context.value !== "object" || Array.isArray(context.value) || context.value === null) {
+        context.addIssue({ message: "value is not an object" });
+        return;
+    }
+    if (!schema) {
+        return;
+    }
+    const isShape = !Array.isArray(schema);
+    let shape = schema;
+    if (Array.isArray(schema)) {
+        shape = {};
+        for (const key of schema) {
+            shape[key] = null;
+        }
+    }
+    const missingKeys = [];
+    for (const key in shape) {
+        const property = key.endsWith("?") ? key.slice(0, -1) : key;
+        if (context.value[property] === undefined) {
+            if (!key.endsWith("?")) {
+                missingKeys.push(property);
+            }
+            continue;
+        }
+        if (isShape) {
+            context.withKey(property).validate(shape[key]);
+        }
+    }
+    if (missingKeys.length) {
+        context.addIssue({
+            message: "object value has missing keys",
+            missingKeys,
+        });
+    }
+    if (isStrict) {
+        const unknownKeys = [];
+        for (const key in context.value) {
+            if (!(key in shape) && !(`${key}?` in shape)) {
+                unknownKeys.push(key);
+            }
+        }
+        if (unknownKeys.length) {
+            context.addIssue({
+                message: "object value has unknown keys",
+                unknownKeys,
+            });
+        }
+    }
+}
+function objectType(schema = {}) {
+    return function validateLooseObject(context) {
+        validateObject(context, schema, false);
+    };
+}
+function strictObjectType(schema) {
+    return function validateStrictObject(context) {
+        validateObject(context, schema, true);
+    };
+}
+function promiseType(type) {
+    return function validatePromise(context) {
+        if (!(context.value instanceof Promise)) {
+            context.addIssue({ message: "value is not a promise" });
+        }
+    };
+}
+function recordType(valueType) {
+    return function validateRecord(context) {
+        if (typeof context.value !== "object" ||
+            Array.isArray(context.value) ||
+            context.value === null) {
+            context.addIssue({ message: "value is not an object" });
+            return;
+        }
+        if (!valueType) {
+            return;
+        }
+        for (const key in context.value) {
+            context.withKey(key).validate(valueType);
+        }
+    };
+}
+function tuple(types) {
+    return function validateTuple(context) {
+        if (!Array.isArray(context.value)) {
+            context.addIssue({ message: "value is not an array" });
+            return;
+        }
+        if (context.value.length !== types.length) {
+            context.addIssue({ message: "tuple value does not have the correct length" });
+            return;
+        }
+        for (let index = 0; index < types.length; index++) {
+            context.withKey(index).validate(types[index]);
+        }
+    };
+}
+function union(types) {
+    return function validateUnion(context) {
+        let firstIssueIndex = 0;
+        const subIssues = [];
+        for (const type of types) {
+            const subContext = context.withIssues(subIssues);
+            subContext.validate(type);
+            if (subIssues.length === firstIssueIndex || subContext.issueDepth > 0) {
+                context.mergeIssues(subIssues.slice(firstIssueIndex));
+                return;
+            }
+            firstIssueIndex = subIssues.length;
+        }
+        context.addIssue({
+            message: "value does not match union type",
+            subIssues,
+        });
+    };
+}
+function reactiveValueType(type) {
+    return function validateReactiveValue(context) {
+        if (typeof context.value !== "function" || !context.value[atomSymbol]) {
+            context.addIssue({ message: "value is not a reactive value" });
+        }
+    };
+}
+function ref(type) {
+    return union([literalType(null), instanceType(type)]);
+}
+const types = {
+    and: intersection,
+    any: anyType,
+    array: arrayType,
+    boolean: booleanType,
+    constructor: constructorType,
+    customValidator: customValidator,
+    function: functionType,
+    instanceOf: instanceType,
+    literal: literalType,
+    number: numberType,
+    object: objectType,
+    or: union,
+    promise: promiseType,
+    record: recordType,
+    ref,
+    selection: literalSelection,
+    signal: reactiveValueType,
+    strictObject: strictObjectType,
+    string: stringType,
+    tuple: tuple,
+};
+
+function validateObjectWithDefaults(schema, defaultValues) {
+    const keys = Array.isArray(schema) ? schema : Object.keys(schema);
+    const mandatoryDefaultedKeys = keys.filter((key) => !key.endsWith("?") && key in defaultValues);
+    return (context) => {
+        if (mandatoryDefaultedKeys.length) {
+            context.addIssue({
+                message: "props have default values on mandatory keys",
+                keys: mandatoryDefaultedKeys,
+            });
+        }
+        context.validate(types.object(schema));
+    };
+}
+function props(type, defaults) {
+    const { node, app, componentName } = getContext("component");
+    Object.assign(node.defaultProps, defaults);
+    function getProp(key) {
+        if (node.props[key] === undefined && defaults) {
+            return defaults[key];
+        }
+        return node.props[key];
+    }
+    const result = Object.create(null);
+    function applyPropGetters(keys) {
+        for (const key of keys) {
+            Reflect.defineProperty(result, key, {
+                enumerable: true,
+                get: getProp.bind(null, key),
+            });
+        }
+    }
+    if (type) {
+        const keys = (Array.isArray(type) ? type : Object.keys(type)).map((key) => key.endsWith("?") ? key.slice(0, -1) : key);
+        applyPropGetters(keys);
+        if (app.dev) {
+            const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
+            assertType(node.props, validation, `Invalid component props (${componentName})`);
+            node.willUpdateProps.push((np) => {
+                assertType(np, validation, `Invalid component props (${componentName})`);
+            });
+        }
+    }
+    else {
+        const getKeys = (props) => {
+            const keys = [];
+            for (const k in props) {
+                if (k.charCodeAt(0) !== 1) {
+                    keys.push(k);
+                }
+            }
+            if (defaults) {
+                for (const k in defaults) {
+                    if (!(k in props)) {
+                        keys.push(k);
+                    }
+                }
+            }
+            return keys;
+        };
+        let keys = getKeys(node.props);
+        applyPropGetters(keys);
+        node.willUpdateProps.push((np) => {
+            for (const key of keys) {
+                Reflect.deleteProperty(result, key);
+            }
+            keys = getKeys(np);
+            applyPropGetters(keys);
+        });
+    }
+    return result;
 }
 
 function status(entity) {
@@ -6704,6 +6771,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(name, templat
 export { App, Component, EventBus, OwlError, Plugin, Registry, Resource, __info__, assertType, batched, blockDom, computed, config, effect, htmlEscape, markRaw, markup, mount, onError, onMounted, onPatched, onWillDestroy, onWillPatch, onWillStart, onWillUnmount, onWillUpdateProps, plugin, props, providePlugins, proxy, signal, status, toRaw, types, untrack, useApp, useContext, useEffect, useListener, useResource, validateType, whenReady, xml };
 
 
-__info__.date = '2026-03-13T14:10:34.725Z';
-__info__.hash = 'd41cdf8';
+__info__.date = '2026-04-08T13:31:02.500Z';
+__info__.hash = '2e9164e';
 __info__.url = 'https://github.com/odoo/owl';

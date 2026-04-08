@@ -42,7 +42,7 @@
     "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",
     "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
     "lint": "eslint src/**/*.ts tests/**/*.ts",
-    "release": "node tools/release.js",
+    "release": "node tools/release.cjs",
     "compile_templates": "node tools/compile_owl_templates.mjs"
   },
   "bin": {

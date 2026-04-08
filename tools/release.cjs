@@ -35,7 +35,10 @@ async function startRelease() {
   log(`Make sure that github is configured to allow it:`);
   log(`   settings => branches => edit master => uncheck Do not allow bypassing the above settings`);
   log(`   (and probably a good idea to readd the protection after)`)
-  
+
+  let isAlpha = await ask("Is this an alpha release? [y/n] (n): ");
+  isAlpha = isAlpha.toLowerCase() === "y";
+
   const STEPS = 11;
   let step = 1;
   // ---------------------------------------------------------------------------
@@ -48,7 +51,16 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: collecting info...`);
-  let next = await ask("Next version: ");
+  const currentVersion = package.version;
+  let defaultNext = "";
+  if (isAlpha) {
+    const alphaMatch = currentVersion.match(/^(.+)-alpha\.(\d+)$/);
+    if (alphaMatch) {
+      defaultNext = `${alphaMatch[1]}-alpha.${parseInt(alphaMatch[2]) + 1}`;
+    }
+  }
+  let next = await ask(`Next version${defaultNext ? ` (${defaultNext})` : ""}: `);
+  next = next || defaultNext;
   if (next[0] === 'v') next = next.substring(1);
   let file = await ask(`Release notes (${REL_NOTES_FILE}): `);
   file = file || REL_NOTES_FILE;
@@ -141,14 +153,16 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Creating the release...`);
-  const relaseResult = await execCommand(`gh release create v${next} dist/*.js dist/*.zip ${draft} -F ${file}`);
+  const prerelease = isAlpha ? "--prerelease" : "";
+  const relaseResult = await execCommand(`gh release create v${next} dist/*.js dist/*.zip ${draft} ${prerelease} -F ${file}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
     return;
   }
 
   log(`Step ${step++}/${STEPS}: publishing module on npm...`);
-  await execCommand("npm publish");
+  const npmTag = isAlpha ? "--tag alpha" : "";
+  await execCommand(`npm publish ${npmTag}`);
 
   log("Owl Release process completed! Thank you for your patience");
   await execCommand(`gh release view`);

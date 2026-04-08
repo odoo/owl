@@ -1,4 +1,4 @@
-import terser from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import copy from "rollup-plugin-copy";
 import execute from "rollup-plugin-execute";
 import del from "rollup-plugin-delete";
@@ -50,7 +50,7 @@ export default ({ "config-browser": browser, "config-env": env }) => {
         string({
           include: "**/page_scripts/owl_devtools_global_hook.js",
         }),
-        isProduction && terser.terser(),
+        isProduction && terser(),
       ],
     };
   }

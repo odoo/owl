@@ -7,14 +7,20 @@ import { nodeErrorHandlers } from "./rendering/error_handling";
 // -----------------------------------------------------------------------------
 
 function decorate(node: ComponentNode, f: Function, hookName: string) {
-  const result = f.bind(node.component);
   if (node.app.dev) {
-    const suffix = f.name ? ` <${f.name}>` : "";
-    Reflect.defineProperty(result, "name", {
-      value: hookName + suffix,
-    });
+    const component = node.component;
+    const componentName = component ? component.constructor.name : "Component";
+    const name = `${componentName}.${hookName}`;
+    // Create a named wrapper so the name appears in stack traces.
+    // V8 uses computed property keys as inferred function names.
+    const wrapper = {
+      [name]() {
+        return f.call(component);
+      },
+    };
+    return wrapper[name];
   }
-  return result;
+  return f.bind(node.component);
 }
 
 export function onWillStart(fn: () => Promise<void> | void | any) {

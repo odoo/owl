@@ -3,7 +3,7 @@ import { BDom, mount } from "../blockdom";
 import type { ComponentNode } from "../component_node";
 import { getCurrentComputation, removeSources, setComputation } from "../reactivity/computations";
 import { STATUS } from "../status";
-import { fibersInError } from "./error_handling";
+import { fibersInError, handleError } from "./error_handling";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -142,7 +142,7 @@ export class Fiber {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();
       } catch (e) {
-        node.app.handleError({ node, error: e });
+        handleError({ node, error: e });
       }
       setComputation(c);
       root.setCounter(root.counter - 1);
@@ -217,7 +217,7 @@ export class RootFiber extends Fiber {
         fiber.node.willUnmount = [];
       }
       this.locked = false;
-      node.app.handleError({ fiber: current || this, error: e });
+      handleError({ fiber: current || this, error: e });
     }
   }
 
@@ -281,7 +281,7 @@ export class MountFiber extends RootFiber {
         }
       }
     } catch (e) {
-      this.node.app.handleError({ fiber: current as Fiber, error: e });
+      handleError({ fiber: current as Fiber, error: e });
     }
   }
 }

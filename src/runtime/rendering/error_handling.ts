@@ -1,5 +1,4 @@
 import { OwlError } from "../../common/owl_error";
-import type { App } from "../app";
 import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
 
@@ -10,54 +9,12 @@ export const nodeErrorHandlers: WeakMap<
   ((error: any, finalize: Function) => void)[]
 > = new WeakMap();
 
-function destroyApp(app: App, error: Error): OwlError {
-  try {
-    app.destroy();
-  } catch (e) {
-    // mute all errors here because we are in a corrupted state anyway
-  }
-  const e = Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
-    cause: error,
-  });
-  return e;
-}
-
-function _handleError(node: ComponentNode | null, error: any): boolean {
-  if (!node) {
-    return false;
-  }
-  const fiber = node.fiber;
-  if (fiber) {
-    fibersInError.set(fiber, error);
-  }
-
-  const errorHandlers = nodeErrorHandlers.get(node);
-  if (errorHandlers) {
-    let handled = false;
-    // execute in the opposite order
-    const finalize = () => destroyApp(node.app, error);
-    for (let i = errorHandlers.length - 1; i >= 0; i--) {
-      try {
-        errorHandlers[i](error, finalize);
-        handled = true;
-        break;
-      } catch (e) {
-        error = e;
-      }
-    }
-
-    if (handled) {
-      return true;
-    }
-  }
-  return _handleError(node.parent, error);
-}
-
 type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
 export function handleError(params: ErrorParams) {
   let { error } = params;
-  const node = "node" in params ? params.node : params.fiber.node;
-  const fiber = "fiber" in params ? params.fiber : node.fiber;
+  let node: ComponentNode | null = "node" in params ? params.node : params.fiber.node;
+  const fiber = "fiber" in params ? params.fiber : node!.fiber;
+  const app = node!.app;
 
   if (fiber) {
     // resets the fibers on components if possible. This is important so that
@@ -72,8 +29,42 @@ export function handleError(params: ErrorParams) {
     fibersInError.set(fiber.root!, error);
   }
 
-  const handled = _handleError(node, error);
-  if (!handled) {
-    throw destroyApp(node.app, error);
+  const finalize = () => {
+    try {
+      app.destroy();
+    } catch (e) {
+      // mute all errors here because we are in a corrupted state anyway
+    }
+    return Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
+      cause: error,
+    });
+  };
+
+  // Walk up the component tree looking for error handlers
+  while (node) {
+    const nodeFiber = node.fiber;
+    if (nodeFiber) {
+      fibersInError.set(nodeFiber, error);
+    }
+
+    const errorHandlers = nodeErrorHandlers.get(node);
+    if (errorHandlers) {
+      // execute in the opposite order
+      for (let i = errorHandlers.length - 1; i >= 0; i--) {
+        try {
+          errorHandlers[i](error, finalize);
+          return; // handled
+        } catch (e) {
+          error = e;
+        }
+      }
+    }
+    node = node.parent;
   }
+
+  // No handler found — create the OwlError, then let the app handle it.
+  // app._handleError is called after error creation, so it doesn't appear
+  // in the error's .stack property.
+  const owlError = finalize();
+  app._handleError(owlError);
 }

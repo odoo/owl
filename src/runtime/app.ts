@@ -5,7 +5,7 @@ import { saveContext } from "./context";
 import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager";
 import { GetProps } from "./props";
 import { proxy, toRaw } from "./reactivity/proxy";
-import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
+import { nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
 import { Resource } from "./resource";
@@ -167,8 +167,8 @@ export class App extends TemplateSet {
     apps.delete(this);
   }
 
-  handleError(...args: Parameters<typeof handleError>) {
-    return handleError(...args);
+  _handleError(error: any) {
+    throw error;
   }
 }
 

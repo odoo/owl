@@ -2000,51 +2000,11 @@ function untrack(fn) {
 // Maps fibers to thrown errors
 const fibersInError = new WeakMap();
 const nodeErrorHandlers = new WeakMap();
-function destroyApp(app, error) {
-    try {
-        app.destroy();
-    }
-    catch (e) {
-        // mute all errors here because we are in a corrupted state anyway
-    }
-    const e = Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
-        cause: error,
-    });
-    return e;
-}
-function _handleError(node, error) {
-    if (!node) {
-        return false;
-    }
-    const fiber = node.fiber;
-    if (fiber) {
-        fibersInError.set(fiber, error);
-    }
-    const errorHandlers = nodeErrorHandlers.get(node);
-    if (errorHandlers) {
-        let handled = false;
-        // execute in the opposite order
-        const finalize = () => destroyApp(node.app, error);
-        for (let i = errorHandlers.length - 1; i >= 0; i--) {
-            try {
-                errorHandlers[i](error, finalize);
-                handled = true;
-                break;
-            }
-            catch (e) {
-                error = e;
-            }
-        }
-        if (handled) {
-            return true;
-        }
-    }
-    return _handleError(node.parent, error);
-}
 function handleError(params) {
     let { error } = params;
-    const node = "node" in params ? params.node : params.fiber.node;
+    let node = "node" in params ? params.node : params.fiber.node;
     const fiber = "fiber" in params ? params.fiber : node.fiber;
+    const app = node.app;
     if (fiber) {
         // resets the fibers on components if possible. This is important so that
         // new renderings can be properly included in the initial one, if any.
@@ -2056,10 +2016,43 @@ function handleError(params) {
         } while (current);
         fibersInError.set(fiber.root, error);
     }
-    const handled = _handleError(node, error);
-    if (!handled) {
-        throw destroyApp(node.app, error);
+    const finalize = () => {
+        try {
+            app.destroy();
+        }
+        catch (e) {
+            // mute all errors here because we are in a corrupted state anyway
+        }
+        return Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
+            cause: error,
+        });
+    };
+    // Walk up the component tree looking for error handlers
+    while (node) {
+        const nodeFiber = node.fiber;
+        if (nodeFiber) {
+            fibersInError.set(nodeFiber, error);
+        }
+        const errorHandlers = nodeErrorHandlers.get(node);
+        if (errorHandlers) {
+            // execute in the opposite order
+            for (let i = errorHandlers.length - 1; i >= 0; i--) {
+                try {
+                    errorHandlers[i](error, finalize);
+                    return; // handled
+                }
+                catch (e) {
+                    error = e;
+                }
+            }
+        }
+        node = node.parent;
     }
+    // No handler found — create the OwlError, then let the app handle it.
+    // app._handleError is called after error creation, so it doesn't appear
+    // in the error's .stack property.
+    const owlError = finalize();
+    app._handleError(owlError);
 }
 
 function makeChildFiber(node, parent) {
@@ -2195,7 +2188,7 @@ class Fiber {
                 this.bdom = node.renderFn();
             }
             catch (e) {
-                node.app.handleError({ node, error: e });
+                handleError({ node, error: e });
             }
             setComputation(c);
             root.setCounter(root.counter - 1);
@@ -2265,7 +2258,7 @@ class RootFiber extends Fiber {
                 fiber.node.willUnmount = [];
             }
             this.locked = false;
-            node.app.handleError({ fiber: current || this, error: e });
+            handleError({ fiber: current || this, error: e });
         }
     }
     setCounter(newValue) {
@@ -2321,7 +2314,7 @@ class MountFiber extends RootFiber {
             }
         }
         catch (e) {
-            this.node.app.handleError({ fiber: current, error: e });
+            handleError({ fiber: current, error: e });
         }
     }
 }
@@ -2399,7 +2392,7 @@ class ComponentNode {
             await Promise.all(promises);
         }
         catch (e) {
-            this.app.handleError({ node: this, error: e });
+            handleError({ node: this, error: e });
             return;
         }
         if (this.status === 0 /* STATUS.NEW */ && this.fiber === fiber) {
@@ -2489,7 +2482,7 @@ class ComponentNode {
                 }
             }
             catch (e) {
-                this.app.handleError({ error: e, node: this });
+                handleError({ error: e, node: this });
             }
         }
         for (const computation of this.computations) {
@@ -5870,8 +5863,33 @@ class Scheduler {
             node._destroy();
         }
         this.cancelledNodes.clear();
-        for (let task of this.tasks) {
-            this.processFiber(task);
+        for (let fiber of this.tasks) {
+            if (fiber.root !== fiber) {
+                this.tasks.delete(fiber);
+                continue;
+            }
+            const hasError = fibersInError.has(fiber);
+            if (hasError && fiber.counter !== 0) {
+                this.tasks.delete(fiber);
+                continue;
+            }
+            if (fiber.node.status === 3 /* STATUS.DESTROYED */) {
+                this.tasks.delete(fiber);
+                continue;
+            }
+            if (fiber.counter === 0) {
+                if (!hasError) {
+                    fiber.complete();
+                }
+                // at this point, the fiber should have been applied to the DOM, so we can
+                // remove it from the task list. If it is not the case, it means that there
+                // was an error and an error handler triggered a new rendering that recycled
+                // the fiber, so in that case, we actually want to keep the fiber around,
+                // otherwise it will just be ignored.
+                if (fiber.appliedToDom) {
+                    this.tasks.delete(fiber);
+                }
+            }
         }
         for (let task of this.tasks) {
             if (task.node.status === 3 /* STATUS.DESTROYED */) {
@@ -5879,34 +5897,6 @@ class Scheduler {
             }
         }
         this.processing = false;
-    }
-    processFiber(fiber) {
-        if (fiber.root !== fiber) {
-            this.tasks.delete(fiber);
-            return;
-        }
-        const hasError = fibersInError.has(fiber);
-        if (hasError && fiber.counter !== 0) {
-            this.tasks.delete(fiber);
-            return;
-        }
-        if (fiber.node.status === 3 /* STATUS.DESTROYED */) {
-            this.tasks.delete(fiber);
-            return;
-        }
-        if (fiber.counter === 0) {
-            if (!hasError) {
-                fiber.complete();
-            }
-            // at this point, the fiber should have been applied to the DOM, so we can
-            // remove it from the task list. If it is not the case, it means that there
-            // was an error and an error handler triggered a new rendering that recycled
-            // the fiber, so in that case, we actually want to keep the fiber around,
-            // otherwise it will just be ignored.
-            if (fiber.appliedToDom) {
-                this.tasks.delete(fiber);
-            }
-        }
     }
 }
 
@@ -6007,8 +5997,8 @@ class App extends TemplateSet {
         this.scheduler.processTasks();
         apps.delete(this);
     }
-    handleError(...args) {
-        return handleError(...args);
+    _handleError(error) {
+        throw error;
     }
 }
 async function mount(C, target, config = {}) {
@@ -6066,14 +6056,20 @@ const mainEventHandler = (data, ev, currentTarget) => {
 //  hooks
 // -----------------------------------------------------------------------------
 function decorate(node, f, hookName) {
-    const result = f.bind(node.component);
     if (node.app.dev) {
-        const suffix = f.name ? ` <${f.name}>` : "";
-        Reflect.defineProperty(result, "name", {
-            value: hookName + suffix,
-        });
+        const component = node.component;
+        const componentName = component ? component.constructor.name : "Component";
+        const name = `${componentName}.${hookName}`;
+        // Create a named wrapper so the name appears in stack traces.
+        // V8 uses computed property keys as inferred function names.
+        const wrapper = {
+            [name]() {
+                return f.call(component);
+            },
+        };
+        return wrapper[name];
     }
-    return result;
+    return f.bind(node.component);
 }
 function onWillStart(fn) {
     const { node } = getContext("component");
@@ -6331,22 +6327,30 @@ class Registry {
     }
 }
 
-const anyType = function validateAny() { };
-const booleanType = function validateBoolean(context) {
-    if (typeof context.value !== "boolean") {
-        context.addIssue({ message: "value is not a boolean" });
-    }
-};
-const numberType = function validateNumber(context) {
-    if (typeof context.value !== "number") {
-        context.addIssue({ message: "value is not a number" });
-    }
-};
-const stringType = function validateString(context) {
-    if (typeof context.value !== "string") {
-        context.addIssue({ message: "value is not a string" });
-    }
-};
+function anyType() {
+    return function validateAny() { };
+}
+function booleanType() {
+    return function validateBoolean(context) {
+        if (typeof context.value !== "boolean") {
+            context.addIssue({ message: "value is not a boolean" });
+        }
+    };
+}
+function numberType() {
+    return function validateNumber(context) {
+        if (typeof context.value !== "number") {
+            context.addIssue({ message: "value is not a number" });
+        }
+    };
+}
+function stringType() {
+    return function validateString(context) {
+        if (typeof context.value !== "string") {
+            context.addIssue({ message: "value is not a string" });
+        }
+    };
+}
 function arrayType(elementType) {
     return function validateArray(context) {
         if (!Array.isArray(context.value)) {
@@ -6537,6 +6541,9 @@ function reactiveValueType(type) {
         }
     };
 }
+function componentType() {
+    return constructorType(Component);
+}
 function ref(type) {
     return union([literalType(null), instanceType(type)]);
 }
@@ -6545,6 +6552,7 @@ const types = {
     any: anyType,
     array: arrayType,
     boolean: booleanType,
+    component: componentType,
     constructor: constructorType,
     customValidator: customValidator,
     function: functionType,
@@ -6771,6 +6779,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(name, templat
 export { App, Component, EventBus, OwlError, Plugin, Registry, Resource, __info__, assertType, batched, blockDom, computed, config, effect, htmlEscape, markRaw, markup, mount, onError, onMounted, onPatched, onWillDestroy, onWillPatch, onWillStart, onWillUnmount, onWillUpdateProps, plugin, props, providePlugins, proxy, signal, status, toRaw, types, untrack, useApp, useContext, useEffect, useListener, useResource, validateType, whenReady, xml };
 
 
-__info__.date = '2026-04-08T13:31:02.500Z';
-__info__.hash = '2e9164e';
+__info__.date = '2026-04-09T13:05:14.047Z';
+__info__.hash = 'abbb2fb';
 __info__.url = 'https://github.com/odoo/owl';

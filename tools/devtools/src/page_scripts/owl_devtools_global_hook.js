@@ -1262,63 +1262,66 @@
             component.props.children.push(property);
           }
         });
+      let obj;
       // Load env of the component
-      const env = (isApp ? node.env : node.component.env) || {};
-      component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
-      const envPath = isApp
-        ? [...path, { type: "item", value: "env" }]
-        : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
-      Reflect.ownKeys(env)
-        .sort(compareKeys)
-        .forEach((key) => {
-          let oldBranch = oldTree?.env.children[component.env.children.length];
-          const envElement = this.serializeObjectChild(
-            env,
-            { type: "item", value: key, childIndex: component.env.children.length },
-            0,
-            "env",
-            envPath,
-            oldBranch,
-            oldTree
-          );
-          if (envElement) {
-            component.env.children.push(envElement);
+      const env = isApp ? node.env : node.component.env;
+      if (env) {
+        component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
+        const envPath = isApp
+          ? [...path, { type: "item", value: "env" }]
+          : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
+        Reflect.ownKeys(env)
+          .sort(compareKeys)
+          .forEach((key) => {
+            let oldBranch = oldTree?.env.children[component.env.children.length];
+            const envElement = this.serializeObjectChild(
+              env,
+              { type: "item", value: key, childIndex: component.env.children.length },
+              0,
+              "env",
+              envPath,
+              oldBranch,
+              oldTree
+            );
+            if (envElement) {
+              component.env.children.push(envElement);
+            }
+          });
+        // Load env getters
+        let obj = Object.getPrototypeOf(env);
+        Reflect.ownKeys(obj).forEach((key) => {
+          if (
+            key !== "__proto__" &&
+            Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
+          ) {
+            let child = {
+              name: key,
+              depth: 0,
+              toggled: false,
+              objectType: "env",
+              path: [
+                ...envPath,
+                { type: "prototype getter", value: key, childIndex: component.env.children.length },
+              ],
+              contentType: "getter",
+              content: "(...)",
+              hasChildren: false,
+              children: [],
+            };
+            component.env.children.push(child);
           }
         });
-      // Load env getters
-      let obj = Object.getPrototypeOf(env);
-      Reflect.ownKeys(obj).forEach((key) => {
-        if (
-          key !== "__proto__" &&
-          Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-        ) {
-          let child = {
-            name: key,
-            depth: 0,
-            toggled: false,
-            objectType: "env",
-            path: [
-              ...envPath,
-              { type: "prototype getter", value: key, childIndex: component.env.children.length },
-            ],
-            contentType: "getter",
-            content: "(...)",
-            hasChildren: false,
-            children: [],
-          };
-          component.env.children.push(child);
-        }
-      });
-      const envPrototype = this.serializeObjectChild(
-        env,
-        { type: "prototype", childIndex: component.env.children.length },
-        0,
-        "env",
-        envPath,
-        oldTree?.env[component.env.children.length],
-        oldTree
-      );
-      component.env.children.push(envPrototype);
+        const envPrototype = this.serializeObjectChild(
+          env,
+          { type: "prototype", childIndex: component.env.children.length },
+          0,
+          "env",
+          envPath,
+          oldTree?.env[component.env.children.length],
+          oldTree
+        );
+        component.env.children.push(envPrototype);
+      }
       // Load instance of the component
       const instance = isApp ? node : node.component;
       component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: [] };

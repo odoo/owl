@@ -96,7 +96,9 @@ export class StorePlugin extends Plugin {
     if (!fromOld && this.expandByDefault()) {
       this.apps().forEach((tree) => expandNodes(tree, this.componentsToggleBlacklist()));
     }
-    keepEnvLit(details);
+    if(details.env) {
+      keepEnvLit(details);
+    }
     this.activeComponent.set(proxy(details));
     if (this.searchText().length) {
       this.updateSearch(this.searchText());
@@ -138,7 +140,9 @@ export class StorePlugin extends Plugin {
     if (!details) {
       await this.loadComponentsTree(false);
     } else {
-      keepEnvLit(details);
+      if(details.env) {
+        keepEnvLit(details);
+      }
       this.activeComponent.set(proxy(details));
     }
     if (this.page() !== "ComponentsTab") {

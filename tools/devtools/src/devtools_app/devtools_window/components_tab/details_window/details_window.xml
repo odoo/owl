@@ -37,7 +37,7 @@
           <ObjectTreeElement object="observed" index="observed_index"/>
         </t>
       </div>
-      <div t-if="this.store.activeComponent().env.children.length > 0" id="env" class="details-panel ps-2 py-1">
+      <div t-if="this.store.activeComponent().env?.children.length > 0" id="env" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'env')">
             <i class="fa mx-1 pointer-icon"

@@ -1,3 +1,4 @@
+import { compile } from "../../src/compiler";
 import { renderToString, snapshotEverything, TestContext } from "../helpers";
 
 snapshotEverything();
@@ -168,5 +169,20 @@ describe("simple templates, mostly static", () => {
   test("text node with interpolation sigil at top level", () => {
     const template = "${very cool}";
     expect(renderToString(template)).toBe("${very cool}");
+  });
+
+  test("compiled template function is named after template name", () => {
+    const fn = compile("<div>hello</div>", { name: "MyComponent", hasGlobalValues: false });
+    expect(fn.toString()).toContain("function template_MyComponent(");
+  });
+
+  test("compiled template function name uses dots replaced by underscores", () => {
+    const fn = compile("<div>hello</div>", { name: "app.MyComponent", hasGlobalValues: false });
+    expect(fn.toString()).toContain("function template_app_MyComponent(");
+  });
+
+  test("compiled template function has default name for anonymous templates", () => {
+    const fn = compile("<div>hello</div>", { name: "__template__1", hasGlobalValues: false });
+    expect(fn.toString()).toContain("function template(");
   });
 });

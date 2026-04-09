@@ -3,22 +3,22 @@ import { assertType, Component, computed, signal, types as t, validateType } fro
 class A {}
 
 test("simple assertion", () => {
-  expect(() => assertType("hey", t.string)).not.toThrow();
+  expect(() => assertType("hey", t.string())).not.toThrow();
   expect(() => assertType({}, t.object())).not.toThrow();
   expect(() => assertType([], t.array())).not.toThrow();
-  expect(() => assertType(1, t.boolean)).toThrow("Value does not match the type");
+  expect(() => assertType(1, t.boolean())).toThrow("Value does not match the type");
 });
 
 test("validateType", () => {
-  expect(validateType("abc", t.string)).toMatchObject([]);
-  expect(validateType("abc", t.number)).toMatchObject([{ message: "value is not a number" }]);
-  expect(validateType(undefined, t.number)).toMatchObject([{ message: "value is not a number" }]);
-  expect(validateType(1, t.number)).toEqual([]);
+  expect(validateType("abc", t.string())).toMatchObject([]);
+  expect(validateType("abc", t.number())).toMatchObject([{ message: "value is not a number" }]);
+  expect(validateType(undefined, t.number())).toMatchObject([{ message: "value is not a number" }]);
+  expect(validateType(1, t.number())).toEqual([]);
 });
 
 test("and", () => {
-  const a = t.object({ a: t.string });
-  const b = t.object({ b: t.number });
+  const a = t.object({ a: t.string() });
+  const b = t.object({ b: t.number() });
   expect(validateType({}, t.and([a, b]))).toMatchObject([
     { message: "object value has missing keys", missingKeys: ["a"] },
     { message: "object value has missing keys", missingKeys: ["b"] },
@@ -40,20 +40,20 @@ test("and", () => {
 });
 
 test("any", () => {
-  expect(validateType("", t.any)).toEqual([]);
-  expect(validateType("abc", t.any)).toEqual([]);
-  expect(validateType(true, t.any)).toEqual([]);
-  expect(validateType(false, t.any)).toEqual([]);
-  expect(validateType(123, t.any)).toEqual([]);
-  expect(validateType(987, t.any)).toEqual([]);
-  expect(validateType(undefined, t.any)).toEqual([]);
-  expect(validateType(null, t.any)).toEqual([]);
-  expect(validateType({}, t.any)).toEqual([]);
-  expect(validateType({ a: 1, b: "", c: { a: true } }, t.any)).toEqual([]);
-  expect(validateType([{ a: 1 }, { b: 2 }], t.any)).toEqual([]);
-  expect(validateType(() => {}, t.any)).toEqual([]);
-  expect(validateType(A, t.any)).toEqual([]);
-  expect(validateType(new A(), t.any)).toEqual([]);
+  expect(validateType("", t.any())).toEqual([]);
+  expect(validateType("abc", t.any())).toEqual([]);
+  expect(validateType(true, t.any())).toEqual([]);
+  expect(validateType(false, t.any())).toEqual([]);
+  expect(validateType(123, t.any())).toEqual([]);
+  expect(validateType(987, t.any())).toEqual([]);
+  expect(validateType(undefined, t.any())).toEqual([]);
+  expect(validateType(null, t.any())).toEqual([]);
+  expect(validateType({}, t.any())).toEqual([]);
+  expect(validateType({ a: 1, b: "", c: { a: true } }, t.any())).toEqual([]);
+  expect(validateType([{ a: 1 }, { b: 2 }], t.any())).toEqual([]);
+  expect(validateType(() => {}, t.any())).toEqual([]);
+  expect(validateType(A, t.any())).toEqual([]);
+  expect(validateType(new A(), t.any())).toEqual([]);
 });
 
 test("array", () => {
@@ -69,30 +69,30 @@ test("array", () => {
   expect(validateType(["abc"], t.array())).toEqual([]);
   expect(validateType(["abc", 123], t.array())).toEqual([]);
   expect(validateType(["abc", 123, false], t.array())).toEqual([]);
-  expect(validateType(["abc"], t.array(t.string))).toEqual([]);
-  expect(validateType([123, "abc"], t.array(t.string))).toMatchObject([
+  expect(validateType(["abc"], t.array(t.string()))).toEqual([]);
+  expect(validateType([123, "abc"], t.array(t.string()))).toMatchObject([
     { message: "value is not a string", path: [0] },
   ]);
-  expect(validateType(["abc", "def"], t.array(t.string))).toEqual([]);
-  expect(validateType(["abc", 321], t.array(t.string))).toMatchObject([
+  expect(validateType(["abc", "def"], t.array(t.string()))).toEqual([]);
+  expect(validateType(["abc", 321], t.array(t.string()))).toMatchObject([
     { message: "value is not a string", path: [1] },
   ]);
 });
 
 test("boolean", () => {
   const issue = { message: "value is not a boolean" };
-  expect(validateType(true, t.boolean)).toEqual([]);
-  expect(validateType(false, t.boolean)).toEqual([]);
-  expect(validateType("", t.boolean)).toMatchObject([issue]);
-  expect(validateType("abc", t.boolean)).toMatchObject([issue]);
-  expect(validateType(123, t.boolean)).toMatchObject([issue]);
-  expect(validateType(987, t.boolean)).toMatchObject([issue]);
-  expect(validateType(undefined, t.boolean)).toMatchObject([issue]);
-  expect(validateType(null, t.boolean)).toMatchObject([issue]);
-  expect(validateType({}, t.boolean)).toMatchObject([issue]);
-  expect(validateType([], t.boolean)).toMatchObject([issue]);
-  expect(validateType(A, t.boolean)).toMatchObject([issue]);
-  expect(validateType(new A(), t.boolean)).toMatchObject([issue]);
+  expect(validateType(true, t.boolean())).toEqual([]);
+  expect(validateType(false, t.boolean())).toEqual([]);
+  expect(validateType("", t.boolean())).toMatchObject([issue]);
+  expect(validateType("abc", t.boolean())).toMatchObject([issue]);
+  expect(validateType(123, t.boolean())).toMatchObject([issue]);
+  expect(validateType(987, t.boolean())).toMatchObject([issue]);
+  expect(validateType(undefined, t.boolean())).toMatchObject([issue]);
+  expect(validateType(null, t.boolean())).toMatchObject([issue]);
+  expect(validateType({}, t.boolean())).toMatchObject([issue]);
+  expect(validateType([], t.boolean())).toMatchObject([issue]);
+  expect(validateType(A, t.boolean())).toMatchObject([issue]);
+  expect(validateType(new A(), t.boolean())).toMatchObject([issue]);
 });
 
 test("constructor", () => {
@@ -130,16 +130,16 @@ test("constructor", () => {
 test("component", () => {
   class MyComponent extends Component {}
   const issue = { message: "value is not 'Component' or an extension" };
-  expect(validateType(Component, t.component)).toEqual([]);
-  expect(validateType(MyComponent, t.component)).toEqual([]);
-  expect(validateType(true, t.component)).toMatchObject([issue]);
-  expect(validateType("abc", t.component)).toMatchObject([issue]);
-  expect(validateType(A, t.component)).toMatchObject([issue]);
-  expect(validateType(new MyComponent(null as any), t.component)).toMatchObject([issue]);
+  expect(validateType(Component, t.component())).toEqual([]);
+  expect(validateType(MyComponent, t.component())).toEqual([]);
+  expect(validateType(true, t.component())).toMatchObject([issue]);
+  expect(validateType("abc", t.component())).toMatchObject([issue]);
+  expect(validateType(A, t.component())).toMatchObject([issue]);
+  expect(validateType(new MyComponent(null as any), t.component())).toMatchObject([issue]);
 });
 
 test("customValidator", () => {
-  const validator = t.customValidator(t.string, (size) => ["sm", "md", "lg"].includes(size));
+  const validator = t.customValidator(t.string(), (size) => ["sm", "md", "lg"].includes(size));
   expect(validateType(123, validator)).toMatchObject([{ message: "value is not a string" }]);
   expect(validateType("sm", validator)).toEqual([]);
   expect(validateType("md", validator)).toEqual([]);
@@ -150,7 +150,7 @@ test("customValidator", () => {
   expect(
     validateType(
       "small",
-      t.customValidator(t.string, (size) => ["sm", "md", "lg"].includes(size), "Invalid")
+      t.customValidator(t.string(), (size) => ["sm", "md", "lg"].includes(size), "Invalid")
     )
   ).toMatchObject([{ message: "Invalid" }]);
 });
@@ -170,8 +170,8 @@ describe("function", () => {
   });
 
   test("parameters and return types are not checked", () => {
-    expect(validateType(() => {}, t.function([t.string], t.boolean))).toEqual([]);
-    expect(validateType(function () {}, t.function([t.string], t.boolean))).toEqual([]);
+    expect(validateType(() => {}, t.function([t.string()], t.boolean()))).toEqual([]);
+    expect(validateType(function () {}, t.function([t.string()], t.boolean()))).toEqual([]);
   });
 });
 
@@ -230,18 +230,18 @@ test("literal", () => {
 
 test("number", () => {
   const issue = { message: "value is not a number" };
-  expect(validateType(123, t.number)).toEqual([]);
-  expect(validateType(987, t.number)).toEqual([]);
-  expect(validateType(true, t.number)).toMatchObject([issue]);
-  expect(validateType(false, t.number)).toMatchObject([issue]);
-  expect(validateType("", t.number)).toMatchObject([issue]);
-  expect(validateType("abc", t.number)).toMatchObject([issue]);
-  expect(validateType(undefined, t.number)).toMatchObject([issue]);
-  expect(validateType(null, t.number)).toMatchObject([issue]);
-  expect(validateType({}, t.number)).toMatchObject([issue]);
-  expect(validateType([], t.number)).toMatchObject([issue]);
-  expect(validateType(A, t.number)).toMatchObject([issue]);
-  expect(validateType(new A(), t.number)).toMatchObject([issue]);
+  expect(validateType(123, t.number())).toEqual([]);
+  expect(validateType(987, t.number())).toEqual([]);
+  expect(validateType(true, t.number())).toMatchObject([issue]);
+  expect(validateType(false, t.number())).toMatchObject([issue]);
+  expect(validateType("", t.number())).toMatchObject([issue]);
+  expect(validateType("abc", t.number())).toMatchObject([issue]);
+  expect(validateType(undefined, t.number())).toMatchObject([issue]);
+  expect(validateType(null, t.number())).toMatchObject([issue]);
+  expect(validateType({}, t.number())).toMatchObject([issue]);
+  expect(validateType([], t.number())).toMatchObject([issue]);
+  expect(validateType(A, t.number())).toMatchObject([issue]);
+  expect(validateType(new A(), t.number())).toMatchObject([issue]);
 });
 
 describe("object", () => {
@@ -269,38 +269,38 @@ describe("object", () => {
     ]);
     expect(validateType({}, t.object({}))).toEqual([]);
     expect(validateType({ a: 1 }, t.object({}))).toEqual([]);
-    expect(validateType({ a: 1 }, t.object({ a: t.number }))).toEqual([]);
-    expect(validateType({ a: 1 }, t.object({ a: t.string }))).toMatchObject([
+    expect(validateType({ a: 1 }, t.object({ a: t.number() }))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({ a: t.string() }))).toMatchObject([
       { message: "value is not a string", path: ["a"] },
     ]);
-    expect(validateType({ b: 1 }, t.object({ a: t.string }))).toMatchObject([
+    expect(validateType({ b: 1 }, t.object({ a: t.string() }))).toMatchObject([
       { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
-    expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string }))).toEqual([]);
+    expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string() }))).toEqual([]);
   });
 
   test("shaped object with optional key", () => {
-    expect(validateType({}, t.object({ a: t.number }))).toMatchObject([
+    expect(validateType({}, t.object({ a: t.number() }))).toMatchObject([
       { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
-    expect(validateType({}, t.object({ "a?": t.number }))).toEqual([]);
-    expect(validateType({}, t.object({ a: t.number, "b?": t.number }))).toMatchObject([
+    expect(validateType({}, t.object({ "a?": t.number() }))).toEqual([]);
+    expect(validateType({}, t.object({ a: t.number(), "b?": t.number() }))).toMatchObject([
       { message: "object value has missing keys", path: [], missingKeys: ["a"] },
     ]);
-    expect(validateType({ a: 1 }, t.object({ a: t.number, "b?": t.number }))).toEqual([]);
-    expect(validateType({ a: 1, b: 1 }, t.object({ a: t.number, "b?": t.number }))).toMatchObject(
-      []
-    );
+    expect(validateType({ a: 1 }, t.object({ a: t.number(), "b?": t.number() }))).toEqual([]);
     expect(
-      validateType({ a: 1, b: "abc" }, t.object({ a: t.number, "b?": t.number }))
+      validateType({ a: 1, b: 1 }, t.object({ a: t.number(), "b?": t.number() }))
+    ).toMatchObject([]);
+    expect(
+      validateType({ a: 1, b: "abc" }, t.object({ a: t.number(), "b?": t.number() }))
     ).toMatchObject([{ message: "value is not a number", path: ["b"] }]);
   });
 
   test("shaped object with nested object", () => {
     const type = t.object({
-      a: t.number,
+      a: t.number(),
       b: t.object({
-        c: t.string,
+        c: t.string(),
       }),
     });
 
@@ -378,57 +378,57 @@ describe("promise", () => {
   });
 
   test("return type is not checked", () => {
-    expect(validateType(Promise.resolve(""), t.promise(t.string))).toEqual([]);
-    expect(validateType(Promise.resolve(123), t.promise(t.string))).toEqual([]);
-    expect(validateType(Promise.resolve(true), t.promise(t.string))).toEqual([]);
+    expect(validateType(Promise.resolve(""), t.promise(t.string()))).toEqual([]);
+    expect(validateType(Promise.resolve(123), t.promise(t.string()))).toEqual([]);
+    expect(validateType(Promise.resolve(true), t.promise(t.string()))).toEqual([]);
   });
 });
 
 test("signal", () => {
   const issue = { message: "value is not a reactive value" };
-  expect(validateType(123, t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType("abc", t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType(true, t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType(() => {}, t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType(function () {}, t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType(A, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(123, t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType("abc", t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType(true, t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType(() => {}, t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType(function () {}, t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType(A, t.signal(t.string()))).toMatchObject([issue]);
   class B {
     set() {}
   }
-  expect(validateType(B, t.signal(t.string))).toMatchObject([issue]);
-  expect(validateType(signal(1), t.signal(t.number))).toEqual([]);
+  expect(validateType(B, t.signal(t.string()))).toMatchObject([issue]);
+  expect(validateType(signal(1), t.signal(t.number()))).toEqual([]);
   expect(
     validateType(
       computed(() => 1),
-      t.signal(t.number)
+      t.signal(t.number())
     )
   ).toEqual([]);
 });
 
 test("record", () => {
-  expect(validateType("abc", t.record(t.string))).toMatchObject([
+  expect(validateType("abc", t.record(t.string()))).toMatchObject([
     { message: "value is not an object", path: [] },
   ]);
-  expect(validateType(123, t.record(t.string))).toMatchObject([
+  expect(validateType(123, t.record(t.string()))).toMatchObject([
     { message: "value is not an object", path: [] },
   ]);
-  expect(validateType(true, t.record(t.string))).toMatchObject([
+  expect(validateType(true, t.record(t.string()))).toMatchObject([
     { message: "value is not an object", path: [] },
   ]);
-  expect(validateType({}, t.record(t.string))).toEqual([]);
-  expect(validateType({ a: "abc" }, t.record(t.string))).toEqual([]);
-  expect(validateType({ a: "abc", b: "def" }, t.record(t.string))).toEqual([]);
-  expect(validateType({ a: 123 }, t.record(t.string))).toMatchObject([
+  expect(validateType({}, t.record(t.string()))).toEqual([]);
+  expect(validateType({ a: "abc" }, t.record(t.string()))).toEqual([]);
+  expect(validateType({ a: "abc", b: "def" }, t.record(t.string()))).toEqual([]);
+  expect(validateType({ a: 123 }, t.record(t.string()))).toMatchObject([
     { message: "value is not a string", path: ["a"] },
   ]);
-  expect(validateType({ a: 123, b: "def" }, t.record(t.string))).toMatchObject([
+  expect(validateType({ a: 123, b: "def" }, t.record(t.string()))).toMatchObject([
     { message: "value is not a string", path: ["a"] },
   ]);
-  expect(validateType({ a: 123, b: 123 }, t.record(t.string))).toMatchObject([
+  expect(validateType({ a: 123, b: 123 }, t.record(t.string()))).toMatchObject([
     { message: "value is not a string", path: ["a"] },
     { message: "value is not a string", path: ["b"] },
   ]);
-  expect(validateType({ a: 123, b: 123 }, t.record(t.number))).toEqual([]);
+  expect(validateType({ a: 123, b: 123 }, t.record(t.number()))).toEqual([]);
 });
 
 test("strictObject", () => {
@@ -442,120 +442,122 @@ test("strictObject", () => {
   expect(validateType({ a: 1 }, t.strictObject({}))).toMatchObject([
     { message: "object value has unknown keys", unknownKeys: ["a"] },
   ]);
-  expect(validateType({}, t.strictObject({ a: t.number }))).toMatchObject([
+  expect(validateType({}, t.strictObject({ a: t.number() }))).toMatchObject([
     { message: "object value has missing keys", missingKeys: ["a"] },
   ]);
-  expect(validateType({ a: 1 }, t.strictObject({ a: t.number }))).toEqual([]);
+  expect(validateType({ a: 1 }, t.strictObject({ a: t.number() }))).toEqual([]);
 });
 
 test("string", () => {
   const issue = { message: "value is not a string" };
-  expect(validateType("", t.string)).toEqual([]);
-  expect(validateType("abc", t.string)).toEqual([]);
-  expect(validateType(123, t.string)).toMatchObject([issue]);
-  expect(validateType(987, t.string)).toMatchObject([issue]);
-  expect(validateType(true, t.string)).toMatchObject([issue]);
-  expect(validateType(false, t.string)).toMatchObject([issue]);
-  expect(validateType(undefined, t.string)).toMatchObject([issue]);
-  expect(validateType(null, t.string)).toMatchObject([issue]);
-  expect(validateType({}, t.string)).toMatchObject([issue]);
-  expect(validateType([], t.string)).toMatchObject([issue]);
-  expect(validateType(A, t.string)).toMatchObject([issue]);
-  expect(validateType(new A(), t.string)).toMatchObject([issue]);
+  expect(validateType("", t.string())).toEqual([]);
+  expect(validateType("abc", t.string())).toEqual([]);
+  expect(validateType(123, t.string())).toMatchObject([issue]);
+  expect(validateType(987, t.string())).toMatchObject([issue]);
+  expect(validateType(true, t.string())).toMatchObject([issue]);
+  expect(validateType(false, t.string())).toMatchObject([issue]);
+  expect(validateType(undefined, t.string())).toMatchObject([issue]);
+  expect(validateType(null, t.string())).toMatchObject([issue]);
+  expect(validateType({}, t.string())).toMatchObject([issue]);
+  expect(validateType([], t.string())).toMatchObject([issue]);
+  expect(validateType(A, t.string())).toMatchObject([issue]);
+  expect(validateType(new A(), t.string())).toMatchObject([issue]);
 });
 
 test("tuple", () => {
-  expect(validateType(["abc"], t.tuple([t.string]))).toEqual([]);
-  expect(validateType([], t.tuple([t.string]))).toMatchObject([
+  expect(validateType(["abc"], t.tuple([t.string()]))).toEqual([]);
+  expect(validateType([], t.tuple([t.string()]))).toMatchObject([
     { message: "tuple value does not have the correct length" },
   ]);
-  expect(validateType([123], t.tuple([t.string]))).toMatchObject([
+  expect(validateType([123], t.tuple([t.string()]))).toMatchObject([
     { message: "value is not a string", path: [0] },
   ]);
-  expect(validateType(["abc", 123], t.tuple([t.string]))).toMatchObject([
+  expect(validateType(["abc", 123], t.tuple([t.string()]))).toMatchObject([
     { message: "tuple value does not have the correct length" },
   ]);
-  expect(validateType("", t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType("", t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType("abc", t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType("abc", t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType(123, t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(123, t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType(987, t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(987, t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType(true, t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(true, t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType({}, t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType({}, t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not an array" },
   ]);
-  expect(validateType(["abc", 123], t.tuple([t.string, t.number]))).toEqual([]);
-  expect(validateType([123, "abc"], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(["abc", 123], t.tuple([t.string(), t.number()]))).toEqual([]);
+  expect(validateType([123, "abc"], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not a string", path: [0] },
     { message: "value is not a number", path: [1] },
   ]);
-  expect(validateType(["abc"], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(["abc"], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "tuple value does not have the correct length" },
   ]);
-  expect(validateType([123], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType([123], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "tuple value does not have the correct length" },
   ]);
-  expect(validateType(["abc", true], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(["abc", true], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not a number", path: [1] },
   ]);
-  expect(validateType([true, 123], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType([true, 123], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "value is not a string", path: [0] },
   ]);
-  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number]))).toMatchObject([
+  expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number()]))).toMatchObject([
     { message: "tuple value does not have the correct length" },
   ]);
-  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number, t.boolean]))).toEqual([]);
-  expect(validateType(["abc", 123, 123], t.tuple([t.string, t.number, t.boolean]))).toMatchObject([
-    { message: "value is not a boolean", path: [2] },
-  ]);
+  expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number(), t.boolean()]))).toEqual(
+    []
+  );
+  expect(
+    validateType(["abc", 123, 123], t.tuple([t.string(), t.number(), t.boolean()]))
+  ).toMatchObject([{ message: "value is not a boolean", path: [2] }]);
 });
 
 test("or", () => {
-  expect(validateType("", t.or([t.string, t.number]))).toEqual([]);
-  expect(validateType("abc", t.or([t.string, t.number]))).toEqual([]);
-  expect(validateType(123, t.or([t.string, t.number]))).toEqual([]);
-  expect(validateType(987, t.or([t.string, t.number]))).toEqual([]);
-  expect(validateType(true, t.or([t.string, t.number]))).toMatchObject([
+  expect(validateType("", t.or([t.string(), t.number()]))).toEqual([]);
+  expect(validateType("abc", t.or([t.string(), t.number()]))).toEqual([]);
+  expect(validateType(123, t.or([t.string(), t.number()]))).toEqual([]);
+  expect(validateType(987, t.or([t.string(), t.number()]))).toEqual([]);
+  expect(validateType(true, t.or([t.string(), t.number()]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType({}, t.or([t.string, t.number]))).toMatchObject([
+  expect(validateType({}, t.or([t.string(), t.number()]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType([], t.or([t.string, t.number]))).toMatchObject([
+  expect(validateType([], t.or([t.string(), t.number()]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType([], t.or([t.string, t.array(t.number)]))).toEqual([]);
-  expect(validateType([""], t.or([t.string, t.array(t.number)]))).toMatchObject([
+  expect(validateType([], t.or([t.string(), t.array(t.number())]))).toEqual([]);
+  expect(validateType([""], t.or([t.string(), t.array(t.number())]))).toMatchObject([
     { message: "value is not a number", path: [0] },
   ]);
 });
 
 test("complex type", () => {
   const complexType = t.object({
-    "a?": t.number,
+    "a?": t.number(),
     b: t.array(
       t.object({
         a: t.instanceOf(A),
-        "b?": t.or([t.number, t.literal(false)]),
-        c: t.tuple([t.string, t.string]),
+        "b?": t.or([t.number(), t.literal(false)]),
+        c: t.tuple([t.string(), t.string()]),
       })
     ),
   });

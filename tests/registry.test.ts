@@ -100,7 +100,7 @@ describe("registry", () => {
     const registry = new Registry({
       name: "test",
       validation: t.object({
-        blip: t.string,
+        blip: t.string(),
       }),
     });
 

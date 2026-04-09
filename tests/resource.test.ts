@@ -67,7 +67,7 @@ test("validation schema", async () => {
   const resource = new Resource({
     name: "test",
     validation: t.object({
-      blip: t.string,
+      blip: t.string(),
     }),
   });
 

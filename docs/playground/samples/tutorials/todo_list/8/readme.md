@@ -80,5 +80,5 @@ does not need to know how the plugin works internally.
 ## Bonus Exercises
 
 - Validate the `text` argument in `addTodo` using the `assertType` function
-  from Owl: `assertType(text, t.string)`. This ensures the plugin's API is
+  from Owl: `assertType(text, t.string())`. This ensures the plugin's API is
   called correctly and helps catch bugs early.

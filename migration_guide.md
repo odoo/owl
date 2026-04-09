@@ -250,10 +250,10 @@ class SomeComponent extends Component {
   static template = "...";
 
   props = props({
-      name: t.string,
-      "visible?": t.boolean,
-      "immediate?": t.boolean,
-      "leaveDuration?": t.number,
+      name: t.string(),
+      "visible?": t.boolean(),
+      "immediate?": t.boolean(),
+      "leaveDuration?": t.number(),
       "onLeave?": t.function(),
       // no need to grab the slot prop here
   }, {
@@ -371,7 +371,7 @@ class C extends Component {
 class C extends Component {
   static template = "...";
   
-  props = props({ counter: t.signal(t.number) });
+  props = props({ counter: t.signal(t.number()) });
   isLarge = computed(() => this.props.counter() > 10);
 }
 ```
@@ -402,7 +402,7 @@ class C extends Component {
 class C extends Component {
   static template = "...";
   
-  props = props({ resId: t.signal(t.number) });
+  props = props({ resId: t.signal(t.number()) });
   someText = signal("");
 
   setup() {
@@ -423,7 +423,7 @@ no really good way to solve the issue other than with a `useEffect`.
 class C extends Component {
   static template = "...";
   
-  props = props({ resId: t.signal(t.number) });
+  props = props({ resId: t.signal(t.number()) });
 
   setup() {
     useEffect(async () => {
@@ -442,7 +442,7 @@ issue properly, we will provide a `asyncComputed` helper in Odoo:
 class C extends Component {
   static template = "...";
   
-  props = props({ resId: t.signal(t.number) });
+  props = props({ resId: t.signal(t.number()) });
   state = asyncComputed(() => this.loadRecord(this.props.resId()));
 }
 ```
@@ -714,7 +714,7 @@ const c = useComponent();
 // do something with c.props
 
 // owl 3
-const props = props({ value: t.string});
+const props = props({ value: t.string()});
 // do something with props
 
 ```

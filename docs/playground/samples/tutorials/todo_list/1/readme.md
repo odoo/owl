@@ -42,7 +42,7 @@ import { Component, props, types as t } from "@odoo/owl";
 
 class TodoItem extends Component {
     props = props({
-        todo: t.object({ id: t.number, text: t.string, completed: t.boolean }),
+        todo: t.object({ id: t.number(), text: t.string(), completed: t.boolean() }),
     });
 }
 ```

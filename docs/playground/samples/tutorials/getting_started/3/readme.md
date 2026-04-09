@@ -26,9 +26,9 @@ import { Component, props, types as t } from "@odoo/owl";
 
 class ProductCard extends Component {
   props = props({
-    name: t.string,
-    price: t.number,
-    "image?": t.string,
+    name: t.string(),
+    price: t.number(),
+    "image?": t.string(),
   });
 }
 ```
@@ -45,18 +45,18 @@ Owl will check that required props are provided and that their types match.
 
 The `types` helper supports many other types:
 
-- `t.boolean`, `t.number`, `t.string`
+- `t.boolean()`, `t.number()`, `t.string()`
 - `t.function()`
-- `t.object({ id: t.number, name: t.string })`
+- `t.object({ id: t.number(), name: t.string() })`
 - `t.signal()`
-- `t.array(t.string)`
+- `t.array(t.string())`
 
 The `props` function accepts a second argument for **default values**:
 
 ```js
 props = props({
-    name: t.string,
-    "image?": t.string,
+    name: t.string(),
+    "image?": t.string(),
 }, {
     image: "📦",
 });

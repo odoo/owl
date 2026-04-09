@@ -101,7 +101,7 @@ Pass a `validation` option to validate items on `add()`:
 ```js
 const commands = new Resource({
   name: "commands",
-  validation: t.object({ label: t.string, action: t.function() }),
+  validation: t.object({ label: t.string(), action: t.function() }),
 });
 
 commands.add({ label: "Save", action: save }); // ok

@@ -59,8 +59,8 @@ Define the app schema in `hibou.js`:
 import { types as t } from "@odoo/owl";
 
 const APP_SCHEMA = t.object({
-    name: t.string,
-    icon: t.string,
+    name: t.string(),
+    icon: t.string(),
     window: t.constructor(Component),
     "systrayItems?": t.array(t.constructor(Component)),
     "plugins?": t.array(t.constructor(Plugin)),

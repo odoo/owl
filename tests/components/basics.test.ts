@@ -159,8 +159,8 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
       props = props(
         {
-          a: t.any,
-          "b?": t.number,
+          a: t.any(),
+          "b?": t.number(),
         },
         { b: 1 }
       );

@@ -26,25 +26,33 @@ type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) extends (_
   ? I
   : never;
 
-const anyType: any = function validateAny() {} as any;
+function anyType(): any {
+  return function validateAny() {} as any;
+}
 
-const booleanType: boolean = function validateBoolean(context: ValidationContext) {
-  if (typeof context.value !== "boolean") {
-    context.addIssue({ message: "value is not a boolean" });
-  }
-} as any;
+function booleanType(): boolean {
+  return function validateBoolean(context: ValidationContext) {
+    if (typeof context.value !== "boolean") {
+      context.addIssue({ message: "value is not a boolean" });
+    }
+  } as any;
+}
 
-const numberType: number = function validateNumber(context: ValidationContext) {
-  if (typeof context.value !== "number") {
-    context.addIssue({ message: "value is not a number" });
-  }
-} as any;
+function numberType(): number {
+  return function validateNumber(context: ValidationContext) {
+    if (typeof context.value !== "number") {
+      context.addIssue({ message: "value is not a number" });
+    }
+  } as any;
+}
 
-const stringType: string = function validateString(context: ValidationContext) {
-  if (typeof context.value !== "string") {
-    context.addIssue({ message: "value is not a string" });
-  }
-} as any;
+function stringType(): string {
+  return function validateString(context: ValidationContext) {
+    if (typeof context.value !== "string") {
+      context.addIssue({ message: "value is not a string" });
+    }
+  } as any;
+}
 
 function arrayType(): any[];
 function arrayType<T>(elementType: T): T[];
@@ -285,7 +293,9 @@ function reactiveValueType(type?: any): ReactiveValue<any> {
   } as any;
 }
 
-const componentType: typeof Component = constructorType(Component as any) as any;
+function componentType(): typeof Component {
+  return constructorType(Component as any) as any;
+}
 
 function ref(): HTMLElement | null;
 function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;

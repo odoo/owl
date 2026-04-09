@@ -5,7 +5,7 @@ export class Window extends Component {
     static template = "hibou.Window";
 
     props = props({
-        title: t.string,
+        title: t.string(),
         "onClose?": t.function(),
         "x?": t.signal(),
         "y?": t.signal(),

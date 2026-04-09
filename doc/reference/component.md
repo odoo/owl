@@ -59,7 +59,7 @@ using the `props` function. The result can be stored on any property name:
 class MyComponent extends Component {
   static template = xml`<span t-out="this.myProps.name"/>`;
 
-  myProps = props({ name: t.string });
+  myProps = props({ name: t.string() });
 }
 ```
 

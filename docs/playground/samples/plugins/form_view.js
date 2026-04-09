@@ -14,7 +14,7 @@ class Field extends Component {
             <span t-out="this.props.descr"/>:
             <span t-out="this.model.record[this.props.field]"/>
         </p>`;
-    props = props({ field: t.string, descr: t.string});
+    props = props({ field: t.string(), descr: t.string()});
 
     // we can import plugins here. the model is provided by the form view,
     // and the notificationplugin is global    

@@ -22,7 +22,7 @@ import { Component, props, types as t, xml } from "@odoo/owl";
 
 class Child extends Component {
   static template = xml`<span t-out="this.props.message"/>`;
-  props = props({ message: t.string });
+  props = props({ message: t.string() });
 }
 
 class Parent extends Component {
@@ -89,7 +89,7 @@ is created or updated. See [Props validation](#props-validation) for details.
 ```js
 props(); // no schema
 props(["name", "age?"]); // array form
-props({ name: t.string, "age?": t.number }); // typed form
+props({ name: t.string(), "age?": t.number() }); // typed form
 ```
 
 ### Default values (second argument)
@@ -102,7 +102,7 @@ Defining a default on a mandatory prop will cause a validation error.
 
 ```js
 props(["color?"], { color: "red" });
-props({ "color?": t.string }, { color: "red" });
+props({ "color?": t.string() }, { color: "red" });
 ```
 
 ## Translatable props
@@ -166,8 +166,8 @@ class ProductList extends Component {
   static template = xml`...`;
 
   props = props({
-    count: t.number,
-    items: t.array(t.object({ id: t.number, label: t.string })),
+    count: t.number(),
+    items: t.array(t.object({ id: t.number(), label: t.string() })),
     "onSelect?": t.function(),
     size: t.selection(["small", "medium", "large"]),
   });
@@ -193,7 +193,7 @@ Or with type validation:
 class MyComponent extends Component {
   static template = xml`...`;
   props = props({
-    "someProp?": t.number,
+    "someProp?": t.number(),
     "slots?": t.object(),
   });
 }

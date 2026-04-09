@@ -11,7 +11,7 @@ import {
   getCurrentComputation,
   setComputation,
 } from "./reactivity/computations";
-import { fibersInError } from "./rendering/error_handling";
+import { fibersInError, handleError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { STATUS } from "./status";
 
@@ -109,7 +109,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       setComputation(prev);
       await Promise.all(promises!);
     } catch (e) {
-      this.app.handleError({ node: this, error: e });
+      handleError({ node: this, error: e });
       return;
     }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
@@ -204,7 +204,7 @@ export class ComponentNode implements VNode<ComponentNode> {
           cb.call(component);
         }
       } catch (e) {
-        this.app.handleError({ error: e, node: this });
+        handleError({ error: e, node: this });
       }
     }
     for (const computation of this.computations) {

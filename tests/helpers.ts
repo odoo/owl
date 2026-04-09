@@ -277,7 +277,7 @@ expect.extend({
 });
 
 export function nextAppError(app: any) {
-  const { handleError } = app;
+  const { _handleError } = app;
   const rootPromises = [...app.roots].map((r) => r.promise);
 
   let settled = false;
@@ -285,19 +285,15 @@ export function nextAppError(app: any) {
   const done = (error: any, restore = true) => {
     if (settled) return;
     settled = true;
-    if (restore) app.handleError = handleError;
+    if (restore) app._handleError = _handleError;
     resolve(error);
   };
 
   let resolve: (value: any) => void;
   const result = new Promise((res) => (resolve = res));
 
-  app.handleError = (...args: Parameters<typeof handleError>) => {
-    try {
-      handleError.call(app, ...args);
-    } catch (e) {
-      done(e);
-    }
+  app._handleError = (error: any) => {
+    done(error);
   };
 
   for (const p of rootPromises) {

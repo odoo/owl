@@ -68,8 +68,33 @@ export class Scheduler {
       node._destroy();
     }
     this.cancelledNodes.clear();
-    for (let task of this.tasks) {
-      this.processFiber(task);
+    for (let fiber of this.tasks) {
+      if (fiber.root !== fiber) {
+        this.tasks.delete(fiber);
+        continue;
+      }
+      const hasError = fibersInError.has(fiber);
+      if (hasError && fiber.counter !== 0) {
+        this.tasks.delete(fiber);
+        continue;
+      }
+      if (fiber.node.status === STATUS.DESTROYED) {
+        this.tasks.delete(fiber);
+        continue;
+      }
+      if (fiber.counter === 0) {
+        if (!hasError) {
+          fiber.complete();
+        }
+        // at this point, the fiber should have been applied to the DOM, so we can
+        // remove it from the task list. If it is not the case, it means that there
+        // was an error and an error handler triggered a new rendering that recycled
+        // the fiber, so in that case, we actually want to keep the fiber around,
+        // otherwise it will just be ignored.
+        if (fiber.appliedToDom) {
+          this.tasks.delete(fiber);
+        }
+      }
     }
     for (let task of this.tasks) {
       if (task.node.status === STATUS.DESTROYED) {
@@ -77,35 +102,5 @@ export class Scheduler {
       }
     }
     this.processing = false;
-  }
-
-  processFiber(fiber: RootFiber) {
-    if (fiber.root !== fiber) {
-      this.tasks.delete(fiber);
-      return;
-    }
-    const hasError = fibersInError.has(fiber);
-    if (hasError && fiber.counter !== 0) {
-      this.tasks.delete(fiber);
-      return;
-    }
-    if (fiber.node.status === STATUS.DESTROYED) {
-      this.tasks.delete(fiber);
-      return;
-    }
-
-    if (fiber.counter === 0) {
-      if (!hasError) {
-        fiber.complete();
-      }
-      // at this point, the fiber should have been applied to the DOM, so we can
-      // remove it from the task list. If it is not the case, it means that there
-      // was an error and an error handler triggered a new rendering that recycled
-      // the fiber, so in that case, we actually want to keep the fiber around,
-      // otherwise it will just be ignored.
-      if (fiber.appliedToDom) {
-        this.tasks.delete(fiber);
-      }
-    }
   }
 }

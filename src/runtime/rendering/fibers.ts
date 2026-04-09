@@ -127,14 +127,9 @@ export class Fiber {
     }
 
     // there are no current rendering from above => we can render
-    this._render();
-  }
-
-  _render() {
     const node = this.node;
     const root = this.root;
     if (root) {
-      // todo: should use updateComputation somewhere else.
       const c = getCurrentComputation();
       removeSources(node.signalComputation);
       setComputation(node.signalComputation);
@@ -145,7 +140,11 @@ export class Fiber {
         handleError({ node, error: e });
       }
       setComputation(c);
-      root.setCounter(root.counter - 1);
+      const newCounter = root.counter - 1;
+      root.counter = newCounter;
+      if (newCounter === 0) {
+        this.node.app.scheduler.flush();
+      }
     }
   }
 }

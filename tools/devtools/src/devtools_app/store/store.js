@@ -46,7 +46,7 @@ export class StorePlugin extends Plugin {
     hooks: { toggled: true, children: [] },
     version: "1.0",
   }));
-  renderPaths = signal.Set(new Set());
+  renderPaths = proxy(new Set());
 
   // --- Non-reactive ---
   isFirefox = IS_FIREFOX;
@@ -829,7 +829,7 @@ export class StorePlugin extends Plugin {
 
   // Connect to the port to communicate to the background script
   _setupPortListener() {
-    let rootRendersTimeout = false;
+    let rootRendersTimeout = null;
     browserInstance.runtime.onConnect.addListener((port) => {
       if (port.name === "OwlDevtoolsPort_" + this.devtoolsId()) {
         port.onMessage.addListener(async (msg) => {
@@ -864,12 +864,16 @@ export class StorePlugin extends Plugin {
             }
             // This determines which components will have a short highlight effect in the tree
             // to indicate they have been rendered
-            this.renderPaths().add(JSON.stringify(msg.data));
+            this.renderPaths.add(JSON.stringify(msg.data));
+            if (!rootRendersTimeout) {
+              this.loadComponentsTree(true);
+            }
             clearTimeout(rootRendersTimeout);
             rootRendersTimeout = setTimeout(() => {
-              this.renderPaths().clear();
+              rootRendersTimeout = false;
+              this.renderPaths.clear();
+              this.loadComponentsTree(true);
             }, 100);
-            this.loadComponentsTree(true);
           }
           // Select the component based on the path received with the SelectElement message
           if (msg.type === "SelectElement") {

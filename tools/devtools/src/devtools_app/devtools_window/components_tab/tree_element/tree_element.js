@@ -39,10 +39,13 @@ export class TreeElement extends Component {
     });
     // Effect to apply a short highlight effect to the component when it is rendered
     useEffect(() => {
-      const size = this.store.renderPaths().size;
-      if (this.store.renderPaths().has(this.stringifiedPath)) {
+      if (this.store.renderPaths.has(this.stringifiedPath)) {
+        if (this.blockHighlight) {
+          return;
+        }
         const treeElement = this.element();
         if (treeElement) {
+          this.blockHighlight = true;
           treeElement.classList.add("render-highlight");
           setTimeout(() => {
             treeElement.classList.add("highlight-fade");

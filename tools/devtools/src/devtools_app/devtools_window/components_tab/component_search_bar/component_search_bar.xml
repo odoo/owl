@@ -7,7 +7,7 @@
     <div class="icons-separator"/>
     <div class="d-flex align-items-center ms-2 flex-grow-1">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
-      <input type="text" class="search-input ms-1 w-100 border-0 h-100" placeholder="Search" t-on-keyup.stop="this.updateSearch" t-on-keydown.stop="this.onSearchKeyDown" t-att-value="this.store.searchText()"/>
+      <input type="text" class="search-input ms-1 w-100 border-0 h-100" placeholder="Search" t-on-input.stop="this.updateSearch" t-on-keydown.stop="this.onSearchKeyDown" t-att-value="this.store.searchText()"/>
       <t t-if="this.store.searchText().length > 0">
         <t t-out="this.store.searchResults().length ? this.store.searchIndex() + 1 : 0"/>|<t t-out="this.store.searchResults().length"/>
         <i class="fa fa-angle-up lg-icon utility-icon ms-1 p-1" t-on-click.stop="() => this.store.getPrevSearch()"></i>

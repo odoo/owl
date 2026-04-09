@@ -6,6 +6,26 @@
 - [`validateType`](#validatetype)
 - [`assertType`](#asserttype)
 - [Validators](#validators)
+  - [`t.any`](#tany)
+  - [`t.boolean`](#tboolean)
+  - [`t.number`](#tnumber)
+  - [`t.string`](#tstring)
+  - [`t.array`](#tarrayelementtype)
+  - [`t.object`](#tobjectshape)
+  - [`t.strictObject`](#tstrictobjectshape)
+  - [`t.record`](#trecordvaluetype)
+  - [`t.tuple`](#ttupletypes)
+  - [`t.function`](#tfunctionparams-returntype)
+  - [`t.promise`](#tpromisetype)
+  - [`t.literal`](#tliteralvalue)
+  - [`t.selection`](#tselectionvalues)
+  - [`t.instanceOf`](#tinstanceofconstructor)
+  - [`t.constructor`](#tconstructorconstructor)
+  - [`t.signal`](#tsignaltype)
+  - [`t.ref`](#treftype)
+  - [`t.or`](#tortypes)
+  - [`t.and`](#tandtypes)
+  - [`t.customValidator`](#tcustomvalidatortype-predicate-errormessage)
 
 ## Overview
 
@@ -80,27 +100,257 @@ assertType("hello", t.number, "Invalid config");
 
 ## Validators
 
-Owl exports a `types` object containing the following validators:
+Owl exports a `types` object (aliased as `t` below) containing the following
+validators. Each validator can be used with `validateType`, `assertType`, or
+as a prop type in a component's `props` definition.
 
-| Validator                 | Description                                                                                                        |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `types.any`               | Accepts any value without validation                                                                               |
-| `types.boolean`           | Validates that the value is a boolean                                                                              |
-| `types.number`            | Validates that the value is a number                                                                               |
-| `types.string`            | Validates that the value is a string                                                                               |
-| `types.array()`           | Validates that the value is an array, optionally validating each element against a given type                      |
-| `types.object()`          | Validates that the value is an object, optionally checking keys or validating values against a shape               |
-| `types.strictObject()`    | Like `object`, but also rejects unknown keys not present in the schema                                             |
-| `types.record()`          | Validates that the value is an object, optionally validating all values against a given type                       |
-| `types.tuple()`           | Validates that the value is an array with a fixed length and validates each element against its corresponding type |
-| `types.function()`        | Validates that the value is a function                                                                             |
-| `types.promise()`         | Validates that the value is a Promise                                                                              |
-| `types.literal()`         | Validates that the value is strictly equal to a given literal (number, string, boolean, null, or undefined)        |
-| `types.selection()`       | Validates that the value matches one of several literal values                                                     |
-| `types.instanceOf()`      | Validates that the value is an instance of a given constructor                                                     |
-| `types.constructor()`     | Validates that the value is a given constructor or a subclass of it                                                |
-| `types.signal()`          | Validates that the value is a reactive value (signal)                                                              |
-| `types.ref()`             | Validates that the value is either null or an instance of an HTMLElement (or a subclass)                           |
-| `types.or()`              | Validates that the value matches at least one of the given types (union)                                           |
-| `types.and()`             | Validates that the value matches all of the given types (intersection)                                             |
-| `types.customValidator()` | Validates using a base type, then applies a custom predicate with a custom error message                           |
+```js
+import { types as t } from "@odoo/owl";
+```
+
+### `t.any`
+
+Accepts any value without validation.
+
+```js
+t.any;
+// validates: 42, "hello", null, undefined, ...
+```
+
+### `t.boolean`
+
+Validates that the value is a boolean.
+
+```js
+t.boolean;
+// validates: true, false
+// rejects:   0, "true", null
+```
+
+### `t.number`
+
+Validates that the value is a number.
+
+```js
+t.number;
+// validates: 42, 3.14, NaN
+// rejects:   "42", null
+```
+
+### `t.string`
+
+Validates that the value is a string.
+
+```js
+t.string;
+// validates: "hello", ""
+// rejects:   42, null
+```
+
+### `t.array(elementType?)`
+
+Validates that the value is an array. When `elementType` is provided, each
+element is validated against it.
+
+```js
+t.array(); // any array
+t.array(t.number); // array of numbers
+t.array(t.string); // array of strings
+
+// validates: [1, 2, 3]     with t.array(t.number)
+// rejects:   [1, "two", 3] with t.array(t.number)
+```
+
+### `t.object(shape?)`
+
+Validates that the value is an object. When a `shape` is provided (either an
+object mapping keys to validators, or an array of key names), the object is
+checked for the expected keys. Keys ending with `?` are optional. Extra keys
+are allowed.
+
+```js
+t.object(); // any object
+t.object(["name", "age"]); // must have "name" and "age" keys
+t.object({ name: t.string, "age?": t.number }); // "name" required, "age" optional
+
+// validates: { name: "Alice", age: 30, extra: true }
+// rejects:   { age: 30 }  (missing required key "name")
+```
+
+### `t.strictObject(shape)`
+
+Like `t.object`, but also rejects unknown keys not present in the schema.
+Accepts either an array of key names or an object mapping keys to validators.
+
+```js
+t.strictObject(["name", "age"]); // must have exactly "name" and "age" keys
+t.strictObject({ name: t.string, "age?": t.number }); // "name" required, "age" optional
+
+// validates: { name: "Alice" }
+// validates: { name: "Alice", age: 30 }
+// rejects:   { name: "Alice", extra: true }  (unknown key "extra")
+```
+
+### `t.record(valueType?)`
+
+Validates that the value is an object. When `valueType` is provided, every
+value in the object is validated against it.
+
+```js
+t.record(); // any object
+t.record(t.number); // all values must be numbers
+
+// validates: { a: 1, b: 2 }     with t.record(t.number)
+// rejects:   { a: 1, b: "two" } with t.record(t.number)
+```
+
+### `t.tuple(types)`
+
+Validates that the value is an array with a fixed length, where each element
+matches its corresponding type.
+
+```js
+t.tuple([t.string, t.number]);
+
+// validates: ["hello", 42]
+// rejects:   ["hello"]           (wrong length)
+// rejects:   ["hello", "world"]  (second element is not a number)
+```
+
+### `t.function(params?, returnType?)`
+
+Validates that the value is a function. At runtime, only the `typeof` check is
+performed — the `params` and `returnType` arguments are **not validated at
+runtime**, they only exist to provide TypeScript type inference.
+
+```js
+t.function(); // any function
+t.function([t.string, t.number]); // typed params (TS inference only)
+t.function([t.string], t.boolean); // typed params and return (TS inference only)
+
+// validates: () => {}, Math.max, class Foo {}
+// rejects:   42, "hello", null
+```
+
+### `t.promise(type?)`
+
+Validates that the value is a `Promise`. At runtime, only the `instanceof`
+check is performed — the `type` argument is **not validated at runtime**, it
+only exists to provide TypeScript type inference.
+
+```js
+t.promise(); // any promise
+t.promise(t.string); // Promise<string> (TS inference only)
+
+// validates: Promise.resolve(42), new Promise(() => {})
+// rejects:   42, { then() {} }
+```
+
+### `t.literal(value)`
+
+Validates that the value is strictly equal (`===`) to the given literal.
+
+```js
+t.literal("admin");
+t.literal(0);
+t.literal(null);
+
+// validates: "admin"   with t.literal("admin")
+// rejects:   "user"    with t.literal("admin")
+```
+
+### `t.selection(values)`
+
+Validates that the value matches one of several literal values. This is
+shorthand for `t.or` with `t.literal` for each value.
+
+```js
+t.selection(["small", "medium", "large"]);
+
+// validates: "small", "medium", "large"
+// rejects:   "xl", 0, null
+```
+
+### `t.instanceOf(constructor)`
+
+Validates that the value is an instance of the given constructor.
+
+```js
+t.instanceOf(Date);
+t.instanceOf(HTMLInputElement);
+
+// validates: new Date()             with t.instanceOf(Date)
+// rejects:   Date.now()             with t.instanceOf(Date)
+// rejects:   "2024-01-01"           with t.instanceOf(Date)
+```
+
+### `t.constructor(constructor)`
+
+Validates that the value is the given constructor itself or a subclass of it.
+
+```js
+t.constructor(Error);
+
+// validates: Error, TypeError, RangeError
+// rejects:   new Error(), "Error"
+```
+
+### `t.signal(type?)`
+
+Validates that the value is a reactive value (signal). The optional `type`
+argument is used for type inference only.
+
+```js
+t.signal(); // any signal
+t.signal(t.number); // Signal<number> (for TS inference)
+```
+
+### `t.ref(type?)`
+
+Validates that the value is either `null` or an instance of `HTMLElement` (or
+a subclass). Useful for component ref props.
+
+```js
+t.ref(); // null | HTMLElement
+t.ref(HTMLInputElement); // null | HTMLInputElement
+```
+
+### `t.or(types)`
+
+Validates that the value matches **at least one** of the given types (union).
+
+```js
+t.or([t.string, t.number]);
+t.or([t.literal("none"), t.number]);
+
+// validates: "hello"  with t.or([t.string, t.number])
+// validates: 42       with t.or([t.string, t.number])
+// rejects:   true     with t.or([t.string, t.number])
+```
+
+### `t.and(types)`
+
+Validates that the value matches **all** of the given types (intersection).
+
+```js
+t.and([t.object({ name: t.string }), t.object({ age: t.number })]);
+
+// validates: { name: "Alice", age: 30 }
+// rejects:   { name: "Alice" }  (missing "age")
+```
+
+### `t.customValidator(type, predicate, errorMessage?)`
+
+Validates the value against a base type, then applies a custom predicate
+function. If the predicate returns `false`, validation fails with the given
+error message (defaults to `"value does not match custom validation"`).
+
+```js
+t.customValidator(t.number, (v) => v >= 0, "value must be non-negative");
+t.customValidator(t.string, (v) => v.length > 0, "value must not be empty");
+t.customValidator(t.array(t.number), (v) => v.length <= 10, "too many items");
+
+// validates: 42    with the first example
+// rejects:   -1    with the first example ("value must be non-negative")
+// rejects:   "hi"  with the first example (fails base type: "value is not a number")
+```

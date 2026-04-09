@@ -2,6 +2,7 @@
 
 import { isElementInCenterViewport, minimizeKey, browserInstance } from "../../../../utils";
 import { StorePlugin } from "../../../store/store";
+import { ComponentsPlugin } from "../../../store/components_plugin";
 import { HighlightText } from "./highlight_text/highlight_text";
 
 const { Component, signal, proxy, useEffect, onMounted, plugin, props, types: t } = owl;
@@ -17,6 +18,7 @@ export class TreeElement extends Component {
       searched: false,
     });
     this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
     this.element = signal(null);
     this.stringifiedPath = JSON.stringify(this.props.component.path);
     // Scroll to the selected element when it changes
@@ -34,12 +36,12 @@ export class TreeElement extends Component {
         }
       }
       if (el) {
-        this.store.selectedElement.set(el);
+        this.components.selectedElement.set(el);
       }
     });
     // Effect to apply a short highlight effect to the component when it is rendered
     useEffect(() => {
-      if (this.store.renderPaths.has(this.stringifiedPath)) {
+      if (this.components.renderPaths.has(this.stringifiedPath)) {
         if (this.blockHighlight) {
           return;
         }
@@ -60,7 +62,7 @@ export class TreeElement extends Component {
     });
     // Used to know when the component is in the search bar results
     useEffect(() => {
-      const searchResults = this.store.searchResults();
+      const searchResults = this.components.searchResults();
       if (searchResults.includes(this.props.component.path)) {
         this.state.searched = true;
       } else {
@@ -82,12 +84,12 @@ export class TreeElement extends Component {
       {
         title: "Expand children",
         show: true,
-        action: () => this.store.toggleComponentAndChildren(this.props.component, true),
+        action: () => this.components.toggleComponentAndChildren(this.props.component, true),
       },
       {
         title: "Fold all children",
         show: true,
-        action: () => this.store.toggleComponentAndChildren(this.props.component, false),
+        action: () => this.components.toggleComponentAndChildren(this.props.component, false),
       },
       {
         title: "Fold direct children",
@@ -97,13 +99,13 @@ export class TreeElement extends Component {
       {
         title: "Inspect source code",
         show: true,
-        action: () => this.store.inspectComponent("source", this.props.component.path),
+        action: () => this.components.inspectComponent("source", this.props.component.path),
       },
       {
         title: "Store as global variable",
         show: this.props.component.path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
+          this.components.logObjectInConsole([
             ...this.props.component.path,
             { type: "item", value: "component" },
           ]),
@@ -111,18 +113,18 @@ export class TreeElement extends Component {
       {
         title: "Inspect in Elements tab",
         show: this.props.component.path.length !== 1,
-        action: () => this.store.inspectComponent("DOM", this.props.component.path),
+        action: () => this.components.inspectComponent("DOM", this.props.component.path),
       },
       {
         title: "Force rerender",
         show: this.props.component.path.length !== 1,
-        action: () => this.store.refreshComponent(this.props.component.path),
+        action: () => this.components.refreshComponent(this.props.component.path),
       },
       {
         title: "Store observed states as global variable",
         show: this.props.component.path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
+          this.components.logObjectInConsole([
             ...this.props.component.path,
             { type: "item", value: "subscriptions" },
           ]),
@@ -130,17 +132,17 @@ export class TreeElement extends Component {
       {
         title: "Inspect compiled template",
         show: this.props.component.path.length !== 1,
-        action: () => this.store.inspectComponent("compiled template", this.props.component.path),
+        action: () => this.components.inspectComponent("compiled template", this.props.component.path),
       },
       {
         title: "Log raw template",
         show: this.props.component.path.length !== 1,
-        action: () => this.store.inspectComponent("raw template", this.props.component.path),
+        action: () => this.components.inspectComponent("raw template", this.props.component.path),
       },
       {
         title: "Store as global variable",
         show: this.props.component.path.length === 1,
-        action: () => this.store.logObjectInConsole([...this.props.component.path]),
+        action: () => this.components.logObjectInConsole([...this.props.component.path]),
       },
       {
         title: "Don't fold component by default",
@@ -170,7 +172,7 @@ export class TreeElement extends Component {
       this.toggleDisplay();
     }
     if (!this.props.component.selected) {
-      this.store.selectComponent(this.props.component.path);
+      this.components.selectComponent(this.props.component.path);
     }
   }
 

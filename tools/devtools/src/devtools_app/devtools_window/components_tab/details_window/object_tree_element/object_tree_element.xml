@@ -3,7 +3,7 @@
   <t t-name="devtools.ObjectTreeElement">
     <div class="m-0 p-0 text-nowrap w-100 object-line"
       t-att-class="this.props.class + (this.props.object.hasChildren ? ' bg-feedback' : '')"
-      t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)"
+      t-on-click.stop="() => this.components.toggleObjectTreeElementsDisplay(this.props.object)"
       t-on-contextmenu.prevent="this.openMenu"
     >
       <div t-attf-style="padding-left: {{this.objectPadding}}rem">
@@ -14,7 +14,7 @@
         <t t-out="this.props.object.name"/>
         <t t-if="this.props.object.content.length > 0">: </t>
         <t t-if="this.props.object.contentType == 'getter'">
-          <span class="getter-content object-content" t-att-class="this.objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
+          <span class="getter-content object-content" t-att-class="this.objectLineClass" t-on-click.stop="() => this.components.loadGetterContent(this.props.object)">
             <t t-out="this.props.object.content"/>
           </span>
         </t>

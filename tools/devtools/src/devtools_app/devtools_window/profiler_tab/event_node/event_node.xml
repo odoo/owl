@@ -13,8 +13,8 @@
         <span>
           <t t-out="this.props.event.type"/>:
           &lt;<span style="cursor:pointer; color: var(--component-color);"
-                t-on-click.stop="() => this.store.selectComponent(this.props.event.path)"
-                t-on-mouseover.stop="() => this.store.highlightComponent(this.props.event.path)"
+                t-on-click.stop="() => this.components.selectComponent(this.props.event.path)"
+                t-on-mouseover.stop="() => this.components.highlightComponent(this.props.event.path)"
                 t-on-contextmenu.stop="this.openComponentMenu"
                 t-out="this.props.event.component"/>
           <t t-if="this.minimizedKey.length > 0">

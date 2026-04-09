@@ -3,105 +3,105 @@
   <t t-name="devtools.DetailsWindow">
     <div class="panel-top d-flex align-items-center">
       <div class="ms-1 p-1 text-truncate" style="width: 100%;">
-        <span t-if="this.store.activeComponent().path.length > 1">&lt;</span>
+        <span t-if="this.components.activeComponent().path.length > 1">&lt;</span>
         <b
           style="color: var(--component-color); cursor: pointer;"
-          t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent().path)"
-          t-on-click.stop="() => this.store.onActiveComponentClick()"
+          t-on-mouseover.stop="() => this.components.highlightComponent(this.components.activeComponent().path)"
+          t-on-click.stop="() => this.components.onActiveComponentClick()"
           t-on-contextmenu.prevent="this.openMenu"
-          t-out="this.store.activeComponent().name"
+          t-out="this.components.activeComponent().name"
         />
-        <span t-if="this.store.activeComponent().path.length > 1">&gt;</span>
-        <span class="version" t-else="">owl=<t t-out="this.store.activeComponent().version"/></span>
+        <span t-if="this.components.activeComponent().path.length > 1">&gt;</span>
+        <span class="version" t-else="">owl=<t t-out="this.components.activeComponent().version"/></span>
       </div>
-      <t t-if="this.store.activeComponent().path.length > 1">
-        <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('DOM')"></i>
-        <i title="Store component as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
-        <i title="Inspect source code of component" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
-        <i title="Trigger rerender of the component" class="fa fa-refresh utility-icon p-1" t-on-click.stop="() => this.store.refreshComponent()"></i>
+      <t t-if="this.components.activeComponent().path.length > 1">
+        <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.components.inspectComponent('DOM')"></i>
+        <i title="Store component as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.components.logObjectInConsole()"></i>
+        <i title="Inspect source code of component" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.components.inspectComponent('source')"></i>
+        <i title="Trigger rerender of the component" class="fa fa-refresh utility-icon p-1" t-on-click.stop="() => this.components.refreshComponent()"></i>
       </t>
       <t t-else="">
-        <i title="Store app as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
-        <i title="Inspect source code of the app" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
+        <i title="Store app as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.components.logObjectInConsole()"></i>
+        <i title="Inspect source code of the app" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.components.inspectComponent('source')"></i>
       </t>
     </div>
     <div class="details-container">
-      <div t-if="this.store.observedVariables().length and this.store.observedVariables().some((v) => v.visible)" id="observedVariables" class="details-panel ps-2 py-1">
+      <div t-if="this.components.observedVariables().length and this.components.observedVariables().some((v) => v.visible)" id="observedVariables" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100">
             <b class="ps-2">observed variables</b>
           </div>
-          <i title="Remove observed variables" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.store.clearObservedVariable()"></i>
+          <i title="Remove observed variables" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.components.clearObservedVariable()"></i>
         </div>
-        <t t-foreach="this.store.observedVariables()" t-as="observed" t-key="observed_index" t-if="observed.visible">
+        <t t-foreach="this.components.observedVariables()" t-as="observed" t-key="observed_index" t-if="observed.visible">
           <ObjectTreeElement object="observed" index="observed_index"/>
         </t>
       </div>
-      <div t-if="this.store.activeComponent().env?.children.length > 0" id="env" class="details-panel ps-2 py-1">
+      <div t-if="this.components.activeComponent().env?.children.length > 0" id="env" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'env')">
             <i class="fa mx-1 pointer-icon"
-              t-att-class="{'fa-caret-right': !this.store.activeComponent().env.toggled, 'fa-caret-down': this.store.activeComponent().env.toggled}"
+              t-att-class="{'fa-caret-right': !this.components.activeComponent().env.toggled, 'fa-caret-down': this.components.activeComponent().env.toggled}"
             /><b>env</b>
           </div>
         </div>
-        <t t-if="this.store.activeComponent().env.toggled" t-foreach="this.store.activeComponent().env.children" t-as="env" t-key="env_index">
+        <t t-if="this.components.activeComponent().env.toggled" t-foreach="this.components.activeComponent().env.children" t-as="env" t-key="env_index">
           <ObjectTreeElement object="env"/>
         </t>
       </div>
-      <div t-if="this.store.activeComponent().props.children.length > 0" class="details-panel ps-2 py-1">
+      <div t-if="this.components.activeComponent().props.children.length > 0" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'props')">
             <i class="fa mx-1 pointer-icon"
-              t-att-class="{'fa-caret-right': !this.store.activeComponent().props.toggled, 'fa-caret-down': this.store.activeComponent().props.toggled}"
+              t-att-class="{'fa-caret-right': !this.components.activeComponent().props.toggled, 'fa-caret-down': this.components.activeComponent().props.toggled}"
             /><b>props</b>
           </div>
         </div>
-        <t t-if="this.store.activeComponent().props.toggled" t-foreach="this.store.activeComponent().props.children" t-as="prop" t-key="prop_index">
+        <t t-if="this.components.activeComponent().props.toggled" t-foreach="this.components.activeComponent().props.children" t-as="prop" t-key="prop_index">
           <ObjectTreeElement object="prop"/>
         </t>
       </div>
-      <div t-if="this.store.activeComponent().subscriptions.children.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
+      <div t-if="this.components.activeComponent().subscriptions.children.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
         <div class="d-flex">
           <div title="Shows all the targets that will trigger a re-render of the component when one of its associated keys is modified" class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'subscriptions')">
             <i class="fa mx-1 pointer-icon"
-              t-att-class="{'fa-caret-right': !this.store.activeComponent().subscriptions.toggled, 'fa-caret-down': this.store.activeComponent().subscriptions.toggled}"
+              t-att-class="{'fa-caret-right': !this.components.activeComponent().subscriptions.toggled, 'fa-caret-down': this.components.activeComponent().subscriptions.toggled}"
             /><b>observed state</b>
           </div>
-          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent().path, {type: 'item', value: 'subscriptions'}])"></i>
+          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.components.logObjectInConsole([...this.components.activeComponent().path, {type: 'item', value: 'subscriptions'}])"></i>
         </div>
-        <div t-if="this.store.activeComponent().subscriptions.toggled" id="subscriptionsPanel">
-          <t t-foreach="this.store.activeComponent().subscriptions.children" t-as="subscription" t-key="subscription_index">
+        <div t-if="this.components.activeComponent().subscriptions.toggled" id="subscriptionsPanel">
+          <t t-foreach="this.components.activeComponent().subscriptions.children" t-as="subscription" t-key="subscription_index">
             <ObjectTreeElement object="subscription.target"/>
           </t>
         </div>
       </div>
-      <div t-if="this.store.activeComponent().instance.children.length > 0" id="instance" class="details-panel ps-2 py-1">
+      <div t-if="this.components.activeComponent().instance.children.length > 0" id="instance" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
             <i class="fa mx-1 pointer-icon"
-              t-att-class="{'fa-caret-right': !this.store.activeComponent().instance.toggled, 'fa-caret-down': this.store.activeComponent().instance.toggled}"
+              t-att-class="{'fa-caret-right': !this.components.activeComponent().instance.toggled, 'fa-caret-down': this.components.activeComponent().instance.toggled}"
             /><b>instance</b>
           </div>
-          <t t-if="this.store.activeComponent().path.length > 1">
-            <i title="Inspect compiled template" class="fa fa-hashtag utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('compiled template')"></i>
-            <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('raw template')"></i>
+          <t t-if="this.components.activeComponent().path.length > 1">
+            <i title="Inspect compiled template" class="fa fa-hashtag utility-icon p-1" t-on-click.stop="() => this.components.inspectComponent('compiled template')"></i>
+            <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.components.inspectComponent('raw template')"></i>
           </t>
         </div>
-        <t t-if="this.store.activeComponent().instance.toggled" t-foreach="this.store.activeComponent().instance.children" t-as="instance" t-key="instance_index">
+        <t t-if="this.components.activeComponent().instance.toggled" t-foreach="this.components.activeComponent().instance.children" t-as="instance" t-key="instance_index">
           <ObjectTreeElement object="instance"/>
         </t>
       </div>
-      <div t-if="this.store.activeComponent().hooks?.children.length > 0" id="hooks" class="details-panel ps-2 py-1">
+      <div t-if="this.components.activeComponent().hooks?.children.length > 0" id="hooks" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'hooks')">
             <i class="fa mx-1 pointer-icon"
-              t-att-class="{'fa-caret-right': !this.store.activeComponent().hooks.toggled, 'fa-caret-down': this.store.activeComponent().hooks.toggled}"
+              t-att-class="{'fa-caret-right': !this.components.activeComponent().hooks.toggled, 'fa-caret-down': this.components.activeComponent().hooks.toggled}"
             /><b>hooks</b>
           </div>
-          <i title="Remove breakpoints" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.store.removeBreakpoints()"></i>
+          <i title="Remove breakpoints" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.components.removeBreakpoints()"></i>
         </div>
-        <t t-if="this.store.activeComponent().hooks.toggled" t-foreach="this.store.activeComponent().hooks.children" t-as="hook" t-key="hook_index">
+        <t t-if="this.components.activeComponent().hooks.toggled" t-foreach="this.components.activeComponent().hooks.children" t-as="hook" t-key="hook_index">
           <ObjectTreeElement object="hook"/>
         </t>
       </div>

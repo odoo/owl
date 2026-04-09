@@ -1,5 +1,6 @@
 const { Component, plugin } = owl;
 import { StorePlugin } from "../../../store/store";
+import { ComponentsPlugin } from "../../../store/components_plugin";
 import { ObjectTreeElement } from "./object_tree_element/object_tree_element";
 
 export class DetailsWindow extends Component {
@@ -7,6 +8,7 @@ export class DetailsWindow extends Component {
   static components = { ObjectTreeElement };
   setup() {
     this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
   }
 
   get contextMenuItems() {
@@ -14,51 +16,51 @@ export class DetailsWindow extends Component {
       {
         title: "Inspect source code",
         show: true,
-        action: () => this.store.inspectComponent("source", this.store.activeComponent().path),
+        action: () => this.components.inspectComponent("source", this.components.activeComponent().path),
       },
       {
         title: "Store as global variable",
-        show: this.store.activeComponent().path.length !== 1,
+        show: this.components.activeComponent().path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
-            ...this.store.activeComponent().path,
+          this.components.logObjectInConsole([
+            ...this.components.activeComponent().path,
             { type: "item", value: "component" },
           ]),
       },
       {
         title: "Inspect in Elements tab",
-        show: this.store.activeComponent().path.length !== 1,
-        action: () => this.store.inspectComponent("DOM", this.store.activeComponent().path),
+        show: this.components.activeComponent().path.length !== 1,
+        action: () => this.components.inspectComponent("DOM", this.components.activeComponent().path),
       },
       {
         title: "Force rerender",
-        show: this.store.activeComponent().path.length !== 1,
-        action: () => this.store.refreshComponent(this.store.activeComponent().path),
+        show: this.components.activeComponent().path.length !== 1,
+        action: () => this.components.refreshComponent(this.components.activeComponent().path),
       },
       {
         title: "Store observed states as global variable",
-        show: this.store.activeComponent().path.length !== 1,
+        show: this.components.activeComponent().path.length !== 1,
         action: () =>
-          this.store.logObjectInConsole([
-            ...this.store.activeComponent().path,
+          this.components.logObjectInConsole([
+            ...this.components.activeComponent().path,
             { type: "item", value: "subscriptions" },
           ]),
       },
       {
         title: "Inspect compiled template",
-        show: this.store.activeComponent().path.length !== 1,
+        show: this.components.activeComponent().path.length !== 1,
         action: () =>
-          this.store.inspectComponent("compiled template", this.store.activeComponent().path),
+          this.components.inspectComponent("compiled template", this.components.activeComponent().path),
       },
       {
         title: "Log raw template",
-        show: this.store.activeComponent().path.length !== 1,
-        action: () => this.store.inspectComponent("raw template", this.store.activeComponent().path),
+        show: this.components.activeComponent().path.length !== 1,
+        action: () => this.components.inspectComponent("raw template", this.components.activeComponent().path),
       },
       {
         title: "Store as global variable",
-        show: this.store.activeComponent().path.length === 1,
-        action: () => this.store.logObjectInConsole([...this.store.activeComponent().path]),
+        show: this.components.activeComponent().path.length === 1,
+        action: () => this.components.logObjectInConsole([...this.components.activeComponent().path]),
       },
     ];
   }
@@ -68,6 +70,6 @@ export class DetailsWindow extends Component {
   }
 
   toggleCategory(ev, category) {
-    this.store.activeComponent()[category].toggled = !this.store.activeComponent()[category].toggled;
+    this.components.activeComponent()[category].toggled = !this.components.activeComponent()[category].toggled;
   }
 }

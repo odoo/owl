@@ -1,6 +1,7 @@
 const { Component, plugin } = owl;
 import { ContextMenu } from "../context_menu/context_menu";
 import { StorePlugin } from "../store/store";
+import { ComponentsPlugin } from "../store/components_plugin";
 import { ComponentsTab } from "./components_tab/components_tab";
 import { ProfilerTab } from "./profiler_tab/profiler_tab";
 import { Tab } from "./tab/tab";
@@ -10,6 +11,7 @@ export class DevtoolsWindow extends Component {
   static components = { ComponentsTab, Tab, ProfilerTab, ContextMenu };
   setup() {
     this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
   }
 
   selectFrame(ev) {

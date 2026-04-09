@@ -1,4 +1,4 @@
-import { StorePlugin } from "../../../store/store";
+import { ComponentsPlugin } from "../../../store/components_plugin";
 
 const { Component, plugin } = owl;
 
@@ -6,17 +6,17 @@ export class ComponentSearchBar extends Component {
   static template = "devtools.ComponentSearchBar";
 
   setup() {
-    this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
   }
 
   updateSearch(event) {
-    this.store.updateSearch(event.target.value);
+    this.components.updateSearch(event.target.value);
   }
 
   // Go to the next search result repeatedly while enter is pressed
   onSearchKeyDown(event) {
     if (event.key === "Enter") {
-      this.store.getNextSearch();
+      this.components.getNextSearch();
     }
   }
 }

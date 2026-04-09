@@ -5,7 +5,7 @@
       t-att-class="{'component-selected': this.props.component.selected,'component-highlighted': this.props.component.highlighted}"
       class="tree-component m-0 p-0 w-100 text-nowrap user-select-none"
       t-on-contextmenu.prevent="this.openMenu"
-      t-on-mouseover.stop="() => this.store.highlightComponent(this.props.component.path)"
+      t-on-mouseover.stop="() => this.components.highlightComponent(this.props.component.path)"
       t-on-click.stop="this.toggleComponent"
     >
       <div class="component-wrapper" t-attf-style="padding-left: {{this.componentPadding}}rem">
@@ -16,7 +16,7 @@
         />
         <span t-if="this.props.component.depth">&lt;</span>
         <span style="color: var(--component-color);">
-          <HighlightText originalText="this.props.component.name" searchValue="this.state.searched ? this.store.searchText() : ''"/>
+          <HighlightText originalText="this.props.component.name" searchValue="this.state.searched ? this.components.searchText() : ''"/>
           <t t-if="this.minimizedKey.length > 0">
             <span t-if="this.minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
               <t t-out="this.minimizedKey"/>

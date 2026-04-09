@@ -3,20 +3,20 @@
   <t t-name="devtools.ProfilerTab">
     <div class="position-relative overflow-hidden d-flex flex-column h-100">
       <div class="panel-top d-flex align-items-center">
-        <i title="Start/Stop Recording" class="fa fa-circle profiler-icon p-2" t-attf-style="color: {{this.store.activeRecorder() ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
-        <i title="Clear events" class="fa fa-ban profiler-icon p-2" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
+        <i title="Start/Stop Recording" class="fa fa-circle profiler-icon p-2" t-attf-style="color: {{this.profiler.activeRecorder() ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.profiler.toggleRecording()" aria-hidden="true"></i>
+        <i title="Clear events" class="fa fa-ban profiler-icon p-2" t-on-click.stop="() => this.profiler.clearEventsConsole()" aria-hidden="true"></i>
         <div class="icons-separator"/>
         <select class="form-select form-select-sm custom-select pointer-icon border-0" t-on-change="this.selectDisplayMode">
-          <option t-att-selected="this.store.eventsTreeView()" value="Tree">Tree view</option>
-          <option t-att-selected="!this.store.eventsTreeView()" value="List">Events log</option>
+          <option t-att-selected="this.profiler.eventsTreeView()" value="Tree">Tree view</option>
+          <option t-att-selected="!this.profiler.eventsTreeView()" value="List">Events log</option>
         </select>
-        <i title="Collapse All" class="fa fa-list p-2 profiler-icon" t-on-click="() => this.store.collapseAll()" t-attf-style="{{this.store.eventsTreeView() ? '' : 'display: none;'}}"></i>
+        <i title="Collapse All" class="fa fa-list p-2 profiler-icon" t-on-click="() => this.profiler.collapseAll()" t-attf-style="{{this.profiler.eventsTreeView() ? '' : 'display: none;'}}"></i>
         <div class="icons-separator"/>
         <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace renderings in console">
-          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.store.traceRenderings()" t-on-input="() => this.store.toggleTracing()"/> Trace Renderings
+          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.profiler.traceRenderings()" t-on-input="() => this.profiler.toggleTracing()"/> Trace Renderings
         </label>
         <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace subscriptions in console (warning: it is VERY verbose)">
-          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.store.traceSubscriptions()" t-on-input="() => this.store.toggleSubscriptionTracing()"/> Trace Subscriptions
+          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.profiler.traceSubscriptions()" t-on-input="() => this.profiler.toggleSubscriptionTracing()"/> Trace Subscriptions
         </label>
         <!-- <EventSearchBar/> -->
       </div>
@@ -29,13 +29,13 @@
           </div>
         </t>
         <t t-else="">
-          <t t-if="this.store.eventsTreeView()">
-            <t t-foreach="this.store.eventsTree()" t-as="event" t-key="event.id">
+          <t t-if="this.profiler.eventsTreeView()">
+            <t t-foreach="this.profiler.eventsTree()" t-as="event" t-key="event.id">
               <EventNode event="event"/>
             </t>
           </t>
           <t t-else="">
-            <t t-foreach="this.store.events()" t-as="event" t-key="event_index">
+            <t t-foreach="this.profiler.events()" t-as="event" t-key="event_index">
               <Event event="event"/>
             </t>
           </t>

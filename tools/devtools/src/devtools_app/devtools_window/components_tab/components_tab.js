@@ -5,6 +5,7 @@ import { TreeElement } from "./tree_element/tree_element";
 import { DetailsWindow } from "./details_window/details_window";
 import { ComponentSearchBar } from "./component_search_bar/component_search_bar";
 import { StorePlugin } from "../../store/store";
+import { ComponentsPlugin } from "../../store/components_plugin";
 
 export class ComponentsTab extends Component {
   static template = "devtools.ComponentsTab";
@@ -13,6 +14,7 @@ export class ComponentsTab extends Component {
 
   setup() {
     this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
     this.flushRendersTimeout = false;
     useListener(document, "keydown", this.onKeyboardEvent.bind(this));
     useListener(window, "resize", this.onWindowResize);
@@ -27,19 +29,19 @@ export class ComponentsTab extends Component {
   onKeyboardEvent(event) {
     switch (event.key) {
       case "ArrowLeft":
-        this.store.toggleOrSelectPrevElement(true);
+        this.components.toggleOrSelectPrevElement(true);
         event.preventDefault();
         break;
       case "ArrowUp":
-        this.store.toggleOrSelectPrevElement(false);
+        this.components.toggleOrSelectPrevElement(false);
         event.preventDefault();
         break;
       case "ArrowRight":
-        this.store.toggleOrSelectNextElement(true);
+        this.components.toggleOrSelectNextElement(true);
         event.preventDefault();
         break;
       case "ArrowDown":
-        this.store.toggleOrSelectNextElement(false);
+        this.components.toggleOrSelectNextElement(false);
         event.preventDefault();
         break;
     }

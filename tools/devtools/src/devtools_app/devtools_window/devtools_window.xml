@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.DevtoolsWindow">
-    <div id="container" class="d-flex w-100 h-100 flex-column position-absolute overflow-hidden" t-on-mouseover.stop="() => this.store.removeHighlights()" t-on-mouseout.stop="() => this.store.removeHighlights()">
+    <div id="container" class="d-flex w-100 h-100 flex-column position-absolute overflow-hidden" t-on-mouseover.stop="() => this.components.removeHighlights()" t-on-mouseout.stop="() => this.components.removeHighlights()">
       <t t-if="!this.store.extensionContextStatus()">
         <div class="status-message d-flex justify-content-center align-items-center">
           Extension context is invalid. Please close the devtools and reload the page.

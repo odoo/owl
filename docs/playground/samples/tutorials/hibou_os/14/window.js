@@ -5,14 +5,14 @@ export class Window extends Component {
     static template = "hibou.Window";
 
     props = props({
-        title: t.string,
+        title: t.string(),
         "onClose?": t.function(),
         "x?": t.signal(),
         "y?": t.signal(),
         "zIndex?": t.signal(),
         "component?": t.function(),
-        "width?": t.number,
-        "height?": t.number,
+        "width?": t.number(),
+        "height?": t.number(),
     });
 
     dnd = useDragAndDrop(this.props.x, this.props.y);

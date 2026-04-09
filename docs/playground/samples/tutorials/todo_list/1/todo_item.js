@@ -4,6 +4,6 @@ export class TodoItem extends Component {
     static template = "tutorial.TodoItem";
 
     props = props({
-        todo: t.object({ id: t.number, text: t.string, completed: t.boolean }),
+        todo: t.object({ id: t.number(), text: t.string(), completed: t.boolean() }),
     });
 }

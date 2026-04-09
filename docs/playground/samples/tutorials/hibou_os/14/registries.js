@@ -3,11 +3,11 @@ import { Registry, Component, Plugin, types as t } from "@odoo/owl";
 export const menuItemRegistry = new Registry({
     name: "menuItem",
     validation: t.object({
-        name: t.string,
-        icon: t.string,
+        name: t.string(),
+        icon: t.string(),
         window: t.constructor(Component),
-        "width?": t.number,
-        "height?": t.number,
+        "width?": t.number(),
+        "height?": t.number(),
     }),
 });
 

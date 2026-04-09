@@ -16,7 +16,7 @@ Here is what you need to do:
 - Use `t-model="this.props.todo.completed"` on the checkbox to bind it
   directly to the signal
 - Update the props definition in `TodoItem` to validate `completed` as
-  `t.signal()` instead of `t.boolean`
+  `t.signal()` instead of `t.boolean()`
 - Click on the checkboxes to verify that the strikethrough styling now updates
   correctly
 
@@ -46,7 +46,7 @@ To validate a signal prop, use `t.signal()`:
 
 ```js
 props = props({
-    todo: t.object({ id: t.number, text: t.string, completed: t.signal() }),
+    todo: t.object({ id: t.number(), text: t.string(), completed: t.signal() }),
 });
 ```
 

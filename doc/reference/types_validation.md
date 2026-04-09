@@ -6,10 +6,10 @@
 - [`validateType`](#validatetype)
 - [`assertType`](#asserttype)
 - [Validators](#validators)
-  - [`t.any`](#tany)
-  - [`t.boolean`](#tboolean)
-  - [`t.number`](#tnumber)
-  - [`t.string`](#tstring)
+  - [`t.any()`](#tany)
+  - [`t.boolean()`](#tboolean)
+  - [`t.number()`](#tnumber)
+  - [`t.string()`](#tstring)
   - [`t.array`](#tarrayelementtype)
   - [`t.object`](#tobjectshape)
   - [`t.strictObject`](#tstrictobjectshape)
@@ -20,7 +20,7 @@
   - [`t.literal`](#tliteralvalue)
   - [`t.selection`](#tselectionvalues)
   - [`t.instanceOf`](#tinstanceofconstructor)
-  - [`t.component`](#tcomponent)
+  - [`t.component()`](#tcomponent)
   - [`t.constructor`](#tconstructorconstructor)
   - [`t.signal`](#tsignaltype)
   - [`t.ref`](#treftype)
@@ -49,8 +49,8 @@ class UserCard extends Component {
     </div>`;
 
   props = props({
-    name: t.string,
-    "age?": t.number,
+    name: t.string(),
+    "age?": t.number(),
   });
 }
 ```
@@ -66,15 +66,15 @@ An empty list means the value is valid.
 ```js
 import { types as t, validateType } from "@odoo/owl";
 
-validateType(42, t.number); // [] (valid)
-validateType("hello", t.number); // [{ message: "value is not a number" }]
+validateType(42, t.number()); // [] (valid)
+validateType("hello", t.number()); // [{ message: "value is not a number" }]
 
-validateType([1, 2, 3], t.array(t.number)); // [] (valid)
-validateType([1, "two"], t.array(t.number)); // [{ message: "value is not a number" }]
+validateType([1, 2, 3], t.array(t.number())); // [] (valid)
+validateType([1, "two"], t.array(t.number())); // [{ message: "value is not a number" }]
 
 const userType = t.object({
-  name: t.string,
-  "age?": t.number,
+  name: t.string(),
+  "age?": t.number(),
 });
 
 validateType({ name: "Alice" }, userType); // [] (valid)
@@ -90,12 +90,12 @@ returning the issues list. Accepts an optional error message prefix.
 ```js
 import { types as t, assertType } from "@odoo/owl";
 
-assertType(42, t.number); // ok, does nothing
+assertType(42, t.number()); // ok, does nothing
 
-assertType("hello", t.number);
+assertType("hello", t.number());
 // throws: "Value does not match the type\n[...]"
 
-assertType("hello", t.number, "Invalid config");
+assertType("hello", t.number(), "Invalid config");
 // throws: "Invalid config\n[...]"
 ```
 
@@ -109,41 +109,41 @@ as a prop type in a component's `props` definition.
 import { types as t } from "@odoo/owl";
 ```
 
-### `t.any`
+### `t.any()`
 
 Accepts any value without validation.
 
 ```js
-t.any;
+t.any();
 // validates: 42, "hello", null, undefined, ...
 ```
 
-### `t.boolean`
+### `t.boolean()`
 
 Validates that the value is a boolean.
 
 ```js
-t.boolean;
+t.boolean();
 // validates: true, false
 // rejects:   0, "true", null
 ```
 
-### `t.number`
+### `t.number()`
 
 Validates that the value is a number.
 
 ```js
-t.number;
+t.number();
 // validates: 42, 3.14, NaN
 // rejects:   "42", null
 ```
 
-### `t.string`
+### `t.string()`
 
 Validates that the value is a string.
 
 ```js
-t.string;
+t.string();
 // validates: "hello", ""
 // rejects:   42, null
 ```
@@ -155,11 +155,11 @@ element is validated against it.
 
 ```js
 t.array(); // any array
-t.array(t.number); // array of numbers
-t.array(t.string); // array of strings
+t.array(t.number()); // array of numbers
+t.array(t.string()); // array of strings
 
-// validates: [1, 2, 3]     with t.array(t.number)
-// rejects:   [1, "two", 3] with t.array(t.number)
+// validates: [1, 2, 3]     with t.array(t.number())
+// rejects:   [1, "two", 3] with t.array(t.number())
 ```
 
 ### `t.object(shape?)`
@@ -172,7 +172,7 @@ are allowed.
 ```js
 t.object(); // any object
 t.object(["name", "age"]); // must have "name" and "age" keys
-t.object({ name: t.string, "age?": t.number }); // "name" required, "age" optional
+t.object({ name: t.string(), "age?": t.number() }); // "name" required, "age" optional
 
 // validates: { name: "Alice", age: 30, extra: true }
 // rejects:   { age: 30 }  (missing required key "name")
@@ -185,7 +185,7 @@ Accepts either an array of key names or an object mapping keys to validators.
 
 ```js
 t.strictObject(["name", "age"]); // must have exactly "name" and "age" keys
-t.strictObject({ name: t.string, "age?": t.number }); // "name" required, "age" optional
+t.strictObject({ name: t.string(), "age?": t.number() }); // "name" required, "age" optional
 
 // validates: { name: "Alice" }
 // validates: { name: "Alice", age: 30 }
@@ -199,10 +199,10 @@ value in the object is validated against it.
 
 ```js
 t.record(); // any object
-t.record(t.number); // all values must be numbers
+t.record(t.number()); // all values must be numbers
 
-// validates: { a: 1, b: 2 }     with t.record(t.number)
-// rejects:   { a: 1, b: "two" } with t.record(t.number)
+// validates: { a: 1, b: 2 }     with t.record(t.number())
+// rejects:   { a: 1, b: "two" } with t.record(t.number())
 ```
 
 ### `t.tuple(types)`
@@ -211,7 +211,7 @@ Validates that the value is an array with a fixed length, where each element
 matches its corresponding type.
 
 ```js
-t.tuple([t.string, t.number]);
+t.tuple([t.string(), t.number()]);
 
 // validates: ["hello", 42]
 // rejects:   ["hello"]           (wrong length)
@@ -226,8 +226,8 @@ runtime**, they only exist to provide TypeScript type inference.
 
 ```js
 t.function(); // any function
-t.function([t.string, t.number]); // typed params (TS inference only)
-t.function([t.string], t.boolean); // typed params and return (TS inference only)
+t.function([t.string(), t.number()]); // typed params (TS inference only)
+t.function([t.string()], t.boolean()); // typed params and return (TS inference only)
 
 // validates: () => {}, Math.max, class Foo {}
 // rejects:   42, "hello", null
@@ -241,7 +241,7 @@ only exists to provide TypeScript type inference.
 
 ```js
 t.promise(); // any promise
-t.promise(t.string); // Promise<string> (TS inference only)
+t.promise(t.string()); // Promise<string> (TS inference only)
 
 // validates: Promise.resolve(42), new Promise(() => {})
 // rejects:   42, { then() {} }
@@ -285,13 +285,13 @@ t.instanceOf(HTMLInputElement);
 // rejects:   "2024-01-01"           with t.instanceOf(Date)
 ```
 
-### `t.component`
+### `t.component()`
 
 Validates that the value is `Component` or a subclass of it. This is shorthand
 for `t.constructor(Component)`.
 
 ```js
-t.component;
+t.component();
 
 // validates: Component, MyComponent (extends Component)
 // rejects:   new Component(), "Component"
@@ -315,7 +315,7 @@ argument is used for type inference only.
 
 ```js
 t.signal(); // any signal
-t.signal(t.number); // Signal<number> (for TS inference)
+t.signal(t.number()); // Signal<number> (for TS inference)
 ```
 
 ### `t.ref(type?)`
@@ -333,12 +333,12 @@ t.ref(HTMLInputElement); // null | HTMLInputElement
 Validates that the value matches **at least one** of the given types (union).
 
 ```js
-t.or([t.string, t.number]);
-t.or([t.literal("none"), t.number]);
+t.or([t.string(), t.number()]);
+t.or([t.literal("none"), t.number()]);
 
-// validates: "hello"  with t.or([t.string, t.number])
-// validates: 42       with t.or([t.string, t.number])
-// rejects:   true     with t.or([t.string, t.number])
+// validates: "hello"  with t.or([t.string(), t.number()])
+// validates: 42       with t.or([t.string(), t.number()])
+// rejects:   true     with t.or([t.string(), t.number()])
 ```
 
 ### `t.and(types)`
@@ -346,7 +346,7 @@ t.or([t.literal("none"), t.number]);
 Validates that the value matches **all** of the given types (intersection).
 
 ```js
-t.and([t.object({ name: t.string }), t.object({ age: t.number })]);
+t.and([t.object({ name: t.string() }), t.object({ age: t.number() })]);
 
 // validates: { name: "Alice", age: 30 }
 // rejects:   { name: "Alice" }  (missing "age")
@@ -359,9 +359,9 @@ function. If the predicate returns `false`, validation fails with the given
 error message (defaults to `"value does not match custom validation"`).
 
 ```js
-t.customValidator(t.number, (v) => v >= 0, "value must be non-negative");
-t.customValidator(t.string, (v) => v.length > 0, "value must not be empty");
-t.customValidator(t.array(t.number), (v) => v.length <= 10, "too many items");
+t.customValidator(t.number(), (v) => v >= 0, "value must be non-negative");
+t.customValidator(t.string(), (v) => v.length > 0, "value must not be empty");
+t.customValidator(t.array(t.number()), (v) => v.length <= 10, "too many items");
 
 // validates: 42    with the first example
 // rejects:   -1    with the first example ("value must be non-negative")

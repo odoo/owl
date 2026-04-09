@@ -214,11 +214,11 @@ test("components start plugins at their level", async () => {
 
 test("components can give config to plugins", async () => {
   class PluginA extends Plugin {
-    inputA = config("inputAlias", t.string);
+    inputA = config("inputAlias", t.string());
   }
 
   class PluginB extends Plugin {
-    inputB = config("otherInput", t.number);
+    inputB = config("otherInput", t.number());
     other = 1;
   }
 
@@ -239,7 +239,7 @@ test("components can give config to plugins", async () => {
 
 test("plugin config are validated", async () => {
   class PluginA extends Plugin {
-    inputA = config("input", t.string);
+    inputA = config("input", t.string());
   }
 
   class Test extends Component {
@@ -258,7 +258,7 @@ test("plugin config are validated", async () => {
 
 test("optional plugin config work as expected (value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string) || "abc";
+    inputA = config("input?", t.string()) || "abc";
   }
 
   class Test extends Component {
@@ -271,7 +271,7 @@ test("optional plugin config work as expected (value given)", async () => {
 
 test("optional plugin config work as expected (no value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string) || "abc";
+    inputA = config("input?", t.string()) || "abc";
   }
 
   class Test extends Component {
@@ -284,7 +284,7 @@ test("optional plugin config work as expected (no value given)", async () => {
 
 test("optional plugin config work as expected (no config given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string) || "abc";
+    inputA = config("input?", t.string()) || "abc";
   }
 
   class Test extends Component {
@@ -333,7 +333,7 @@ test("shadow plugin", async () => {
 
 test("components can register resources", async () => {
   class PluginA extends Plugin {
-    colors = new Resource({ name: "colors", validation: t.string });
+    colors = new Resource({ name: "colors", validation: t.string() });
 
     value = computed(() => {
       return this.colors.items().join("|");

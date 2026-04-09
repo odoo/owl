@@ -155,8 +155,8 @@ options:
 
 ```js
 class ApiPlugin extends Plugin {
-  baseUrl = config("apiBaseUrl", t.string);
-  timeout = config("apiTimeout?", t.number) || 5000;
+  baseUrl = config("apiBaseUrl", t.string());
+  timeout = config("apiTimeout?", t.number()) || 5000;
 
   setup() {
     // use this.baseUrl and this.timeout

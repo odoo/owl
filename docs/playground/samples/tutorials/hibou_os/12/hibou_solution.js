@@ -4,8 +4,8 @@ import { WindowManager } from "./window/window_manager";
 import { WindowManagerPlugin } from "./window/window_manager_plugin";
 
 const APP_SCHEMA = t.object({
-    name: t.string,
-    icon: t.string,
+    name: t.string(),
+    icon: t.string(),
     window: t.constructor(Component),
     "systrayItems?": t.array(t.constructor(Component)),
     "plugins?": t.array(t.constructor(Plugin)),

@@ -12,10 +12,10 @@ export class ProductCard extends Component {
       </div>`;
 
     props = props({
-        name: t.string,
-        description: t.string,
-        price: t.number,
-        "image?": t.string,
+        name: t.string(),
+        description: t.string(),
+        price: t.number(),
+        "image?": t.string(),
     }, {
         image: "📦",
     });

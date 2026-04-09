@@ -2,7 +2,7 @@ import { Component, mount, signal, props, types as t } from "@odoo/owl";
 
 class KanbanCard extends Component {
   static template = "tutorial.KanbanCard";
-  props = props({ title: t.string, onDelete: t.function() });
+  props = props({ title: t.string(), onDelete: t.function() });
 }
 
 class KanbanColumn extends Component {

@@ -451,7 +451,7 @@ class MyComponent extends Component {
 
   // now, this.props is an object with the two keys a and b, and IDEs can
   // infer that this.props.a is a string, and this.props.b is a optional number
-  props = props({ a: t.string, "b?": t.number });
+  props = props({ a: t.string(), "b?": t.number() });
 }
 ```
 
@@ -463,7 +463,7 @@ import { Component, props } from "@odoo/owl";
 class MyComponent extends Component {
   static template = "mytemplate";
 
-  props = props({ a: t.string, "b?": t.number });
+  props = props({ a: t.string(), "b?": t.number() });
   otherProps = props({ c: t.instanceOf(SomeClass) });
 
   // no description here => we get all props received by the component
@@ -476,7 +476,7 @@ class MyComponent extends Component {
   // we can define default values as well, as second argument:
   myProp = props(
     {
-      "foo?": t.boolean,
+      "foo?": t.boolean(),
     },
     {
       foo: true,
@@ -532,10 +532,10 @@ class SomeComponent extends Component {
 
   props = props(
     {
-      name: t.string,
-      "visible?": t.boolean,
-      "immediate?": t.boolean,
-      "leaveDuration?": t.number,
+      name: t.string(),
+      "visible?": t.boolean(),
+      "immediate?": t.boolean(),
+      "leaveDuration?": t.number(),
       "onLeave?": t.function(),
       // no need to grab the slot prop here
     },
@@ -873,8 +873,8 @@ static props = {
 
 // owl 3.x
 props = props({
-  "mode?": t.string,
-  "readonly?": t.boolean,
+  "mode?": t.string(),
+  "readonly?": t.boolean(),
   "onChange?": t.function(),
   "onBlur?": t.function(),
 });
@@ -882,12 +882,12 @@ props = props({
 // other examples
 props = props({
   someObject: t.object({
-    id: t.string,
-    values: t.union([t.array(), t.number])
+    id: t.string(),
+    values: t.union([t.array(), t.number()])
   }),
 });
 
-assertType(myObj, t.object({ id: t.number, text: t.string}));
+assertType(myObj, t.object({ id: t.number(), text: t.string()}));
 ```
 
 ### onWillUpdateProps is removed
@@ -908,7 +908,7 @@ the signal from a performance standpoint.
 ```js
 class Child extends Component {
   static template = xml`<t t-out="this.double()"/>`;
-  props = props({ count: t.signal(t.number) });
+  props = props({ count: t.signal(t.number()) });
 
   // double is always updated
   double = computed(() => 2 * this.props.count());
@@ -1684,7 +1684,7 @@ class Counter extends Component {
         Count: <t t-out="this.props.count()"/>
       </div>`;
 
-  props = props({ count: t.signal(t.number) });
+  props = props({ count: t.signal(t.number()) });
 
   increment() {
     this.props.count.set(this.props.count() + 1);
@@ -1773,7 +1773,7 @@ class Notification extends Component {
             <div><t t-out="this.props.notification.message"/></div>
         </div>`;
   props = props({
-    notification: t.object({ title: t.string, message: t.string }),
+    notification: t.object({ title: t.string(), message: t.string() }),
   });
 }
 

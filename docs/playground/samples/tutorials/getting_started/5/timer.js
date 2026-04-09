@@ -7,7 +7,7 @@ export class Timer extends Component {
       </div>`;
 
     props = props({
-        increment: t.number,
+        increment: t.number(),
     });
 
     value = signal(0);

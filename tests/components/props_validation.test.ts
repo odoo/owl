@@ -111,9 +111,9 @@ describe("props validation", () => {
 
   test("validate simple types", async () => {
     const Tests = [
-      { type: t.number, ok: 1, ko: "1" },
-      { type: t.boolean, ok: true, ko: "1" },
-      { type: t.string, ok: "1", ko: 1 },
+      { type: t.number(), ok: 1, ko: "1" },
+      { type: t.boolean(), ok: true, ko: "1" },
+      { type: t.string(), ok: "1", ko: 1 },
       { type: t.object(), ok: {}, ko: "1" },
       { type: t.instanceOf(Date), ok: new Date(), ko: "1" },
       { type: t.function(), ok: () => {}, ko: "1" },
@@ -171,7 +171,7 @@ describe("props validation", () => {
   test("can validate a prop with multiple types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.or([t.string, t.boolean]) });
+      props = props({ p: t.or([t.string(), t.boolean()]) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -213,7 +213,7 @@ describe("props validation", () => {
   test("can validate an optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ "p?": t.string });
+      props = props({ "p?": t.string() });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -255,7 +255,7 @@ describe("props validation", () => {
   test("can validate an array with given primitive type", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.array(t.string) });
+      props = props({ p: t.array(t.string()) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -299,7 +299,7 @@ describe("props validation", () => {
   test("can validate an array with multiple sub element types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.array(t.or([t.string, t.boolean])) });
+      props = props({ p: t.array(t.or([t.string(), t.boolean()])) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -349,7 +349,7 @@ describe("props validation", () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
       props = props({
-        p: t.object({ id: t.number, url: t.string }),
+        p: t.object({ id: t.number(), url: t.string() }),
       });
     }
     class Parent extends Component {
@@ -397,8 +397,8 @@ describe("props validation", () => {
       static template = xml`<div>hey</div>`;
       props = props({
         p: t.object({
-          id: t.number,
-          url: t.or([t.boolean, t.array(t.number)]),
+          id: t.number(),
+          url: t.or([t.boolean(), t.array(t.number())]),
         }),
       });
     }
@@ -438,7 +438,7 @@ describe("props validation", () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        myprop: t.array(t.object({ "num?": t.number })),
+        myprop: t.array(t.object({ "num?": t.number() })),
       });
     }
     let error: Error;
@@ -466,7 +466,9 @@ describe("props validation", () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        size: t.customValidator(t.string, (e: string) => ["small", "medium", "large"].includes(e)),
+        size: t.customValidator(t.string(), (e: string) =>
+          ["small", "medium", "large"].includes(e)
+        ),
       });
     }
     let error: Error;
@@ -496,7 +498,7 @@ describe("props validation", () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        n: t.customValidator(t.number, validator),
+        n: t.customValidator(t.number(), validator),
       });
     }
     let error: Error | undefined;
@@ -572,7 +574,7 @@ describe("props validation", () => {
   test("props: can be defined with a type any", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any });
+      props = props({ message: t.any() });
     }
     await expect(
       mount(SubComp, fixture, {
@@ -641,7 +643,7 @@ describe("props validation", () => {
   test.skip("props: extra props cause an error, part 2", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any });
+      props = props({ message: t.any() });
     }
 
     await expect(
@@ -669,7 +671,7 @@ describe("props validation", () => {
   test("optional prop do not cause an error if value is undefined", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ "message?": t.string });
+      props = props({ "message?": t.string() });
     }
 
     await expect(
@@ -710,7 +712,7 @@ describe("props validation", () => {
     let error: Error;
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number });
+      props = props({ p: t.number() });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -733,7 +735,7 @@ describe("props validation", () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ "p?": t.number }, { p: 4 });
+      props = props({ "p?": t.number() }, { p: 4 });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -753,8 +755,8 @@ describe("props validation", () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
       props = props({
-        "optional?": t.string,
-        mandatory: t.number,
+        "optional?": t.string(),
+        mandatory: t.number(),
       });
     }
     class Parent extends Component {
@@ -787,7 +789,7 @@ describe("props validation", () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
       props = props({
-        message: t.string,
+        message: t.string(),
       });
     }
     class Parent extends Component {

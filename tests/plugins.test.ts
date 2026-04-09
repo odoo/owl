@@ -531,7 +531,7 @@ describe("sub plugin managers", () => {
 describe("plugins and resources", () => {
   test("can define a resource type", () => {
     class A extends Plugin {
-      colors = new Resource({ name: "colors", validation: t.string });
+      colors = new Resource({ name: "colors", validation: t.string() });
     }
     class B extends Plugin {
       a = plugin(A);
@@ -554,7 +554,7 @@ describe("plugins and resources", () => {
 
   test("resources from child plugins are available in parent plugins", () => {
     class A extends Plugin {
-      colors = new Resource({ name: "colors", validation: t.string });
+      colors = new Resource({ name: "colors", validation: t.string() });
     }
     class B extends Plugin {
       setup() {
@@ -583,7 +583,7 @@ describe("plugins and resources", () => {
 
   test("resources are derived values, can be seen from effect", async () => {
     class A extends Plugin {
-      colors = new Resource({ name: "colors", validation: t.string });
+      colors = new Resource({ name: "colors", validation: t.string() });
     }
 
     class B extends Plugin {

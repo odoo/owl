@@ -1,3 +1,4 @@
+import { Component } from "./component";
 import { atomSymbol, ReactiveValue } from "./reactivity/computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
@@ -284,6 +285,8 @@ function reactiveValueType(type?: any): ReactiveValue<any> {
   } as any;
 }
 
+const componentType: typeof Component = constructorType(Component as any) as any;
+
 function ref(): HTMLElement | null;
 function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;
 function ref(type?: any): any {
@@ -295,6 +298,7 @@ export const types = {
   any: anyType,
   array: arrayType,
   boolean: booleanType,
+  component: componentType,
   constructor: constructorType,
   customValidator: customValidator,
   function: functionType,

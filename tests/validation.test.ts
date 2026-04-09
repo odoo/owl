@@ -1,4 +1,4 @@
-import { assertType, computed, signal, types as t, validateType } from "../src";
+import { assertType, Component, computed, signal, types as t, validateType } from "../src";
 
 class A {}
 
@@ -125,6 +125,17 @@ test("constructor", () => {
   expect(validateType(new C(), t.constructor(A))).toMatchObject([issue]);
   expect(validateType([], t.constructor(A))).toMatchObject([issue]);
   expect(validateType(() => {}, t.constructor(A))).toMatchObject([issue]);
+});
+
+test("component", () => {
+  class MyComponent extends Component {}
+  const issue = { message: "value is not 'Component' or an extension" };
+  expect(validateType(Component, t.component)).toEqual([]);
+  expect(validateType(MyComponent, t.component)).toEqual([]);
+  expect(validateType(true, t.component)).toMatchObject([issue]);
+  expect(validateType("abc", t.component)).toMatchObject([issue]);
+  expect(validateType(A, t.component)).toMatchObject([issue]);
+  expect(validateType(new MyComponent(null as any), t.component)).toMatchObject([issue]);
 });
 
 test("customValidator", () => {

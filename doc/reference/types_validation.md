@@ -20,6 +20,7 @@
   - [`t.literal`](#tliteralvalue)
   - [`t.selection`](#tselectionvalues)
   - [`t.instanceOf`](#tinstanceofconstructor)
+  - [`t.component`](#tcomponent)
   - [`t.constructor`](#tconstructorconstructor)
   - [`t.signal`](#tsignaltype)
   - [`t.ref`](#treftype)
@@ -282,6 +283,18 @@ t.instanceOf(HTMLInputElement);
 // validates: new Date()             with t.instanceOf(Date)
 // rejects:   Date.now()             with t.instanceOf(Date)
 // rejects:   "2024-01-01"           with t.instanceOf(Date)
+```
+
+### `t.component`
+
+Validates that the value is `Component` or a subclass of it. This is shorthand
+for `t.constructor(Component)`.
+
+```js
+t.component;
+
+// validates: Component, MyComponent (extends Component)
+// rejects:   new Component(), "Component"
 ```
 
 ### `t.constructor(constructor)`

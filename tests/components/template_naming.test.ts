@@ -22,6 +22,20 @@ describe("template naming", () => {
     app.destroy();
   });
 
+  test("component with hyphenated template name has named template function", async () => {
+    const app = new App();
+    app.addTemplate("o-spreadsheet-grid", "<div>grid</div>");
+    class Grid extends Component {
+      static template = "o-spreadsheet-grid";
+    }
+    const root = app.createRoot(Grid);
+    await root.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>grid</div>");
+    const templateFn = app.getTemplate("o-spreadsheet-grid");
+    expect(templateFn.name).toBe("template_o_spreadsheet_grid");
+    app.destroy();
+  });
+
   test("component with inline xml template has generic template function name", async () => {
     class MyWidget extends Component {
       static template = xml`<div>hello</div>`;

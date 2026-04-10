@@ -8,9 +8,11 @@ export { text, comment } from "./text";
 export { html } from "./html";
 export { createCatcher } from "./event_catcher";
 
+export type MountTarget = HTMLElement | ShadowRoot;
+
 export interface VNode<T = any> {
-  mount(parent: HTMLElement, afterNode: Node | null): void;
-  moveBeforeDOMNode(node: Node | null, parent?: HTMLElement): void;
+  mount(parent: MountTarget, afterNode: Node | null): void;
+  moveBeforeDOMNode(node: Node | null, parent?: MountTarget): void;
   moveBeforeVNode(other: T | null, afterNode: Node | null): void;
   patch(other: T, withBeforeRemove: boolean): void;
   beforeRemove(): void;
@@ -25,7 +27,7 @@ export interface VNode<T = any> {
 
 export type BDom = VNode<any>;
 
-export function mount(vnode: VNode, fixture: HTMLElement, afterNode: Node | null = null) {
+export function mount(vnode: VNode, fixture: MountTarget, afterNode: Node | null = null) {
   vnode.mount(fixture, afterNode);
 }
 

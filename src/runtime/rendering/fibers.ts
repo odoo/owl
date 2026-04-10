@@ -1,5 +1,5 @@
 import { OwlError } from "../../common/owl_error";
-import { BDom, mount } from "../blockdom";
+import { BDom, mount, type MountTarget } from "../blockdom";
 import type { ComponentNode } from "../component_node";
 import { getCurrentComputation, removeSources, setComputation } from "../reactivity/computations";
 import { STATUS } from "../status";
@@ -235,10 +235,10 @@ export interface MountOptions {
 }
 
 export class MountFiber extends RootFiber {
-  target: HTMLElement;
+  target: MountTarget;
   position: Position;
 
-  constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
+  constructor(node: ComponentNode, target: MountTarget, options: MountOptions = {}) {
     super(node, null);
     this.target = target;
     this.position = options.position || "last-child";

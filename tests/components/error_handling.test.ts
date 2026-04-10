@@ -321,11 +321,12 @@ describe("errors and promises", () => {
 
     const app = new App();
     let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
+    const root = app.createRoot(Root);
+    const errorProm = nextAppError(app);
+    const mountProm = root
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(errorProm).resolves.toThrow(
       "[Owl] Unhandled error. Destroying the root component"
     );
     await mountProm;
@@ -347,11 +348,12 @@ describe("errors and promises", () => {
 
     const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
+    const root = app.createRoot(Root);
+    const errorProm = nextAppError(app);
+    const mountProm = root
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(errorProm).resolves.toThrow(
       "[Owl] Unhandled error. Destroying the root component"
     );
     await mountProm;
@@ -375,11 +377,12 @@ describe("errors and promises", () => {
 
     const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
+    const root = app.createRoot(Root);
+    const errorProm = nextAppError(app);
+    const mountProm = root
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(errorProm).resolves.toThrow(
       "[Owl] Unhandled error. Destroying the root component"
     );
     await mountProm;

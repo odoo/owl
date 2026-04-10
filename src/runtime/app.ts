@@ -135,9 +135,21 @@ export class App extends TemplateSet {
 
         const fiber = new MountFiber(node, target, options);
         this.scheduler.addFiber(fiber);
-        const prev = getCurrentComputation();
-        node.initiateRender(fiber);
-        setComputation(prev);
+        if (node.willStart.length) {
+          const prev = getCurrentComputation();
+          node.initiateRender(fiber);
+          setComputation(prev);
+        } else {
+          node.fiber = fiber;
+          if (node.mounted.length) {
+            fiber.root!.mounted.push(fiber);
+          }
+          try {
+            fiber.render();
+          } catch (e) {
+            reject(e);
+          }
+        }
         return promise;
       },
       destroy: () => {

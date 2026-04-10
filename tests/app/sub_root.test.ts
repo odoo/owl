@@ -114,7 +114,6 @@ test("destroy a subroot while another component is mounted in main app", async (
 
   const app = new App();
   const comp = await app.createRoot(SomeComponent).mount(fixture);
-  expect(fixture.innerHTML).toBe("a<div></div>");
   await nextTick();
   expect(fixture.innerHTML).toBe("a<div>c</div>");
   comp.state.flag = true;

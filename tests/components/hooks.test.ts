@@ -210,6 +210,62 @@ describe("hooks", () => {
     ]);
   });
 
+  test("onWillUpdateProps receives nextProps", async () => {
+    let received: any = undefined;
+    class Child extends Component {
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
+      setup() {
+        onWillUpdateProps((nextProps) => {
+          received = nextProps;
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child value="this.value()"/>`;
+      static components = { Child };
+      value = signal(1);
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+
+    parent.value.set(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span>");
+    expect(received).toBeDefined();
+    expect(received.value).toBe(2);
+  });
+
+  test("onWillUpdateProps receives nextProps (dev mode)", async () => {
+    let received: any = undefined;
+    class Child extends Component {
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
+      props = props();
+      setup() {
+        onWillUpdateProps((nextProps) => {
+          received = nextProps;
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child value="this.value()"/>`;
+      static components = { Child };
+      value = signal(1);
+    }
+
+    const app = new App({ dev: true });
+    const parent = await app.createRoot(Parent).mount(fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+
+    parent.value.set(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span>");
+    expect(received).toBeDefined();
+    expect(received.value).toBe(2);
+    app.destroy();
+  });
+
   test("useListener", async () => {
     let n = 0;
 

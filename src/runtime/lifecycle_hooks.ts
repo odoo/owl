@@ -14,8 +14,8 @@ function decorate(node: ComponentNode, f: Function, hookName: string) {
     // Create a named wrapper so the name appears in stack traces.
     // V8 uses computed property keys as inferred function names.
     const wrapper = {
-      [name]() {
-        return f.call(component);
+      [name](...args: any[]) {
+        return f.call(component, ...args);
       },
     };
     return wrapper[name];

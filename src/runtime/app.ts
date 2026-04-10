@@ -6,7 +6,6 @@ import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager
 import { GetProps } from "./props";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { nodeErrorHandlers } from "./rendering/error_handling";
-import { getCurrentComputation, setComputation } from "./reactivity/computations";
 import { Fiber, MountFiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
 import { Resource } from "./resource";
@@ -136,9 +135,7 @@ export class App extends TemplateSet {
         const fiber = new MountFiber(node, target, options);
         this.scheduler.addFiber(fiber);
         if (node.willStart.length) {
-          const prev = getCurrentComputation();
           node.initiateRender(fiber);
-          setComputation(prev);
         } else {
           node.fiber = fiber;
           if (node.mounted.length) {

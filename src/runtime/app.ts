@@ -6,7 +6,8 @@ import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager
 import { GetProps } from "./props";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { nodeErrorHandlers } from "./rendering/error_handling";
-import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
+import { getCurrentComputation, setComputation } from "./reactivity/computations";
+import { Fiber, MountFiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
 import { Resource } from "./resource";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
@@ -45,7 +46,7 @@ declare global {
   }
 }
 
-type MountTarget = HTMLElement | ShadowRoot;
+import type { MountTarget } from "./blockdom";
 
 interface Root<T extends ComponentConstructor> {
   node: ComponentNode;
@@ -111,12 +112,32 @@ export class App extends TemplateSet {
     const root = {
       node: node!,
       promise,
-      mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
+      mount: (target: MountTarget, options?: MountOptions) => {
         if (error) {
           return promise;
         }
         App.validateTarget(target);
-        this.mountNode(node, target, resolve, reject, options);
+
+        // Set up error handler and onMounted callback
+        let handlers = nodeErrorHandlers.get(node);
+        if (!handlers) {
+          handlers = [];
+          nodeErrorHandlers.set(node, handlers);
+        }
+        handlers.unshift((e, finalize) => {
+          const finalError = finalize();
+          reject(finalError);
+        });
+        node.mounted.push(() => {
+          resolve(node.component);
+          handlers!.shift();
+        });
+
+        const fiber = new MountFiber(node, target, options);
+        this.scheduler.addFiber(fiber);
+        const prev = getCurrentComputation();
+        node.initiateRender(fiber);
+        setComputation(prev);
         return promise;
       },
       destroy: () => {
@@ -127,35 +148,6 @@ export class App extends TemplateSet {
     };
     this.roots.add(root);
     return root;
-  }
-
-  private mountNode(
-    node: ComponentNode,
-    target: HTMLElement | ShadowRoot,
-    resolve: (c: any) => void,
-    reject: (e: any) => void,
-    options?: MountOptions
-  ) {
-    // Manually add the last resort error handler on the node
-    let handlers = nodeErrorHandlers.get(node);
-    if (!handlers) {
-      handlers = [];
-      nodeErrorHandlers.set(node, handlers);
-    }
-
-    handlers.unshift((e, finalize) => {
-      const finalError = finalize();
-      reject(finalError);
-    });
-
-    // manually set a onMounted callback.
-    // that way, we are independant from the current node.
-    node.mounted.push(() => {
-      resolve(node.component);
-      handlers!.shift();
-    });
-
-    node.mountComponent(target, options);
   }
 
   destroy() {

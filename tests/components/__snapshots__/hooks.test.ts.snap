@@ -78,6 +78,63 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
 }"
 `;
 
+exports[`hooks onWillUpdateProps receives nextProps (dev mode) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {value: ctx['this'].value()};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`hooks onWillUpdateProps receives nextProps (dev mode) 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`hooks onWillUpdateProps receives nextProps 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].value()}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`hooks onWillUpdateProps receives nextProps 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`hooks two different call to willPatch/patched should work 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

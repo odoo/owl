@@ -1,5 +1,4 @@
 import { App, Component, mount, onWillDestroy, props, types } from "../../src";
-import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
   onMounted,
@@ -319,17 +318,14 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe("[Owl] Unhandled error. Destroying the root component");
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toHaveBeenCalledTimes(0);
     expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
@@ -345,18 +341,14 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App({ test: true });
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.stack).toContain("error_handling.test.ts");
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.stack).toContain("error_handling.test.ts");
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toHaveBeenCalledTimes(0);
     expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
@@ -373,18 +365,14 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App({ test: true });
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe(`boom in onWillStart`);
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toBe("boom in onWillStart");
   });
 
   test("an error in willPatch call will reject the render promise", async () => {

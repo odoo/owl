@@ -6,7 +6,7 @@ import { Component } from "../component";
 import { ComponentNode } from "../component_node";
 import { markRaw } from "../reactivity/proxy";
 import { Markup } from "../utils";
-import { Fiber } from "./fibers";
+import { Fiber, makeChildFiber } from "./fibers";
 
 const ObjectCreate = Object.create;
 /**
@@ -233,7 +233,18 @@ function createComponent<P extends Record<string, any>>(
     if (node) {
       if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
         node.forceNextRender = false;
-        updateAndRender.call(node, props, parentFiber);
+        if (node.willUpdateProps.length) {
+          updateAndRender.call(node, props, parentFiber);
+        } else {
+          // Synchronous fast path — no willUpdateProps hooks
+          const fiber = makeChildFiber(node, parentFiber);
+          node.fiber = fiber;
+          node.props = props;
+          const parentRoot = parentFiber.root!;
+          if (node.willPatch.length) parentRoot.willPatch.push(fiber);
+          if (node.patched.length) parentRoot.patched.push(fiber);
+          fiber.render();
+        }
       }
     } else {
       // new component

@@ -1,12 +1,12 @@
 import { templates } from "../../assets/templates.js";
 import { getOwlStatus } from "../utils";
-const { Component, useState, onWillStart, mount, App } = owl;
+const { Component, proxy, onWillStart, mount, App } = owl;
 
 class PopUpApp extends Component {
   static template = "popup.PopUpApp";
 
   setup() {
-    this.state = useState({ status: 0 });
+    this.state = proxy({ status: 0 });
     onWillStart(async () => {
       try {
         this.state.status = await getOwlStatus();

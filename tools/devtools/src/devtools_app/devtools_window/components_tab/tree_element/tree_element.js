@@ -4,42 +4,62 @@ import { isElementInCenterViewport, minimizeKey, browserInstance } from "../../.
 import { useStore } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, useRef, useState, useEffect, onMounted } = owl;
+const { Component, signal, proxy, onMounted, onPatched, onWillUnmount } = owl;
+const getProps = owl.props;
+
+function useLayoutEffect(fn, computeDeps) {
+  let cleanup, deps;
+  onMounted(() => {
+    deps = computeDeps();
+    cleanup = fn(...deps);
+  });
+  onPatched(() => {
+    const newDeps = computeDeps();
+    if (newDeps.some((d, i) => d !== deps[i])) {
+      cleanup?.();
+      deps = newDeps;
+      cleanup = fn(...deps);
+    }
+  });
+  onWillUnmount(() => cleanup?.());
+}
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
 
   static components = { TreeElement, HighlightText };
 
+  props = getProps();
+
   setup() {
-    this.state = useState({
+    this.state = proxy({
       searched: false,
     });
     this.store = useStore();
-    this.element = useRef("element");
+    this.element = signal(null);
     this.stringifiedPath = JSON.stringify(this.props.component.path);
     // Scroll to the selected element when it changes
     onMounted(() => {
       if (this.props.component.selected) {
-        this.element.el.scrollIntoView({ block: "center", behavior: "auto" });
+        this.element().scrollIntoView({ block: "center", behavior: "auto" });
       }
     });
-    useEffect(
+    useLayoutEffect(
       (selected) => {
         if (selected) {
-          if (!isElementInCenterViewport(this.element.el)) {
-            this.element.el.scrollIntoView({ block: "center", behavior: "smooth" });
+          if (!isElementInCenterViewport(this.element())) {
+            this.element().scrollIntoView({ block: "center", behavior: "smooth" });
           }
         }
-        this.store.selectedElement = this.element.el;
+        this.store.selectedElement = this.element();
       },
       () => [this.props.component.selected]
     );
     // Effect to apply a short highlight effect to the component when it is rendered
-    useEffect(
+    useLayoutEffect(
       () => {
         if (this.store.renderPaths.has(this.stringifiedPath)) {
-          const treeElement = this.element.el;
+          const treeElement = this.element();
           treeElement.classList.add("render-highlight");
           setTimeout(() => {
             treeElement.classList.add("highlight-fade");
@@ -54,7 +74,7 @@ export class TreeElement extends Component {
       () => [this.store.renderPaths.size]
     );
     // Used to know when the component is in the search bar results
-    useEffect(
+    useLayoutEffect(
       (searchResults) => {
         if (searchResults.includes(this.props.component.path)) {
           this.state.searched = true;

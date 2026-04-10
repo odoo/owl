@@ -3,9 +3,10 @@
 import { useStore } from "../../store/store";
 
 const { Component } = owl;
+const getProps = owl.props;
 
 export class Tab extends Component {
-  static props = ["tabName"];
+  props = getProps();
 
   static template = "devtools.Tab";
 

@@ -2,33 +2,33 @@
 <templates xml:space="preserve">
   <t t-name="devtools.DevtoolsWindow" owl="1">
     <div id="container" class="d-flex w-100 h-100 flex-column position-absolute overflow-hidden" t-on-mouseover.stop="() => this.store.removeHighlights()" t-on-mouseout.stop="() => this.store.removeHighlights()">
-      <t t-if="!store.extensionContextStatus">
+      <t t-if="!this.store.extensionContextStatus">
         <div class="status-message d-flex justify-content-center align-items-center">
           Extension context is invalid. Please close the devtools and reload the page.
         </div>
       </t>
-      <t t-elif="store.owlStatus">
+      <t t-elif="this.store.owlStatus">
         <div class="panel-top d-flex align-items-center custom-navbar">
           <Tab tabName="'ComponentsTab'"/>
           <Tab tabName="'ProfilerTab'"/>
-          <select t-if="store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="selectFrame">
-            <t t-foreach="store.frameUrls" t-as="frame" t-key="frame_index">
-              <option t-att-value="frame"><t t-esc="frame"/></option>
+          <select t-if="this.store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="this.selectFrame">
+            <t t-foreach="this.store.frameUrls" t-as="frame" t-key="frame_index">
+              <option t-att-value="frame"><t t-out="frame"/></option>
             </t>
           </select>
           <i class="ms-auto p-1 me-1 lg-icon fa fa-question-circle navbar-icon" title="Open devtools doc" t-on-click.stop="() => this.store.openDocumentation()"></i>
-          <i class="p-1 me-1 lg-icon fa navbar-icon" title="Toggle dark mode" t-att-class="{ 'fa-sun-o': store.settings.darkMode, 'fa-moon-o' : !store.settings.darkMode}" t-on-click.stop="() => this.store.toggleDarkMode()"></i>
+          <i class="p-1 me-1 lg-icon fa navbar-icon" title="Toggle dark mode" t-att-class="{ 'fa-sun-o': this.store.settings.darkMode, 'fa-moon-o' : !this.store.settings.darkMode}" t-on-click.stop="() => this.store.toggleDarkMode()"></i>
           <i class="p-1 me-1 lg-icon fa fa-repeat navbar-icon" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
         </div>
-        <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
-        <ProfilerTab t-if="store.page === 'ProfilerTab'"/>
+        <ComponentsTab t-if="this.store.page === 'ComponentsTab'"/>
+        <ProfilerTab t-if="this.store.page === 'ProfilerTab'"/>
       </t>
       <t t-else="">
         <div class="status-message d-flex justify-content-center align-items-center">
           Owl is not loaded on this page.
         </div>
       </t>
-      <ContextMenu t-if="store.contextMenu" items="store.contextMenu.items"/>
+      <ContextMenu t-if="this.store.contextMenu" items="this.store.contextMenu.items"/>
     </div>
   </t>
 </templates>

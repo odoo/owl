@@ -1,18 +1,36 @@
 import { useStore } from "../store/store";
 
-const { Component, useEffect, useRef } = owl;
+const { Component, signal, onMounted, onPatched, onWillUnmount } = owl;
+const getProps = owl.props;
+
+function useLayoutEffect(fn, computeDeps) {
+  let cleanup, deps;
+  onMounted(() => {
+    deps = computeDeps();
+    cleanup = fn(...deps);
+  });
+  onPatched(() => {
+    const newDeps = computeDeps();
+    if (newDeps.some((d, i) => d !== deps[i])) {
+      cleanup?.();
+      deps = newDeps;
+      cleanup = fn(...deps);
+    }
+  });
+  onWillUnmount(() => cleanup?.());
+}
 
 export class ContextMenu extends Component {
   static template = "devtools.ContextMenu";
-  static props = {
-    items: Array,
-  };
+
+  props = getProps();
+
   setup() {
     this.store = useStore();
-    this.contextMenu = useRef("contextmenu");
-    useEffect(
+    this.menuEl = signal(null);
+    useLayoutEffect(
       (position) => {
-        const menu = this.contextMenu.el;
+        const menu = this.menuEl();
         const menuWidth = menu.offsetWidth;
         const menuHeight = menu.offsetHeight;
         let { x, y } = position;

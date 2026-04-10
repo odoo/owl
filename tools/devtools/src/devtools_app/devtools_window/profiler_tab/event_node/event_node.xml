@@ -2,34 +2,34 @@
 <templates xml:space="preserve">
   <t t-name="devtools.EventNode" owl="1">
     <div class="my-0 p-0 object-line"
-      t-on-click.stop="toggleDisplay"
-      t-on-contextmenu="openNodeMenu"
+      t-on-click.stop="this.toggleDisplay"
+      t-on-contextmenu="this.openNodeMenu"
     >
-      <div class="text-nowrap" t-attf-style="padding-left: {{eventPadding}}rem">
+      <div class="text-nowrap" t-attf-style="padding-left: {{this.eventPadding}}rem">
         <i class="fa px-1 pointer-icon caret"
-          t-att-class="{'fa-caret-right': !props.event.toggled, 'fa-caret-down': props.event.toggled}"
-          t-attf-style="visibility: {{props.event.children.length > 0 ? '' : 'hidden'}};"
+          t-att-class="{'fa-caret-right': !this.props.event.toggled, 'fa-caret-down': this.props.event.toggled}"
+          t-attf-style="visibility: {{this.props.event.children.length > 0 ? '' : 'hidden'}};"
         />
         <span>
-          <t t-esc="props.event.type"/>:
+          <t t-out="this.props.event.type"/>:
           &lt;<span style="cursor:pointer; color: var(--component-color);"
-                t-on-click.stop="() => this.store.selectComponent(props.event.path)"
-                t-on-mouseover.stop="() => this.store.highlightComponent(props.event.path)"
+                t-on-click.stop="() => this.store.selectComponent(this.props.event.path)"
+                t-on-mouseover.stop="() => this.store.highlightComponent(this.props.event.path)"
                 t-on-contextmenu.stop="openComponentMenu"
-                t-esc="props.event.component"/>
-          <t t-if="minimizedKey.length > 0">
-            <span t-if="minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
-              <t t-esc="minimizedKey"/>
+                t-out="this.props.event.component"/>
+          <t t-if="this.minimizedKey.length > 0">
+            <span t-if="this.minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
+              <t t-out="this.minimizedKey"/>
             </span>
           </t>&gt;
           <span>
-            (<t t-esc="renderTime"/>ms)
+            (<t t-out="this.renderTime"/>ms)
           </span>
         </span>
       </div>
     </div>
-    <t t-if="props.event.toggled">
-      <t t-foreach="props.event.children" t-as="child" t-key="child.id">
+    <t t-if="this.props.event.toggled">
+      <t t-foreach="this.props.event.children" t-as="child" t-key="child.id">
         <EventNode event="child"/>
       </t>
     </t>

@@ -6,7 +6,6 @@ import { ProfilerTab } from "./profiler_tab/profiler_tab";
 import { Tab } from "./tab/tab";
 
 export class DevtoolsWindow extends Component {
-  static props = [];
   static template = "devtools.DevtoolsWindow";
   static components = { ComponentsTab, Tab, ProfilerTab, ContextMenu };
   setup() {

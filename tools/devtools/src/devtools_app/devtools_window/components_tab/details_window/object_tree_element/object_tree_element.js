@@ -1,25 +1,45 @@
 import { useStore } from "../../../../store/store";
 
-const { Component, useState, useEffect, useRef } = owl;
+const { Component, proxy, signal, onMounted, onPatched, onWillUnmount } = owl;
+const getProps = owl.props;
+
+function useLayoutEffect(fn, computeDeps) {
+  let cleanup, deps;
+  onMounted(() => {
+    deps = computeDeps();
+    cleanup = fn(...deps);
+  });
+  onPatched(() => {
+    const newDeps = computeDeps();
+    if (newDeps.some((d, i) => d !== deps[i])) {
+      cleanup?.();
+      deps = newDeps;
+      cleanup = fn(...deps);
+    }
+  });
+  onWillUnmount(() => cleanup?.());
+}
 
 export class ObjectTreeElement extends Component {
   static template = "devtools.ObjectTreeElement";
 
   static components = { ObjectTreeElement };
 
+  props = getProps();
+
   setup() {
-    this.state = useState({
+    this.state = proxy({
       editMode: false,
       menuTop: 0,
       menuLeft: 0,
     });
-    const inputRef = useRef("input");
+    this.inputRef = signal(null);
     this.store = useStore();
-    useEffect(
+    useLayoutEffect(
       (editMode) => {
         // Focus on the input when it is created
         if (editMode) {
-          inputRef.el.select();
+          this.inputRef().select();
         }
       },
       () => [this.state.editMode]

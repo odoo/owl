@@ -7,7 +7,7 @@ type Constructor<T = any> = { new (...args: any[]): T };
 export type GetOptionalEntries<T> = {
   [K in keyof T as K extends `${infer P}?` ? P : never]?: T[K];
 };
-export type GetRequiredEntries<T> = {
+type GetRequiredEntries<T> = {
   [K in keyof T as K extends `${string}?` ? never : K]: T[K];
 };
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };

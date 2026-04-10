@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-export type Callback = (...args: any[]) => void;
+type Callback = (...args: any[]) => void;
 
 /**
  * Creates a batched version of a callback so that all calls to it in the same

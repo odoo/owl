@@ -41,13 +41,6 @@ const WORD_REPLACEMENT: { [key: string]: string } = Object.assign(Object.create(
   lte: "<=",
 });
 
-export interface QWebVar {
-  id: string; // foo
-  expr: string; // scope.foo (local variables => only foo)
-  value?: string; // 1 + 3
-  hasBody?: boolean;
-}
-
 //------------------------------------------------------------------------------
 // Tokenizer
 //------------------------------------------------------------------------------

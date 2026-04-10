@@ -301,7 +301,7 @@ interface RefCollector {
 }
 
 export type Setter<T = any> = (this: T, value: any) => void;
-export type Updater<T = any> = (this: T, value: any, oldVal: any) => void;
+type Updater<T = any> = (this: T, value: any, oldVal: any) => void;
 
 interface Location {
   refIdx: number;

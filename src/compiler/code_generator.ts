@@ -199,6 +199,7 @@ class CodeTarget {
   tSetVars: Map<string, number> = new Map();
   code: string[] = [];
   hasRoot = false;
+  deferReturn = false;
   needsScopeProtection = false;
   on: EventHandlers | null;
 
@@ -416,7 +417,7 @@ export class CodeGenerator {
       blockExpr = `toggler(${ctx.tKeyExpr}, ${blockExpr})`;
     }
 
-    if (block.isRoot) {
+    if (block.isRoot && !this.target.deferReturn) {
       if (this.target.on) {
         blockExpr = this.wrapWithEventCatcher(blockExpr, this.target.on);
       }
@@ -929,9 +930,20 @@ export class CodeGenerator {
       const n = ast.content.filter((c) => !c.hasNoRepresentation).length;
       let result: string | null = null;
       if (n <= 1) {
+        // Check if there are non-DOM directives (like t-set) after the DOM child.
+        // If so, defer the return so those directives are compiled before it.
+        const shouldDefer =
+          !this.target.hasRoot && ast.content[ast.content.length - 1].hasNoRepresentation;
+        if (shouldDefer) {
+          this.target.deferReturn = true;
+        }
         for (let child of ast.content) {
           const blockName = this.compileAST(child, ctx);
           result = result || blockName;
+        }
+        if (shouldDefer) {
+          this.target.deferReturn = false;
+          this.addLine(`return ${result};`);
         }
         return result;
       }

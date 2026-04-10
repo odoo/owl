@@ -1,6 +1,12 @@
-import { renderToString, snapshotEverything, TestContext } from "../helpers";
+import { Component, mount, xml } from "../../src";
+import { makeTestFixture, renderToString, snapshotEverything, TestContext } from "../helpers";
 
 snapshotEverything();
+
+let fixture: HTMLElement;
+beforeEach(() => {
+  fixture = makeTestFixture();
+});
 
 // -----------------------------------------------------------------------------
 // t-set
@@ -317,5 +323,22 @@ describe("t-set", () => {
     expect(context.renderToString("main")).toBe(
       "<div><p>source</p><div>sourcecalled</div><p>source</p></div>"
     );
+  });
+
+  test("t-set after a dom element is executed before event handlers", async () => {
+    let received: number | undefined;
+    class Root extends Component {
+      static template = xml`
+        <t t-set="val" t-value="1"/>
+        <button t-on-click="() => this.logValue(val)">log</button>
+        <t t-set="val" t-value="2"/>`;
+      logValue(val: number) {
+        received = val;
+      }
+    }
+
+    await mount(Root, fixture);
+    fixture.querySelector("button")!.click();
+    expect(received).toBe(2);
   });
 });

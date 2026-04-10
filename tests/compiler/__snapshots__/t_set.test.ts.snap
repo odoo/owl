@@ -200,6 +200,25 @@ exports[`t-set set from empty body 1`] = `
 }"
 `;
 
+exports[`t-set t-set after a dom element is executed before event handlers 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx)=>ctx['this'].logValue(ctx['val']);
+  
+  let block1 = createBlock(\`<button block-handler-0="click">log</button>\`);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["val"] = 1;
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b1 = block1([hdlr1]);
+    ctx["val"] = 2;
+    return b1;
+  }
+}"
+`;
+
 exports[`t-set t-set and t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

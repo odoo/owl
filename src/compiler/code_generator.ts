@@ -36,7 +36,7 @@ export interface Config {
   dev?: boolean;
 }
 
-export interface CodeGenOptions extends Config {
+interface CodeGenOptions extends Config {
   name?: string;
   hasGlobalValues: boolean;
 }

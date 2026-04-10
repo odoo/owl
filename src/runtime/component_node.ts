@@ -22,7 +22,6 @@ import { STATUS } from "./status";
 type LifecycleHook = Function;
 
 export class ComponentNode implements VNode<ComponentNode> {
-  el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
   component: Component;
@@ -32,7 +31,6 @@ export class ComponentNode implements VNode<ComponentNode> {
   parentKey: string | null;
   props: Record<string, any>;
   defaultProps: Record<string, any> = {};
-
   renderFn: Function;
   parent: ComponentNode | null;
   children: { [key: string]: ComponentNode } = Object.create(null);

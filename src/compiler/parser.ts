@@ -29,7 +29,7 @@ export const enum ASTType {
   TTranslationContext,
 }
 
-export interface BaseAST {
+interface BaseAST {
   type: ASTType;
   hasNoRepresentation?: true;
 }

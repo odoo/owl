@@ -277,27 +277,21 @@ expect.extend({
 });
 
 export function nextAppError(app: any) {
-  const { _handleError } = app;
-  const rootPromises = [...app.roots].map((r) => r.promise);
-
-  let settled = false;
-
-  const done = (error: any, restore = true) => {
-    if (settled) return;
-    settled = true;
-    if (restore) app._handleError = _handleError;
-    resolve(error);
-  };
-
   let resolve: (value: any) => void;
   const result = new Promise((res) => (resolve = res));
 
+  const original = app._handleError;
   app._handleError = (error: any) => {
-    done(error);
+    app._handleError = original;
+    resolve(error);
   };
 
-  for (const p of rootPromises) {
-    p.catch((err: any) => done(err));
+  // Also catch rejections from root mount promises
+  for (const root of app.roots) {
+    root.promise.catch((err: any) => {
+      app._handleError = original;
+      resolve(err);
+    });
   }
 
   return result;

@@ -98,6 +98,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       setComputation(prev);
       await Promise.all(promises!);
     } catch (e) {
+      setComputation(prev);
       handleError({ node: this, error: e });
       return;
     }

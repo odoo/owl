@@ -131,10 +131,12 @@ describe("refs", () => {
     }
 
     const app = new App({ test: true });
-    const mountProm = expect(app.createRoot(Test).mount(fixture)).rejects.toThrow(
+    const root = app.createRoot(Test);
+    const errorProm = nextAppError(app);
+    const mountProm = expect(root.mount(fixture)).rejects.toThrow(
       'Cannot set the same ref more than once in the same component, ref "coucou" was set multiple times in Test'
     );
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(errorProm).resolves.toThrow(
       'Cannot set the same ref more than once in the same component, ref "coucou" was set multiple times in Test'
     );
     await mountProm;

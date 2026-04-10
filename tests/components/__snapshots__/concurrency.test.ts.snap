@@ -2039,7 +2039,7 @@ exports[`sibling rendering: child without willStart renders before async sibling
 }"
 `;
 
-exports[`sibling rendering: child without willStart renders before async sibling 3`] = `
+exports[`sibling rendering: child without willStart renders before async sibling 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -2054,7 +2054,7 @@ exports[`sibling rendering: child without willStart renders before async sibling
 }"
 `;
 
-exports[`sibling rendering: child without willStart renders before async sibling 4`] = `
+exports[`sibling rendering: child without willStart renders before async sibling 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

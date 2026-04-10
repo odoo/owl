@@ -4335,9 +4335,12 @@ test("sibling rendering: child without willStart renders before async sibling", 
 
   const prom = mount(Parent, fixture);
 
-  // No templates have executed yet — the parent's own initiateRender
-  // hasn't yielded its microtick yet.
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  // parent and child b are rendered immediately
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+   [
+     "B:template",
+   ]
+  `);
 
   await prom;
   // ChildB's template executes before ChildA's: ChildB renders synchronously
@@ -4346,7 +4349,6 @@ test("sibling rendering: child without willStart renders before async sibling", 
   // (template order) since both would go through initiateRender.
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:template",
       "A:template",
     ]
   `);

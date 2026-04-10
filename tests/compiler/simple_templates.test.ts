@@ -187,8 +187,8 @@ describe("simple templates, mostly static", () => {
     expect(fn2.toString()).toContain("function template_o_spreadsheet_grid(");
   });
 
-  test("compiled template function has default name for anonymous templates", () => {
+  test("compiled template function uses name directly for anonymous templates", () => {
     const fn = compile("<div>hello</div>", { name: "__template__1", hasGlobalValues: false });
-    expect(fn.toString()).toContain("function template(");
+    expect(fn.toString()).toContain("function __template__1(");
   });
 });

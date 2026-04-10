@@ -176,9 +176,15 @@ describe("simple templates, mostly static", () => {
     expect(fn.toString()).toContain("function template_MyComponent(");
   });
 
-  test("compiled template function name uses dots replaced by underscores", () => {
+  test("compiled template function name replaces special characters with underscores", () => {
     const fn = compile("<div>hello</div>", { name: "app.MyComponent", hasGlobalValues: false });
     expect(fn.toString()).toContain("function template_app_MyComponent(");
+
+    const fn2 = compile("<div>hello</div>", {
+      name: "o-spreadsheet-grid",
+      hasGlobalValues: false,
+    });
+    expect(fn2.toString()).toContain("function template_o_spreadsheet_grid(");
   });
 
   test("compiled template function has default name for anonymous templates", () => {

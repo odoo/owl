@@ -4296,6 +4296,136 @@ test("component destroyed just after render", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 });
 
+// When a component has no willStart hook, the rendering takes a fast path that
+// renders the template synchronously during the parent's template execution,
+// skipping the microtick from initiateRender. Owl does not guarantee a specific
+// rendering order for siblings. This test documents the current behavior.
+
+test("sibling rendering: child without willStart renders before async sibling", async () => {
+  // ChildA has willStart (async path): goes through initiateRender which yields
+  // a microtick before rendering the template.
+  // ChildB has no willStart (fast path): renders synchronously during the
+  // parent's template execution.
+  // Both children are created during the parent's template rendering (which
+  // itself runs after a microtick), so neither template has executed before
+  // the first microtick boundary. But within the same microtask, ChildB (fast
+  // path) renders its template before ChildA (async path) because ChildA
+  // needs an additional microtick from initiateRender's await.
+  class ChildA extends Component {
+    static template = xml`<span t-out="this.log()"/>`;
+    log() {
+      steps.push("A:template");
+      return "a";
+    }
+    setup() {
+      onWillStart(() => {});
+    }
+  }
+  class ChildB extends Component {
+    static template = xml`<span t-out="this.log()"/>`;
+    log() {
+      steps.push("B:template");
+      return "b";
+    }
+  }
+  class Parent extends Component {
+    static template = xml`<div><ChildA/><ChildB/></div>`;
+    static components = { ChildA, ChildB };
+  }
+
+  const prom = mount(Parent, fixture);
+
+  // No templates have executed yet — the parent's own initiateRender
+  // hasn't yielded its microtick yet.
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+
+  await prom;
+  // ChildB's template executes before ChildA's: ChildB renders synchronously
+  // (fast path) while ChildA waits for an extra microtick from initiateRender.
+  // Without the fast path optimization, ChildA's template would execute first
+  // (template order) since both would go through initiateRender.
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "B:template",
+      "A:template",
+    ]
+  `);
+  expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span></div>");
+});
+
+test("slot content renders synchronously when child has no willStart", async () => {
+  // Child has no willStart, so it takes the fast path and renders its
+  // template (including slot content) synchronously. Sibling also has no
+  // willStart. Both render in the same synchronous frame.
+  class Child extends Component {
+    static template = xml`<div><t t-slot="default"/></div>`;
+  }
+  class Sibling extends Component {
+    static template = xml`<span t-out="this.log()"/>`;
+    log() {
+      steps.push("sibling:template");
+      return "sibling";
+    }
+  }
+  class Parent extends Component {
+    static template = xml`<div><Child><p t-out="this.log()"/></Child><Sibling/></div>`;
+    static components = { Child, Sibling };
+    log() {
+      steps.push("slot:template");
+      return "content";
+    }
+  }
+
+  await mount(Parent, fixture);
+  // Child renders synchronously (fast path), so its slot content renders
+  // before the sibling's template.
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "slot:template",
+      "sibling:template",
+    ]
+  `);
+  expect(fixture.innerHTML).toBe("<div><div><p>content</p></div><span>sibling</span></div>");
+});
+
+test("slot content renders after microtick when child has willStart", async () => {
+  // Child has willStart, so it goes through the async path. Its template
+  // (including slot content) renders after a microtick. Sibling has no
+  // willStart and renders synchronously via the fast path.
+  class Child extends Component {
+    static template = xml`<div><t t-slot="default"/></div>`;
+    setup() {
+      onWillStart(() => {});
+    }
+  }
+  class Sibling extends Component {
+    static template = xml`<span t-out="this.log()"/>`;
+    log() {
+      steps.push("sibling:template");
+      return "sibling";
+    }
+  }
+  class Parent extends Component {
+    static template = xml`<div><Child><p t-out="this.log()"/></Child><Sibling/></div>`;
+    static components = { Child, Sibling };
+    log() {
+      steps.push("slot:template");
+      return "content";
+    }
+  }
+
+  await mount(Parent, fixture);
+  // Sibling renders first (fast path), then Child renders after the
+  // microtick from initiateRender, which includes the slot content.
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "sibling:template",
+      "slot:template",
+    ]
+  `);
+  expect(fixture.innerHTML).toBe("<div><div><p>content</p></div><span>sibling</span></div>");
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

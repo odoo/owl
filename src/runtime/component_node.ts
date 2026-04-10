@@ -12,7 +12,7 @@ import {
   setComputation,
 } from "./reactivity/computations";
 import { fibersInError, handleError } from "./rendering/error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
+import { Fiber, makeChildFiber, makeRootFiber, MountFiber } from "./rendering/fibers";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -83,17 +83,6 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.component.setup();
     setComputation(previousComputation);
     contextStack.length = 0; // clear context stack
-  }
-
-  mountComponent(target: any, options?: MountOptions) {
-    const fiber = new MountFiber(this, target, options);
-    this.app.scheduler.addFiber(fiber);
-    let prev = getCurrentComputation();
-    this.initiateRender(fiber);
-    // only useful if the component is a root, and a willstart function just
-    // crashed synchonously. In that case, it is possible that the previous
-    // computation has not been properly restored
-    setComputation(prev);
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {

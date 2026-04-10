@@ -1,6 +1,5 @@
-import { Component, mount, onError, OwlError, props, types as t, xml } from "../../src";
-import { App } from "../../src/runtime/app";
-import { makeTestFixture, nextAppError, nextTick, render, snapshotEverything } from "../helpers";
+import { Component, mount, onError, props, types as t, xml } from "../../src";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -47,26 +46,22 @@ describe("props validation", () => {
       static template = xml`<div><SubComp /></div>`;
     }
 
-    const app = new App({ test: true });
-    let error: OwlError | undefined;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
-    error = undefined;
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
 
+    error = undefined;
     try {
       await mount(Parent, fixture, { dev: false });
     } catch (e) {
-      error = e as Error;
+      error = e;
     }
-    expect(error!).toBeUndefined();
+    expect(error).toBeUndefined();
   });
 
   test("props: list of strings", async () => {
@@ -79,18 +74,14 @@ describe("props validation", () => {
       static template = xml`<div><SubComp /></div>`;
     }
 
-    const app = new App({ test: true });
-    let error: OwlError | undefined;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("validate props for root component", async () => {
@@ -132,39 +123,35 @@ describe("props validation", () => {
       };
       (Parent as any).components = { SubComp };
 
+      let error: any;
+
       state = {};
-      let app = new App({ test: true });
-      let error: OwlError | undefined;
-      let mountProm = app
-        .createRoot(Parent)
-        .mount(fixture)
-        .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow(
-        "[Owl] Unhandled error. Destroying the root component"
-      );
-      await mountProm;
-      expect(error!).toBeDefined();
-      expect(error!.cause.message).toMatch(`Invalid component props (SubComp)`);
+      try {
+        await mount(Parent, fixture, { test: true });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.cause.message).toMatch(`Invalid component props (SubComp)`);
+
       error = undefined;
       state = { p: test.ok };
       try {
         await mount(Parent, fixture, { dev: true });
       } catch (e) {
-        error = e as Error;
+        error = e;
       }
-      expect(error!).toBeUndefined();
+      expect(error).toBeUndefined();
+
+      error = undefined;
       state = { p: test.ko };
-      app = new App({ test: true });
-      mountProm = app
-        .createRoot(Parent)
-        .mount(fixture)
-        .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow(
-        "[Owl] Unhandled error. Destroying the root component"
-      );
-      await mountProm;
-      expect(error!).toBeDefined();
-      expect(error!.cause.message).toMatch(`Invalid component props (SubComp)`);
+      try {
+        await mount(Parent, fixture, { test: true });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeDefined();
+      expect(error.cause.message).toMatch(`Invalid component props (SubComp)`);
     }
   });
 
@@ -197,17 +184,13 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     state = { p: 1 };
-    const app = new App({ test: true });
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an optional props", async () => {
@@ -239,17 +222,13 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     state = { p: 1 };
-    const app = new App({ test: true });
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an array with given primitive type", async () => {
@@ -332,17 +311,13 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     state = { p: [true, 1] };
-    const app = new App({ test: true });
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an object with simple shape", async () => {

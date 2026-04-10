@@ -185,7 +185,9 @@ describe("reactivity in lifecycle", () => {
     const prom = mount(Comp, fixture);
     (STATE as any).val = 2;
     await prom;
-    expect(steps).toEqual([2]);
+    // The first render happens synchronously (fast path, no willStart),
+    // so the template executes with val=1. Then val=2 triggers a re-render.
+    expect(steps).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
 

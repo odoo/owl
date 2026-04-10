@@ -36,14 +36,14 @@ describe("template naming", () => {
     app.destroy();
   });
 
-  test("component with inline xml template has generic template function name", async () => {
+  test("component with inline xml template uses its generated name", async () => {
     class MyWidget extends Component {
       static template = xml`<div>hello</div>`;
     }
     const app = new App();
     app.createRoot(MyWidget);
     const templateFn = app.getTemplate(MyWidget.template);
-    expect(templateFn.name).toBe("template");
+    expect(templateFn.name).toBe(MyWidget.template);
     app.destroy();
   });
 });

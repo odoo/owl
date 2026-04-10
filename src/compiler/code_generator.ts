@@ -283,8 +283,12 @@ export class CodeGenerator {
     this.dev = options.dev || false;
     this.ast = ast;
     this.templateName = options.name;
-    if (options.name && !options.name.startsWith("__")) {
-      this.target.name = `template_${options.name.replace(/[^a-zA-Z0-9_$]/g, "_")}`;
+    if (options.name) {
+      if (options.name.startsWith("__")) {
+        this.target.name = options.name;
+      } else {
+        this.target.name = `template_${options.name.replace(/[^a-zA-Z0-9_$]/g, "_")}`;
+      }
     }
     if (options.hasGlobalValues) {
       this.helpers.add("__globals__");

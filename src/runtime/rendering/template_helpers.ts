@@ -255,7 +255,16 @@ function createComponent<P extends Record<string, any>>(
       }
       node = new ComponentNode(C, props, app, ctx, key);
       children[key] = node;
-      initiateRender.call(node, new Fiber(node, parentFiber));
+      const fiber = new Fiber(node, parentFiber);
+      if (node.willStart.length) {
+        initiateRender.call(node, fiber);
+      } else {
+        node.fiber = fiber;
+        if (node.mounted.length) {
+          fiber.root!.mounted.push(fiber);
+        }
+        fiber.render();
+      }
     }
     parentFiber.childrenMap[key] = node;
     return node;

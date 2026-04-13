@@ -285,10 +285,14 @@
       let inFlush = false;
       let _render = false;
       app.scheduler.constructor.prototype.flush = function () {
-        // Used to know when a render is triggered inside the flush method or not
+        // Used to know when a render is triggered inside the flush method or not.
+        // Save/restore rather than hard-reset to false so recursive flush() calls
+        // (which occur in OWL 3 when setCounter(0) fires flush() from inside
+        // _render()) do not prematurely clear the flag for the outer caller.
+        const wasInFlush = inFlush;
         inFlush = true;
         originalFlush.call(this, ...arguments);
-        inFlush = false;
+        inFlush = wasInFlush;
       };
       const originalRender = self.Fiber.prototype.render;
       self.Fiber.prototype.render = function () {
@@ -315,8 +319,12 @@
         };
 
         originalRender.call(this, ...arguments);
+        // OWL 3: ComponentNode has no .name getter; use component.constructor.name instead.
+        // The ?? fallback keeps OWL 2 compatibility where node.name was a direct property.
+        const nodeName =
+          this.node.component?.constructor?.name ?? this.node.name ?? "";
         if (_render && self.traceRenderings && this instanceof self.RootFiber) {
-          console.groupCollapsed(`Rendering <${this.node.name}>`);
+          console.groupCollapsed(`Rendering <${nodeName}>`);
           console.trace();
           console.groupEnd();
         }
@@ -326,7 +334,7 @@
           if (flushed) {
             self.eventsBatch.push({
               type: "render (flushed)",
-              component: this.node.name,
+              component: nodeName,
               key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
@@ -338,7 +346,7 @@
             if (this instanceof self.RootFiber) {
               self.eventsBatch.push({
                 type: this.deep ? "render (deep)" : "render",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
@@ -348,7 +356,7 @@
             } else if (this.node.status === 0) {
               self.eventsBatch.push({
                 type: "create",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
@@ -358,7 +366,7 @@
             } else {
               self.eventsBatch.push({
                 type: "update",
-                component: this.node.name,
+                component: nodeName,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
                 time: time,
@@ -369,7 +377,7 @@
           } else {
             self.eventsBatch.push({
               type: "render (delayed)",
-              component: this.node.name,
+              component: nodeName,
               key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
@@ -390,10 +398,12 @@
       firstRoot.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
+          // OWL 3: ComponentNode has no .name; use component.constructor.name.
+          // parentKey is string|null in OWL 3; normalise null to "" for validation.
           const event = {
             type: "destroy",
-            component: this.name,
-            key: this.parentKey,
+            component: this.component?.constructor?.name ?? this.name ?? "",
+            key: this.parentKey ?? "",
             path: path,
             time: 0,
             id: self.eventId++,

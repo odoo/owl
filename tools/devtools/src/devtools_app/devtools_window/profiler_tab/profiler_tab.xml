@@ -15,9 +15,11 @@
         <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace renderings in console">
           <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.profiler.traceRenderings()" t-on-input="() => this.profiler.toggleTracing()"/> Trace Renderings
         </label>
-        <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace subscriptions in console (warning: it is VERY verbose)">
-          <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.profiler.traceSubscriptions()" t-on-input="() => this.profiler.toggleSubscriptionTracing()"/> Trace Subscriptions
-        </label>
+        <t t-if="this.profiler.subscriptionTracingSupported()">
+          <label class="p-1 mx-1 form-check-label pointer-icon" title="Trace subscriptions in console (warning: it is VERY verbose)">
+            <input type="checkbox" class="form-check-input me-1 pointer-icon" t-att-checked="this.profiler.traceSubscriptions()" t-on-input="() => this.profiler.toggleSubscriptionTracing()"/> Trace Subscriptions
+          </label>
+        </t>
         <!-- <EventSearchBar/> -->
       </div>
       <div class="events-container h-100 font-monospace">

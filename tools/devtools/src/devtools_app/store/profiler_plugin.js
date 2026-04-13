@@ -12,6 +12,8 @@ export class ProfilerPlugin extends Plugin {
   activeRecorder = signal(false);
   traceRenderings = signal(false);
   traceSubscriptions = signal(false);
+  // false when inspecting an OWL 3 page (reactive not exposed → patchReactivity() cannot work)
+  subscriptionTracingSupported = signal(true);
 
   setup() {
     this._store = plugin(StorePlugin);
@@ -177,6 +179,19 @@ export class ProfilerPlugin extends Plugin {
         this._store.activeFrame()
       )
     );
+  }
+
+  async refreshSubscriptionTracingSupport(frame) {
+    const supported = await evalFunctionInWindow(
+      "supportsSubscriptionTracing",
+      [],
+      frame ?? this._store.activeFrame()
+    );
+    this.subscriptionTracingSupported.set(supported);
+    // If the active frame no longer supports subscription tracing, turn it off.
+    if (!supported && this.traceSubscriptions()) {
+      this.traceSubscriptions.set(false);
+    }
   }
 
   async toggleSubscriptionTracing() {

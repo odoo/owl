@@ -487,6 +487,12 @@
       return this.traceRenderings;
     }
 
+    // Returns whether subscription tracing is supported in the current OWL version.
+    // OWL 3 does not expose `reactive` (only `proxy`), so patchReactivity() cannot work.
+    supportsSubscriptionTracing() {
+      return !!this.reactive;
+    }
+
     toggleSubscriptionTracing(value) {
       if (value) {
         this.patchReactivity();

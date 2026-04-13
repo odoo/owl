@@ -98,6 +98,7 @@ export class StorePlugin extends Plugin {
     this._profiler.eventsTree.set(proxy([]));
     this.activeFrame.set(frame);
     this._components.loadComponentsTree(false);
+    this._profiler.refreshSubscriptionTracingSupport(frame);
     evalFunctionInWindow(
       "toggleEventsRecording",
       [this._profiler.activeRecorder(), this._profiler.events().length],
@@ -149,6 +150,7 @@ export class StorePlugin extends Plugin {
     evalFunctionInWindow("toggleTracing", [false]);
     this._profiler.traceSubscriptions.set(false);
     evalFunctionInWindow("toggleSubscriptionTracing", [false]);
+    this._profiler.refreshSubscriptionTracingSupport();
     this.updateIFrameList();
   }
 
@@ -161,6 +163,7 @@ export class StorePlugin extends Plugin {
 
     this._components.loadComponentsTree(false);
     this.updateIFrameList();
+    this._profiler.refreshSubscriptionTracingSupport();
 
     document.addEventListener("click", () => this.contextMenu.set(null), { capture: true });
     document.addEventListener("contextmenu", () => this.contextMenu.set(null), { capture: true });

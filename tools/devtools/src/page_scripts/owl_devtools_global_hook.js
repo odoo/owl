@@ -283,7 +283,12 @@
       const self = this;
       const originalFlush = app.scheduler.constructor.prototype.flush;
       let inFlush = false;
-      let _render = false;
+      // Per-fiber symbol to track whether _render() was actually called for this
+      // fiber's render() invocation. A shared boolean flag is unreliable in OWL 3
+      // because setCounter(0) → flush() → other fibers' render() can all run
+      // synchronously inside one render() call, resetting a shared flag before
+      // the outer render() reads it back.
+      const renderCalledKey = Symbol("owlDevtoolsRenderCalled");
       app.scheduler.constructor.prototype.flush = function () {
         // Used to know when a render is triggered inside the flush method or not.
         // Save/restore rather than hard-reset to false so recursive flush() calls
@@ -297,15 +302,19 @@
       const originalRender = self.Fiber.prototype.render;
       self.Fiber.prototype.render = function () {
         const id = self.eventId++;
-        _render = false;
+        // Reset the per-fiber flag before calling the original render.
+        this[renderCalledKey] = false;
         let flushed = false;
         // We know if a render comes from flush before calling the render method
         if (this instanceof self.RootFiber && inFlush) {
           flushed = true;
         }
 
-        // patch the renderFn function from the node to only measure the time
-        // spent in the template, not in additional work, such as flushing scheduler
+        // Patch the renderFn to measure time and detect that an actual render
+        // happened (as opposed to a delayed render where renderFn is never called).
+        // This works for both OWL 2 (where _render() calls renderFn) and OWL 3
+        // (where render() calls renderFn directly — there is no _render() method).
+        const fiber = this;
         const node = this.node;
         const nodeRenderFn = node.renderFn;
         let time = 0;
@@ -315,6 +324,8 @@
           time = performance.now() - before;
           // unpatch the node render function
           node.renderFn = nodeRenderFn;
+          // Mark the fiber: renderFn was actually invoked (not a delayed render).
+          fiber[renderCalledKey] = true;
           return result;
         };
 
@@ -323,7 +334,9 @@
         // The ?? fallback keeps OWL 2 compatibility where node.name was a direct property.
         const nodeName =
           this.node.component?.constructor?.name ?? this.node.name ?? "";
-        if (_render && self.traceRenderings && this instanceof self.RootFiber) {
+        // Read the per-fiber flag: true means renderFn was called for this fiber.
+        const didRender = this[renderCalledKey];
+        if (didRender && self.traceRenderings && this instanceof self.RootFiber) {
           console.groupCollapsed(`Rendering <${nodeName}>`);
           console.trace();
           console.groupEnd();
@@ -340,8 +353,8 @@
               time: time,
               id: id,
             });
-            // if _render is called, it is a proper render (and not a delayed one)
-          } else if (_render) {
+            // if renderFn was called, it is a proper render (and not a delayed one)
+          } else if (didRender) {
             // A render on a RootFiber is a root render and can propagate other renders to its children
             if (this instanceof self.RootFiber) {
               self.eventsBatch.push({
@@ -373,7 +386,7 @@
                 id: id,
               });
             }
-            // _render has not been called so it is a delayed render that could be flushed later on
+            // renderFn not called: it is a delayed render that could be flushed later on
           } else {
             self.eventsBatch.push({
               type: "render (delayed)",
@@ -385,11 +398,6 @@
             });
           }
         }
-      };
-      const original_Render = self.Fiber.prototype._render;
-      self.Fiber.prototype._render = function () {
-        _render = true;
-        original_Render.call(this, ...arguments);
       };
       // Signals when a component is destroyed
       // All component nodes share the same prototype, so patching one suffices

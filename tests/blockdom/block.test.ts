@@ -260,40 +260,4 @@ describe("misc", () => {
       "http://www.w3.org/1999/xhtml",
     ]);
   });
-
-  //     test.skip("reusing a block skips patching process", async () => {
-  //       const block = createBlock('<div><block-text-0/></div>');
-  //       const foo = block(["foo"]);
-  //       const bar = block(["bar"]);
-  //       let fooCounter = 0;
-  //       let barCounter = 0;
-  //       let fooValue = "foo";
-  //       let barValue = "bar";
-  //       Object.defineProperty(foo.data, 0, {
-  //         get() {
-  //           fooCounter++;
-  //           return fooValue;
-  //         },
-  //       });
-  //       Object.defineProperty(bar.data, 0, {
-  //         get() {
-  //           barCounter++;
-  //           return barValue;
-  //         },
-  //         set(val) {
-  //           barValue = val;
-  //         },
-  //       });
-
-  //       const bdom = multi([foo, bar]);
-  //       mount(bdom, fixture);
-  //       expect(fooCounter).toBe(1);
-  //       expect(barCounter).toBe(1);
-  //       expect(fixture.innerHTML).toBe("<div>foo</div><div>bar</div>");
-
-  //       patch(bdom, multi([foo, block(["otherbar"])]));
-  //       expect(fixture.innerHTML).toBe("foootherbar");
-  //       expect(fooCounter).toBe(1);
-  //       expect(barCounter).toBe(2);
-  //     });
 });

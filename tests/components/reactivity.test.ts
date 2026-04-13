@@ -234,8 +234,7 @@ describe("reactivity in lifecycle", () => {
     `);
   });
 
-  // todo: unskip it
-  test.skip("Component is automatically subscribed to proxy object received as prop", async () => {
+  test("Component is automatically subscribed to proxy object received as prop", async () => {
     let childRenderCount = 0;
     let parentRenderCount = 0;
     class Child extends Component {

@@ -183,6 +183,37 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 }"
 `;
 
+exports[`reactivity in lifecycle Component is automatically subscribed to proxy object received as prop 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["obj","proxyObj"]);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
+    return comp1({obj: ctx['this'].obj,proxyObj: ctx['this'].proxyObj}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle Component is automatically subscribed to proxy object received as prop 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
+    const b2 = safeOutput(ctx['this'].props.obj.a);
+    const b3 = safeOutput(ctx['this'].props.proxyObj.b);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle an external proxy object should be tracked 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

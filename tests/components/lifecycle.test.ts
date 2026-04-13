@@ -112,40 +112,6 @@ describe("lifecycle hooks", () => {
     await mount(Test, fixture);
   });
 
-  test.skip("timeout in onWillStart emits a console log", async () => {
-    const { log } = console;
-    let logArgs: any[];
-    console.log = jest.fn((...args) => (logArgs = args));
-    const { setTimeout } = window;
-    let timeoutCbs: any = {};
-    let timeoutId = 0;
-    window.setTimeout = ((cb: any) => {
-      timeoutCbs[++timeoutId] = cb;
-      return timeoutId;
-    }) as any;
-    try {
-      class Test extends Component {
-        static template = xml`<span/>`;
-        setup() {
-          onWillStart(() => new Promise(() => {}));
-        }
-      }
-      mount(Test, fixture, { test: true });
-      nextTick();
-      for (const id in timeoutCbs) {
-        timeoutCbs[id]();
-        delete timeoutCbs[id];
-      }
-      await nextMicroTick();
-      await nextMicroTick();
-      expect(console.log).toHaveBeenCalledTimes(1);
-      expect(logArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
-    } finally {
-      console.log = log;
-      window.setTimeout = setTimeout;
-    }
-  });
-
   test("timeout in onWillStart doesn't emit a console log if app is destroyed", async () => {
     const { log } = console;
     console.log = jest.fn();
@@ -173,55 +139,6 @@ describe("lifecycle hooks", () => {
       await nextMicroTick();
       await nextMicroTick();
       expect(console.log).toHaveBeenCalledTimes(0);
-    } finally {
-      console.log = log;
-      window.setTimeout = setTimeout;
-    }
-  });
-
-  test.skip("timeout in onWillUpdateProps emits a console log", async () => {
-    class Child extends Component {
-      static template = xml``;
-      setup() {
-        onWillUpdateProps(() => new Promise(() => {}));
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child prop="this.state.prop"/>`;
-      static components = { Child };
-      state = proxy({ prop: 1 });
-    }
-    const parent = await mount(Parent, fixture, { test: true });
-
-    const { log } = console;
-    let logArgs: any[];
-    console.log = jest.fn((...args) => (logArgs = args));
-    const { setTimeout } = window;
-    let timeoutCbs: any = {};
-    let timeoutId = 0;
-    window.setTimeout = ((cb: any) => {
-      timeoutCbs[++timeoutId] = cb;
-      return timeoutId;
-    }) as any;
-
-    try {
-      parent.state.prop = 2;
-      let tick = nextTick();
-      for (const id in timeoutCbs) {
-        timeoutCbs[id]();
-        delete timeoutCbs[id];
-      }
-      await tick;
-      tick = nextTick();
-      for (const id in timeoutCbs) {
-        timeoutCbs[id]();
-        delete timeoutCbs[id];
-      }
-      await tick;
-      expect(console.log).toHaveBeenCalledTimes(1);
-      expect(logArgs![0]!.message).toBe(
-        "onWillUpdateProps's promise hasn't resolved after 3 seconds"
-      );
     } finally {
       console.log = log;
       window.setTimeout = setTimeout;

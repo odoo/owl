@@ -663,43 +663,6 @@ exports[`lifecycle hooks timeout in onWillStart doesn't emit a console log if ap
 }"
 `;
 
-exports[`lifecycle hooks timeout in onWillStart emits a console log 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<span/>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks timeout in onWillUpdateProps emits a console log 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["prop"]);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {prop: ctx['state'].prop};
-    return comp1(props1, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`lifecycle hooks timeout in onWillUpdateProps emits a console log 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
-  }
-}"
-`;
-
 exports[`lifecycle hooks various hooks are called on subsubcomponents, in proper order 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { App, Component, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { useApp } from "../../src/runtime/hooks";
 import { STATUS, status } from "../../src/runtime/status";
 import {
@@ -45,28 +45,6 @@ describe("app", () => {
     const app = new App();
     await app.createRoot(SomeComponent, { props: { value: 333 } }).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>333</div>");
-  });
-
-  test.skip("warnIfNoStaticProps works as expected", async () => {
-    let originalconsoleWarn = console.warn;
-    let mockConsoleWarn = jest.fn(() => {});
-    console.warn = mockConsoleWarn;
-
-    class Root extends Component {
-      static template = xml`<div t-out="message"/>`;
-      props = props();
-    }
-
-    await mount(Root, fixture, {
-      test: true,
-      props: { messge: "hey" },
-      warnIfNoStaticProps: true,
-    } as any);
-
-    console.warn = originalconsoleWarn;
-    expect(mockConsoleWarn).toHaveBeenCalledWith(
-      "Component 'Root' does not have a static props description"
-    );
   });
 
   test("can mount app in an iframe", async () => {

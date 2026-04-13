@@ -154,25 +154,6 @@ describe("Reactivity", () => {
     expect(spy).toHaveBeenLastCalledWith(false);
   });
 
-  //   // Skipped because the hasOwnProperty trap is tripped by *writing*. We
-  //   // (probably) do not want to subscribe to changes on writes.
-  //   test.skip("hasOwnProperty causes the key's presence to be observed", async () => {
-  //     let n = 0;
-  //     const state = createReactive({}, () => n++);
-
-  //     Object.hasOwnProperty.call(state, "a");
-  //     state.a = 2;
-  //     expect(n).toBe(1);
-
-  //     Object.hasOwnProperty.call(state, "a");
-  //     state.a = 3;
-  //     expect(n).toBe(1);
-
-  //     Object.hasOwnProperty.call(state, "a");
-  //     delete state.a;
-  //     expect(n).toBe(2);
-  //   });
-
   test("setting property to same value does not trigger callback", async () => {
     const spy = jest.fn();
     const state = createProxy({ a: 1 });

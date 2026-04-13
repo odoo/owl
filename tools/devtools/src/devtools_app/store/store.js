@@ -217,7 +217,12 @@ export class StorePlugin extends Plugin {
           if (msg.type === "FrameReady") {
             this.updateIFrameList();
             this.owlStatus.set(true);
-            await this._resetData();
+            // Only reset data when inspecting an iframe: when on the top frame,
+            // a new iframe becoming ready is a background event and should not
+            // discard the profiler data the user has already recorded.
+            if (this.activeFrame() !== "top") {
+              await this._resetData();
+            }
           }
           // We need to reload the components tree when the set of apps in the page is modified
           if (msg.type === "RefreshApps") {

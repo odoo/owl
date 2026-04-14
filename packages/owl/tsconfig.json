@@ -2,10 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "include": [
     "src/**/*.ts",
-    "src/*.ts"
+    "tests/**/*.ts"
   ],
   "compilerOptions": {
-    "outDir": "dist",
-    "declarationDir": "dist/types"
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node", "vitest/globals"]
   }
 }

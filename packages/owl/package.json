@@ -30,7 +30,7 @@
     "build:types": "node build.mjs types",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:types": "tsc --project tsconfig.tests.json"
+    "test:types": "tsc"
   },
   "repository": {
     "type": "git",

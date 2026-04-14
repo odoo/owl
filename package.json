@@ -23,6 +23,8 @@
     "test": "npm run test -w packages/owl",
     "test:doc-links": "vitest run --config tools/vitest.config.ts",
     "build:playground": "npm run build -w tools/playground",
+    "build:site": "npm run build && npm run build:playground && node tools/site/assemble.mjs",
+    "serve:site": "npm run build:site && python3 tools/site/server.py || python tools/site/server.py",
     "playground:serve": "python3 tools/playground/server.py || python tools/playground/server.py",
     "playground": "npm run build && npm run build:playground && npm run playground:serve",
     "prettier": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",

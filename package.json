@@ -1,53 +1,36 @@
 {
-  "name": "@odoo/owl",
-  "version": "3.0.0-alpha.26",
-  "description": "Odoo Web Library (OWL)",
-  "main": "dist/owl.cjs.js",
-  "module": "dist/owl.es.js",
-  "types": "dist/types/owl.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types/owl.d.ts",
-      "import": "./dist/owl.es.js",
-      "require": "./dist/owl.cjs.js",
-      "default": "./dist/owl.es.js"
-    },
-    "./dist/*": "./dist/*",
-    "./package.json": "./package.json"
-  },
+  "name": "owl-monorepo",
+  "private": true,
+  "description": "Odoo Web Library (OWL) monorepo",
   "type": "module",
-  "files": [
-    "dist"
+  "workspaces": [
+    "packages/*"
   ],
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build:bundle": "rollup -c --failAfterWarnings",
-    "build:runtime": "rollup -c --failAfterWarnings runtime",
-    "build:compiler": "rollup -c --failAfterWarnings compiler",
-    "build": "npm run build:bundle",
+    "build": "npm run build -w packages/owl",
+    "build:bundle": "npm run build:bundle -w packages/owl",
+    "build:runtime": "npm run build:runtime -w packages/owl",
+    "build:compiler": "npm run build:compiler -w packages/owl",
     "build:devtools": "rollup -c ./tools/devtools/rollup.config.js",
     "dev:devtools-chrome": "npm run build:devtools -- --config-browser=chrome",
     "dev:devtools-firefox": "npm run build:devtools -- --config-browser=firefox",
     "build:devtools-chrome": "npm run dev:devtools-chrome -- --config-env=production",
     "build:devtools-firefox": "npm run dev:devtools-firefox -- --config-env=production",
-    "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
-    "test:watch": "jest --watch",
+    "test": "npm run test -w packages/owl",
+    "test:doc-links": "jest --config tools/jest.config.cjs",
     "playground:serve": "python3 tools/playground_server.py || python tools/playground_server.py",
     "playground": "npm run build && npm run playground:serve",
     "preplayground:watch": "npm run build",
     "playground:watch": "npm-run-all  --parallel playground:serve \"build:* -- --watch\"",
-    "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",
+    "prettier": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",
     "prettier-fast": "git diff-tree --no-commit-id --name-only -r HEAD --diff-filter=d | xargs prettier --write",
-    "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
-    "lint": "eslint src/**/*.ts tests/**/*.ts",
+    "check-formatting": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
+    "lint": "eslint packages/owl/src/**/*.ts packages/owl/tests/**/*.ts",
     "release": "node tools/release.cjs",
     "compile_templates": "node tools/compile_owl_templates.mjs"
-  },
-  "bin": {
-    "compile_owl_templates": "tools/compile_owl_templates.mjs"
   },
   "repository": {
     "type": "git",
@@ -101,35 +84,9 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/tests"
-    ],
-    "setupFiles": [
-      "./tests/mocks/mockEventTarget.js"
-    ],
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "verbose": false,
-    "testRegex": "(/tests/.*(test|spec))\\.ts?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
   "prettier": {
     "printWidth": 100,
     "endOfLine": "auto",
     "trailingComma": "es5"
-  },
-  "dependencies": {
-    "jsdom": "^25.0.1"
   }
 }

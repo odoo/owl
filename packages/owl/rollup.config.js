@@ -16,7 +16,7 @@ if (pkg.module !== ES_FILENAME || pkg.main !== CJS_FILENAME) {
 
 const outro = `
 __info__.date = '${new Date().toISOString()}';
-__info__.hash = '${git.short(".")}';
+__info__.hash = '${git.short("../..")}';
 __info__.url = 'https://github.com/odoo/owl';
 `;
 

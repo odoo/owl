@@ -1,0 +1,31 @@
+{
+  /**
+   ** Base TypeScript configuration shared across all packages.
+   ** Commented-out options have their default values.
+   **/
+  "compilerOptions": {
+                                                                // Main options
+    "target": "ES2022",
+    "module": "es6",
+    "lib": ["ES2022", "DOM"],
+                                                                // Strict typechecking options
+    "strict": true,
+                                                                // Additional checks
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+                                                                // Module resolution options
+    "moduleResolution": "node",
+    "types": [
+      "jest",
+      "node"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+                                                                // Emit options
+    "declaration": true,
+    "preserveConstEnums": false
+  }
+}

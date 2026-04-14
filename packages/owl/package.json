@@ -1,0 +1,70 @@
+{
+  "name": "@odoo/owl",
+  "version": "3.0.0-alpha.26",
+  "description": "Odoo Web Library (OWL)",
+  "main": "dist/owl.cjs.js",
+  "module": "dist/owl.es.js",
+  "types": "dist/types/owl.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/owl.d.ts",
+      "import": "./dist/owl.es.js",
+      "require": "./dist/owl.cjs.js",
+      "default": "./dist/owl.es.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build:bundle": "rollup -c --failAfterWarnings",
+    "build:runtime": "rollup -c --failAfterWarnings runtime",
+    "build:compiler": "rollup -c --failAfterWarnings compiler",
+    "build": "npm run build:bundle",
+    "test": "jest",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odoo/owl.git"
+  },
+  "author": "Odoo",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/odoo/owl/issues"
+  },
+  "homepage": "https://github.com/odoo/owl#readme",
+  "dependencies": {
+    "jsdom": "^25.0.1"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/tests"
+    ],
+    "setupFiles": [
+      "./tests/mocks/mockEventTarget.js"
+    ],
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "verbose": false,
+    "testRegex": "(/tests/.*(test|spec))\\.ts?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}

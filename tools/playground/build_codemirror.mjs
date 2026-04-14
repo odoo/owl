@@ -3,60 +3,21 @@
 /**
  * Build script for CodeMirror bundle used in the playground.
  *
- * Usage: node tools/build_codemirror.mjs
+ * Usage: node tools/playground/build_codemirror.mjs
  *
  * This script bundles CodeMirror packages into a single file for the playground.
+ * Dependencies are declared in tools/playground/package.json.
  */
 
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { execSync } from "child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.resolve(__dirname, "..");
+const rootDir = path.resolve(__dirname, "../..");
 const outputFile = path.resolve(rootDir, "docs/playground/libs/codemirror.bundle.js");
 
-// Check if we need to install dependencies
-const requiredPackages = [
-  "@codemirror/autocomplete",
-  "@codemirror/commands",
-  "@codemirror/lang-css",
-  "@codemirror/lang-javascript",
-  "@codemirror/lang-xml",
-  "@codemirror/lang-markdown",
-  "@codemirror/language",
-  "@codemirror/state",
-  "@codemirror/theme-one-dark",
-  "@codemirror/view",
-  "codemirror",
-  "@emmetio/codemirror6-plugin",
-];
-
-console.log("Checking CodeMirror dependencies...");
-
-let needInstall = false;
-for (const pkg of requiredPackages) {
-  try {
-    const pkgPath = path.resolve(rootDir, "node_modules", pkg);
-    if (!fs.existsSync(pkgPath)) {
-      console.log(`  Missing: ${pkg}`);
-      needInstall = true;
-    }
-  } catch {
-    needInstall = true;
-  }
-}
-
-if (needInstall) {
-  console.log("\nInstalling CodeMirror dependencies...");
-  execSync(`npm install --save-dev ${requiredPackages.join(" ")}`, {
-    cwd: rootDir,
-    stdio: "inherit",
-  });
-}
-
-console.log("\nBundling CodeMirror...");
+console.log("Bundling CodeMirror...");
 
 const entryContent = `
 // CodeMirror bundle for OWL Playground

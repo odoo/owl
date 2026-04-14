@@ -1,4 +1,4 @@
-import { css as cssLang, javascript, markdown, xml as xmlLang } from "./libs/codemirror.bundle.js";
+import { css as cssLang, javascript, markdown, xml as xmlLang } from "@libs/codemirror";
 
 const LANGUAGES = {
   js: () => javascript(),

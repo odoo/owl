@@ -10,13 +10,13 @@ URL = 'http://{0}:{1}/docs/playground'.format(HOST, PORT)
 
 
 # We define our own handler here to remap owl.js GET requests to the Owl build
-# in dist/.  This is useful for the benchmarks and playground applications.
-# With this, we can simply copy the playground folder as is in the gh-page when
-# we want to update the playground.
+# in packages/owl/dist/.  This is useful for the benchmarks and playground
+# applications. With this, we can simply copy the playground folder as is in the
+# gh-page when we want to update the playground.
 class OWLHandler(SimpleHTTPRequestHandler):
-    def do_GET(self): 
+    def do_GET(self):
         if self.path == '/docs/owl.js' or self.path == '/docs/playground/owl.js':
-            self.path = '/dist/owl.es.js'
+            self.path = '/packages/owl/dist/owl.es.js'
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def end_headers(self):

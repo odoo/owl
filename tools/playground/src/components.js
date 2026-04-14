@@ -11,7 +11,7 @@ import {
   signal,
   untrack,
   useEffect,
-} from "../owl.js";
+} from "@odoo/owl";
 import { createOwlCompletions, parseMarkdown, xmlTagRename } from "./code_utils.js";
 import { getFileType, LANGUAGES, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import {
@@ -28,7 +28,7 @@ import {
   keymap,
   oneDark,
   Prec,
-} from "./libs/codemirror.bundle.js";
+} from "@libs/codemirror";
 import {
   CodePlugin,
   DialogPlugin,

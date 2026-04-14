@@ -156,7 +156,6 @@ class Playground extends Component {
     const onKeyDown = (ev) => {
       if ((ev.ctrlKey || ev.metaKey) && ev.key === "Enter") {
         ev.preventDefault();
-        this.view.setShowHelp(false);
         this.code.run();
       }
     };
@@ -200,10 +199,6 @@ class Playground extends Component {
   async openTutorial(tutorial) {
     await this.templatePlugin.openTutorial(tutorial);
     this.view.setShowProjectManager(false);
-  }
-
-  toggleHelp() {
-    this.view.toggleHelp();
   }
 
   shareCode() {

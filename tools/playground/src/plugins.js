@@ -1046,8 +1046,6 @@ class ViewPlugin extends Plugin {
   static id = "view";
 
   showProjectManager = signal(false);
-  showHelp = signal(false);
-
   toggleProjectManager() {
     this.showProjectManager.set(!this.showProjectManager());
   }
@@ -1056,13 +1054,6 @@ class ViewPlugin extends Plugin {
     this.showProjectManager.set(value);
   }
 
-  toggleHelp() {
-    this.showHelp.set(!this.showHelp());
-  }
-
-  setShowHelp(value) {
-    this.showHelp.set(value);
-  }
 }
 
 export {

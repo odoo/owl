@@ -13,8 +13,20 @@ SITE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.
 
 
 class NoCacheHandler(SimpleHTTPRequestHandler):
+    """Serves the site and strips the /owl/ prefix so the local layout matches
+    GitHub Pages (where the repo is served under /owl/)."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=SITE_DIR, **kwargs)
+
+    def translate_path(self, path):
+        # Strip the /owl/ prefix so VitePress assets (which use
+        # base: "/owl/documentation/") resolve correctly in local dev.
+        if path == '/owl':
+            path = '/'
+        elif path.startswith('/owl/'):
+            path = '/' + path[5:]
+        return super().translate_path(path)
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")

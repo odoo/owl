@@ -7,14 +7,14 @@
 html, body {
   height: 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: #1a1a2e;
-  background: #fafafa;
+  color: #111827;
+  background: #fff;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: #5a54a4;
+  color: #1e293b;
   text-decoration: none;
 }
 
@@ -28,152 +28,144 @@ a:hover {
   padding: 0 24px;
 }
 
-/* ---- Header ---- */
+/* ---- Hero ---- */
 
 header {
-  background: linear-gradient(135deg, #2d2b55, #3d3a6e);
-  color: #fff;
-  padding: 80px 24px 64px;
+  padding: 40px 24px 44px;
   text-align: center;
+  border-bottom: 1px solid #f0eff8;
 }
 
 header .logo {
-  font-size: 64px;
-  display: block;
-  margin-bottom: 16px;
-}
-
-header h1 {
   font-size: 48px;
-  font-weight: 800;
-  letter-spacing: 2px;
+  display: block;
   margin-bottom: 12px;
 }
 
+header h1 {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
 header .tagline {
-  font-size: 18px;
-  color: #c5c3df;
-  margin-bottom: 8px;
+  font-size: 17px;
+  color: #4b5563;
+  margin-bottom: 6px;
 }
 
 header .subtitle {
   font-size: 14px;
-  color: #9997b8;
-  margin-bottom: 32px;
+  color: #9ca3af;
+  margin-bottom: 24px;
 }
 
 header .subtitle a {
-  color: #c5c3df;
-  text-decoration: underline;
+  color: #6b7280;
 }
 
-nav {
+.hero-cta {
   display: flex;
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.nav-btn {
+.cta-primary {
   display: inline-block;
   padding: 10px 24px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
-  color: #c5c3df;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.15s, transform 0.15s;
+  background: #1e293b;
+  color: #fff;
+  transition: background 0.15s;
 }
 
-.nav-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+.cta-primary:hover {
+  background: #3d3a6e;
   text-decoration: none;
-  transform: translateY(-1px);
 }
 
-.nav-btn.primary {
-  background: #fff;
-  color: #2d2b55;
-  border-color: #fff;
+.cta-secondary {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  border: 1px solid #d1d0e8;
+  transition: background 0.15s;
 }
 
-.nav-btn.primary:hover {
-  background: #f0eef8;
+.cta-secondary:hover {
+  background: #f5f3fb;
+  text-decoration: none;
 }
 
 /* ---- Features ---- */
 
 .features {
-  padding: 64px 0;
+  padding: 40px 0;
 }
 
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 24px 40px;
 }
 
 @media (max-width: 768px) {
   .feature-grid {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 
-.feature-card {
-  background: #fff;
-  border: 1px solid #e8e8ed;
-  border-radius: 10px;
-  padding: 28px 24px;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.feature-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(45, 43, 85, 0.08);
-}
-
 .feature-card h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  margin-bottom: 8px;
-  color: #1a1a2e;
+  margin-bottom: 6px;
+  color: #1e293b;
 }
 
 .feature-card p {
   font-size: 14px;
-  color: #7a7a8c;
-  line-height: 1.5;
+  color: #6b7280;
+  line-height: 1.6;
 }
 
 /* ---- Example ---- */
 
 .example {
-  padding: 64px 0;
-  background: #fff;
-  border-top: 1px solid #e8e8ed;
-  border-bottom: 1px solid #e8e8ed;
+  padding: 40px 0;
+  background: #fafafa;
+  border-top: 1px solid #f0eff8;
+  border-bottom: 1px solid #f0eff8;
 }
 
 .example h2, .tutorials h2 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   text-align: center;
   margin-bottom: 8px;
-  color: #1a1a2e;
+  color: #111827;
 }
 
 .section-subtitle {
   text-align: center;
-  color: #7a7a8c;
+  color: #6b7280;
   font-size: 15px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .example-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  margin-top: 32px;
+  margin-top: 20px;
 }
 
 @media (max-width: 768px) {
@@ -185,18 +177,18 @@ nav {
 .code-header {
   font-size: 12px;
   font-weight: 600;
-  color: #9997b8;
+  color: #6b7280;
   padding: 8px 16px;
-  background: #2d2b55;
-  border-radius: 10px 10px 0 0;
+  background: #e5e7eb;
+  border-radius: 8px 8px 0 0;
   letter-spacing: 0.5px;
 }
 
 .code-block pre {
-  background: #1e1e3f;
-  color: #e6edf3;
+  background: #f3f4f6;
+  color: #1f2937;
   padding: 20px;
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 8px 8px;
   overflow-x: auto;
   font-size: 13px;
   line-height: 1.6;
@@ -217,9 +209,9 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  border: 1px solid #e8e8ed;
-  border-radius: 0 0 10px 10px;
+  background: #fff;
+  border: 1px solid #e9e8f4;
+  border-radius: 0 0 8px 8px;
   min-height: 120px;
 }
 
@@ -237,17 +229,17 @@ nav {
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  border: 1px solid #e8e8ed;
+  border: 1px solid #e4e1f0;
   background: #fff;
   font-size: 20px;
   font-weight: 600;
-  color: #2d2b55;
+  color: #1e293b;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
 
 .counter button:hover {
-  background: #f0eef8;
+  background: #f5f3fb;
   transform: scale(1.05);
 }
 
@@ -258,13 +250,14 @@ nav {
 /* ---- Tutorials ---- */
 
 .tutorials {
-  padding: 64px 0;
+  padding: 40px 0;
 }
 
 .tutorial-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
+  margin-top: 20px;
 }
 
 @media (max-width: 768px) {
@@ -275,18 +268,16 @@ nav {
 
 .tutorial-card {
   display: block;
-  background: #fff;
-  border: 1px solid #e8e8ed;
-  border-radius: 10px;
+  border: 1px solid #e9e8f4;
+  border-radius: 8px;
   padding: 20px;
-  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   color: inherit;
 }
 
 .tutorial-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 43, 85, 0.08);
-  border-color: #c5c3df;
+  border-color: #a8a4d4;
+  box-shadow: 0 2px 8px rgba(42, 39, 85, 0.06);
   text-decoration: none;
 }
 
@@ -294,7 +285,7 @@ nav {
   font-size: 15px;
   font-weight: 700;
   margin-bottom: 6px;
-  color: #1a1a2e;
+  color: #111827;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -302,7 +293,7 @@ nav {
 
 .tutorial-desc {
   font-size: 13px;
-  color: #7a7a8c;
+  color: #6b7280;
   line-height: 1.4;
 }
 
@@ -316,7 +307,7 @@ nav {
 }
 
 .star.filled {
-  color: #7a7a8c;
+  color: #a8a4d4;
 }
 
 /* ---- Footer ---- */
@@ -324,10 +315,60 @@ nav {
 footer {
   text-align: center;
   padding: 32px 24px;
-  color: #9997b8;
+  color: #9ca3af;
   font-size: 13px;
+  border-top: 1px solid #f0eff8;
 }
 
 footer a {
-  color: #7a7a8c;
+  color: #6b7280;
+}
+
+/* SITE NAVBAR ****************************************/
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #1e293b;
+  padding: 0 12px;
+  height: 44px;
+}
+
+.site-nav-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.site-nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+}
+
+.site-nav-link.active {
+  color: #fff;
+  font-weight: 700;
+}
+
+.site-nav-github {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  color: #94a3b8;
+  transition: color 0.15s, background 0.15s;
+}
+
+.site-nav-github:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
 }

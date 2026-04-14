@@ -72,6 +72,9 @@ function getFiles(filePath: string[] = []): FileData[] {
   }
   const absPath = path.join(REPO_ROOT, filePath.join("/"));
   const files = fs.readdirSync(absPath, { withFileTypes: true }).map((f) => {
+    if (f.name.startsWith(".")) {
+      return [];
+    }
     if (f.isDirectory()) {
       return getFiles(filePath.concat(f.name));
     }
@@ -90,11 +93,14 @@ function getFiles(filePath: string[] = []): FileData[] {
 }
 
 const LOCAL_FILES = ["LICENSE"];
-// Historical docs with broken links to old Owl 2 reference pages
-const SKIP_LINK_CHECK = ["migration_owl1_to_owl2.md"];
+const SKIP_LINK_CHECK: string[] = [];
 export function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
   if (link.link.startsWith("http")) {
     // no check on external links
+    return true;
+  }
+  if (link.link.startsWith("../")) {
+    // no check on links going outside the doc tree (e.g. ../playground/)
     return true;
   }
   if (SKIP_LINK_CHECK.includes(current.name)) {

@@ -16,8 +16,8 @@ All changes are documented here in no particular order.
 
 - components can now have empty content or multiple root nodes (htmlelement or text) ([details](#31-components-can-now-have-arbitrary-content))
 - breaking: component.el is removed ([details](#9-componentel-is-removed))
-- new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
-- new `onWillDestroy`, `onWillRender` and `onRendered` hooks ([doc](doc/reference/component.md#lifecycle))
+- new `useEffect` hook ([doc](reference/hooks.md#useeffect))
+- new `onWillDestroy`, `onWillRender` and `onRendered` hooks ([doc](reference/component.md#lifecycle))
 - breaking: lifecycle methods are removed ([details](#1-component-lifecycle-methods-are-removed))
 - breaking: can no longer be mounted on detached DOM ([details](#2-components-can-no-longer-be-mounted-in-a-detached-dom-element))
 - breaking: standalone `mount` method API is simpler ([details](#4-mount-method-api-is-simpler))
@@ -29,8 +29,8 @@ All changes are documented here in no particular order.
 - breaking: `render` method does not return a promise anymore ([details](#35-render-method-does-not-return-a-promise-anymore))
 - breaking: `catchError` method is replaced by `onError` hook ([details](#36-catcherror-method-is-replaced-by-onerror-hook))
 - breaking: Support for inline css (`css` tag and static `style`) has been removed ([details](#37-support-for-inline-css-css-tag-and-static-style-has-been-removed))
-- new: prop validation system can now describe that additional props are allowed (with `*`) ([doc](doc/reference/props.md#props-validation))
-- breaking: prop validation system does not allow default prop on a mandatory (not optional) prop ([doc](doc/reference/props.md#props-validation))
+- new: prop validation system can now describe that additional props are allowed (with `*`) ([doc](reference/props.md#props-validation))
+- breaking: prop validation system does not allow default prop on a mandatory (not optional) prop ([doc](reference/props.md#props-validation))
 - breaking: rendering a component does not necessarily render child components ([details](#40-rendering-a-component-does-not-necessarily-render-child-components))
 
 **Templates**
@@ -38,9 +38,9 @@ All changes are documented here in no particular order.
 - breaking: `t-foreach` should always have a corresponding `t-key` ([details](#20-t-foreach-should-always-have-a-corresponding-t-key))
 - breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
 - breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
-- new: add support for synthetic events ([doc](doc/reference/event_handling.md#synthetic-events))
+- new: add support for synthetic events ([doc](reference/event_handling.md#synthetic-events))
 - breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
-- new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
+- new: components can use the `.bind` suffix to bind function props ([doc](reference/props.md#binding-function-props))
 - breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - new: an error is thrown if an handler defined in a `t-on-` directive is not a function (failed silently previously in some cases)
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
@@ -49,15 +49,15 @@ All changes are documented here in no particular order.
 **Reactivity**
 
 - finer grained reactivity: owl 2 tracks change per key/component
-- finer grained reactivity: sub components can reobserve state ([doc](doc/reference/reactivity.md))
-- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#proxy))
-- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
-- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
+- finer grained reactivity: sub components can reobserve state ([doc](reference/reactivity.md))
+- new: `reactive` function: create reactive state (without being linked to a component) ([doc](reference/reactivity.md#proxy))
+- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](reference/reactivity.md#markraw))
+- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](reference/reactivity.md#toraw))
 
 **Slots**
 
 - breaking: `t-set` does not define a slot any more ([details](#3-t-set-will-no-longer-work-to-define-a-slot))
-- slots capabilities have been improved ([doc](doc/reference/slots.md))
+- slots capabilities have been improved ([doc](reference/slots.md))
   - params can be give to slot content (to pass information from slot owner to slot user)
   - slots are given as a `prop` (and can be manipulated/propagated to sub components )
   - slots can define scopes (to pass information from slot user to slot owner)
@@ -73,8 +73,8 @@ All changes are documented here in no particular order.
 
 - improved performance
 - much simpler code
-- new App class to encapsulate a root Owl component (with the config for that application) ([doc](doc/reference/app.md))
-- new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
+- new App class to encapsulate a root Owl component (with the config for that application) ([doc](reference/app.md))
+- new `useEffect` hook ([doc](reference/hooks.md#useeffect))
 - breaking: `Context` is removed ([details](#15-context-is-removed))
 - breaking: `env` is now totally empty ([details](#16-env-is-now-totally-empty))
 - breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
@@ -125,7 +125,7 @@ class MyComponent extends Component {
 }
 ```
 
-Documentation: [Component Lifecycle](doc/reference/component.md#lifecycle)
+Documentation: [Component Lifecycle](reference/component.md#lifecycle)
 
 ### 2. components can no longer be mounted in a detached dom element
 
@@ -179,7 +179,7 @@ because real applications will need to configure the templates, the translations
 and other stuff. All complex usecases need to go through the new `App` class,
 that encapsulates the root of an owl application.
 
-Documentation: [Mounting a component](doc/reference/app.md#mount-helper)
+Documentation: [Mounting a component](reference/app.md#mount-helper)
 
 ### 5. components can no longer be instantiated and mounted by hand
 
@@ -259,7 +259,7 @@ This comes from the fact that Owl 2 supports fragments (arbitrary content).
 Migration: if one need a reference to the root htmlelement of a template, it is
 suggested to simply add a `ref` on it, and access the reference as needed.
 
-Documentation: [Refs](doc/reference/refs.md)
+Documentation: [Refs](reference/refs.md)
 
 ### 10. style/class on components are now regular props
 
@@ -309,8 +309,8 @@ can have multiple roots
 
 Documentation:
 
-- [Fragments](doc/reference/template_syntax.md#fragments)
-- [Mounting a component](doc/reference/app.md#mount-helper)
+- [Fragments](reference/template_syntax.md#fragments)
+- [Mounting a component](reference/app.md#mount-helper)
 
 ### 13. Portal does no longer transfer DOM events
 
@@ -369,7 +369,7 @@ Migration: there is no proper way to get an equivalent. The closest is to get
 a reference to the root App using `this.__owl__.app`. If you need to do this,
 let us know. If this is a legitimate usecase, we may add a `useApp` hook.
 
-Documentation: [Environment](doc/reference/environment.md)
+Documentation: [Environment](reference/environment.md)
 
 ### 17. `t-component` no longer accepts strings
 
@@ -396,7 +396,7 @@ the implementation is slightly simpler.
 Migration: simply using `constructor.components.Coucou` instead of `Coucou` will
 do the trick.
 
-Documentation: [Component](doc/reference/component.md#dynamic-sub-components)
+Documentation: [Component](reference/component.md#dynamic-sub-components)
 
 ### 18. most exports are exported at top level
 
@@ -454,7 +454,7 @@ rewritten like this: `bus.addEventListener("event-type", (({detail: info}) => {.
 
 Do not forget to similarly replace `bus.off(...)` by `bus.removeEventListener(...)`
 
-Documentation: [EventBus](doc/reference/utils.md#eventbus)
+Documentation: [EventBus](reference/utils.md#eventbus)
 
 ### 22. `Store` is removed
 
@@ -523,7 +523,7 @@ us so we can study this usecase.
 In Owl, a call to `useSubEnv` would define a new environment for the children
 AND the component. It is very useful, but in some cases, one only need to update
 the children component environment. This can now be done with a new hook:
-[`useChildSubEnv`](doc/reference/hooks.md)
+[`useChildSubEnv`](reference/hooks.md)
 
 ### 28. `env` is now frozen
 
@@ -538,7 +538,7 @@ components. This use case still works with `useSubEnv`.
 Migration: use `useSubEnv` instead of writing directly to the env. Also, note
 that the environment given to the App can initially contain anything.
 
-Documentation: [Environment](doc/reference/environment.md)
+Documentation: [Environment](reference/environment.md)
 
 ### 29. `t-ref` does not work on component
 
@@ -580,7 +580,7 @@ adapted like this:
 <button t-on-click="() => this.someFunction(someVar)">blabla</button>
 ```
 
-Documentation: [Event Handling](doc/reference/event_handling.md)
+Documentation: [Event Handling](reference/event_handling.md)
 
 ### 31. components can now have arbitrary content
 
@@ -594,7 +594,7 @@ So, the following template works for components:
   hello
 ```
 
-Documentation: [Fragments](doc/reference/template_syntax.md#fragments)
+Documentation: [Fragments](reference/template_syntax.md#fragments)
 
 ### 32. `renderToString` on QWeb has been removed
 
@@ -696,7 +696,7 @@ consistent.
 Migration: mostly replace all `catchError` methods by `onError` hooks in the
 `setup` method.
 
-Documentation: [Error Handling](doc/reference/error_handling.md)
+Documentation: [Error Handling](reference/error_handling.md)
 
 ## 37. Support for inline css (`css` tag and static `style`) has been removed
 
@@ -731,7 +731,7 @@ Otherwise, it will be escaped (just like `t-esc`).
 Migration: replace all `t-raw` uses by `t-out`, and uses the `markup` function
 to mark all the js values.
 
-Documentation: [Outputting data](doc/reference/template_syntax.md#outputting-data)
+Documentation: [Outputting data](reference/template_syntax.md#outputting-data)
 
 ## 39. `browser` object has been removed
 

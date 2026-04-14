@@ -41,6 +41,15 @@ import {
 import { HELLO_WORLD_JS } from "./samples.js";
 import { debounce } from "./utils.js";
 
+// Override oneDark's background colors to match the slate UI theme.
+// Prec.override ensures this beats oneDark's theme styles.
+const slateTheme = Prec.highest(EditorView.theme({
+  "&": { backgroundColor: "#243447" },
+  ".cm-gutters": { backgroundColor: "#243447", borderRight: "1px solid #2e4055" },
+  ".cm-activeLine": { backgroundColor: "rgba(255,255,255,0.03)" },
+  ".cm-activeLineGutter": { backgroundColor: "#1a2840" },
+}));
+
 class CodeEditor extends Component {
   static template = "CodeEditor";
 
@@ -154,7 +163,7 @@ class CodeEditor extends Component {
 
     useEffect(() => {
       const isDark = this.settings.darkMode();
-      const ext = isDark ? oneDark : [];
+      const ext = isDark ? [oneDark, slateTheme] : [];
       for (const pane of Object.values(this.panes)) {
         if (pane.view) {
           pane.view.dispatch({ effects: this.themeCompartment.reconfigure(ext) });
@@ -374,7 +383,6 @@ class CodeEditor extends Component {
             {
               key: "Mod-Enter",
               run: () => {
-                this.view.setShowHelp(false);
                 this.code.run();
                 const activeId = this.project.activeProjectId();
                 if (activeId) {
@@ -394,7 +402,7 @@ class CodeEditor extends Component {
         this.fontSizeCompartment.of(
           EditorView.theme({ "&": { fontSize: this.settings.fontSize() + "px" } })
         ),
-        this.themeCompartment.of(this.settings.darkMode() ? oneDark : []),
+        this.themeCompartment.of(this.settings.darkMode() ? [oneDark, slateTheme] : []),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             const value = update.state.doc.toString();
@@ -1591,7 +1599,6 @@ class ContentView extends Component {
   }
 
   runCode() {
-    this.view.setShowHelp(false);
     this.code.run();
     const activeId = this.project.activeProjectId();
     if (activeId) {

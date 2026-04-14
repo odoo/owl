@@ -31,4 +31,7 @@ cpSync(resolve(root, "tools/playground/dist/playground.js"), resolve(out, "playg
 cpSync(resolve(root, "tools/playground/libs"), resolve(out, "playground/libs"), { recursive: true });
 cpSync(resolve(root, "tools/playground/samples"), resolve(out, "playground/samples"), { recursive: true });
 
+// Documentation (VitePress)
+cpSync(resolve(root, "doc/.vitepress/dist"), resolve(out, "documentation"), { recursive: true });
+
 console.log("Site assembled in dist/website/");

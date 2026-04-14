@@ -29,6 +29,7 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm run build:playground
+    - run: npm run build:doc
     - name: Assemble site
       run: node tools/site/assemble.mjs
     - name: Upload artifact

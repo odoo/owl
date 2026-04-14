@@ -25,7 +25,8 @@
     "test:types": "npm run test:types -w packages/owl",
     "test:doc-links": "vitest run --config tools/vitest.config.ts",
     "build:playground": "npm run build -w tools/playground",
-    "build:site": "npm run build && npm run build:playground && node tools/site/assemble.mjs",
+    "build:doc": "vitepress build doc",
+    "build:site": "npm run build && npm run build:playground && npm run build:doc && node tools/site/assemble.mjs",
     "serve:site": "npm run build:site && python3 tools/site/server.py || python tools/site/server.py",
     "playground:serve": "python3 tools/playground/server.py || python tools/playground/server.py",
     "playground": "npm run build && npm run build:playground && npm run playground:serve",
@@ -60,6 +61,7 @@
     "globals": "^17.3.0",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
+    "vitepress": "^1.6.4",
     "vitest": "^4.1.4"
   },
   "prettier": {

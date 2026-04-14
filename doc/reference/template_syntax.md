@@ -299,12 +299,14 @@ If an expression evaluates to a falsy value, it will not be set at all:
 It is sometimes convenient to format an attribute with string interpolation. In
 that case, the `t-attf-` directive can be used. It is useful when we need to mix
 literal and dynamic elements, such as css classes. The dynamic elements can be
+::: v-pre
 specified with either `{{...}}` or `#{...}`:
 
 ```xml
 <div t-attf-foo="a {{value1}} is #{value2} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
+:::
 
 If we need completely dynamic attribute names, then there is an additional
 directive: `t-att`, which takes either an object (with keys mapping to their
@@ -589,6 +591,7 @@ object as context. This can be done by using the `t-call-context` directive:
 The `t-call` directive can also be used to dynamically call a sub template,
 using string interpolation. For example:
 
+::: v-pre
 ```xml
 <div t-name="main-template">
     <t t-call="{{template}}">
@@ -596,6 +599,7 @@ using string interpolation. For example:
     </t>
 </div>
 ```
+:::
 
 Here, the name of the template is obtained from the `template` value in the
 template rendering context.

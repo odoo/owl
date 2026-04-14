@@ -7,7 +7,7 @@
                                                                 // Main options
     "target": "ES2022",
     "module": "es6",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
                                                                 // Strict typechecking options
     "strict": true,
                                                                 // Additional checks
@@ -24,7 +24,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
                                                                 // Emit options
-    "declaration": true,
-    "preserveConstEnums": false
+    "declaration": true
   }
 }

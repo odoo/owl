@@ -23,9 +23,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build:bundle": "rollup -c --failAfterWarnings",
-    "build:runtime": "rollup -c --failAfterWarnings runtime",
-    "build:compiler": "rollup -c --failAfterWarnings compiler",
+    "build:bundle": "node build.mjs",
+    "build:runtime": "node build.mjs runtime",
+    "build:compiler": "node build.mjs compiler",
     "build": "npm run build:bundle",
     "test": "vitest run",
     "test:watch": "vitest"

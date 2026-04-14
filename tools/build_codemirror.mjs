@@ -56,7 +56,6 @@ if (needInstall) {
   });
 }
 
-// Create the bundle using esbuild (simpler than rollup for this use case)
 console.log("\nBundling CodeMirror...");
 
 const entryContent = `
@@ -81,23 +80,15 @@ const tempEntry = path.resolve(rootDir, "temp_codemirror_entry.mjs");
 fs.writeFileSync(tempEntry, entryContent);
 
 try {
-  // Use rollup since it's already installed
-  const rollup = await import("rollup");
-  const terser = (await import("@rollup/plugin-terser")).default;
-  const { nodeResolve } = await import("@rollup/plugin-node-resolve");
+  const esbuild = await import("esbuild");
 
-  const bundle = await rollup.rollup({
-    input: tempEntry,
-    plugins: [nodeResolve(), terser()],
+  await esbuild.build({
+    entryPoints: [tempEntry],
+    outfile: outputFile,
+    bundle: true,
+    format: "esm",
+    minify: true,
   });
-
-  await bundle.write({
-    file: outputFile,
-    format: "es",
-    exports: "named",
-  });
-
-  await bundle.close();
 
   console.log(`\nBundle written to: ${outputFile}`);
 

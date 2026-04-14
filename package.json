@@ -15,6 +15,7 @@
     "build:bundle": "npm run build:bundle -w packages/owl",
     "build:runtime": "npm run build:runtime -w packages/owl",
     "build:compiler": "npm run build:compiler -w packages/owl",
+    "build:types": "npm run build:types -w packages/owl",
     "build:devtools": "node tools/devtools/build.mjs",
     "dev:devtools-chrome": "node tools/devtools/build.mjs --browser=chrome",
     "dev:devtools-firefox": "node tools/devtools/build.mjs --browser=firefox",

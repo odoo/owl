@@ -27,6 +27,7 @@
     "build:runtime": "node build.mjs runtime",
     "build:compiler": "node build.mjs compiler",
     "build": "npm run build:bundle",
+    "build:types": "node build.mjs types",
     "test": "vitest run",
     "test:watch": "vitest"
   },

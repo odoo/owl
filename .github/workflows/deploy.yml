@@ -27,3 +27,4 @@ jobs:
     - run: npm run check-formatting
     - run: npm run lint
     - run: npm run build
+    - run: npm run build:types

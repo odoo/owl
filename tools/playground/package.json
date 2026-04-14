@@ -1,0 +1,24 @@
+{
+  "name": "owl-playground",
+  "private": true,
+  "description": "Owl playground tools and CodeMirror dependencies",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:codemirror": "node build_codemirror.mjs",
+    "serve": "python3 server.py || python server.py"
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/language": "^6.12.2",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/theme-one-dark": "^6.1.3",
+    "@codemirror/view": "^6.40.0",
+    "@emmetio/codemirror6-plugin": "^0.4.0",
+    "codemirror": "^6.0.2"
+  }
+}

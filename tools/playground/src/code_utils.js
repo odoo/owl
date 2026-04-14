@@ -4,7 +4,7 @@ import {
   EditorView,
   snippet,
   syntaxTree,
-} from "./libs/codemirror.bundle.js";
+} from "@libs/codemirror";
 import { loadJS } from "./utils.js";
 
 let markedLoaded = null;

@@ -1,4 +1,4 @@
-import { Plugin, computed, plugin, signal } from "../owl.js";
+import { Plugin, computed, plugin, signal } from "@odoo/owl";
 import { generateId, getFileType, makeFileEntry } from "./file_utils.js";
 import { EXAMPLES, HELLO_WORLD_JS, TUTORIALS, loadFilesFromMapping } from "./samples.js";
 

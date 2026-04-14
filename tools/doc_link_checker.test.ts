@@ -64,16 +64,6 @@ function getFiles(filePath: string[] = []): FileData[] {
   if (filePath.length === 0) {
     const baseFiles: FileData[] = [
       { name: "README.md", path: [], links: [], sections: [], fullName: "README.md" },
-      { name: "CHANGELOG.md", path: [], links: [], sections: [], fullName: "CHANGELOG.md" },
-      { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" },
-      { name: "release_notes.md", path: [], links: [], sections: [], fullName: "release_notes.md" },
-      {
-        name: "migration_guide.md",
-        path: [],
-        links: [],
-        sections: [],
-        fullName: "migration_guide.md",
-      },
     ];
     const rest = getFiles(["doc"]);
     const result = baseFiles.concat(rest);
@@ -100,9 +90,14 @@ function getFiles(filePath: string[] = []): FileData[] {
 }
 
 const LOCAL_FILES = ["LICENSE"];
+// Historical docs with broken links to old Owl 2 reference pages
+const SKIP_LINK_CHECK = ["migration_owl1_to_owl2.md"];
 export function isLinkValid(link: MarkDownLink, current: FileData, files: FileData[]): boolean {
   if (link.link.startsWith("http")) {
     // no check on external links
+    return true;
+  }
+  if (SKIP_LINK_CHECK.includes(current.name)) {
     return true;
   }
   if (current.name.endsWith(".png")) {

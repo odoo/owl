@@ -33,8 +33,6 @@ All changes are documented here in no particular order.
 - breaking: prop validation system does not allow default prop on a mandatory (not optional) prop ([doc](doc/reference/props.md#props-validation))
 - breaking: rendering a component does not necessarily render child components ([details](#40-rendering-a-component-does-not-necessarily-render-child-components))
 
-
-
 **Templates**
 
 - breaking: `t-foreach` should always have a corresponding `t-key` ([details](#20-t-foreach-should-always-have-a-corresponding-t-key))
@@ -48,7 +46,6 @@ All changes are documented here in no particular order.
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
 - new: the `this` variable in template expressions is now bound to the component
 
-
 **Reactivity**
 
 - finer grained reactivity: owl 2 tracks change per key/component
@@ -56,7 +53,6 @@ All changes are documented here in no particular order.
 - new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#proxy))
 - new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
 - new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
-
 
 **Slots**
 
@@ -66,7 +62,6 @@ All changes are documented here in no particular order.
   - slots are given as a `prop` (and can be manipulated/propagated to sub components )
   - slots can define scopes (to pass information from slot user to slot owner)
 
-
 **Portal**
 
 - Portal are now defined with `t-portal` ([details](#33-portal-are-now-defined-with-t-portal))
@@ -74,11 +69,10 @@ All changes are documented here in no particular order.
 - breaking: does no longer transfer dom events ([details](#13-portal-does-no-longer-transfer-dom-events))
 - breaking: does render as an empty text node instead of `<portal/>` ([details](#14-portal-does-render-as-an-empty-text-node-instead-of-portal))
 
-
 **Miscellaneous**
 
 - improved performance
-- much simpler code 
+- much simpler code
 - new App class to encapsulate a root Owl component (with the config for that application) ([doc](doc/reference/app.md))
 - new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
 - breaking: `Context` is removed ([details](#15-context-is-removed))
@@ -118,7 +112,9 @@ class MyComponent extends Component {
   }
 }
 ```
+
 should become:
+
 ```js
 class MyComponent extends Component {
   setup() {
@@ -143,7 +139,6 @@ happens.
 
 Migration: well, not really easy. The code needs to be refactored in a different way.
 
-
 ### 3. **`t-set` will no longer work to define a slot**
 
 The `t-set` directive cannot define a slot anymore. Only the `t-set-slot` directive
@@ -158,7 +153,9 @@ Example:
 ```xml
 <SideBar><t t-set="content">content</t></SideBar>
 ```
+
 should become:
+
 ```xml
 <SideBar><t t-set-slot="content">content</t></SideBar>
 ```
@@ -223,9 +220,10 @@ Before, it was possible to define a component without specifying its template:
 
 ```js
 class Blabla extends Component {
-    // no static template here!
+  // no static template here!
 }
 ```
+
 with the `Blabla` template. It also worked with subclasses. But then, this means
 that the code had to look up all the super classes names to find the correct
 template.
@@ -270,6 +268,7 @@ Before, it was possible to do this in a template:
 ```xml
 <Child style="..." class="..."/>
 ```
+
 (or with `t-att-style` and `t-att-class`). This does no longer work, as they are
 now considered normal props.
 
@@ -288,6 +287,7 @@ In parent:
 ```xml
 <Child class="'o_my_god'"/>
 ```
+
 and in child:
 
 ```xml
@@ -308,9 +308,9 @@ prepended in something, maybe a `div`. Remember that you the root component
 can have multiple roots
 
 Documentation:
+
 - [Fragments](doc/reference/template_syntax.md#fragments)
 - [Mounting a component](doc/reference/app.md#mount-helper)
-
 
 ### 13. Portal does no longer transfer DOM events
 
@@ -402,7 +402,7 @@ Documentation: [Component](doc/reference/component.md#dynamic-sub-components)
 
 Most exports are flattened: for ex, `onMounted` is in owl, not in `owl.hooks`.
 
-Rationale: this makes it easier to work with, instead of importing stuff from 
+Rationale: this makes it easier to work with, instead of importing stuff from
 `owl`, then `owl.hooks` and `owl.tags` for example.
 
 Migration: all import code simply need to be slightly adapted.
@@ -419,7 +419,7 @@ Rationale: this is actually simple to do, is faster, and makes more sense to me.
 ### 20. `t-foreach` should always have a corresponding `t-key`
 
 It was possible in Owl 1 to write a `t-foreach` without a `t-key`. In that case,
-the index was used as key.  Since it was clearly a possible bug, Owl 1 had a
+the index was used as key. Since it was clearly a possible bug, Owl 1 had a
 warning in some cases, when it could detect that there was definitely not a `t-key`.
 However, this was imperfect, and in some cases no warning was displayed. In Owl 2,
 the tag with a `t-foreach` has to have a corresponding `t-key`.
@@ -443,7 +443,7 @@ it simply extends `EventTarget` (the native Dom class), so its implementation
 is basically only 5 lines long. This means that it has now the usual DOM interface:
 
 ```js
-bus.addEventListener('event-name', callback);
+bus.addEventListener("event-name", callback);
 ```
 
 Rationale: it makes it easier to have just one interface to remember, it makes
@@ -467,6 +467,7 @@ user space (so, not necessarily at the framework level). Another point is that
 the store API was invented before the hooks, then was still a little awkward.
 
 Migration:
+
 - rewrite the code not to use a store
 - probably use the reactivity system instead and build a store class and a few
   hooks on top of it.
@@ -489,7 +490,7 @@ Maybe something like: add a `t-ref` in the template, and define a hook `useFadeO
 that takes the ref, and add a fadeout class at initial render, then in mounted,
 wait for a micro tick and remove it.
 
-Migration: try to reimplement it manually. 
+Migration: try to reimplement it manually.
 
 ### 25. no more global components or templates
 
@@ -499,7 +500,7 @@ no longer the case in Owl 2.
 Rationale: first, this was a tradeoff: ease of use was gained, but at the cost
 of a higher complexity. Users had to know that there was a magic mechanism. Also,
 it was not used much in practice, and the cost of having to import manually components
-is low.  Finally, this can be mostly done in user space (for example, by subclassing
+is low. Finally, this can be mostly done in user space (for example, by subclassing
 `Component`).
 
 Migration: import manually all required global components, or find a way to organize
@@ -514,7 +515,7 @@ how/when the state is updated, and how each component is loading/updating itself
 Migration: remove the `AsyncRoot` component, then possibly, reorganize the code
 to fetch data in a higher order component, and using a `t-if/t-else` to display
 either a fallback when the data is not ready, or the actual component with data
-as props.  If there is no escape, and `AsyncRoot` is needed, please reach out to
+as props. If there is no escape, and `AsyncRoot` is needed, please reach out to
 us so we can study this usecase.
 
 ### 27. `useChildSubEnv` (only applies to child components)
@@ -527,14 +528,14 @@ the children component environment. This can now be done with a new hook:
 ### 28. `env` is now frozen
 
 In Owl 2, the `env` object is frozen. It can no longer be modified (structurally)
-arbitrarily. 
+arbitrarily.
 
 Rationale: it seems like the `env` object purpose is to have a global channel of
 communication between components. It is however scary if anyone can add something
-to it.  The usual use case is to add something to the environment for some child
+to it. The usual use case is to add something to the environment for some child
 components. This use case still works with `useSubEnv`.
 
-Migration: use `useSubEnv` instead of writing directly to the env.  Also, note
+Migration: use `useSubEnv` instead of writing directly to the env. Also, note
 that the environment given to the App can initially contain anything.
 
 Documentation: [Environment](doc/reference/environment.md)
@@ -546,7 +547,7 @@ longer works.
 
 Rationale: the possibility of having a ref to a child component breaks the
 encapsulation provided by Owl components: a child component now has a private
-and a public interface.  Another issue is that it may be unclear when the ref
+and a public interface. Another issue is that it may be unclear when the ref
 should be set: is the component active on setup, or on mounted? Also, it is
 kind of awkward to implement.
 
@@ -569,7 +570,7 @@ a function.
 Rationale: the fact that owl 1 had to support expressions meant that it was not
 possible to properly inject the event in general. With this restriction, Owl 2
 can support more general use cases. Also, the examples above can simply be
-wrapped in a lambda function. 
+wrapped in a lambda function.
 
 Migration: use lambda functions. For example, the two examples above can be
 adapted like this:
@@ -602,17 +603,17 @@ the qweb instance knew all templates. But now, the closest analogy is the `App`
 class, but it is not as convenient, since the `app` instance is no longer visible
 to components (while before, `qweb` was in the environment).
 
-Also, this can easily be done in userspace, by mounting a component in a div.  For example:
+Also, this can easily be done in userspace, by mounting a component in a div. For example:
 
 ```js
 export async function renderToString(template, context) {
   class C extends Component {
     static template = template;
-    setup () {
-        Object.assign(this, context);
+    setup() {
+      Object.assign(this, context);
     }
   }
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   document.body.appendChild(div);
   const app = new App(C);
   await app.mount(div);
@@ -623,7 +624,7 @@ export async function renderToString(template, context) {
 }
 ```
 
-The function above works for most cases, but is asynchronous.  An alternative
+The function above works for most cases, but is asynchronous. An alternative
 function could look like this:
 
 ```js
@@ -634,7 +635,7 @@ function renderToString(template, context = {}) {
   app.addTemplate(template, template, { allowDuplicate: true });
   const templateFn = app.getTemplate(template);
   const bdom = templateFn(context, {});
-  const div = document.createElement('div')
+  const div = document.createElement("div");
   blockDom.mount(bdom, div);
   return div.innerHTML;
 }
@@ -689,7 +690,7 @@ occurring during the component lifecycle. This has been replaced by a `onError`
 hook, with a similar API.
 
 Rationale: `catchError` felt a little big awkward, when most of the way we
-interact with componentss is via hooks.  Using hooks felt more natural and
+interact with componentss is via hooks. Using hooks felt more natural and
 consistent.
 
 Migration: mostly replace all `catchError` methods by `onError` hooks in the
@@ -697,11 +698,10 @@ Migration: mostly replace all `catchError` methods by `onError` hooks in the
 
 Documentation: [Error Handling](doc/reference/error_handling.md)
 
-
 ## 37. Support for inline css (`css` tag and static `style`) has been removed
 
 Rationale: Owl tries to focus on what it does best, and supporting inline css
-was not a priority.  It used to support some simplified scss language, but it
+was not a priority. It used to support some simplified scss language, but it
 was feared that it would cause more trouble than it was worth. Also, it seems
 like it can be done in userspace.
 
@@ -712,7 +712,7 @@ simple implementation could look like this:
 let cache = {};
 
 function useStyle(css) {
-  if (!css in cache) {
+  if ((!css) in cache) {
     const sheet = document.createElement("style");
     sheet.innerHTML = css;
     cache[css] = sheet;
@@ -736,7 +736,7 @@ Documentation: [Outputting data](doc/reference/template_syntax.md#outputting-dat
 ## 39. `browser` object has been removed
 
 Rationale: the `browser` object caused more trouble than it was worth. Also, it
-seems like this should be done in user space, not at the framework level.  
+seems like this should be done in user space, not at the framework level.
 
 Migration: code should just be adapted to either use another browser object,
 or to use native browser function (and then, just mock them directly).
@@ -751,7 +751,7 @@ Before, if one had the following component tree:
       A-->C;
 ```
 
-when `A` would render, it would also render `B` and `C`. Now, in Owl 2, it will 
+when `A` would render, it would also render `B` and `C`. Now, in Owl 2, it will
 (shallow) compare the before and after props, and `B` or `C` will only be rerendered
 if their props have changed.
 
@@ -763,4 +763,3 @@ Rationale: This was just not possible in Owl 1, but it now possible. This is
 due to the rewriteof the underlying rendering engine and the reactivity
 system. The goal is to have a big performance boost in large screen with many
 components: now Owl only rerender what is strictly useful.
-

@@ -18,7 +18,7 @@ Please note that the design is still a work in progress and may evolve as
 discussions progress.
 
 This is a significant breaking change in Owl. See the migration
-guide for more details: [Migration Guide to Owl 3](migration_guide.md)
+guide for more details: [Migration Guide to Owl 3](migration_owl2_to_owl3.md)
 
 ## Table of Content
 

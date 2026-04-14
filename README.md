@@ -114,7 +114,7 @@ The documentation below is for **Owl 3**. For the Owl 2 documentation, see the
 
 ### Misc
 
-- [Owl 3.x Release Notes](release_notes.md) — Complete guide to all changes in Owl 3
+- [Owl 3.x Design Document](doc/owl3_design.md) — Complete guide to all changes in Owl 3
 - [Design Principles](doc/miscellaneous/design_principles.md)
 - [Why we built Owl](doc/miscellaneous/why_owl.md)
 - [Architecture Notes](doc/miscellaneous/architecture.md)

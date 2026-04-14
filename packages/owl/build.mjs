@@ -86,8 +86,10 @@ switch (target) {
   case "compiler":
     await buildCompiler();
     break;
+  case "types":
+    buildTypes();
+    break;
   default:
     await buildVariant("src/index.ts");
     await buildCompiler();
-    buildTypes();
 }

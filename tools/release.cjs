@@ -39,7 +39,7 @@ async function startRelease() {
   let isAlpha = await ask("Is this an alpha release? [y/n] (n): ");
   isAlpha = isAlpha.toLowerCase() === "y";
 
-  const STEPS = 10;
+  const STEPS = 11;
   let step = 1;
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Checking if code formatting is right...`)
@@ -111,6 +111,14 @@ async function startRelease() {
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
     logError("Build failed. Aborting.");
+    return;
+  }
+
+  // ---------------------------------------------------------------------------
+  log(`Step ${step++}/${STEPS}: building type declarations...`);
+  const typesResult = await execCommand("npm run build:types");
+  if (typesResult !== 0) {
+    logError("Type generation failed. Aborting.");
     return;
   }
 

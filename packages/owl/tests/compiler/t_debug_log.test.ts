@@ -7,7 +7,7 @@ import { renderToString, snapshotTemplate } from "../helpers";
 describe("debugging", () => {
   test("t-debug", () => {
     const consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
     const template = `<div t-debug=""><t t-if="true"><span t-debug="">hey</span></t></div>`;
     snapshotTemplate(template);
     expect(console.log).toHaveBeenCalledTimes(1);
@@ -16,7 +16,7 @@ describe("debugging", () => {
 
   test("t-debug on sub template", () => {
     const consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
     let template = `<p t-debug="">coucou</p>`;
     snapshotTemplate(template);
     template = `<div><t t-call="sub"/></div>`;
@@ -27,7 +27,7 @@ describe("debugging", () => {
 
   test("t-log", () => {
     const consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     const template = `<div>
             <t t-set="foo" t-value="42"/>
@@ -41,7 +41,7 @@ describe("debugging", () => {
 
   test("t-log: interaction with t-set", () => {
     const consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     const template = `
       <t>

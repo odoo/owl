@@ -553,7 +553,7 @@ describe("t-call (template calling)", () => {
       fr: { game: "jeu" },
       pt: { title: "titulo" },
     };
-    const translateFn = jest.fn(
+    const translateFn = vi.fn(
       (expr: string, translationCtx: string) => translations[translationCtx]?.[expr] || expr
     );
 
@@ -575,7 +575,7 @@ describe("t-call (template calling)", () => {
       fr: { game: "jeu" },
       pt: { title: "titulo" },
     };
-    const translateFn = jest.fn(
+    const translateFn = vi.fn(
       (expr: string, translationCtx: string) => translations[translationCtx]?.[expr] || expr
     );
 

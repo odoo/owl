@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`style and class handling can set class on multi root component 1`] = `
+exports[`style and class handling > can set class on multi root component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -13,7 +13,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
 }"
 `;
 
-exports[`style and class handling can set class on multi root component 2`] = `
+exports[`style and class handling > can set class on multi root component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -30,7 +30,7 @@ exports[`style and class handling can set class on multi root component 2`] = `
 }"
 `;
 
-exports[`style and class handling can set class on sub component, as prop 1`] = `
+exports[`style and class handling > can set class on sub component, as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -43,7 +43,7 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
 }"
 `;
 
-exports[`style and class handling can set class on sub component, as prop 2`] = `
+exports[`style and class handling > can set class on sub component, as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -57,7 +57,7 @@ exports[`style and class handling can set class on sub component, as prop 2`] = 
 }"
 `;
 
-exports[`style and class handling can set class on sub sub component 1`] = `
+exports[`style and class handling > can set class on sub sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -70,7 +70,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
 }"
 `;
 
-exports[`style and class handling can set class on sub sub component 2`] = `
+exports[`style and class handling > can set class on sub sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -83,7 +83,7 @@ exports[`style and class handling can set class on sub sub component 2`] = `
 }"
 `;
 
-exports[`style and class handling can set class on sub sub component 3`] = `
+exports[`style and class handling > can set class on sub sub component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -97,7 +97,7 @@ exports[`style and class handling can set class on sub sub component 3`] = `
 }"
 `;
 
-exports[`style and class handling can set more than one class on sub component 1`] = `
+exports[`style and class handling > can set more than one class on sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -110,7 +110,7 @@ exports[`style and class handling can set more than one class on sub component 1
 }"
 `;
 
-exports[`style and class handling can set more than one class on sub component 2`] = `
+exports[`style and class handling > can set more than one class on sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -124,7 +124,7 @@ exports[`style and class handling can set more than one class on sub component 2
 }"
 `;
 
-exports[`style and class handling can set style and class inside component 1`] = `
+exports[`style and class handling > can set style and class inside component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -137,7 +137,7 @@ exports[`style and class handling can set style and class inside component 1`] =
 }"
 `;
 
-exports[`style and class handling class on components do not interfere with user defined classes 1`] = `
+exports[`style and class handling > class on components do not interfere with user defined classes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -151,7 +151,7 @@ exports[`style and class handling class on components do not interfere with user
 }"
 `;
 
-exports[`style and class handling class on sub component, which is switched to another 1`] = `
+exports[`style and class handling > class on sub component, which is switched to another 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -164,7 +164,7 @@ exports[`style and class handling class on sub component, which is switched to a
 }"
 `;
 
-exports[`style and class handling class on sub component, which is switched to another 2`] = `
+exports[`style and class handling > class on sub component, which is switched to another 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -184,7 +184,7 @@ exports[`style and class handling class on sub component, which is switched to a
 }"
 `;
 
-exports[`style and class handling class on sub component, which is switched to another 3`] = `
+exports[`style and class handling > class on sub component, which is switched to another 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -198,7 +198,7 @@ exports[`style and class handling class on sub component, which is switched to a
 }"
 `;
 
-exports[`style and class handling class on sub component, which is switched to another 4`] = `
+exports[`style and class handling > class on sub component, which is switched to another 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -212,7 +212,7 @@ exports[`style and class handling class on sub component, which is switched to a
 }"
 `;
 
-exports[`style and class handling class with extra whitespaces (variation) 1`] = `
+exports[`style and class handling > class with extra whitespaces (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -228,7 +228,7 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
 }"
 `;
 
-exports[`style and class handling class with extra whitespaces (variation) 2`] = `
+exports[`style and class handling > class with extra whitespaces (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -242,7 +242,7 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
 }"
 `;
 
-exports[`style and class handling class with extra whitespaces 1`] = `
+exports[`style and class handling > class with extra whitespaces 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -255,7 +255,7 @@ exports[`style and class handling class with extra whitespaces 1`] = `
 }"
 `;
 
-exports[`style and class handling class with extra whitespaces 2`] = `
+exports[`style and class handling > class with extra whitespaces 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -269,7 +269,7 @@ exports[`style and class handling class with extra whitespaces 2`] = `
 }"
 `;
 
-exports[`style and class handling component class and parent class combine together 1`] = `
+exports[`style and class handling > component class and parent class combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -282,7 +282,7 @@ exports[`style and class handling component class and parent class combine toget
 }"
 `;
 
-exports[`style and class handling component class and parent class combine together 2`] = `
+exports[`style and class handling > component class and parent class combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -296,7 +296,7 @@ exports[`style and class handling component class and parent class combine toget
 }"
 `;
 
-exports[`style and class handling component static style and dynamic t-att-style combine together 1`] = `
+exports[`style and class handling > component static style and dynamic t-att-style combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -309,7 +309,7 @@ exports[`style and class handling component static style and dynamic t-att-style
 }"
 `;
 
-exports[`style and class handling component static style and dynamic t-att-style combine together 2`] = `
+exports[`style and class handling > component static style and dynamic t-att-style combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -323,7 +323,7 @@ exports[`style and class handling component static style and dynamic t-att-style
 }"
 `;
 
-exports[`style and class handling dynamic t-att-style is properly added and updated on widget root el 1`] = `
+exports[`style and class handling > dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -336,7 +336,7 @@ exports[`style and class handling dynamic t-att-style is properly added and upda
 }"
 `;
 
-exports[`style and class handling dynamic t-att-style is properly added and updated on widget root el 2`] = `
+exports[`style and class handling > dynamic t-att-style is properly added and updated on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -350,7 +350,7 @@ exports[`style and class handling dynamic t-att-style is properly added and upda
 }"
 `;
 
-exports[`style and class handling empty class attribute is not added on widget root el 1`] = `
+exports[`style and class handling > empty class attribute is not added on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -366,7 +366,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 }"
 `;
 
-exports[`style and class handling empty class attribute is not added on widget root el 2`] = `
+exports[`style and class handling > empty class attribute is not added on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -380,7 +380,7 @@ exports[`style and class handling empty class attribute is not added on widget r
 }"
 `;
 
-exports[`style and class handling error in subcomponent with class 1`] = `
+exports[`style and class handling > error in subcomponent with class 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -393,7 +393,7 @@ exports[`style and class handling error in subcomponent with class 1`] = `
 }"
 `;
 
-exports[`style and class handling error in subcomponent with class 2`] = `
+exports[`style and class handling > error in subcomponent with class 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -409,7 +409,7 @@ exports[`style and class handling error in subcomponent with class 2`] = `
 }"
 `;
 
-exports[`style and class handling no class is set is child ignores it 1`] = `
+exports[`style and class handling > no class is set is child ignores it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -422,7 +422,7 @@ exports[`style and class handling no class is set is child ignores it 1`] = `
 }"
 `;
 
-exports[`style and class handling no class is set is child ignores it 2`] = `
+exports[`style and class handling > no class is set is child ignores it 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -435,7 +435,7 @@ exports[`style and class handling no class is set is child ignores it 2`] = `
 }"
 `;
 
-exports[`style and class handling no class is set is parent does not give it as prop 1`] = `
+exports[`style and class handling > no class is set is parent does not give it as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -448,7 +448,7 @@ exports[`style and class handling no class is set is parent does not give it as 
 }"
 `;
 
-exports[`style and class handling no class is set is parent does not give it as prop 2`] = `
+exports[`style and class handling > no class is set is parent does not give it as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -462,7 +462,7 @@ exports[`style and class handling no class is set is parent does not give it as 
 }"
 `;
 
-exports[`style and class handling static style and dynamic t-att-style with object combine together 1`] = `
+exports[`style and class handling > static style and dynamic t-att-style with object combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -475,7 +475,7 @@ exports[`style and class handling static style and dynamic t-att-style with obje
 }"
 `;
 
-exports[`style and class handling static style and dynamic t-att-style with object combine together 2`] = `
+exports[`style and class handling > static style and dynamic t-att-style with object combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -489,7 +489,7 @@ exports[`style and class handling static style and dynamic t-att-style with obje
 }"
 `;
 
-exports[`style and class handling style is properly added on widget root el 1`] = `
+exports[`style and class handling > style is properly added on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -502,7 +502,7 @@ exports[`style and class handling style is properly added on widget root el 1`] 
 }"
 `;
 
-exports[`style and class handling style is properly added on widget root el 2`] = `
+exports[`style and class handling > style is properly added on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -516,7 +516,7 @@ exports[`style and class handling style is properly added on widget root el 2`] 
 }"
 `;
 
-exports[`style and class handling t-att-class is properly added/removed on widget root el (v2) 1`] = `
+exports[`style and class handling > t-att-class is properly added/removed on widget root el (v2) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -532,7 +532,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 }"
 `;
 
-exports[`style and class handling t-att-class is properly added/removed on widget root el (v2) 2`] = `
+exports[`style and class handling > t-att-class is properly added/removed on widget root el (v2) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -546,7 +546,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 }"
 `;
 
-exports[`style and class handling t-att-class is properly added/removed on widget root el (v3) 1`] = `
+exports[`style and class handling > t-att-class is properly added/removed on widget root el (v3) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -559,7 +559,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 }"
 `;
 
-exports[`style and class handling t-att-class is properly added/removed on widget root el (v3) 2`] = `
+exports[`style and class handling > t-att-class is properly added/removed on widget root el (v3) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -573,7 +573,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 }"
 `;
 
-exports[`style and class handling t-att-style is cleared when interpolated prop becomes undefined 1`] = `
+exports[`style and class handling > t-att-style is cleared when interpolated prop becomes undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -587,7 +587,7 @@ exports[`style and class handling t-att-style is cleared when interpolated prop 
 }"
 `;
 
-exports[`style and class handling t-att-style is cleared when value becomes undefined 1`] = `
+exports[`style and class handling > t-att-style is cleared when value becomes undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -601,7 +601,7 @@ exports[`style and class handling t-att-style is cleared when value becomes unde
 }"
 `;
 
-exports[`style and class handling t-att-style with object value 1`] = `
+exports[`style and class handling > t-att-style with object value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -615,7 +615,7 @@ exports[`style and class handling t-att-style with object value 1`] = `
 }"
 `;
 
-exports[`style and class handling t-att-style with string value 1`] = `
+exports[`style and class handling > t-att-style with string value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

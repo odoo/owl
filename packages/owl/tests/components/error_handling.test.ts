@@ -33,8 +33,8 @@ let mockConsoleWarn: any;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleError = jest.fn(() => {});
-  mockConsoleWarn = jest.fn(() => {});
+  mockConsoleError = vi.fn(() => {});
+  mockConsoleWarn = vi.fn(() => {});
   console.error = mockConsoleError;
   console.warn = mockConsoleWarn;
 });
@@ -61,9 +61,8 @@ describe("basics", () => {
     parent.state.flag = true;
 
     render(parent);
-    await expect(nextAppError(parent.__owl__.app)).resolves.toThrow(
-      "[Owl] Unhandled error. Destroying the root component"
-    );
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toContain("[Owl] Unhandled error. Destroying the root component");
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });

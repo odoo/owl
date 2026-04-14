@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`misc complex template 1`] = `
+exports[`misc > complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -80,7 +80,7 @@ exports[`misc complex template 1`] = `
 }"
 `;
 
-exports[`misc global 1`] = `
+exports[`misc > global 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -122,7 +122,7 @@ exports[`misc global 1`] = `
 }"
 `;
 
-exports[`misc global 2`] = `
+exports[`misc > global 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -138,7 +138,7 @@ exports[`misc global 2`] = `
 }"
 `;
 
-exports[`misc global 3`] = `
+exports[`misc > global 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -154,7 +154,7 @@ exports[`misc global 3`] = `
 }"
 `;
 
-exports[`misc global 4`] = `
+exports[`misc > global 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -170,7 +170,7 @@ exports[`misc global 4`] = `
 }"
 `;
 
-exports[`misc other complex template 1`] = `
+exports[`misc > other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -8,7 +8,7 @@ async function waitScheduler() {
 
 describe("effect", () => {
   test("effect runs directly", () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     effect(() => {
       spy();
     });
@@ -17,7 +17,7 @@ describe("effect", () => {
 
   test("effect tracks proxy properties", async () => {
     const state = proxy({ a: 1 });
-    const spy = jest.fn();
+    const spy = vi.fn();
     effect(() => spy(state.a));
     expectSpy(spy, 1, { args: [1] });
     state.a = 2;
@@ -27,7 +27,7 @@ describe("effect", () => {
 
   test("effect should unsubscribe previous dependencies", async () => {
     const state = proxy({ a: 1, b: 10, c: 100 });
-    const spy = jest.fn();
+    const spy = vi.fn();
     effect(() => {
       if (state.a === 1) {
         spy(state.b);
@@ -52,7 +52,7 @@ describe("effect", () => {
 
   test("effect should not run if dependencies do not change", async () => {
     const state = proxy({ a: 1 });
-    const spy = jest.fn();
+    const spy = vi.fn();
     effect(() => {
       spy(state.a);
     });
@@ -89,8 +89,8 @@ describe("effect", () => {
   describe("nested effects", () => {
     test("should track correctly", async () => {
       const state = proxy({ a: 1, b: 10 });
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       effect(() => {
         spy1(state.a);
         if (state.a === 1) {
@@ -119,7 +119,7 @@ describe("effect", () => {
   describe("unsubscribe", () => {
     test("should be able to unsubscribe", async () => {
       const state = proxy({ a: 1 });
-      const spy = jest.fn();
+      const spy = vi.fn();
       const unsubscribe = effect(() => {
         spy(state.a);
       });
@@ -135,8 +135,8 @@ describe("effect", () => {
 
     test("effect should call cleanup function", async () => {
       const state = proxy({ a: 1 });
-      const spy = jest.fn();
-      const cleanup = jest.fn();
+      const spy = vi.fn();
+      const cleanup = vi.fn();
       effect(() => {
         spy(state.a);
         return cleanup;
@@ -154,12 +154,12 @@ describe("effect", () => {
     });
     test("should call cleanup when unsubscribing nested effects", async () => {
       const state = proxy({ a: 1, b: 10, c: 100 });
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
-      const spy3 = jest.fn();
-      const cleanup1 = jest.fn();
-      const cleanup2 = jest.fn();
-      const cleanup3 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
+      const spy3 = vi.fn();
+      const cleanup1 = vi.fn();
+      const cleanup2 = vi.fn();
+      const cleanup3 = vi.fn();
       const unsubscribe = effect(() => {
         spy1(state.a);
         if (state.a === 1) {

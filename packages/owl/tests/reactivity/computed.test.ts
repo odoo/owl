@@ -1,3 +1,4 @@
+import { vi, type Mock } from "vitest";
 import { proxy, computed, signal } from "../../src";
 import {
   atomSymbol,
@@ -17,9 +18,9 @@ async function waitScheduler() {
   await nextMicroTick();
 }
 
-export type SpyComputed<T> = ReactiveValue<T> & { spy: jest.Mock<any, T[]> };
+export type SpyComputed<T> = ReactiveValue<T> & { spy: Mock };
 export function spyComputed<T>(fn: () => T): SpyComputed<T> {
-  const spy = jest.fn(fn);
+  const spy = vi.fn(fn);
   const d = computed(spy) as SpyComputed<T>;
   d.spy = spy;
   return d;

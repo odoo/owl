@@ -150,7 +150,7 @@ describe("reactivity in lifecycle", () => {
     //     return super.__render(f);
     //   }
     // }
-    // TestWidget.prototype.__render = jest.fn(TestWidget.prototype.__render);
+    // TestWidget.prototype.__render = vi.fn(TestWidget.prototype.__render);
     // const widget = new TestWidget();
     // widget.state.val = 2;
     // await widget.mount(fixture);

@@ -40,7 +40,7 @@ test("invalidate a signal", async () => {
 
   const fakeSignal = () => {};
   fakeSignal.set = () => {};
-  expect(() => signal.invalidate(fakeSignal)).toThrow("Value is not a signal (() => { })");
+  expect(() => signal.invalidate(fakeSignal)).toThrow(/Value is not a signal/);
 });
 
 describe("signal.Array", () => {

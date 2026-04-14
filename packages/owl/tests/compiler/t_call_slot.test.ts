@@ -17,7 +17,7 @@ describe("t-call-slot", () => {
     const template = `<t t-slot="default"/>`;
     const parsedTemplate = parseXML(template).firstChild as Element;
     const originalConsoleWarn = console.warn;
-    const mockConsoleWarn = jest.fn(() => {});
+    const mockConsoleWarn = vi.fn(() => {});
     console.warn = mockConsoleWarn;
     compile(parsedTemplate);
     console.warn = originalConsoleWarn;

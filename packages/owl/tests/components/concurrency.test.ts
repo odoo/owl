@@ -770,7 +770,7 @@ test("concurrent renderings scenario 1", async () => {
       return this.props.fromB;
     }
   }
-  ComponentC.prototype.someValue = jest.fn(ComponentC.prototype.someValue);
+  ComponentC.prototype.someValue = vi.fn(ComponentC.prototype.someValue);
 
   class ComponentB extends Component {
     static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="this.state.fromB" /></p>`;
@@ -1046,7 +1046,7 @@ test("concurrent renderings scenario 3", async () => {
       return this.props.fromC;
     }
   }
-  ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
+  ComponentD.prototype.someValue = vi.fn(ComponentD.prototype.someValue);
 
   class ComponentC extends Component {
     static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></span>`;
@@ -1160,7 +1160,7 @@ test("concurrent renderings scenario 4", async () => {
       return this.props.fromC;
     }
   }
-  ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
+  ComponentD.prototype.someValue = vi.fn(ComponentD.prototype.someValue);
 
   class ComponentC extends Component {
     static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></span>`;
@@ -1277,7 +1277,7 @@ test("concurrent renderings scenario 5", async () => {
       return this.props.fromA;
     }
   }
-  ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
+  ComponentB.prototype.someValue = vi.fn(ComponentB.prototype.someValue);
 
   class ComponentA extends Component {
     static components = { ComponentB };
@@ -1355,7 +1355,7 @@ test("concurrent renderings scenario 6", async () => {
       return this.props.fromA;
     }
   }
-  ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
+  ComponentB.prototype.someValue = vi.fn(ComponentB.prototype.someValue);
 
   class ComponentA extends Component {
     static components = { ComponentB };
@@ -1434,7 +1434,7 @@ test("concurrent renderings scenario 7", async () => {
       return this.state.fromB;
     }
   }
-  ComponentB.prototype.someValue = jest.fn(ComponentB.prototype.someValue);
+  ComponentB.prototype.someValue = vi.fn(ComponentB.prototype.someValue);
 
   class ComponentA extends Component {
     static components = { ComponentB };

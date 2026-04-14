@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`comments comment node with backslash at top level 1`] = `
+exports[`comments > comment node with backslash at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -11,7 +11,7 @@ exports[`comments comment node with backslash at top level 1`] = `
 }"
 `;
 
-exports[`comments comment node with backtick at top-level 1`] = `
+exports[`comments > comment node with backtick at top-level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -22,7 +22,7 @@ exports[`comments comment node with backtick at top-level 1`] = `
 }"
 `;
 
-exports[`comments comment node with interpolation sigil at top level 1`] = `
+exports[`comments > comment node with interpolation sigil at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -33,7 +33,7 @@ exports[`comments comment node with interpolation sigil at top level 1`] = `
 }"
 `;
 
-exports[`comments only a comment 1`] = `
+exports[`comments > only a comment 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -44,7 +44,7 @@ exports[`comments only a comment 1`] = `
 }"
 `;
 
-exports[`comments properly handle comments 1`] = `
+exports[`comments > properly handle comments 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -57,7 +57,7 @@ exports[`comments properly handle comments 1`] = `
 }"
 `;
 
-exports[`comments properly handle comments between t-if/t-else 1`] = `
+exports[`comments > properly handle comments between t-if/t-else 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

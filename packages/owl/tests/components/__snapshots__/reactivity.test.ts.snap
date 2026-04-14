@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`components and computed Child is not rerender when reactive is computed 1`] = `
+exports[`components and computed > Child is not rerender when reactive is computed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -15,7 +15,7 @@ exports[`components and computed Child is not rerender when reactive is computed
 }"
 `;
 
-exports[`components and computed Child is not rerender when reactive is computed 2`] = `
+exports[`components and computed > Child is not rerender when reactive is computed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -26,7 +26,7 @@ exports[`components and computed Child is not rerender when reactive is computed
 }"
 `;
 
-exports[`components and computed simple component and computed value 1`] = `
+exports[`components and computed > simple component and computed value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -40,7 +40,7 @@ exports[`components and computed simple component and computed value 1`] = `
 }"
 `;
 
-exports[`reactive cleanup on component destruction benchmark-like scenario: signal.Array rows with computed isSelected 1`] = `
+exports[`reactive cleanup on component destruction > benchmark-like scenario: signal.Array rows with computed isSelected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -64,7 +64,7 @@ exports[`reactive cleanup on component destruction benchmark-like scenario: sign
 }"
 `;
 
-exports[`reactive cleanup on component destruction benchmark-like scenario: signal.Array rows with computed isSelected 2`] = `
+exports[`reactive cleanup on component destruction > benchmark-like scenario: signal.Array rows with computed isSelected 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -81,7 +81,7 @@ exports[`reactive cleanup on component destruction benchmark-like scenario: sign
 }"
 `;
 
-exports[`reactive cleanup on component destruction destroying a component with computed cleans up signal observers 1`] = `
+exports[`reactive cleanup on component destruction > destroying a component with computed cleans up signal observers 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -100,7 +100,7 @@ exports[`reactive cleanup on component destruction destroying a component with c
 }"
 `;
 
-exports[`reactive cleanup on component destruction destroying a component with computed cleans up signal observers 2`] = `
+exports[`reactive cleanup on component destruction > destroying a component with computed cleans up signal observers 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -115,7 +115,7 @@ exports[`reactive cleanup on component destruction destroying a component with c
 }"
 `;
 
-exports[`reactive cleanup on component destruction destroying multiple children with computeds cleans up all signal observers 1`] = `
+exports[`reactive cleanup on component destruction > destroying multiple children with computeds cleans up all signal observers 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -139,7 +139,7 @@ exports[`reactive cleanup on component destruction destroying multiple children 
 }"
 `;
 
-exports[`reactive cleanup on component destruction destroying multiple children with computeds cleans up all signal observers 2`] = `
+exports[`reactive cleanup on component destruction > destroying multiple children with computeds cleans up all signal observers 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -154,7 +154,7 @@ exports[`reactive cleanup on component destruction destroying multiple children 
 }"
 `;
 
-exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 1`] = `
+exports[`reactivity in lifecycle > Child component doesn't render when state they depend on changes but their parent is about to unmount them 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -171,7 +171,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 }"
 `;
 
-exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 2`] = `
+exports[`reactivity in lifecycle > Child component doesn't render when state they depend on changes but their parent is about to unmount them 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -183,7 +183,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 }"
 `;
 
-exports[`reactivity in lifecycle Component is automatically subscribed to proxy object received as prop 1`] = `
+exports[`reactivity in lifecycle > Component is automatically subscribed to proxy object received as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -198,7 +198,7 @@ exports[`reactivity in lifecycle Component is automatically subscribed to proxy 
 }"
 `;
 
-exports[`reactivity in lifecycle Component is automatically subscribed to proxy object received as prop 2`] = `
+exports[`reactivity in lifecycle > Component is automatically subscribed to proxy object received as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -214,7 +214,7 @@ exports[`reactivity in lifecycle Component is automatically subscribed to proxy 
 }"
 `;
 
-exports[`reactivity in lifecycle an external proxy object should be tracked 1`] = `
+exports[`reactivity in lifecycle > an external proxy object should be tracked 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -231,7 +231,7 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 1`] 
 }"
 `;
 
-exports[`reactivity in lifecycle an external proxy object should be tracked 2`] = `
+exports[`reactivity in lifecycle > an external proxy object should be tracked 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -246,7 +246,7 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 2`] 
 }"
 `;
 
-exports[`reactivity in lifecycle can use a state hook 1`] = `
+exports[`reactivity in lifecycle > can use a state hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -261,7 +261,7 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
 }"
 `;
 
-exports[`reactivity in lifecycle can use a state hook 2 1`] = `
+exports[`reactivity in lifecycle > can use a state hook 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -278,7 +278,7 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 }"
 `;
 
-exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
+exports[`reactivity in lifecycle > can use a state hook on Map 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -293,7 +293,7 @@ exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
 }"
 `;
 
-exports[`reactivity in lifecycle change state while mounting component 1`] = `
+exports[`reactivity in lifecycle > change state while mounting component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -310,7 +310,7 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 }"
 `;
 
-exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 1`] = `
+exports[`reactivity in lifecycle > state changes in willUnmount do not trigger rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -329,7 +329,7 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 }"
 `;
 
-exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 2`] = `
+exports[`reactivity in lifecycle > state changes in willUnmount do not trigger rerender 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

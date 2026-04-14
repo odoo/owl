@@ -8,7 +8,7 @@ let mockConsoleWarn: any;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = jest.fn(() => {});
+  mockConsoleWarn = vi.fn(() => {});
   console.warn = mockConsoleWarn;
 });
 

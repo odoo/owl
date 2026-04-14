@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`t-custom can use t-custom directive on a node 1`] = `
+exports[`t-custom > can use t-custom directive on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -16,7 +16,7 @@ exports[`t-custom can use t-custom directive on a node 1`] = `
 }"
 `;
 
-exports[`t-custom can use t-custom directive with modifiers on a node 1`] = `
+exports[`t-custom > can use t-custom directive with modifiers on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

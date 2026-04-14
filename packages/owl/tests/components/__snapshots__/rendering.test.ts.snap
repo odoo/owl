@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`children, default props and renderings 1`] = `
 "function anonymous(app, bdom, helpers
@@ -65,7 +65,7 @@ exports[`force render in case of existing render 3`] = `
 }"
 `;
 
-exports[`rendering semantics can force a render to update sub tree 1`] = `
+exports[`rendering semantics > can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -82,7 +82,7 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
 }"
 `;
 
-exports[`rendering semantics can force a render to update sub tree 2`] = `
+exports[`rendering semantics > can force a render to update sub tree 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -95,7 +95,7 @@ exports[`rendering semantics can force a render to update sub tree 2`] = `
 }"
 `;
 
-exports[`rendering semantics can render a parent without rendering child 1`] = `
+exports[`rendering semantics > can render a parent without rendering child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -110,7 +110,7 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
 }"
 `;
 
-exports[`rendering semantics can render a parent without rendering child 2`] = `
+exports[`rendering semantics > can render a parent without rendering child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -121,7 +121,7 @@ exports[`rendering semantics can render a parent without rendering child 2`] = `
 }"
 `;
 
-exports[`rendering semantics props are proxy (nested prop) 1`] = `
+exports[`rendering semantics > props are proxy (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -134,7 +134,7 @@ exports[`rendering semantics props are proxy (nested prop) 1`] = `
 }"
 `;
 
-exports[`rendering semantics props are proxy (nested prop) 2`] = `
+exports[`rendering semantics > props are proxy (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -146,7 +146,7 @@ exports[`rendering semantics props are proxy (nested prop) 2`] = `
 }"
 `;
 
-exports[`rendering semantics props are proxy 1`] = `
+exports[`rendering semantics > props are proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -159,7 +159,7 @@ exports[`rendering semantics props are proxy 1`] = `
 }"
 `;
 
-exports[`rendering semantics props are proxy 2`] = `
+exports[`rendering semantics > props are proxy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -171,7 +171,7 @@ exports[`rendering semantics props are proxy 2`] = `
 }"
 `;
 
-exports[`rendering semantics render with deep=true followed by render with deep=false work as expected 1`] = `
+exports[`rendering semantics > render with deep=true followed by render with deep=false work as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -187,7 +187,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 }"
 `;
 
-exports[`rendering semantics render with deep=true followed by render with deep=false work as expected 2`] = `
+exports[`rendering semantics > render with deep=true followed by render with deep=false work as expected 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -201,7 +201,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 }"
 `;
 
-exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
+exports[`rendering semantics > rendering is atomic (for one subtree) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -216,7 +216,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
 }"
 `;
 
-exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
+exports[`rendering semantics > rendering is atomic (for one subtree) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -229,7 +229,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
 }"
 `;
 
-exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
+exports[`rendering semantics > rendering is atomic (for one subtree) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -241,7 +241,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
 }"
 `;
 
-exports[`rendering semantics works as expected for dynamic number of props 1`] = `
+exports[`rendering semantics > works as expected for dynamic number of props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -254,7 +254,7 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
 }"
 `;
 
-exports[`rendering semantics works as expected for dynamic number of props 2`] = `
+exports[`rendering semantics > works as expected for dynamic number of props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

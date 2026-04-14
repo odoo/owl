@@ -217,7 +217,7 @@ describe("basics", () => {
 
   test("a component cannot be mounted in a detached node (even if node is detached later)", async () => {
     const warn = console.warn;
-    console.warn = jest.fn();
+    console.warn = vi.fn();
     class Test extends Component {
       static template = xml`<div/>`;
     }
@@ -394,7 +394,6 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
-  jest.setTimeout(10000000);
   test("text after a conditional component", async () => {
     class Child extends Component {
       static template = xml`<p>simple vnode</p>`;

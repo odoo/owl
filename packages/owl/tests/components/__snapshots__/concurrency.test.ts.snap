@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Cascading renders after microtaskTick 1`] = `
 "function anonymous(app, bdom, helpers
@@ -109,7 +109,7 @@ exports[`another scenario with delayed rendering 3`] = `
 }"
 `;
 
-exports[`async rendering destroying a widget before start is over 1`] = `
+exports[`async rendering > destroying a widget before start is over 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1400,31 +1400,6 @@ exports[`delayed render does not go through when t-component value changed 4`] =
   
   return function template(ctx, node, key = "") {
     return text(\`C\`);
-  }
-}"
-`;
-
-exports[`delayed render is not cancelled by upcoming render 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, ["state","isEmpty"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({state: ctx['state'],isEmpty: ctx['state'].groups.length===0}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`delayed render is not cancelled by upcoming render 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['this'].props.state.groups.length);
-    const b3 = text(ctx['this'].props.state.config.test);
-    return multi([b2, b3]);
   }
 }"
 `;

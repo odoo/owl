@@ -114,7 +114,7 @@ describe("lifecycle hooks", () => {
 
   test("timeout in onWillStart doesn't emit a console log if app is destroyed", async () => {
     const { log } = console;
-    console.log = jest.fn();
+    console.log = vi.fn();
     const { setTimeout } = window;
     let timeoutCbs: any = {};
     let timeoutId = 0;

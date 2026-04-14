@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`.alike suffix in a list 1`] = `
 "function anonymous(app, bdom, helpers
@@ -163,7 +163,7 @@ exports[`arrow function props re-render when captured variable changes 2`] = `
 }"
 `;
 
-exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
+exports[`basics > accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -179,7 +179,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 }"
 `;
 
-exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
+exports[`basics > accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -194,7 +194,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 }"
 `;
 
-exports[`basics arrow function props do not leak synthetic keys into props() 1`] = `
+exports[`basics > arrow function props do not leak synthetic keys into props() 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -215,7 +215,7 @@ exports[`basics arrow function props do not leak synthetic keys into props() 1`]
 }"
 `;
 
-exports[`basics arrow function props do not leak synthetic keys into props() 2`] = `
+exports[`basics > arrow function props do not leak synthetic keys into props() 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -230,7 +230,7 @@ exports[`basics arrow function props do not leak synthetic keys into props() 2`]
 }"
 `;
 
-exports[`basics arrow functions as prop correctly capture their scope 1`] = `
+exports[`basics > arrow functions as prop correctly capture their scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -251,7 +251,7 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
 }"
 `;
 
-exports[`basics arrow functions as prop correctly capture their scope 2`] = `
+exports[`basics > arrow functions as prop correctly capture their scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -267,7 +267,7 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
 }"
 `;
 
-exports[`basics explicit object prop 1`] = `
+exports[`basics > explicit object prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -283,7 +283,7 @@ exports[`basics explicit object prop 1`] = `
 }"
 `;
 
-exports[`basics explicit object prop 2`] = `
+exports[`basics > explicit object prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -298,7 +298,7 @@ exports[`basics explicit object prop 2`] = `
 }"
 `;
 
-exports[`basics prop names can contain - 1`] = `
+exports[`basics > prop names can contain - 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -311,7 +311,7 @@ exports[`basics prop names can contain - 1`] = `
 }"
 `;
 
-exports[`basics prop names can contain - 2`] = `
+exports[`basics > prop names can contain - 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -326,7 +326,7 @@ exports[`basics prop names can contain - 2`] = `
 }"
 `;
 
-exports[`basics support prop names that aren't valid bare object property names 1`] = `
+exports[`basics > support prop names that aren't valid bare object property names 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -339,7 +339,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 }"
 `;
 
-exports[`basics support prop names that aren't valid bare object property names 2`] = `
+exports[`basics > support prop names that aren't valid bare object property names 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -355,7 +355,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 }"
 `;
 
-exports[`basics t-set with a body expression can be passed in props, and then t-out 1`] = `
+exports[`basics > t-set with a body expression can be passed in props, and then t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -378,7 +378,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 }"
 `;
 
-exports[`basics t-set with a body expression can be passed in props, and then t-out 2`] = `
+exports[`basics > t-set with a body expression can be passed in props, and then t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -393,7 +393,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 }"
 `;
 
-exports[`basics t-set with a body expression can be used as textual prop 1`] = `
+exports[`basics > t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -411,7 +411,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 }"
 `;
 
-exports[`basics t-set with a body expression can be used as textual prop 2`] = `
+exports[`basics > t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -426,7 +426,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 }"
 `;
 
-exports[`basics t-set works  1`] = `
+exports[`basics > t-set works  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -444,7 +444,7 @@ exports[`basics t-set works  1`] = `
 }"
 `;
 
-exports[`basics t-set works  2`] = `
+exports[`basics > t-set works  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -459,7 +459,7 @@ exports[`basics t-set works  2`] = `
 }"
 `;
 
-exports[`basics template string in prop 1`] = `
+exports[`basics > template string in prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -472,7 +472,7 @@ exports[`basics template string in prop 1`] = `
 }"
 `;
 
-exports[`basics template string in prop 2`] = `
+exports[`basics > template string in prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

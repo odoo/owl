@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`refs basic use 1`] = `
+exports[`refs > basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -15,7 +15,7 @@ exports[`refs basic use 1`] = `
 }"
 `;
 
-exports[`refs ref is set by child component 1`] = `
+exports[`refs > ref is set by child component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -28,7 +28,7 @@ exports[`refs ref is set by child component 1`] = `
 }"
 `;
 
-exports[`refs ref is set by child component 2`] = `
+exports[`refs > ref is set by child component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -43,7 +43,7 @@ exports[`refs ref is set by child component 2`] = `
 }"
 `;
 
-exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = `
+exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -63,7 +63,7 @@ exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = 
 }"
 `;
 
-exports[`refs refs and recursive templates 1`] = `
+exports[`refs > refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -84,7 +84,7 @@ exports[`refs refs and recursive templates 1`] = `
 }"
 `;
 
-exports[`refs refs and t-key 1`] = `
+exports[`refs > refs and t-key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -105,7 +105,7 @@ exports[`refs refs and t-key 1`] = `
 }"
 `;
 
-exports[`refs refs are properly bound in slots 1`] = `
+exports[`refs > refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -130,7 +130,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 }"
 `;
 
-exports[`refs refs are properly bound in slots 2`] = `
+exports[`refs > refs are properly bound in slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -145,7 +145,7 @@ exports[`refs refs are properly bound in slots 2`] = `
 }"
 `;
 
-exports[`refs resource can be used for multi ref 1`] = `
+exports[`refs > resource can be used for multi ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -169,27 +169,7 @@ exports[`refs resource can be used for multi ref 1`] = `
 }"
 `;
 
-exports[`refs throws if there are 2 same refs at the same time 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { makeRefWrapper } = helpers;
-  
-  let block2 = createBlock(\`<div block-ref="0"/>\`);
-  let block3 = createBlock(\`<span block-ref="0"/>\`);
-  
-  return function template(ctx, node, key = "") {
-    let refWrapper = makeRefWrapper(this.__owl__);
-    let ref1 = refWrapper(\`coucou\`, (el) => this.__owl__.setRef((\`coucou\`), el));
-    const b2 = block2([ref1]);
-    let ref2 = refWrapper(\`coucou\`, (el) => this.__owl__.setRef((\`coucou\`), el));
-    const b3 = block3([ref2]);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`refs use 2 refs in a t-if/t-else situation 1`] = `
+exports[`refs > use 2 refs in a t-if/t-else situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

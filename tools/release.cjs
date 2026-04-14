@@ -39,7 +39,7 @@ async function startRelease() {
   let isAlpha = await ask("Is this an alpha release? [y/n] (n): ");
   isAlpha = isAlpha.toLowerCase() === "y";
 
-  const STEPS = 11;
+  const STEPS = 10;
   let step = 1;
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Checking if code formatting is right...`)
@@ -129,10 +129,6 @@ async function startRelease() {
   await execCommand("mv dist/devtools dist/devtools-firefox");
   await execCommand("cd dist && zip -r owl-devtools.zip devtools-chrome devtools-firefox && cd ..");
   await execCommand("rm -r dist/devtools-chrome dist/devtools-firefox && rm packages/owl/dist/compiler.js");
-
-  // ---------------------------------------------------------------------------
-  log(`Step ${step++}/${STEPS}: updating owl on github page...`);
-  await fs.copyFileSync("packages/owl/dist/owl.es.js", "docs/owl.js");
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: creating git commit...`);

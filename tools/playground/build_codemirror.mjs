@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "../..");
-const outputFile = path.resolve(rootDir, "docs/playground/libs/codemirror.bundle.js");
+const outputFile = path.resolve(__dirname, "libs/codemirror.bundle.js");
 
 console.log("Bundling CodeMirror...");
 

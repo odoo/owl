@@ -1,6 +1,7 @@
 /node_modules
 /dist
 /packages/*/dist
+/tools/playground/dist
 
 npm-debug.log
 

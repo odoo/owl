@@ -20,7 +20,7 @@ const externalsPlugin = {
 
 await esbuild.build({
   entryPoints: ["src/playground.js"],
-  outfile: "../../docs/playground/playground.js",
+  outfile: "dist/playground.js",
   bundle: true,
   format: "esm",
   absWorkingDir: __dirname,

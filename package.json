@@ -22,6 +22,7 @@
     "build:devtools-chrome": "node tools/devtools/build.mjs --browser=chrome --env=production",
     "build:devtools-firefox": "node tools/devtools/build.mjs --browser=firefox --env=production",
     "test": "npm run test -w packages/owl",
+    "test:types": "npm run test:types -w packages/owl",
     "test:doc-links": "vitest run --config tools/vitest.config.ts",
     "build:playground": "npm run build -w tools/playground",
     "build:site": "npm run build && npm run build:playground && node tools/site/assemble.mjs",

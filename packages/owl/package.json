@@ -29,7 +29,8 @@
     "build": "npm run build:bundle",
     "build:types": "node build.mjs types",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:types": "tsc --project tsconfig.tests.json"
   },
   "repository": {
     "type": "git",

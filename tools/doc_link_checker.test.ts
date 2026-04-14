@@ -5,6 +5,10 @@
  * documentation.
  */
 import * as fs from "fs";
+import * as path from "path";
+
+// Resolve the repo root (one level up from tools/)
+const REPO_ROOT = path.resolve(__dirname, "..");
 
 //--------------------------------------------------------------------------
 // Helpers
@@ -34,7 +38,7 @@ const HEADING_REGEXP = /\n(#+\s*)(.*)/g;
 export function addMarkdownData(fileData: FileData): void {
   const sep = fileData.path.length > 0 ? "/" : "";
   const fullName = fileData.path.join("/") + sep + fileData.name;
-  const content = fs.readFileSync(fullName, { encoding: "utf8" });
+  const content = fs.readFileSync(path.join(REPO_ROOT, fullName), { encoding: "utf8" });
   let m;
   // get links info
   do {
@@ -56,8 +60,8 @@ export function addMarkdownData(fileData: FileData): void {
  * Returns a list of FileData corresponding to all files that need to be
  * validated.
  */
-function getFiles(path: string[] = []): FileData[] {
-  if (path.length === 0) {
+function getFiles(filePath: string[] = []): FileData[] {
+  if (filePath.length === 0) {
     const baseFiles: FileData[] = [
       { name: "README.md", path: [], links: [], sections: [], fullName: "README.md" },
       { name: "CHANGELOG.md", path: [], links: [], sections: [], fullName: "CHANGELOG.md" },
@@ -76,15 +80,16 @@ function getFiles(path: string[] = []): FileData[] {
     result.forEach(addMarkdownData);
     return result;
   }
-  const files = fs.readdirSync(path.join("/"), { withFileTypes: true }).map((f) => {
+  const absPath = path.join(REPO_ROOT, filePath.join("/"));
+  const files = fs.readdirSync(absPath, { withFileTypes: true }).map((f) => {
     if (f.isDirectory()) {
-      return getFiles(path.concat(f.name));
+      return getFiles(filePath.concat(f.name));
     }
-    const fullName = path.join("/") + (path.length > 0 ? "/" : "") + f.name;
+    const fullName = filePath.join("/") + (filePath.length > 0 ? "/" : "") + f.name;
     return [
       {
         name: f.name,
-        path,
+        path: filePath,
         links: [],
         sections: [],
         fullName,
@@ -112,27 +117,27 @@ export function isLinkValid(link: MarkDownLink, current: FileData, files: FileDa
   const parts = link.link.split("#");
   const hash = parts[1] || "";
   let name;
-  let path;
+  let linkPath;
   if (parts[0]) {
     let temp = parts[0].split("/");
     name = temp[temp.length - 1];
     temp.splice(-1);
-    path = current.path.slice();
+    linkPath = current.path.slice();
     for (let elem of temp) {
       if (elem === "..") {
-        path.splice(-1);
+        linkPath.splice(-1);
       } else if (elem !== ".") {
-        path.push(elem);
+        linkPath.push(elem);
       }
     }
   } else {
     // there are no file name, so this is a relative link to the current file
     name = current.name;
-    path = current.path;
+    linkPath = current.path;
   }
 
   // Step 2: build normalized link file name
-  const linkFullName = path.join("/") + (path.length > 0 ? "/" : "") + name;
+  const linkFullName = linkPath.join("/") + (linkPath.length > 0 ? "/" : "") + name;
 
   // Step 3: check link name against white list of local files
   if (LOCAL_FILES.includes(linkFullName)) {
@@ -167,7 +172,7 @@ function slugify(str: string): string {
     .replace(/\//g, "") // remove /
     .replace(/\s+/g, "-") // Replace spaces with -
     .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special characters
-    .replace(/&/g, "-and-") // Replace & with ‘and’
+    .replace(/&/g, "-and-") // Replace & with 'and'
     .replace(/[^\w\-]+/g, "") // Remove all non-word characters
     .replace(/\-\-+/g, "-") // Replace multiple - with single -
     .replace(/^-+/, "") // Trim - from start of text

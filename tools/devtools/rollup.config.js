@@ -61,12 +61,12 @@ export default ({ "config-browser": browser, "config-env": env }) => {
   const firstRule = generateRule("tools/devtools/src/page_scripts/owl_devtools_global_hook.js");
   if (isProduction) {
     commands[0] = isWindows
-      ? "npm run build && copy dist\\owl.iife.js tools\\devtools\\assets\\owl.js && npm run build:compiler"
-      : "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
+      ? "npm run build && copy packages\\owl\\dist\\owl.iife.js tools\\devtools\\assets\\owl.js && npm run build:compiler"
+      : "npm run build && cp packages/owl/dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
   } else {
     commands[0] = isWindows
-      ? "copy dist\\owl.iife.js tools\\devtools\\assets\\owl.js"
-      : "cp dist/owl.iife.js tools/devtools/assets/owl.js";
+      ? "copy packages\\owl\\dist\\owl.iife.js tools\\devtools\\assets\\owl.js"
+      : "cp packages/owl/dist/owl.iife.js tools/devtools/assets/owl.js";
   }
   firstRule.plugins.push(execute(commands, true));
   const secondRule = generateRule("tools/devtools/src/content.js");

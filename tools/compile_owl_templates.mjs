@@ -4,7 +4,7 @@
 // installed as a node_module.
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { dirname } from "path";
-import { compileTemplates } from "../dist/compile_templates.mjs";
+import { compileTemplates } from "../packages/owl/dist/compile_templates.mjs";
 import { parseArgs } from "util";
 
 const { values, positionals } = parseArgs({

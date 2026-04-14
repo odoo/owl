@@ -281,9 +281,9 @@ expect.extend({
   },
 });
 
-export function nextAppError(app: any) {
-  let resolve: (value: any) => void;
-  const result = new Promise((res) => (resolve = res));
+export function nextAppError(app: any): Promise<Error> {
+  let resolve: (value: Error) => void;
+  const result = new Promise<Error>((res) => (resolve = res));
 
   const original = app._handleError;
   app._handleError = (error: any) => {

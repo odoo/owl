@@ -1,6 +1,6 @@
 import pkg from "./package.json" with { type: "json" };
 import git from "git-rev-sync";
-import typescript from "rollup-plugin-typescript2";
+import typescript from "@rollup/plugin-typescript";
 import terser from '@rollup/plugin-terser';
 import dts from "rollup-plugin-dts";
 
@@ -78,9 +78,7 @@ export default [
     input,
     output,
     plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true,
-      }),
+      typescript(),
     ],
   },
   {
@@ -88,9 +86,7 @@ export default [
     output: [{ file: "dist/compile_templates.mjs", format: "es" }],
     external: ["fs", "fs/promises", "path", "jsdom"],
     plugins: [
-      typescript({
-        useTsconfigDeclarationDir: true,
-      }),
+      typescript(),
     ],
   },
   {

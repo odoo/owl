@@ -9,25 +9,26 @@ import { parseXML } from "../common/utils";
 export type EventHandlers = { [eventName: string]: string };
 export type Attrs = { [attrs: string]: string };
 
-export const enum ASTType {
-  Text,
-  Comment,
-  DomNode,
-  Multi,
-  TIf,
-  TSet,
-  TCall,
-  TOut,
-  TForEach,
-  TKey,
-  TComponent,
-  TDebug,
-  TLog,
-  TCallSlot,
-  TCallBlock,
-  TTranslation,
-  TTranslationContext,
-}
+export const ASTType = {
+  Text: 0,
+  Comment: 1,
+  DomNode: 2,
+  Multi: 3,
+  TIf: 4,
+  TSet: 5,
+  TCall: 6,
+  TOut: 7,
+  TForEach: 8,
+  TKey: 9,
+  TComponent: 10,
+  TDebug: 11,
+  TLog: 12,
+  TCallSlot: 13,
+  TCallBlock: 14,
+  TTranslation: 15,
+  TTranslationContext: 16,
+} as const;
+export type ASTType = (typeof ASTType)[keyof typeof ASTType];
 
 interface BaseAST {
   type: ASTType;
@@ -35,12 +36,12 @@ interface BaseAST {
 }
 
 export interface ASTText extends BaseAST {
-  type: ASTType.Text;
+  type: (typeof ASTType)["Text"];
   value: string;
 }
 
 export interface ASTComment extends BaseAST {
-  type: ASTType.Comment;
+  type: (typeof ASTType)["Comment"];
   value: string;
 }
 
@@ -56,7 +57,7 @@ interface TModelInfo {
 }
 
 export interface ASTDomNode extends BaseAST {
-  type: ASTType.DomNode;
+  type: (typeof ASTType)["DomNode"];
   tag: string;
   content: AST[];
   attrs: Attrs | null;
@@ -69,18 +70,18 @@ export interface ASTDomNode extends BaseAST {
 }
 
 export interface ASTMulti extends BaseAST {
-  type: ASTType.Multi;
+  type: (typeof ASTType)["Multi"];
   content: AST[];
 }
 
 export interface ASTTOut extends BaseAST {
-  type: ASTType.TOut;
+  type: (typeof ASTType)["TOut"];
   expr: string;
   body: AST[] | null;
 }
 
 export interface ASTTif extends BaseAST {
-  type: ASTType.TIf;
+  type: (typeof ASTType)["TIf"];
   condition: string;
   content: AST;
   tElif: { condition: string; content: AST }[] | null;
@@ -88,7 +89,7 @@ export interface ASTTif extends BaseAST {
 }
 
 export interface ASTTSet extends BaseAST {
-  type: ASTType.TSet;
+  type: (typeof ASTType)["TSet"];
   name: string;
   value: string | null; // value defined in attribute
   defaultValue: string | null; // value defined in body, if text
@@ -96,15 +97,15 @@ export interface ASTTSet extends BaseAST {
   hasNoRepresentation: true;
 }
 
-export const enum ForEachNoFlag {
-  First = 1,
-  Last = 2,
-  Index = 4,
-  Value = 8,
-}
+export const ForEachNoFlag = {
+  First: 1,
+  Last: 2,
+  Index: 4,
+  Value: 8,
+} as const;
 
 export interface ASTTForEach extends BaseAST {
-  type: ASTType.TForEach;
+  type: (typeof ASTType)["TForEach"];
   collection: string;
   elem: string;
   body: AST;
@@ -113,13 +114,13 @@ export interface ASTTForEach extends BaseAST {
 }
 
 export interface ASTTKey extends BaseAST {
-  type: ASTType.TKey;
+  type: (typeof ASTType)["TKey"];
   expr: string;
   content: AST;
 }
 
 export interface ASTTCall extends BaseAST {
-  type: ASTType.TCall;
+  type: (typeof ASTType)["TCall"];
   name: string;
   attrs: Attrs | null;
   attrsTranslationCtx: Attrs | null;
@@ -136,7 +137,7 @@ interface SlotDefinition {
 }
 
 export interface ASTComponent extends BaseAST {
-  type: ASTType.TComponent;
+  type: (typeof ASTType)["TComponent"];
   name: string;
   isDynamic: boolean;
   dynamicProps: string | null;
@@ -147,7 +148,7 @@ export interface ASTComponent extends BaseAST {
 }
 
 export interface ASTTCallSlot extends BaseAST {
-  type: ASTType.TCallSlot;
+  type: (typeof ASTType)["TCallSlot"];
   name: string;
   attrs: Attrs | null;
   attrsTranslationCtx: Attrs | null;
@@ -156,28 +157,28 @@ export interface ASTTCallSlot extends BaseAST {
 }
 
 export interface ASTTCallBlock extends BaseAST {
-  type: ASTType.TCallBlock;
+  type: (typeof ASTType)["TCallBlock"];
   name: string;
 }
 
 export interface ASTDebug extends BaseAST {
-  type: ASTType.TDebug;
+  type: (typeof ASTType)["TDebug"];
   content: AST | null;
 }
 
 export interface ASTLog extends BaseAST {
-  type: ASTType.TLog;
+  type: (typeof ASTType)["TLog"];
   expr: string;
   content: AST | null;
 }
 
 export interface ASTTranslation extends BaseAST {
-  type: ASTType.TTranslation;
+  type: (typeof ASTType)["TTranslation"];
   content: AST | null;
 }
 
 export interface ASTTranslationContext extends BaseAST {
-  type: ASTType.TTranslationContext;
+  type: (typeof ASTType)["TTranslationContext"];
   content: AST | null;
   translationCtx: string;
 }

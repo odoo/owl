@@ -1,3 +1,4 @@
+/// <reference path="../build-env.d.ts" />
 import { App } from "./app";
 import {
   config,
@@ -68,6 +69,9 @@ export type { PluginConstructor } from "./plugin_manager";
 export { useContext } from "./context";
 export type { CapturedContext } from "./context";
 
-export const __info__ = {
+export const __info__: Record<string, string> = {
   version: App.version,
+  date: __BUILD_DATE__,
+  hash: __BUILD_HASH__,
+  url: "https://github.com/odoo/owl",
 };

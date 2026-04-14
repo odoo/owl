@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`destroy a subroot while another component is mounted in main app 1`] = `
 "function anonymous(app, bdom, helpers
@@ -59,7 +59,7 @@ exports[`destroy a subroot while another component is mounted in main app 4`] = 
 }"
 `;
 
-exports[`subroot can create a root in a setup function, then use a hook 1`] = `
+exports[`subroot > can create a root in a setup function, then use a hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -70,7 +70,7 @@ exports[`subroot can create a root in a setup function, then use a hook 1`] = `
 }"
 `;
 
-exports[`subroot can create a root in a setup function, then use a hook 2`] = `
+exports[`subroot > can create a root in a setup function, then use a hook 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -81,7 +81,7 @@ exports[`subroot can create a root in a setup function, then use a hook 2`] = `
 }"
 `;
 
-exports[`subroot can mount subroot 1`] = `
+exports[`subroot > can mount subroot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -94,7 +94,7 @@ exports[`subroot can mount subroot 1`] = `
 }"
 `;
 
-exports[`subroot can mount subroot 2`] = `
+exports[`subroot > can mount subroot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -107,7 +107,7 @@ exports[`subroot can mount subroot 2`] = `
 }"
 `;
 
-exports[`subroot can mount subroot inside own dom 1`] = `
+exports[`subroot > can mount subroot inside own dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -120,7 +120,7 @@ exports[`subroot can mount subroot inside own dom 1`] = `
 }"
 `;
 
-exports[`subroot can mount subroot inside own dom 2`] = `
+exports[`subroot > can mount subroot inside own dom 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -133,7 +133,7 @@ exports[`subroot can mount subroot inside own dom 2`] = `
 }"
 `;
 
-exports[`subroot subcomponents can be destroyed, and it properly cleanup the subroots 1`] = `
+exports[`subroot > subcomponents can be destroyed, and it properly cleanup the subroots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -146,7 +146,7 @@ exports[`subroot subcomponents can be destroyed, and it properly cleanup the sub
 }"
 `;
 
-exports[`subroot subcomponents can be destroyed, and it properly cleanup the subroots 2`] = `
+exports[`subroot > subcomponents can be destroyed, and it properly cleanup the subroots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`components in t-out simple list 1`] = `
+exports[`components in t-out > simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -26,7 +26,7 @@ exports[`components in t-out simple list 1`] = `
 }"
 `;
 
-exports[`components in t-out simple list 2`] = `
+exports[`components in t-out > simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

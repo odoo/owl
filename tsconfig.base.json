@@ -19,7 +19,6 @@
                                                                 // Module resolution options
     "moduleResolution": "node",
     "types": [
-      "jest",
       "node"
     ],
     "esModuleInterop": true,

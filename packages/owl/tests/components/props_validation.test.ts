@@ -23,7 +23,7 @@ afterAll(() => {
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = jest.fn(() => {});
+  mockConsoleWarn = vi.fn(() => {});
   console.warn = mockConsoleWarn;
 });
 
@@ -469,7 +469,7 @@ describe("props validation", () => {
   });
 
   test("can validate with a custom validator, and a type", async () => {
-    const validator = jest.fn((n) => 0 <= n && n <= 10);
+    const validator = vi.fn((n) => 0 <= n && n <= 10);
     class TestComponent extends Component {
       static template = xml``;
       props = props({

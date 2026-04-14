@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`hooks autofocus hook input in a t-if 1`] = `
+exports[`hooks > autofocus hook > input in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -20,7 +20,7 @@ exports[`hooks autofocus hook input in a t-if 1`] = `
 }"
 `;
 
-exports[`hooks autofocus hook simple input 1`] = `
+exports[`hooks > autofocus hook > simple input 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -35,7 +35,7 @@ exports[`hooks autofocus hook simple input 1`] = `
 }"
 `;
 
-exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
+exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -48,7 +48,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
 }"
 `;
 
-exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
+exports[`hooks > can use onWillStart, onWillUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -63,7 +63,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 }"
 `;
 
-exports[`hooks mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
+exports[`hooks > mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -78,7 +78,7 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
 }"
 `;
 
-exports[`hooks onWillUpdateProps receives nextProps (dev mode) 1`] = `
+exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -92,7 +92,7 @@ exports[`hooks onWillUpdateProps receives nextProps (dev mode) 1`] = `
 }"
 `;
 
-exports[`hooks onWillUpdateProps receives nextProps (dev mode) 2`] = `
+exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -107,7 +107,7 @@ exports[`hooks onWillUpdateProps receives nextProps (dev mode) 2`] = `
 }"
 `;
 
-exports[`hooks onWillUpdateProps receives nextProps 1`] = `
+exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -120,7 +120,7 @@ exports[`hooks onWillUpdateProps receives nextProps 1`] = `
 }"
 `;
 
-exports[`hooks onWillUpdateProps receives nextProps 2`] = `
+exports[`hooks > onWillUpdateProps receives nextProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -135,7 +135,7 @@ exports[`hooks onWillUpdateProps receives nextProps 2`] = `
 }"
 `;
 
-exports[`hooks two different call to willPatch/patched should work 1`] = `
+exports[`hooks > two different call to willPatch/patched should work 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -150,7 +150,7 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
 }"
 `;
 
-exports[`hooks useEffect hook dependencies prevent effects from rerunning when unchanged 1`] = `
+exports[`hooks > useEffect hook > dependencies prevent effects from rerunning when unchanged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -163,7 +163,7 @@ exports[`hooks useEffect hook dependencies prevent effects from rerunning when u
 }"
 `;
 
-exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
+exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -182,7 +182,7 @@ exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
 }"
 `;
 
-exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
+exports[`hooks > useEffect hook > effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -195,7 +195,7 @@ exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and i
 }"
 `;
 
-exports[`hooks useEffect hook effect that depends on a value is rerun if value changes 1`] = `
+exports[`hooks > useEffect hook > effect that depends on a value is rerun if value changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -210,7 +210,7 @@ exports[`hooks useEffect hook effect that depends on a value is rerun if value c
 }"
 `;
 
-exports[`hooks useEffect hook properly behaves when the effect function throws 1`] = `
+exports[`hooks > useEffect hook > properly behaves when the effect function throws 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -223,7 +223,7 @@ exports[`hooks useEffect hook properly behaves when the effect function throws 1
 }"
 `;
 
-exports[`hooks useListener 1`] = `
+exports[`hooks > useListener 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -240,7 +240,7 @@ exports[`hooks useListener 1`] = `
 }"
 `;
 
-exports[`hooks useListener 2`] = `
+exports[`hooks > useListener 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -255,7 +255,7 @@ exports[`hooks useListener 2`] = `
 }"
 `;
 
-exports[`hooks useListener work with references 1`] = `
+exports[`hooks > useListener work with references 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`event handling Invalid handler throws an error 1`] = `
+exports[`event handling > Invalid handler throws an error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -16,7 +16,7 @@ exports[`event handling Invalid handler throws an error 1`] = `
 }"
 `;
 
-exports[`event handling handler is not called if component is destroyed 1`] = `
+exports[`event handling > handler is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -32,7 +32,7 @@ exports[`event handling handler is not called if component is destroyed 1`] = `
 }"
 `;
 
-exports[`event handling handler receive the event as argument 1`] = `
+exports[`event handling > handler receive the event as argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -51,7 +51,7 @@ exports[`event handling handler receive the event as argument 1`] = `
 }"
 `;
 
-exports[`event handling handler receive the event as argument 2`] = `
+exports[`event handling > handler receive the event as argument 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -64,7 +64,7 @@ exports[`event handling handler receive the event as argument 2`] = `
 }"
 `;
 
-exports[`event handling handler works when app is mounted in an iframe 1`] = `
+exports[`event handling > handler works when app is mounted in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -80,7 +80,7 @@ exports[`event handling handler works when app is mounted in an iframe 1`] = `
 }"
 `;
 
-exports[`event handling input blur event is not called if component is destroyed 1`] = `
+exports[`event handling > input blur event is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -99,7 +99,7 @@ exports[`event handling input blur event is not called if component is destroyed
 }"
 `;
 
-exports[`event handling input blur event is not called if component is destroyed 2`] = `
+exports[`event handling > input blur event is not called if component is destroyed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -115,7 +115,7 @@ exports[`event handling input blur event is not called if component is destroyed
 }"
 `;
 
-exports[`event handling objects from scope are properly captured by t-on 1`] = `
+exports[`event handling > objects from scope are properly captured by t-on 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -141,7 +141,7 @@ exports[`event handling objects from scope are properly captured by t-on 1`] = `
 }"
 `;
 
-exports[`event handling support for callable expression in event handler 1`] = `
+exports[`event handling > support for callable expression in event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -158,7 +158,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
 }"
 `;
 
-exports[`event handling t-on with handler bound to dynamic argument on a t-foreach 1`] = `
+exports[`event handling > t-on with handler bound to dynamic argument on a t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

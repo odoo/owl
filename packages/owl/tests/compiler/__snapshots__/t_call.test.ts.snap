@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`t-call (template calling) basic caller 1`] = `
+exports[`t-call (template calling) > basic caller 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -15,7 +15,7 @@ exports[`t-call (template calling) basic caller 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) basic caller 2`] = `
+exports[`t-call (template calling) > basic caller 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -28,7 +28,7 @@ exports[`t-call (template calling) basic caller 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) basic caller, no parent node 1`] = `
+exports[`t-call (template calling) > basic caller, no parent node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -40,7 +40,7 @@ exports[`t-call (template calling) basic caller, no parent node 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) basic caller, no parent node 2`] = `
+exports[`t-call (template calling) > basic caller, no parent node 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -53,7 +53,7 @@ exports[`t-call (template calling) basic caller, no parent node 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) call with several sub nodes on same line 1`] = `
+exports[`t-call (template calling) > call with several sub nodes on same line 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -78,7 +78,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 1`] 
 }"
 `;
 
-exports[`t-call (template calling) call with several sub nodes on same line 2`] = `
+exports[`t-call (template calling) > call with several sub nodes on same line 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -93,7 +93,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0' 1`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -118,7 +118,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0' 2`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -141,7 +141,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0' 3`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0' 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -164,7 +164,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 3`] = `
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0' 4`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0' 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -179,7 +179,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 4`] = `
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0', without external divs 1`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0', without external divs 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -202,7 +202,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0', without external divs 2`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0', without external divs 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -223,7 +223,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0', without external divs 3`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0', without external divs 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -244,7 +244,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 }"
 `;
 
-exports[`t-call (template calling) cascading t-call t-out='0', without external divs 4`] = `
+exports[`t-call (template calling) > cascading t-call t-out='0', without external divs 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -260,7 +260,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 }"
 `;
 
-exports[`t-call (template calling) dynamic t-call 1`] = `
+exports[`t-call (template calling) > dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -275,7 +275,7 @@ exports[`t-call (template calling) dynamic t-call 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) dynamic t-call 2`] = `
+exports[`t-call (template calling) > dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -290,7 +290,7 @@ exports[`t-call (template calling) dynamic t-call 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) dynamic t-call 3`] = `
+exports[`t-call (template calling) > dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -305,7 +305,7 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
 }"
 `;
 
-exports[`t-call (template calling) inherit context 1`] = `
+exports[`t-call (template calling) > inherit context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -323,7 +323,7 @@ exports[`t-call (template calling) inherit context 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) inherit context 2`] = `
+exports[`t-call (template calling) > inherit context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -337,7 +337,7 @@ exports[`t-call (template calling) inherit context 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) nested t-calls with magic variable 0 1`] = `
+exports[`t-call (template calling) > nested t-calls with magic variable 0 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -361,7 +361,7 @@ exports[`t-call (template calling) nested t-calls with magic variable 0 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) nested t-calls with magic variable 0 2`] = `
+exports[`t-call (template calling) > nested t-calls with magic variable 0 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -373,7 +373,7 @@ exports[`t-call (template calling) nested t-calls with magic variable 0 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) nested t-calls with magic variable 0 3`] = `
+exports[`t-call (template calling) > nested t-calls with magic variable 0 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -387,7 +387,7 @@ exports[`t-call (template calling) nested t-calls with magic variable 0 3`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 1 1`] = `
+exports[`t-call (template calling) > recursive template, part 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -405,7 +405,7 @@ exports[`t-call (template calling) recursive template, part 1 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 2 1`] = `
+exports[`t-call (template calling) > recursive template, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -420,7 +420,7 @@ exports[`t-call (template calling) recursive template, part 2 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 2 2`] = `
+exports[`t-call (template calling) > recursive template, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -448,7 +448,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 3 1`] = `
+exports[`t-call (template calling) > recursive template, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -463,7 +463,7 @@ exports[`t-call (template calling) recursive template, part 3 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 3 2`] = `
+exports[`t-call (template calling) > recursive template, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -491,7 +491,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 1`] = `
+exports[`t-call (template calling) > recursive template, part 4: with t-set recursive index 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -506,7 +506,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 }"
 `;
 
-exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 2`] = `
+exports[`t-call (template calling) > recursive template, part 4: with t-set recursive index 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -537,7 +537,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-foreach 1`] = `
+exports[`t-call (template calling) > root t-call with body: t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -562,7 +562,7 @@ exports[`t-call (template calling) root t-call with body: t-foreach 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-foreach 2`] = `
+exports[`t-call (template calling) > root t-call with body: t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -573,7 +573,7 @@ exports[`t-call (template calling) root t-call with body: t-foreach 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-if false 1`] = `
+exports[`t-call (template calling) > root t-call with body: t-if false 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -594,7 +594,7 @@ exports[`t-call (template calling) root t-call with body: t-if false 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-if false 2`] = `
+exports[`t-call (template calling) > root t-call with body: t-if false 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -605,7 +605,7 @@ exports[`t-call (template calling) root t-call with body: t-if false 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-if true 1`] = `
+exports[`t-call (template calling) > root t-call with body: t-if true 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -626,7 +626,7 @@ exports[`t-call (template calling) root t-call with body: t-if true 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-if true 2`] = `
+exports[`t-call (template calling) > root t-call with body: t-if true 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -637,7 +637,7 @@ exports[`t-call (template calling) root t-call with body: t-if true 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-out with default 1`] = `
+exports[`t-call (template calling) > root t-call with body: t-out with default 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -654,7 +654,7 @@ exports[`t-call (template calling) root t-call with body: t-out with default 1`]
 }"
 `;
 
-exports[`t-call (template calling) root t-call with body: t-out with default 2`] = `
+exports[`t-call (template calling) > root t-call with body: t-out with default 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -665,7 +665,7 @@ exports[`t-call (template calling) root t-call with body: t-out with default 2`]
 }"
 `;
 
-exports[`t-call (template calling) scoped parameters 1`] = `
+exports[`t-call (template calling) > scoped parameters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -688,7 +688,7 @@ exports[`t-call (template calling) scoped parameters 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) scoped parameters 2`] = `
+exports[`t-call (template calling) > scoped parameters 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -699,7 +699,7 @@ exports[`t-call (template calling) scoped parameters 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) scoped parameters, part 2 1`] = `
+exports[`t-call (template calling) > scoped parameters, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -724,7 +724,7 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) scoped parameters, part 2 2`] = `
+exports[`t-call (template calling) > scoped parameters, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -738,7 +738,7 @@ exports[`t-call (template calling) scoped parameters, part 2 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call and translation contexts 1`] = `
+exports[`t-call (template calling) > t-call and translation contexts 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -755,7 +755,7 @@ exports[`t-call (template calling) t-call and translation contexts 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call and translation contexts 2`] = `
+exports[`t-call (template calling) > t-call and translation contexts 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -771,7 +771,7 @@ exports[`t-call (template calling) t-call and translation contexts 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call and translation contexts, variation 1`] = `
+exports[`t-call (template calling) > t-call and translation contexts, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -788,7 +788,7 @@ exports[`t-call (template calling) t-call and translation contexts, variation 1`
 }"
 `;
 
-exports[`t-call (template calling) t-call and translation contexts, variation 2`] = `
+exports[`t-call (template calling) > t-call and translation contexts, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -804,7 +804,7 @@ exports[`t-call (template calling) t-call and translation contexts, variation 2`
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes 1`] = `
+exports[`t-call (template calling) > t-call with attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -816,7 +816,7 @@ exports[`t-call (template calling) t-call with attributes 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes 2`] = `
+exports[`t-call (template calling) > t-call with attributes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -832,7 +832,7 @@ exports[`t-call (template calling) t-call with attributes 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes and t-call-context 1`] = `
+exports[`t-call (template calling) > t-call with attributes and t-call-context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -845,7 +845,7 @@ exports[`t-call (template calling) t-call with attributes and t-call-context 1`]
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes and t-call-context 2`] = `
+exports[`t-call (template calling) > t-call with attributes and t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -863,7 +863,7 @@ exports[`t-call (template calling) t-call with attributes and t-call-context 2`]
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes and t-out='0' 1`] = `
+exports[`t-call (template calling) > t-call with attributes and t-out='0' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -880,7 +880,7 @@ exports[`t-call (template calling) t-call with attributes and t-out='0' 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with attributes and t-out='0' 2`] = `
+exports[`t-call (template calling) > t-call with attributes and t-out='0' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -896,7 +896,7 @@ exports[`t-call (template calling) t-call with attributes and t-out='0' 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with body content as root of a template 1`] = `
+exports[`t-call (template calling) > t-call with body content as root of a template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -915,7 +915,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 }"
 `;
 
-exports[`t-call (template calling) t-call with body content as root of a template 2`] = `
+exports[`t-call (template calling) > t-call with body content as root of a template 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -930,7 +930,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-if 1`] = `
+exports[`t-call (template calling) > t-call with t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -948,7 +948,7 @@ exports[`t-call (template calling) t-call with t-if 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-if 2`] = `
+exports[`t-call (template calling) > t-call with t-if 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -961,7 +961,7 @@ exports[`t-call (template calling) t-call with t-if 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and body text content 1`] = `
+exports[`t-call (template calling) > t-call with t-set inside and body text content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -978,7 +978,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and body text content 2`] = `
+exports[`t-call (template calling) > t-call with t-set inside and body text content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -993,7 +993,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
+exports[`t-call (template calling) > t-call with t-set inside and outside 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1021,7 +1021,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
+exports[`t-call (template calling) > t-call with t-set inside and outside 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1036,7 +1036,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] = `
+exports[`t-call (template calling) > t-call with t-set inside and outside. 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1053,7 +1053,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] = `
+exports[`t-call (template calling) > t-call with t-set inside and outside. 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1081,7 +1081,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
 }"
 `;
 
-exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] = `
+exports[`t-call (template calling) > t-call with t-set inside and outside. 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1098,7 +1098,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] =
 }"
 `;
 
-exports[`t-call (template calling) t-call, conditional and t-set in t-call body 1`] = `
+exports[`t-call (template calling) > t-call, conditional and t-set in t-call body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1127,7 +1127,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 }"
 `;
 
-exports[`t-call (template calling) t-call, conditional and t-set in t-call body 2`] = `
+exports[`t-call (template calling) > t-call, conditional and t-set in t-call body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1142,7 +1142,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 }"
 `;
 
-exports[`t-call (template calling) t-call-context 1`] = `
+exports[`t-call (template calling) > t-call-context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1155,7 +1155,7 @@ exports[`t-call (template calling) t-call-context 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call-context 2`] = `
+exports[`t-call (template calling) > t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1170,7 +1170,7 @@ exports[`t-call (template calling) t-call-context 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call-context and value in body 1`] = `
+exports[`t-call (template calling) > t-call-context and value in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1190,7 +1190,7 @@ exports[`t-call (template calling) t-call-context and value in body 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-call-context and value in body 2`] = `
+exports[`t-call (template calling) > t-call-context and value in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1206,7 +1206,7 @@ exports[`t-call (template calling) t-call-context and value in body 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) t-out inside t-call, with t-set outside 1`] = `
+exports[`t-call (template calling) > t-out inside t-call, with t-set outside 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1223,7 +1223,7 @@ exports[`t-call (template calling) t-out inside t-call, with t-set outside 1`] =
 }"
 `;
 
-exports[`t-call (template calling) t-out inside t-call, with t-set outside 2`] = `
+exports[`t-call (template calling) > t-out inside t-call, with t-set outside 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1238,7 +1238,7 @@ exports[`t-call (template calling) t-out inside t-call, with t-set outside 2`] =
 }"
 `;
 
-exports[`t-call (template calling) values set in body are in call context 1`] = `
+exports[`t-call (template calling) > values set in body are in call context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1260,7 +1260,7 @@ exports[`t-call (template calling) values set in body are in call context 1`] = 
 }"
 `;
 
-exports[`t-call (template calling) values set in body are in call context 2`] = `
+exports[`t-call (template calling) > values set in body are in call context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1272,7 +1272,7 @@ exports[`t-call (template calling) values set in body are in call context 2`] = 
 }"
 `;
 
-exports[`t-call (template calling) with unused body 1`] = `
+exports[`t-call (template calling) > with unused body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1289,7 +1289,7 @@ exports[`t-call (template calling) with unused body 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) with unused body 2`] = `
+exports[`t-call (template calling) > with unused body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1302,7 +1302,7 @@ exports[`t-call (template calling) with unused body 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) with unused setbody 1`] = `
+exports[`t-call (template calling) > with unused setbody 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1321,7 +1321,7 @@ exports[`t-call (template calling) with unused setbody 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) with unused setbody 2`] = `
+exports[`t-call (template calling) > with unused setbody 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1334,7 +1334,7 @@ exports[`t-call (template calling) with unused setbody 2`] = `
 }"
 `;
 
-exports[`t-call (template calling) with used body 1`] = `
+exports[`t-call (template calling) > with used body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1351,7 +1351,7 @@ exports[`t-call (template calling) with used body 1`] = `
 }"
 `;
 
-exports[`t-call (template calling) with used body 2`] = `
+exports[`t-call (template calling) > with used body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

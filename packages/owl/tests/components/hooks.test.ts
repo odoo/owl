@@ -513,8 +513,8 @@ describe("hooks", () => {
     test("properly behaves when the effect function throws", async () => {
       let originalconsoleError = console.error;
       let originalconsoleWarn = console.warn;
-      console.error = jest.fn(() => {});
-      console.warn = jest.fn(() => {});
+      console.error = vi.fn(() => {});
+      console.warn = vi.fn(() => {});
       class MyComponent extends Component {
         static template = xml`<div/>`;
         setup() {

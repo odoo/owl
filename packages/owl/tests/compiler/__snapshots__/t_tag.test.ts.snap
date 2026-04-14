@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`qweb t-tag can fallback if falsy tag 1`] = `
+exports[`qweb t-tag > can fallback if falsy tag 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -14,7 +14,7 @@ exports[`qweb t-tag can fallback if falsy tag 1`] = `
 }"
 `;
 
-exports[`qweb t-tag can update 1`] = `
+exports[`qweb t-tag > can update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -28,7 +28,7 @@ exports[`qweb t-tag can update 1`] = `
 }"
 `;
 
-exports[`qweb t-tag simple usecases 1`] = `
+exports[`qweb t-tag > simple usecases 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -42,7 +42,7 @@ exports[`qweb t-tag simple usecases 1`] = `
 }"
 `;
 
-exports[`qweb t-tag simple usecases 2`] = `
+exports[`qweb t-tag > simple usecases 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -56,7 +56,7 @@ exports[`qweb t-tag simple usecases 2`] = `
 }"
 `;
 
-exports[`qweb t-tag with multiple attributes 1`] = `
+exports[`qweb t-tag > with multiple attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -70,7 +70,7 @@ exports[`qweb t-tag with multiple attributes 1`] = `
 }"
 `;
 
-exports[`qweb t-tag with multiple child nodes 1`] = `
+exports[`qweb t-tag > with multiple child nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -84,7 +84,7 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
 }"
 `;
 
-exports[`qweb t-tag with multiple t-tag in same template 1`] = `
+exports[`qweb t-tag > with multiple t-tag in same template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -101,7 +101,7 @@ exports[`qweb t-tag with multiple t-tag in same template 1`] = `
 }"
 `;
 
-exports[`qweb t-tag with multiple t-tag in same template, part 2 1`] = `
+exports[`qweb t-tag > with multiple t-tag in same template, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -82,7 +82,7 @@ describe("translation support", () => {
       `;
     }
 
-    const translateFn = jest.fn((expr: string) => (expr === "word" ? "mot" : expr));
+    const translateFn = vi.fn((expr: string) => (expr === "word" ? "mot" : expr));
 
     await mount(SomeComponent, fixture, { translateFn });
     expect(fixture.innerHTML).toBe("<div> mot </div>");
@@ -94,7 +94,7 @@ describe("translation support", () => {
       static template = xml`<div>some  word</div>`;
     }
 
-    const translateFn = jest.fn((expr: string) => (expr === "some  word" ? "un mot" : expr));
+    const translateFn = vi.fn((expr: string) => (expr === "some  word" ? "un mot" : expr));
 
     await mount(SomeComponent, fixture, { translateFn });
     expect(translateFn).toHaveBeenCalledWith("some  word", "");
@@ -212,7 +212,7 @@ describe("translation context", () => {
       `;
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "fr" ? (expr === "word" ? "mot" : expr) : expr
     );
 
@@ -228,7 +228,7 @@ describe("translation context", () => {
       `;
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "fr" ? (expr === "title" ? "titre" : expr) : expr
     );
 
@@ -244,7 +244,7 @@ describe("translation context", () => {
         <t t-out="label"/>`;
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "fr" ? "traduit" : expr
     );
 
@@ -264,7 +264,7 @@ describe("translation context", () => {
         <ChildComponent text.translate="game" t-translation-context-text.translate="fr" />`;
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "fr" ? "jeu" : expr
     );
 
@@ -290,7 +290,7 @@ describe("translation context", () => {
         `;
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "fr" ? "jeu" : translationCtx === "pt" ? "título" : expr
     );
 
@@ -316,7 +316,7 @@ describe("translation context", () => {
       props = props();
     }
 
-    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+    const translateFn = vi.fn((expr: string, translationCtx: string) =>
       translationCtx === "pt" ? "título" : expr
     );
 

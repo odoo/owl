@@ -27,9 +27,8 @@
     "build:runtime": "rollup -c --failAfterWarnings runtime",
     "build:compiler": "rollup -c --failAfterWarnings compiler",
     "build": "npm run build:bundle",
-    "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
-    "test:watch": "jest --watch"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -43,28 +42,5 @@
   "homepage": "https://github.com/odoo/owl#readme",
   "dependencies": {
     "jsdom": "^25.0.1"
-  },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/tests"
-    ],
-    "setupFiles": [
-      "./tests/mocks/mockEventTarget.js"
-    ],
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "verbose": false,
-    "testRegex": "(/tests/.*(test|spec))\\.ts?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
   }
 }

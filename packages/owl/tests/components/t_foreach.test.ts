@@ -17,7 +17,7 @@ let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = jest.fn(() => {});
+  mockConsoleWarn = vi.fn(() => {});
   console.warn = mockConsoleWarn;
 });
 
@@ -312,7 +312,7 @@ describe("list of components", () => {
 
   test("crash on duplicate key in dev mode", async () => {
     const consoleInfo = console.info;
-    console.info = jest.fn();
+    console.info = vi.fn();
     class Child extends Component {
       static template = xml``;
     }
@@ -338,7 +338,7 @@ describe("list of components", () => {
 
   test("crash when using object as keys that serialize to the same string", async () => {
     const consoleInfo = console.info;
-    console.info = jest.fn();
+    console.info = vi.fn();
     class Child extends Component {
       static template = xml``;
     }

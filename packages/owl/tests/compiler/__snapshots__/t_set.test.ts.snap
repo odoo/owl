@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`t-set body with backslash at top level 1`] = `
+exports[`t-set > body with backslash at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -14,7 +14,7 @@ exports[`t-set body with backslash at top level 1`] = `
 }"
 `;
 
-exports[`t-set body with backtick at top-level 1`] = `
+exports[`t-set > body with backtick at top-level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -28,7 +28,7 @@ exports[`t-set body with backtick at top-level 1`] = `
 }"
 `;
 
-exports[`t-set body with interpolation sigil at top level 1`] = `
+exports[`t-set > body with interpolation sigil at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -42,7 +42,7 @@ exports[`t-set body with interpolation sigil at top level 1`] = `
 }"
 `;
 
-exports[`t-set evaluate value expression 1`] = `
+exports[`t-set > evaluate value expression 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -59,7 +59,7 @@ exports[`t-set evaluate value expression 1`] = `
 }"
 `;
 
-exports[`t-set evaluate value expression, part 2 1`] = `
+exports[`t-set > evaluate value expression, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -76,7 +76,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
 }"
 `;
 
-exports[`t-set set from attribute literal (no outside div) 1`] = `
+exports[`t-set > set from attribute literal (no outside div) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -90,7 +90,7 @@ exports[`t-set set from attribute literal (no outside div) 1`] = `
 }"
 `;
 
-exports[`t-set set from attribute literal 1`] = `
+exports[`t-set > set from attribute literal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -107,7 +107,7 @@ exports[`t-set set from attribute literal 1`] = `
 }"
 `;
 
-exports[`t-set set from attribute lookup 1`] = `
+exports[`t-set > set from attribute lookup 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -124,7 +124,7 @@ exports[`t-set set from attribute lookup 1`] = `
 }"
 `;
 
-exports[`t-set set from body literal (with t-if/t-else 1`] = `
+exports[`t-set > set from body literal (with t-if/t-else 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -148,7 +148,7 @@ exports[`t-set set from body literal (with t-if/t-else 1`] = `
 }"
 `;
 
-exports[`t-set set from body literal 1`] = `
+exports[`t-set > set from body literal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -162,7 +162,7 @@ exports[`t-set set from body literal 1`] = `
 }"
 `;
 
-exports[`t-set set from body lookup 1`] = `
+exports[`t-set > set from body lookup 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -183,7 +183,7 @@ exports[`t-set set from body lookup 1`] = `
 }"
 `;
 
-exports[`t-set set from empty body 1`] = `
+exports[`t-set > set from empty body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -200,7 +200,7 @@ exports[`t-set set from empty body 1`] = `
 }"
 `;
 
-exports[`t-set t-set after a dom element is executed before event handlers 1`] = `
+exports[`t-set > t-set after a dom element is executed before event handlers 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -219,7 +219,7 @@ exports[`t-set t-set after a dom element is executed before event handlers 1`] =
 }"
 `;
 
-exports[`t-set t-set and t-if 1`] = `
+exports[`t-set > t-set and t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -238,7 +238,7 @@ exports[`t-set t-set and t-if 1`] = `
 }"
 `;
 
-exports[`t-set t-set body is evaluated immediately 1`] = `
+exports[`t-set > t-set body is evaluated immediately 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -263,7 +263,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter from within callee 1`] = `
+exports[`t-set > t-set can't alter from within callee 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -282,7 +282,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter from within callee 2`] = `
+exports[`t-set > t-set can't alter from within callee 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -300,7 +300,7 @@ exports[`t-set t-set can't alter from within callee 2`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter in t-call body 1`] = `
+exports[`t-set > t-set can't alter in t-call body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -326,7 +326,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter in t-call body 2`] = `
+exports[`t-set > t-set can't alter in t-call body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -344,7 +344,7 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
 }"
 `;
 
-exports[`t-set t-set does not modify render context existing key values 1`] = `
+exports[`t-set > t-set does not modify render context existing key values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -361,7 +361,7 @@ exports[`t-set t-set does not modify render context existing key values 1`] = `
 }"
 `;
 
-exports[`t-set t-set evaluates an expression only once 1`] = `
+exports[`t-set > t-set evaluates an expression only once 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -379,7 +379,7 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 }"
 `;
 
-exports[`t-set t-set outside modified in t-foreach 1`] = `
+exports[`t-set > t-set outside modified in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -408,7 +408,7 @@ exports[`t-set t-set outside modified in t-foreach 1`] = `
 }"
 `;
 
-exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] = `
+exports[`t-set > t-set outside modified in t-foreach increment-after operator 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -437,7 +437,7 @@ exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] 
 }"
 `;
 
-exports[`t-set t-set outside modified in t-foreach increment-before operator 1`] = `
+exports[`t-set > t-set outside modified in t-foreach increment-before operator 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -466,7 +466,7 @@ exports[`t-set t-set outside modified in t-foreach increment-before operator 1`]
 }"
 `;
 
-exports[`t-set t-set should reuse variable if possible 1`] = `
+exports[`t-set > t-set should reuse variable if possible 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -495,7 +495,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 }"
 `;
 
-exports[`t-set t-set with content and sub t-out 1`] = `
+exports[`t-set > t-set with content and sub t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -518,7 +518,7 @@ exports[`t-set t-set with content and sub t-out 1`] = `
 }"
 `;
 
-exports[`t-set t-set with t-value (falsy) and body 1`] = `
+exports[`t-set > t-set with t-value (falsy) and body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -545,7 +545,7 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
 }"
 `;
 
-exports[`t-set t-set with t-value (truthy) and body 1`] = `
+exports[`t-set > t-set with t-value (truthy) and body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -572,7 +572,7 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
 }"
 `;
 
-exports[`t-set t-set, multiple t-ifs, and a specific configuration 1`] = `
+exports[`t-set > t-set, multiple t-ifs, and a specific configuration 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -593,7 +593,7 @@ exports[`t-set t-set, multiple t-ifs, and a specific configuration 1`] = `
 }"
 `;
 
-exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
+exports[`t-set > t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -615,7 +615,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 }"
 `;
 
-exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
+exports[`t-set > t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -637,7 +637,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 }"
 `;
 
-exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
+exports[`t-set > t-set, t-if, and mix of expression/body lookup, 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -657,7 +657,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
 }"
 `;
 
-exports[`t-set value priority (with non text body 1`] = `
+exports[`t-set > value priority (with non text body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -679,7 +679,7 @@ exports[`t-set value priority (with non text body 1`] = `
 }"
 `;
 
-exports[`t-set value priority 1`] = `
+exports[`t-set > value priority 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
+exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -18,7 +18,7 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 }"
 `;
 
-exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 3`] = `
+exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -29,7 +29,7 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 }"
 `;
 
-exports[`app can add functions to the bdom 1`] = `
+exports[`app > can add functions to the bdom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -45,7 +45,7 @@ exports[`app can add functions to the bdom 1`] = `
 }"
 `;
 
-exports[`app can call processTask twice in a row without crashing 1`] = `
+exports[`app > can call processTask twice in a row without crashing 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -60,7 +60,7 @@ exports[`app can call processTask twice in a row without crashing 1`] = `
 }"
 `;
 
-exports[`app can call processTask twice in a row without crashing 2`] = `
+exports[`app > can call processTask twice in a row without crashing 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -73,7 +73,7 @@ exports[`app can call processTask twice in a row without crashing 2`] = `
 }"
 `;
 
-exports[`app can configure an app with props 1`] = `
+exports[`app > can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -88,7 +88,7 @@ exports[`app can configure an app with props 1`] = `
 }"
 `;
 
-exports[`app can load templates from an object name-string 1`] = `
+exports[`app > can load templates from an object name-string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -101,7 +101,7 @@ exports[`app can load templates from an object name-string 1`] = `
 }"
 `;
 
-exports[`app can mount app in an iframe 1`] = `
+exports[`app > can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -114,7 +114,7 @@ exports[`app can mount app in an iframe 1`] = `
 }"
 `;
 
-exports[`app destroy remove the widget from the DOM 1`] = `
+exports[`app > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -127,7 +127,7 @@ exports[`app destroy remove the widget from the DOM 1`] = `
 }"
 `;
 
-exports[`useApp destroy remove the widget from the DOM 1`] = `
+exports[`useApp > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

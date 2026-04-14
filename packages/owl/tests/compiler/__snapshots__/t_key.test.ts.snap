@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`t-key can use t-key directive on a node 1`] = `
+exports[`t-key > can use t-key directive on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -16,7 +16,7 @@ exports[`t-key can use t-key directive on a node 1`] = `
 }"
 `;
 
-exports[`t-key can use t-key directive on a node 2 1`] = `
+exports[`t-key > can use t-key directive on a node 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -32,7 +32,7 @@ exports[`t-key can use t-key directive on a node 2 1`] = `
 }"
 `;
 
-exports[`t-key can use t-key directive on a node as a function 1`] = `
+exports[`t-key > can use t-key directive on a node as a function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -48,7 +48,7 @@ exports[`t-key can use t-key directive on a node as a function 1`] = `
 }"
 `;
 
-exports[`t-key t-key directive in a list 1`] = `
+exports[`t-key > t-key directive in a list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -73,7 +73,7 @@ exports[`t-key t-key directive in a list 1`] = `
 }"
 `;
 
-exports[`t-key t-key on sub dom node pushes a child block in its parent 1`] = `
+exports[`t-key > t-key on sub dom node pushes a child block in its parent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -94,7 +94,7 @@ exports[`t-key t-key on sub dom node pushes a child block in its parent 1`] = `
 }"
 `;
 
-exports[`t-key t-key on sub dom node pushes a child block in its parent 2`] = `
+exports[`t-key > t-key on sub dom node pushes a child block in its parent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -108,7 +108,7 @@ exports[`t-key t-key on sub dom node pushes a child block in its parent 2`] = `
 }"
 `;
 
-exports[`t-key t-key: interaction with t-out 1`] = `
+exports[`t-key > t-key: interaction with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

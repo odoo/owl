@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`t-call body content is not evaluated if callee does not use t-out='0' 1`] = `
+exports[`t-call > body content is not evaluated if callee does not use t-out='0' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -17,7 +17,7 @@ exports[`t-call body content is not evaluated if callee does not use t-out='0' 1
 }"
 `;
 
-exports[`t-call body content is not evaluated if callee does not use t-out='0' 2`] = `
+exports[`t-call > body content is not evaluated if callee does not use t-out='0' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -30,7 +30,7 @@ exports[`t-call body content is not evaluated if callee does not use t-out='0' 2
 }"
 `;
 
-exports[`t-call dynamic t-call 1`] = `
+exports[`t-call > dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -47,7 +47,7 @@ exports[`t-call dynamic t-call 1`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call 2`] = `
+exports[`t-call > dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -60,7 +60,7 @@ exports[`t-call dynamic t-call 2`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call 3`] = `
+exports[`t-call > dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -71,7 +71,7 @@ exports[`t-call dynamic t-call 3`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call with same sub component 1`] = `
+exports[`t-call > dynamic t-call with same sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -85,7 +85,7 @@ exports[`t-call dynamic t-call with same sub component 1`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call with same sub component 2`] = `
+exports[`t-call > dynamic t-call with same sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -98,7 +98,7 @@ exports[`t-call dynamic t-call with same sub component 2`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call with same sub component 3`] = `
+exports[`t-call > dynamic t-call with same sub component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -109,7 +109,7 @@ exports[`t-call dynamic t-call with same sub component 3`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call with same sub component 4`] = `
+exports[`t-call > dynamic t-call with same sub component 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -122,7 +122,7 @@ exports[`t-call dynamic t-call with same sub component 4`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call: key is propagated 1`] = `
+exports[`t-call > dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -137,7 +137,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call: key is propagated 2`] = `
+exports[`t-call > dynamic t-call: key is propagated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -151,7 +151,7 @@ exports[`t-call dynamic t-call: key is propagated 2`] = `
 }"
 `;
 
-exports[`t-call dynamic t-call: key is propagated 3`] = `
+exports[`t-call > dynamic t-call: key is propagated 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -164,7 +164,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
 }"
 `;
 
-exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
+exports[`t-call > handlers are properly bound through a dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -180,7 +180,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
 }"
 `;
 
-exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
+exports[`t-call > handlers are properly bound through a dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -195,7 +195,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
 }"
 `;
 
-exports[`t-call handlers are properly bound through a t-call 1`] = `
+exports[`t-call > handlers are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -211,7 +211,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 }"
 `;
 
-exports[`t-call handlers are properly bound through a t-call 2`] = `
+exports[`t-call > handlers are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -227,7 +227,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 }"
 `;
 
-exports[`t-call handlers with arguments are properly bound through a t-call 1`] = `
+exports[`t-call > handlers with arguments are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -242,7 +242,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
 }"
 `;
 
-exports[`t-call handlers with arguments are properly bound through a t-call 2`] = `
+exports[`t-call > handlers with arguments are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -257,7 +257,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
 }"
 `;
 
-exports[`t-call parent is set within t-call 1`] = `
+exports[`t-call > parent is set within t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -272,7 +272,7 @@ exports[`t-call parent is set within t-call 1`] = `
 }"
 `;
 
-exports[`t-call parent is set within t-call 2`] = `
+exports[`t-call > parent is set within t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -285,7 +285,7 @@ exports[`t-call parent is set within t-call 2`] = `
 }"
 `;
 
-exports[`t-call parent is set within t-call 3`] = `
+exports[`t-call > parent is set within t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -298,7 +298,7 @@ exports[`t-call parent is set within t-call 3`] = `
 }"
 `;
 
-exports[`t-call parent is set within t-call with no parentNode 1`] = `
+exports[`t-call > parent is set within t-call with no parentNode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -310,7 +310,7 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
 }"
 `;
 
-exports[`t-call parent is set within t-call with no parentNode 2`] = `
+exports[`t-call > parent is set within t-call with no parentNode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -323,7 +323,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
 }"
 `;
 
-exports[`t-call parent is set within t-call with no parentNode 3`] = `
+exports[`t-call > parent is set within t-call with no parentNode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -336,7 +336,7 @@ exports[`t-call parent is set within t-call with no parentNode 3`] = `
 }"
 `;
 
-exports[`t-call recursive t-call binding this -- static t-call 1`] = `
+exports[`t-call > recursive t-call binding this -- static t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -351,7 +351,7 @@ exports[`t-call recursive t-call binding this -- static t-call 1`] = `
 }"
 `;
 
-exports[`t-call recursive t-call binding this -- static t-call 2`] = `
+exports[`t-call > recursive t-call binding this -- static t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -374,7 +374,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
 }"
 `;
 
-exports[`t-call sub components in two t-calls 1`] = `
+exports[`t-call > sub components in two t-calls 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -395,7 +395,7 @@ exports[`t-call sub components in two t-calls 1`] = `
 }"
 `;
 
-exports[`t-call sub components in two t-calls 2`] = `
+exports[`t-call > sub components in two t-calls 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -408,7 +408,7 @@ exports[`t-call sub components in two t-calls 2`] = `
 }"
 `;
 
-exports[`t-call sub components in two t-calls 3`] = `
+exports[`t-call > sub components in two t-calls 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -423,7 +423,7 @@ exports[`t-call sub components in two t-calls 3`] = `
 }"
 `;
 
-exports[`t-call t-call and t-out 1`] = `
+exports[`t-call > t-call and t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -435,7 +435,7 @@ exports[`t-call t-call and t-out 1`] = `
 }"
 `;
 
-exports[`t-call t-call and t-out 2`] = `
+exports[`t-call > t-call and t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -447,7 +447,7 @@ exports[`t-call t-call and t-out 2`] = `
 }"
 `;
 
-exports[`t-call t-call in t-foreach and children component 1`] = `
+exports[`t-call > t-call in t-foreach and children component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -474,7 +474,7 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
 }"
 `;
 
-exports[`t-call t-call in t-foreach and children component 2`] = `
+exports[`t-call > t-call in t-foreach and children component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -487,7 +487,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
 }"
 `;
 
-exports[`t-call t-call in t-foreach and children component 3`] = `
+exports[`t-call > t-call in t-foreach and children component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -502,7 +502,7 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent 1`] = `
+exports[`t-call > t-call with t-call-context and subcomponent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -515,7 +515,7 @@ exports[`t-call t-call with t-call-context and subcomponent 1`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent 2`] = `
+exports[`t-call > t-call with t-call-context and subcomponent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -531,7 +531,7 @@ exports[`t-call t-call with t-call-context and subcomponent 2`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent 3`] = `
+exports[`t-call > t-call with t-call-context and subcomponent 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -545,7 +545,7 @@ exports[`t-call t-call with t-call-context and subcomponent 3`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent, in dev mode 1`] = `
+exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -558,7 +558,7 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 1`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
+exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -576,7 +576,7 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context and subcomponent, in dev mode 3`] = `
+exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -590,7 +590,7 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 3`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context, simple use 1`] = `
+exports[`t-call > t-call with t-call-context, simple use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -603,7 +603,7 @@ exports[`t-call t-call with t-call-context, simple use 1`] = `
 }"
 `;
 
-exports[`t-call t-call with t-call-context, simple use 2`] = `
+exports[`t-call > t-call with t-call-context, simple use 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -617,7 +617,7 @@ exports[`t-call t-call with t-call-context, simple use 2`] = `
 }"
 `;
 
-exports[`t-call t-call-context: ComponentNode is not looked up in the context 1`] = `
+exports[`t-call > t-call-context: ComponentNode is not looked up in the context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -630,7 +630,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 1`
 }"
 `;
 
-exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`] = `
+exports[`t-call > t-call-context: ComponentNode is not looked up in the context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -660,7 +660,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 }"
 `;
 
-exports[`t-call t-call-context: ComponentNode is not looked up in the context 3`] = `
+exports[`t-call > t-call-context: ComponentNode is not looked up in the context 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -672,7 +672,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 3`
 }"
 `;
 
-exports[`t-call t-call-context: slots don't make component available again when context is captured 1`] = `
+exports[`t-call > t-call-context: slots don't make component available again when context is captured 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -685,7 +685,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 }"
 `;
 
-exports[`t-call t-call-context: slots don't make component available again when context is captured 2`] = `
+exports[`t-call > t-call-context: slots don't make component available again when context is captured 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -705,7 +705,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 }"
 `;
 
-exports[`t-call t-call-context: slots don't make component available again when context is captured 3`] = `
+exports[`t-call > t-call-context: slots don't make component available again when context is captured 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -717,7 +717,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 }"
 `;
 
-exports[`t-call t-call-context: this is not available inside t-call-context 1`] = `
+exports[`t-call > t-call-context: this is not available inside t-call-context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -730,7 +730,7 @@ exports[`t-call t-call-context: this is not available inside t-call-context 1`] 
 }"
 `;
 
-exports[`t-call t-call-context: this is not available inside t-call-context 2`] = `
+exports[`t-call > t-call-context: this is not available inside t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -742,7 +742,7 @@ exports[`t-call t-call-context: this is not available inside t-call-context 2`] 
 }"
 `;
 
-exports[`t-call t-set inside t-call are not evaluated before being rendered 1`] = `
+exports[`t-call > t-set inside t-call are not evaluated before being rendered 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -764,7 +764,7 @@ exports[`t-call t-set inside t-call are not evaluated before being rendered 1`] 
 }"
 `;
 
-exports[`t-call t-set inside t-call are not evaluated before being rendered 2`] = `
+exports[`t-call > t-set inside t-call are not evaluated before being rendered 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

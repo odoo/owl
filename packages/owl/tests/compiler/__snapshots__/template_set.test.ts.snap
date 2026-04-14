@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`loading templates addTemplates does not modify its xml document in place 1`] = `
+exports[`loading templates > addTemplates does not modify its xml document in place 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -15,7 +15,7 @@ exports[`loading templates addTemplates does not modify its xml document in plac
 }"
 `;
 
-exports[`loading templates can initialize qweb with a string 1`] = `
+exports[`loading templates > can initialize qweb with a string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -28,7 +28,7 @@ exports[`loading templates can initialize qweb with a string 1`] = `
 }"
 `;
 
-exports[`loading templates can initialize qweb with an XMLDocument 1`] = `
+exports[`loading templates > can initialize qweb with an XMLDocument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -41,7 +41,7 @@ exports[`loading templates can initialize qweb with an XMLDocument 1`] = `
 }"
 `;
 
-exports[`loading templates can load a few templates from a xml string 1`] = `
+exports[`loading templates > can load a few templates from a xml string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -56,7 +56,7 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
 }"
 `;
 
-exports[`loading templates can load a few templates from a xml string 2`] = `
+exports[`loading templates > can load a few templates from a xml string 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -72,7 +72,7 @@ exports[`loading templates can load a few templates from a xml string 2`] = `
 }"
 `;
 
-exports[`loading templates can load a few templates from an XMLDocument 1`] = `
+exports[`loading templates > can load a few templates from an XMLDocument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -87,7 +87,7 @@ exports[`loading templates can load a few templates from an XMLDocument 1`] = `
 }"
 `;
 
-exports[`loading templates can load a few templates from an XMLDocument 2`] = `
+exports[`loading templates > can load a few templates from an XMLDocument 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -103,7 +103,7 @@ exports[`loading templates can load a few templates from an XMLDocument 2`] = `
 }"
 `;
 
-exports[`loading templates getTemplate: element returned (2) 1`] = `
+exports[`loading templates > getTemplate: element returned (2) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -116,7 +116,7 @@ exports[`loading templates getTemplate: element returned (2) 1`] = `
 }"
 `;
 
-exports[`loading templates getTemplate: element returned 1`] = `
+exports[`loading templates > getTemplate: element returned 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -129,7 +129,7 @@ exports[`loading templates getTemplate: element returned 1`] = `
 }"
 `;
 
-exports[`loading templates getTemplate: template string returned 1`] = `
+exports[`loading templates > getTemplate: template string returned 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -142,7 +142,7 @@ exports[`loading templates getTemplate: template string returned 1`] = `
 }"
 `;
 
-exports[`loading templates getTemplate: undefined returned 1`] = `
+exports[`loading templates > getTemplate: undefined returned 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -1,4 +1,5 @@
-import { diff } from "jest-diff";
+import { vi, type Mock } from "vitest";
+import { diff } from "@vitest/utils/diff";
 import {
   blockDom,
   Component,
@@ -225,7 +226,7 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
 }
 
 export function expectSpy(
-  spy: jest.Mock,
+  spy: Mock,
   count: number,
   opt: { args?: any[]; result?: any } = {}
 ): void {
@@ -297,17 +298,15 @@ export function nextAppError(app: any) {
   return result;
 }
 
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBeLogged(): R;
-    }
+declare module "vitest" {
+  interface Assertion {
+    toBeLogged(): void;
   }
 }
 
-export type SpyEffect<T> = (() => () => void) & { spy: jest.Mock<any, T[]> };
+export type SpyEffect<T> = (() => () => void) & { spy: Mock };
 export function spyEffect<T>(fn: () => T): SpyEffect<T> {
-  const spy = jest.fn(fn);
+  const spy = vi.fn(fn);
   const unsubscribeWrapper = () => effect(spy);
   const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
   return wrapped;

@@ -8,7 +8,7 @@ let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = jest.fn(() => {});
+  mockConsoleWarn = vi.fn(() => {});
   console.warn = mockConsoleWarn;
 });
 
@@ -821,7 +821,7 @@ describe("slots", () => {
 
   test("t-debug on a t-set-slot (defining a slot)", async () => {
     const consoleLog = console.log;
-    console.log = jest.fn();
+    console.log = vi.fn();
 
     class Dialog extends Component {
       static template = xml`<span><t t-call-slot="content"/></span>`;

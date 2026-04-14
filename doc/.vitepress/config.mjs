@@ -1,19 +1,16 @@
 import { defineConfig } from "vitepress";
 import { buildNavbar } from "./navbar.mjs";
 
-// Re-enable this group at the top of each per-route sidebar when a second
-// package lands (owl-router, owl-orm, …). For now it's noise — a single
-// "Owl" entry linking to the same section the user is already in.
-// const packageSwitcher = {
-//   text: "Packages",
-//   items: [
-//     { text: "Owl", link: "/v3/owl/" },
-//     { text: "Router", link: "/v3/owl-router/" },
-//     { text: "ORM", link: "/v3/owl-orm/" },
-//   ],
-// };
+const packageSwitcher = {
+  text: "Packages",
+  items: [
+    { text: "Owl", link: "/v3/owl/" },
+    { text: "ORM", link: "/v3/owl-orm/" },
+  ],
+};
 
 const owlSidebar = [
+  packageSwitcher,
   { text: "Introduction", link: "/v3/owl/" },
   { text: "Overview", link: "/v3/owl/reference/overview" },
   { text: "Installation", link: "/v3/owl/installation" },
@@ -73,6 +70,21 @@ const owlSidebar = [
   },
 ];
 
+const owlOrmSidebar = [
+  packageSwitcher,
+  { text: "Introduction", link: "/v3/owl-orm/" },
+  { text: "Overview", link: "/v3/owl-orm/reference/overview" },
+  { text: "Examples", link: "/v3/owl-orm/reference/examples" },
+  {
+    text: "Reference",
+    items: [
+      { text: "Model", link: "/v3/owl-orm/reference/model" },
+      { text: "Fields", link: "/v3/owl-orm/reference/fields" },
+      { text: "ORM", link: "/v3/owl-orm/reference/orm" },
+    ],
+  },
+];
+
 export default defineConfig({
   title: "OWL",
   description: "Odoo Web Library - A reactive component framework for the web",
@@ -107,7 +119,7 @@ export default defineConfig({
 
     sidebar: {
       "/v3/owl/": owlSidebar,
-      // Future per-package sidebars go here, each starting with packageSwitcher.
+      "/v3/owl-orm/": owlOrmSidebar,
     },
 
     search: {

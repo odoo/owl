@@ -6,7 +6,7 @@ const exec = require("child_process").exec;
 const chalk = require("chalk");
 const branchName = require('current-git-branch');
 
-const REL_NOTES_FILE = `release-notes.md`;
+const REL_NOTES_FILE = `dist/release-notes.md`;
 const branch = "master";
 
 const rl = readline.createInterface({
@@ -69,6 +69,7 @@ async function startRelease() {
     const commitsSinceLastRelease = await getOutput(`git log ${lastRelease.trim()}..HEAD --pretty=%s`);
     const commitsAsMdList = commitsSinceLastRelease.trim().split("\n").map(l => " - " + l).join("\n");
     log(`${file} did not exist, created a template containing all commits since last release.`)
+    fs.mkdirSync("dist", { recursive: true });
     fs.writeFileSync(file, `# v${next}\n\n${commitsAsMdList}`);
     const shouldContinue = await ask(`Check that the contents of ${file} is correct, then press y to continue: `);
     if (shouldContinue.toLowerCase() !== "y") {
@@ -159,6 +160,11 @@ async function startRelease() {
   log(`Step ${step++}/${STEPS}: publishing module on npm...`);
   const npmTag = isAlpha ? "--tag alpha" : "";
   await execCommand(`npm publish ${npmTag} -w packages/owl`);
+
+  // Clean up release notes
+  if (fs.existsSync(file)) {
+    fs.unlinkSync(file);
+  }
 
   log("Owl Release process completed! Thank you for your patience");
   await execCommand(`gh release view`);

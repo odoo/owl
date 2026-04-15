@@ -44,7 +44,7 @@ export { signal, type Signal } from "./signal";
 export { computed } from "./computed";
 
 // Reactivity: effect
-export { effect } from "./effect";
+export { effect, immediateEffect } from "./effect";
 
 // Reactivity: asyncComputed
 export {

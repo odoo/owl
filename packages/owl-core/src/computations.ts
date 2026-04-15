@@ -26,17 +26,20 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  immediate?: boolean;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
+let immediateObservers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
+  immediate: boolean = false
 ): ComputationAtom {
   return {
     state,
@@ -45,6 +48,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    immediate,
   };
 }
 
@@ -61,11 +65,20 @@ export function onWriteAtom(atom: Atom) {
     if (ctx.state === ComputationState.EXECUTED) {
       if (ctx.isDerived) {
         markDownstream(ctx);
+      } else if (ctx.immediate) {
+        immediateObservers.push(ctx);
       } else {
         observers.push(ctx);
       }
     }
     ctx.state = ComputationState.STALE;
+  }
+  if (immediateObservers.length) {
+    const toRun = immediateObservers;
+    immediateObservers = [];
+    for (const ctx of toRun) {
+      updateComputation(ctx);
+    }
   }
   batchProcessEffects();
 }

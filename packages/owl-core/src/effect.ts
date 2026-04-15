@@ -10,8 +10,6 @@ import {
 
 export function effect<T>(fn: () => T) {
   const computation = createComputation(() => {
-    // In case the cleanup read an atom.
-    // todo: test it
     setComputation(undefined);
     unsubscribeEffect(computation);
     setComputation(computation);
@@ -20,10 +18,30 @@ export function effect<T>(fn: () => T) {
   getCurrentComputation()?.observers.add(computation);
   updateComputation(computation);
 
-  // Remove sources and unsubscribe
   return function cleanupEffect() {
-    // In case the cleanup read an atom.
-    // todo: test it
+    const previousComputation = getCurrentComputation();
+    setComputation(undefined);
+    unsubscribeEffect(computation);
+    setComputation(previousComputation);
+  };
+}
+
+export function immediateEffect<T>(fn: () => T) {
+  const computation = createComputation(
+    () => {
+      setComputation(undefined);
+      unsubscribeEffect(computation);
+      setComputation(computation);
+      return fn();
+    },
+    false,
+    ComputationState.STALE,
+    true
+  );
+  getCurrentComputation()?.observers.add(computation);
+  updateComputation(computation);
+
+  return function cleanupImmediateEffect() {
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
     unsubscribeEffect(computation);

@@ -11,7 +11,6 @@ export type Attrs = { [attrs: string]: string };
 
 export const ASTType = {
   Text: 0,
-  Comment: 1,
   DomNode: 2,
   Multi: 3,
   TIf: 4,
@@ -37,11 +36,6 @@ interface BaseAST {
 
 export interface ASTText extends BaseAST {
   type: (typeof ASTType)["Text"];
-  value: string;
-}
-
-export interface ASTComment extends BaseAST {
-  type: (typeof ASTType)["Comment"];
   value: string;
 }
 
@@ -185,7 +179,6 @@ export interface ASTTranslationContext extends BaseAST {
 
 export type AST =
   | ASTText
-  | ASTComment
   | ASTDomNode
   | ASTMulti
   | ASTTif
@@ -284,8 +277,6 @@ function parseTextCommentNode(node: Node, ctx: ParsingContext): AST | null {
     }
 
     return { type: ASTType.Text, value };
-  } else if (node.nodeType === Node.COMMENT_NODE) {
-    return { type: ASTType.Comment, value: node.textContent || "" };
   }
   return null;
 }

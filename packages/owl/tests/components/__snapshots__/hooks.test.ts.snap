@@ -3,7 +3,7 @@
 exports[`hooks > autofocus hook > input in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div><input/><block-child-0/></div>\`);
@@ -23,7 +23,7 @@ exports[`hooks > autofocus hook > input in a t-if 1`] = `
 exports[`hooks > autofocus hook > simple input 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div><input/><input block-ref="0"/></div>\`);
@@ -38,7 +38,7 @@ exports[`hooks > autofocus hook > simple input 1`] = `
 exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`MyComponent\`, true, false, false, ["value"]);
   
@@ -51,7 +51,7 @@ exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 exports[`hooks > can use onWillStart, onWillUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -66,7 +66,7 @@ exports[`hooks > can use onWillStart, onWillUpdateProps 2`] = `
 exports[`hooks > mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
@@ -81,7 +81,7 @@ exports[`hooks > mounted callbacks should be called in reverse order from willUn
 exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -95,7 +95,7 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -110,7 +110,7 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 2`] = `
 exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -123,7 +123,7 @@ exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 exports[`hooks > onWillUpdateProps receives nextProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -138,7 +138,7 @@ exports[`hooks > onWillUpdateProps receives nextProps 2`] = `
 exports[`hooks > two different call to willPatch/patched should work 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
@@ -153,7 +153,7 @@ exports[`hooks > two different call to willPatch/patched should work 1`] = `
 exports[`hooks > useEffect hook > dependencies prevent effects from rerunning when unchanged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -166,7 +166,7 @@ exports[`hooks > useEffect hook > dependencies prevent effects from rerunning wh
 exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block2 = createBlock(\`<div block-ref="0"/>\`);
@@ -185,7 +185,7 @@ exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
 exports[`hooks > useEffect hook > effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -198,7 +198,7 @@ exports[`hooks > useEffect hook > effect runs on mount, is reapplied on patch, a
 exports[`hooks > useEffect hook > effect that depends on a value is rerun if value changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -213,7 +213,7 @@ exports[`hooks > useEffect hook > effect that depends on a value is rerun if val
 exports[`hooks > useEffect hook > properly behaves when the effect function throws 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -226,7 +226,7 @@ exports[`hooks > useEffect hook > properly behaves when the effect function thro
 exports[`hooks > useListener 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
   
@@ -243,7 +243,7 @@ exports[`hooks > useListener 1`] = `
 exports[`hooks > useListener 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -258,7 +258,7 @@ exports[`hooks > useListener 2`] = `
 exports[`hooks > useListener work with references 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span block-ref="0"><block-child-0/></span>\`);

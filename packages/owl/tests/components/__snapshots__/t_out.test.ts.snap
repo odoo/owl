@@ -3,7 +3,7 @@
 exports[`components in t-out > simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, LazyValue, createComponent, withDefault, safeOutput, withKey } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -29,7 +29,7 @@ exports[`components in t-out > simple list 1`] = `
 exports[`components in t-out > simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`child\`);

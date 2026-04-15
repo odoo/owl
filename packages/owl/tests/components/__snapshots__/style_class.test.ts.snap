@@ -3,7 +3,7 @@
 exports[`style and class handling > can set class on multi root component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -16,7 +16,7 @@ exports[`style and class handling > can set class on multi root component 1`] = 
 exports[`style and class handling > can set class on multi root component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block2 = createBlock(\`<div>a</div>\`);
   let block3 = createBlock(\`<span block-attribute-0="class">b</span>\`);
@@ -33,7 +33,7 @@ exports[`style and class handling > can set class on multi root component 2`] = 
 exports[`style and class handling > can set class on sub component, as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -46,7 +46,7 @@ exports[`style and class handling > can set class on sub component, as prop 1`] 
 exports[`style and class handling > can set class on sub component, as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
@@ -60,7 +60,7 @@ exports[`style and class handling > can set class on sub component, as prop 2`] 
 exports[`style and class handling > can set class on sub sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -73,7 +73,7 @@ exports[`style and class handling > can set class on sub sub component 1`] = `
 exports[`style and class handling > can set class on sub sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildChild\`, true, false, false, ["class"]);
   
@@ -86,7 +86,7 @@ exports[`style and class handling > can set class on sub sub component 2`] = `
 exports[`style and class handling > can set class on sub sub component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">childchild</div>\`);
   
@@ -100,7 +100,7 @@ exports[`style and class handling > can set class on sub sub component 3`] = `
 exports[`style and class handling > can set more than one class on sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -113,7 +113,7 @@ exports[`style and class handling > can set more than one class on sub component
 exports[`style and class handling > can set more than one class on sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
@@ -127,7 +127,7 @@ exports[`style and class handling > can set more than one class on sub component
 exports[`style and class handling > can set style and class inside component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div style="font-weight:bold;" class="some-class">world</div>\`);
   
@@ -140,7 +140,7 @@ exports[`style and class handling > can set style and class inside component 1`]
 exports[`style and class handling > class on components do not interfere with user defined classes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
@@ -154,7 +154,7 @@ exports[`style and class handling > class on components do not interfere with us
 exports[`style and class handling > class on sub component, which is switched to another 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class","child"]);
   
@@ -167,7 +167,7 @@ exports[`style and class handling > class on sub component, which is switched to
 exports[`style and class handling > class on sub component, which is switched to another 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["class"]);
   const comp2 = createComponent(app, \`ChildB\`, true, false, false, ["class"]);
@@ -187,7 +187,7 @@ exports[`style and class handling > class on sub component, which is switched to
 exports[`style and class handling > class on sub component, which is switched to another 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">a</div>\`);
   
@@ -201,7 +201,7 @@ exports[`style and class handling > class on sub component, which is switched to
 exports[`style and class handling > class on sub component, which is switched to another 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span block-attribute-0="class">b</span>\`);
   
@@ -215,7 +215,7 @@ exports[`style and class handling > class on sub component, which is switched to
 exports[`style and class handling > class with extra whitespaces (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -231,7 +231,7 @@ exports[`style and class handling > class with extra whitespaces (variation) 1`]
 exports[`style and class handling > class with extra whitespaces (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
@@ -245,7 +245,7 @@ exports[`style and class handling > class with extra whitespaces (variation) 2`]
 exports[`style and class handling > class with extra whitespaces 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -258,7 +258,7 @@ exports[`style and class handling > class with extra whitespaces 1`] = `
 exports[`style and class handling > class with extra whitespaces 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
@@ -272,7 +272,7 @@ exports[`style and class handling > class with extra whitespaces 2`] = `
 exports[`style and class handling > component class and parent class combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -285,7 +285,7 @@ exports[`style and class handling > component class and parent class combine tog
 exports[`style and class handling > component class and parent class combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="child" block-attribute-0="class">child</div>\`);
   
@@ -299,7 +299,7 @@ exports[`style and class handling > component class and parent class combine tog
 exports[`style and class handling > component static style and dynamic t-att-style combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
   
@@ -312,7 +312,7 @@ exports[`style and class handling > component static style and dynamic t-att-sty
 exports[`style and class handling > component static style and dynamic t-att-style combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div style="color: red;" block-attribute-0="style">child</div>\`);
   
@@ -326,7 +326,7 @@ exports[`style and class handling > component static style and dynamic t-att-sty
 exports[`style and class handling > dynamic t-att-style is properly added and updated on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
   
@@ -339,7 +339,7 @@ exports[`style and class handling > dynamic t-att-style is properly added and up
 exports[`style and class handling > dynamic t-att-style is properly added and updated on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   
@@ -353,7 +353,7 @@ exports[`style and class handling > dynamic t-att-style is properly added and up
 exports[`style and class handling > empty class attribute is not added on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -369,7 +369,7 @@ exports[`style and class handling > empty class attribute is not added on widget
 exports[`style and class handling > empty class attribute is not added on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span block-attribute-0="class"/>\`);
   
@@ -383,7 +383,7 @@ exports[`style and class handling > empty class attribute is not added on widget
 exports[`style and class handling > error in subcomponent with class 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -396,7 +396,7 @@ exports[`style and class handling > error in subcomponent with class 1`] = `
 exports[`style and class handling > error in subcomponent with class 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0="class"><block-child-0/></div>\`);
@@ -412,7 +412,7 @@ exports[`style and class handling > error in subcomponent with class 2`] = `
 exports[`style and class handling > no class is set is child ignores it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -425,7 +425,7 @@ exports[`style and class handling > no class is set is child ignores it 1`] = `
 exports[`style and class handling > no class is set is child ignores it 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>child</div>\`);
   
@@ -438,7 +438,7 @@ exports[`style and class handling > no class is set is child ignores it 2`] = `
 exports[`style and class handling > no class is set is parent does not give it as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -451,7 +451,7 @@ exports[`style and class handling > no class is set is parent does not give it a
 exports[`style and class handling > no class is set is parent does not give it as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
@@ -465,7 +465,7 @@ exports[`style and class handling > no class is set is parent does not give it a
 exports[`style and class handling > static style and dynamic t-att-style with object combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
   
@@ -478,7 +478,7 @@ exports[`style and class handling > static style and dynamic t-att-style with ob
 exports[`style and class handling > static style and dynamic t-att-style with object combine together 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div style="color: red;" block-attribute-0="style">child</div>\`);
   
@@ -492,7 +492,7 @@ exports[`style and class handling > static style and dynamic t-att-style with ob
 exports[`style and class handling > style is properly added on widget root el 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["style"]);
   
@@ -505,7 +505,7 @@ exports[`style and class handling > style is properly added on widget root el 1`
 exports[`style and class handling > style is properly added on widget root el 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   
@@ -519,7 +519,7 @@ exports[`style and class handling > style is properly added on widget root el 2`
 exports[`style and class handling > t-att-class is properly added/removed on widget root el (v2) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -535,7 +535,7 @@ exports[`style and class handling > t-att-class is properly added/removed on wid
 exports[`style and class handling > t-att-class is properly added/removed on widget root el (v2) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
@@ -549,7 +549,7 @@ exports[`style and class handling > t-att-class is properly added/removed on wid
 exports[`style and class handling > t-att-class is properly added/removed on widget root el (v3) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["class"]);
   
@@ -562,7 +562,7 @@ exports[`style and class handling > t-att-class is properly added/removed on wid
 exports[`style and class handling > t-att-class is properly added/removed on widget root el (v3) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
@@ -576,7 +576,7 @@ exports[`style and class handling > t-att-class is properly added/removed on wid
 exports[`style and class handling > t-att-style is cleared when interpolated prop becomes undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span block-attribute-0="style">text</span>\`);
   
@@ -590,7 +590,7 @@ exports[`style and class handling > t-att-style is cleared when interpolated pro
 exports[`style and class handling > t-att-style is cleared when value becomes undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   
@@ -604,7 +604,7 @@ exports[`style and class handling > t-att-style is cleared when value becomes un
 exports[`style and class handling > t-att-style with object value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   
@@ -618,7 +618,7 @@ exports[`style and class handling > t-att-style with object value 1`] = `
 exports[`style and class handling > t-att-style with string value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   

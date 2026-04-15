@@ -1,55 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`comments > comment node with backslash at top level 1`] = `
+exports[`comments > comments are ignored 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
-  return function template(ctx, node, key = "") {
-    return comment(\` \\\\ \`);
-  }
-}"
-`;
-
-exports[`comments > comment node with backtick at top-level 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return comment(\` \\\` \`);
-  }
-}"
-`;
-
-exports[`comments > comment node with interpolation sigil at top level 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return comment(\` \\\${very cool} \`);
-  }
-}"
-`;
-
-exports[`comments > only a comment 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return comment(\` comment\`);
-  }
-}"
-`;
-
-exports[`comments > properly handle comments 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hello <!-- comment-->owl</div>\`);
+  let block1 = createBlock(\`<div>hello owl</div>\`);
   
   return function template(ctx, node, key = "") {
     return block1();
@@ -57,10 +13,21 @@ exports[`comments > properly handle comments 1`] = `
 }"
 `;
 
+exports[`comments > only a comment 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
+  }
+}"
+`;
+
 exports[`comments > properly handle comments between t-if/t-else 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<span>true</span>\`);

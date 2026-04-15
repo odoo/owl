@@ -3,7 +3,7 @@
 exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
@@ -21,7 +21,7 @@ exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediatel
 exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`B\`);
@@ -32,7 +32,7 @@ exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediatel
 exports[`app > can add functions to the bdom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { __globals__ } = helpers;
   const hdlr_fn1 = (ctx)=>__globals__.plop('click');
   
@@ -48,7 +48,7 @@ exports[`app > can add functions to the bdom 1`] = `
 exports[`app > can call processTask twice in a row without crashing 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -63,7 +63,7 @@ exports[`app > can call processTask twice in a row without crashing 1`] = `
 exports[`app > can call processTask twice in a row without crashing 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -76,7 +76,7 @@ exports[`app > can call processTask twice in a row without crashing 2`] = `
 exports[`app > can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -91,7 +91,7 @@ exports[`app > can configure an app with props 1`] = `
 exports[`app > can load templates from an object name-string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="hello">hello</div>\`);
   
@@ -104,7 +104,7 @@ exports[`app > can load templates from an object name-string 1`] = `
 exports[`app > can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
@@ -117,7 +117,7 @@ exports[`app > can mount app in an iframe 1`] = `
 exports[`app > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -130,7 +130,7 @@ exports[`app > destroy remove the widget from the DOM 1`] = `
 exports[`useApp > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   

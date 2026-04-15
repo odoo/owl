@@ -3,7 +3,7 @@
 exports[`t-component > can switch between dynamic components without the need for a t-key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -20,7 +20,7 @@ exports[`t-component > can switch between dynamic components without the need fo
 exports[`t-component > can switch between dynamic components without the need for a t-key 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>child a</span>\`);
   
@@ -33,7 +33,7 @@ exports[`t-component > can switch between dynamic components without the need fo
 exports[`t-component > can switch between dynamic components without the need for a t-key 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>child b</span>\`);
   
@@ -46,7 +46,7 @@ exports[`t-component > can switch between dynamic components without the need fo
 exports[`t-component > can use dynamic components (the class) if given (with different root tagname) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -61,7 +61,7 @@ exports[`t-component > can use dynamic components (the class) if given (with dif
 exports[`t-component > can use dynamic components (the class) if given (with different root tagname) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>child a</span>\`);
   
@@ -74,7 +74,7 @@ exports[`t-component > can use dynamic components (the class) if given (with dif
 exports[`t-component > can use dynamic components (the class) if given (with different root tagname) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>child b</div>\`);
   
@@ -87,7 +87,7 @@ exports[`t-component > can use dynamic components (the class) if given (with dif
 exports[`t-component > can use dynamic components (the class) if given 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -102,7 +102,7 @@ exports[`t-component > can use dynamic components (the class) if given 1`] = `
 exports[`t-component > can use dynamic components (the class) if given 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>child a</span>\`);
   
@@ -115,7 +115,7 @@ exports[`t-component > can use dynamic components (the class) if given 2`] = `
 exports[`t-component > can use dynamic components (the class) if given 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>child b</span>\`);
   
@@ -128,7 +128,7 @@ exports[`t-component > can use dynamic components (the class) if given 3`] = `
 exports[`t-component > modifying a sub widget 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -145,7 +145,7 @@ exports[`t-component > modifying a sub widget 1`] = `
 exports[`t-component > modifying a sub widget 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].state.counter++;
   
@@ -162,7 +162,7 @@ exports[`t-component > modifying a sub widget 2`] = `
 exports[`t-component > switching dynamic component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -176,7 +176,7 @@ exports[`t-component > switching dynamic component 1`] = `
 exports[`t-component > switching dynamic component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>child a</div>\`);
   
@@ -189,7 +189,7 @@ exports[`t-component > switching dynamic component 2`] = `
 exports[`t-component > switching dynamic component 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`child b\`);
@@ -200,7 +200,7 @@ exports[`t-component > switching dynamic component 4`] = `
 exports[`t-component > t-component works in simple case 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -214,7 +214,7 @@ exports[`t-component > t-component works in simple case 1`] = `
 exports[`t-component > t-component works in simple case 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>child</div>\`);
   

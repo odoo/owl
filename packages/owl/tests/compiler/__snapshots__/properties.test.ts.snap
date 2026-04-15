@@ -3,7 +3,7 @@
 exports[`changing an attribute with t-att- 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="value"/>\`);
   
@@ -17,7 +17,7 @@ exports[`changing an attribute with t-att- 1`] = `
 exports[`dynamic input value: falsy values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -31,7 +31,7 @@ exports[`dynamic input value: falsy values 1`] = `
 exports[`dynamic input value: falsy values 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -45,7 +45,7 @@ exports[`dynamic input value: falsy values 2`] = `
 exports[`dynamic input value: falsy values 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -59,7 +59,7 @@ exports[`dynamic input value: falsy values 3`] = `
 exports[`dynamic input value: falsy values 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -73,7 +73,7 @@ exports[`dynamic input value: falsy values 4`] = `
 exports[`input of type checkbox with t-att-indeterminate 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input type="checkbox" block-property-0="indeterminate"/>\`);
   
@@ -87,7 +87,7 @@ exports[`input of type checkbox with t-att-indeterminate 1`] = `
 exports[`input type= checkbox, with t-att-checked 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input type="checkbox" block-property-0="checked"/>\`);
   
@@ -101,7 +101,7 @@ exports[`input type= checkbox, with t-att-checked 1`] = `
 exports[`input with t-att-value (patching with same value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -115,7 +115,7 @@ exports[`input with t-att-value (patching with same value 1`] = `
 exports[`input with t-att-value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -129,7 +129,7 @@ exports[`input with t-att-value 1`] = `
 exports[`input, type checkbox, with t-att-checked (patching with same value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input type="checkbox" block-property-0="checked"/>\`);
   
@@ -143,7 +143,7 @@ exports[`input, type checkbox, with t-att-checked (patching with same value 1`] 
 exports[`readonly and readOnly are both interpreted as the readOnly property 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input readonly=""/>\`);
   
@@ -156,7 +156,7 @@ exports[`readonly and readOnly are both interpreted as the readOnly property 1`]
 exports[`readonly and readOnly are both interpreted as the readOnly property 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input readOnly=""/>\`);
   
@@ -169,7 +169,7 @@ exports[`readonly and readOnly are both interpreted as the readOnly property 2`]
 exports[`readonly and readOnly are both interpreted as the readOnly property 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="readOnly"/>\`);
   
@@ -183,7 +183,7 @@ exports[`readonly and readOnly are both interpreted as the readOnly property 3`]
 exports[`readonly and readOnly are both interpreted as the readOnly property 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="readOnly"/>\`);
   
@@ -197,7 +197,7 @@ exports[`readonly and readOnly are both interpreted as the readOnly property 4`]
 exports[`select with t-att-value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<select block-property-0="value"><option value="potato">Potato</option><option value="tomato">Tomato</option><option value="onion">Onion</option></select>\`);
   
@@ -211,7 +211,7 @@ exports[`select with t-att-value 1`] = `
 exports[`textarea with t-att-value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<textarea block-property-0="value"/>\`);
   
@@ -225,7 +225,7 @@ exports[`textarea with t-att-value 1`] = `
 exports[`updating property with falsy value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<input block-property-0="value"/>\`);
   
@@ -239,7 +239,7 @@ exports[`updating property with falsy value 1`] = `
 exports[`various boolean html attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><input type="checkbox" checked="checked"/><input checked="checked"/><div checked="checked"/><div selected="selected"/><option selected="selected" other="1"/><input readonly="readonly"/><button disabled="disabled"/></div>\`);
   

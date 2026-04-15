@@ -3,7 +3,7 @@
 exports[`destroy a subroot while another component is mounted in main app 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildB\`, true, false, false, []);
   const comp2 = createComponent(app, \`ChildA\`, true, false, false, []);
@@ -23,7 +23,7 @@ exports[`destroy a subroot while another component is mounted in main app 1`] = 
 exports[`destroy a subroot while another component is mounted in main app 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block3 = createBlock(\`<div block-ref="0"/>\`);
@@ -40,7 +40,7 @@ exports[`destroy a subroot while another component is mounted in main app 2`] = 
 exports[`destroy a subroot while another component is mounted in main app 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`c\`);
@@ -51,7 +51,7 @@ exports[`destroy a subroot while another component is mounted in main app 3`] = 
 exports[`destroy a subroot while another component is mounted in main app 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`b\`);
@@ -62,7 +62,7 @@ exports[`destroy a subroot while another component is mounted in main app 4`] = 
 exports[`subroot > can create a root in a setup function, then use a hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`a\`);
@@ -73,7 +73,7 @@ exports[`subroot > can create a root in a setup function, then use a hook 1`] = 
 exports[`subroot > can create a root in a setup function, then use a hook 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`c\`);
@@ -84,7 +84,7 @@ exports[`subroot > can create a root in a setup function, then use a hook 2`] = 
 exports[`subroot > can mount subroot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
@@ -97,7 +97,7 @@ exports[`subroot > can mount subroot 1`] = `
 exports[`subroot > can mount subroot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
@@ -110,7 +110,7 @@ exports[`subroot > can mount subroot 2`] = `
 exports[`subroot > can mount subroot inside own dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
@@ -123,7 +123,7 @@ exports[`subroot > can mount subroot inside own dom 1`] = `
 exports[`subroot > can mount subroot inside own dom 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
@@ -136,7 +136,7 @@ exports[`subroot > can mount subroot inside own dom 2`] = `
 exports[`subroot > subcomponents can be destroyed, and it properly cleanup the subroots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
@@ -149,7 +149,7 @@ exports[`subroot > subcomponents can be destroyed, and it properly cleanup the s
 exports[`subroot > subcomponents can be destroyed, and it properly cleanup the subroots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   

@@ -1,11 +1,11 @@
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
 import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
-import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
+import { createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { getContext } from "./context";
 import { helpers } from "./rendering/template_helpers";
 
-const bdom = { text, createBlock, list, multi, html, toggler, comment };
+const bdom = { text, createBlock, list, multi, html, toggler };
 
 export interface TemplateSetConfig {
   dev?: boolean;

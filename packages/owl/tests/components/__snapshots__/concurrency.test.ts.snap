@@ -3,7 +3,7 @@
 exports[`Cascading renders after microtaskTick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, prepareList, safeOutput, withKey } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -27,7 +27,7 @@ exports[`Cascading renders after microtaskTick 1`] = `
 exports[`Cascading renders after microtaskTick 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
   const comp1 = createComponent(app, \`Element\`, true, false, false, ["id"]);
   
@@ -48,7 +48,7 @@ exports[`Cascading renders after microtaskTick 2`] = `
 exports[`Cascading renders after microtaskTick 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -60,7 +60,7 @@ exports[`Cascading renders after microtaskTick 3`] = `
 exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -80,7 +80,7 @@ exports[`another scenario with delayed rendering 1`] = `
 exports[`another scenario with delayed rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -95,7 +95,7 @@ exports[`another scenario with delayed rendering 2`] = `
 exports[`another scenario with delayed rendering 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -112,7 +112,7 @@ exports[`another scenario with delayed rendering 3`] = `
 exports[`async rendering > destroying a widget before start is over 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -125,7 +125,7 @@ exports[`async rendering > destroying a widget before start is over 1`] = `
 exports[`calling render in destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
@@ -139,7 +139,7 @@ exports[`calling render in destroy 1`] = `
 exports[`calling render in destroy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["fromA"]);
   
@@ -152,7 +152,7 @@ exports[`calling render in destroy 2`] = `
 exports[`calling render in destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -167,7 +167,7 @@ exports[`calling render in destroy 3`] = `
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -182,7 +182,7 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
 exports[`changing state before first render does not trigger a render (with parent) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`TestW\`, true, false, false, []);
   
@@ -201,7 +201,7 @@ exports[`changing state before first render does not trigger a render (with pare
 exports[`changing state before first render does not trigger a render (with parent) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -216,7 +216,7 @@ exports[`changing state before first render does not trigger a render (with pare
 exports[`changing state before first render does not trigger a render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -231,7 +231,7 @@ exports[`changing state before first render does not trigger a render 1`] = `
 exports[`component destroyed just after render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
@@ -244,7 +244,7 @@ exports[`component destroyed just after render 1`] = `
 exports[`component destroyed just after render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -258,7 +258,7 @@ exports[`component destroyed just after render 2`] = `
 exports[`components are not destroyed between animation frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
@@ -276,7 +276,7 @@ exports[`components are not destroyed between animation frame 1`] = `
 exports[`components are not destroyed between animation frame 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -291,7 +291,7 @@ exports[`components are not destroyed between animation frame 3`] = `
 exports[`components are not destroyed between animation frame 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`C\`);
@@ -302,7 +302,7 @@ exports[`components are not destroyed between animation frame 5`] = `
 exports[`concurrent renderings scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -318,7 +318,7 @@ exports[`concurrent renderings scenario 1 1`] = `
 exports[`concurrent renderings scenario 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
@@ -334,7 +334,7 @@ exports[`concurrent renderings scenario 1 2`] = `
 exports[`concurrent renderings scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
@@ -350,7 +350,7 @@ exports[`concurrent renderings scenario 1 3`] = `
 exports[`concurrent renderings scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -367,7 +367,7 @@ exports[`concurrent renderings scenario 2 1`] = `
 exports[`concurrent renderings scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
@@ -383,7 +383,7 @@ exports[`concurrent renderings scenario 2 2`] = `
 exports[`concurrent renderings scenario 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
@@ -399,7 +399,7 @@ exports[`concurrent renderings scenario 2 3`] = `
 exports[`concurrent renderings scenario 2bis 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -415,7 +415,7 @@ exports[`concurrent renderings scenario 2bis 1`] = `
 exports[`concurrent renderings scenario 2bis 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA","fromB"]);
   
@@ -431,7 +431,7 @@ exports[`concurrent renderings scenario 2bis 2`] = `
 exports[`concurrent renderings scenario 2bis 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
@@ -447,7 +447,7 @@ exports[`concurrent renderings scenario 2bis 3`] = `
 exports[`concurrent renderings scenario 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -463,7 +463,7 @@ exports[`concurrent renderings scenario 3 1`] = `
 exports[`concurrent renderings scenario 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
   
@@ -479,7 +479,7 @@ exports[`concurrent renderings scenario 3 2`] = `
 exports[`concurrent renderings scenario 3 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
@@ -495,7 +495,7 @@ exports[`concurrent renderings scenario 3 3`] = `
 exports[`concurrent renderings scenario 3 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<i><block-child-0/><block-child-1/></i>\`);
@@ -511,7 +511,7 @@ exports[`concurrent renderings scenario 3 4`] = `
 exports[`concurrent renderings scenario 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -527,7 +527,7 @@ exports[`concurrent renderings scenario 4 1`] = `
 exports[`concurrent renderings scenario 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
   
@@ -543,7 +543,7 @@ exports[`concurrent renderings scenario 4 2`] = `
 exports[`concurrent renderings scenario 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
@@ -559,7 +559,7 @@ exports[`concurrent renderings scenario 4 3`] = `
 exports[`concurrent renderings scenario 4 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<i><block-child-0/><block-child-1/></i>\`);
@@ -575,7 +575,7 @@ exports[`concurrent renderings scenario 4 4`] = `
 exports[`concurrent renderings scenario 5 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -591,7 +591,7 @@ exports[`concurrent renderings scenario 5 1`] = `
 exports[`concurrent renderings scenario 5 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
@@ -606,7 +606,7 @@ exports[`concurrent renderings scenario 5 2`] = `
 exports[`concurrent renderings scenario 6 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -622,7 +622,7 @@ exports[`concurrent renderings scenario 6 1`] = `
 exports[`concurrent renderings scenario 6 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
@@ -637,7 +637,7 @@ exports[`concurrent renderings scenario 6 2`] = `
 exports[`concurrent renderings scenario 7 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -653,7 +653,7 @@ exports[`concurrent renderings scenario 7 1`] = `
 exports[`concurrent renderings scenario 7 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/><block-child-1/></p>\`);
@@ -669,7 +669,7 @@ exports[`concurrent renderings scenario 7 2`] = `
 exports[`concurrent renderings scenario 8 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   
@@ -685,7 +685,7 @@ exports[`concurrent renderings scenario 8 1`] = `
 exports[`concurrent renderings scenario 8 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/><block-child-1/></p>\`);
@@ -701,7 +701,7 @@ exports[`concurrent renderings scenario 8 2`] = `
 exports[`concurrent renderings scenario 9 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["fromA"]);
   const comp2 = createComponent(app, \`ComponentC\`, true, false, false, ["fromA"]);
@@ -720,7 +720,7 @@ exports[`concurrent renderings scenario 9 1`] = `
 exports[`concurrent renderings scenario 9 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<b><block-child-0/></b>\`);
@@ -735,7 +735,7 @@ exports[`concurrent renderings scenario 9 2`] = `
 exports[`concurrent renderings scenario 9 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentD\`, true, false, false, ["fromA","fromC"]);
   
@@ -751,7 +751,7 @@ exports[`concurrent renderings scenario 9 3`] = `
 exports[`concurrent renderings scenario 9 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
@@ -767,7 +767,7 @@ exports[`concurrent renderings scenario 9 4`] = `
 exports[`concurrent renderings scenario 10 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentB\`, true, false, false, ["value"]);
   
@@ -783,7 +783,7 @@ exports[`concurrent renderings scenario 10 1`] = `
 exports[`concurrent renderings scenario 10 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ComponentC\`, true, false, false, ["value"]);
   
@@ -802,7 +802,7 @@ exports[`concurrent renderings scenario 10 2`] = `
 exports[`concurrent renderings scenario 10 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -817,7 +817,7 @@ exports[`concurrent renderings scenario 10 4`] = `
 exports[`concurrent renderings scenario 11 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
@@ -833,7 +833,7 @@ exports[`concurrent renderings scenario 11 1`] = `
 exports[`concurrent renderings scenario 11 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/>|<block-child-1/></span>\`);
@@ -849,7 +849,7 @@ exports[`concurrent renderings scenario 11 2`] = `
 exports[`concurrent renderings scenario 12 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
@@ -865,7 +865,7 @@ exports[`concurrent renderings scenario 12 1`] = `
 exports[`concurrent renderings scenario 12 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -880,7 +880,7 @@ exports[`concurrent renderings scenario 12 2`] = `
 exports[`concurrent renderings scenario 13 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   const comp2 = createComponent(app, \`Child\`, true, false, false, []);
@@ -901,7 +901,7 @@ exports[`concurrent renderings scenario 13 1`] = `
 exports[`concurrent renderings scenario 13 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -916,7 +916,7 @@ exports[`concurrent renderings scenario 13 2`] = `
 exports[`concurrent renderings scenario 14 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
@@ -932,7 +932,7 @@ exports[`concurrent renderings scenario 14 1`] = `
 exports[`concurrent renderings scenario 14 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
@@ -948,7 +948,7 @@ exports[`concurrent renderings scenario 14 2`] = `
 exports[`concurrent renderings scenario 14 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><span><block-child-0/></span><span><block-child-1/></span><span><block-child-2/></span></p>\`);
@@ -965,7 +965,7 @@ exports[`concurrent renderings scenario 14 3`] = `
 exports[`concurrent renderings scenario 15 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
@@ -981,7 +981,7 @@ exports[`concurrent renderings scenario 15 1`] = `
 exports[`concurrent renderings scenario 15 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
@@ -997,7 +997,7 @@ exports[`concurrent renderings scenario 15 2`] = `
 exports[`concurrent renderings scenario 15 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><span><block-child-0/></span><span><block-child-1/></span><span><block-child-2/></span></p>\`);
@@ -1014,7 +1014,7 @@ exports[`concurrent renderings scenario 15 3`] = `
 exports[`concurrent renderings scenario 16 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["fromA"]);
   
@@ -1027,7 +1027,7 @@ exports[`concurrent renderings scenario 16 1`] = `
 exports[`concurrent renderings scenario 16 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["fromB","fromA"]);
   
@@ -1040,7 +1040,7 @@ exports[`concurrent renderings scenario 16 2`] = `
 exports[`concurrent renderings scenario 16 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
@@ -1063,7 +1063,7 @@ exports[`concurrent renderings scenario 16 3`] = `
 exports[`concurrent renderings scenario 16 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`D\`);
@@ -1074,7 +1074,7 @@ exports[`concurrent renderings scenario 16 6`] = `
 exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, []);
   const comp2 = createComponent(app, \`ChildB\`, true, false, false, []);
@@ -1095,7 +1095,7 @@ exports[`creating two async components, scenario 1 1`] = `
 exports[`creating two async components, scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1110,7 +1110,7 @@ exports[`creating two async components, scenario 1 3`] = `
 exports[`creating two async components, scenario 1 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<span>b</span>\`);
   
@@ -1123,7 +1123,7 @@ exports[`creating two async components, scenario 1 5`] = `
 exports[`creating two async components, scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   const comp2 = createComponent(app, \`ChildB\`, true, false, false, ["val"]);
@@ -1144,7 +1144,7 @@ exports[`creating two async components, scenario 2 1`] = `
 exports[`creating two async components, scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>a<block-child-0/></span>\`);
@@ -1159,7 +1159,7 @@ exports[`creating two async components, scenario 2 2`] = `
 exports[`creating two async components, scenario 2 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>b<block-child-0/></span>\`);
@@ -1174,7 +1174,7 @@ exports[`creating two async components, scenario 2 5`] = `
 exports[`creating two async components, scenario 3 (patching in the same frame) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   const comp2 = createComponent(app, \`ChildB\`, true, false, false, ["val"]);
@@ -1195,7 +1195,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`creating two async components, scenario 3 (patching in the same frame) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>a<block-child-0/></span>\`);
@@ -1210,7 +1210,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`creating two async components, scenario 3 (patching in the same frame) 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>b<block-child-0/></span>\`);
@@ -1225,7 +1225,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`delay willUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -1238,7 +1238,7 @@ exports[`delay willUpdateProps 1`] = `
 exports[`delay willUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1253,7 +1253,7 @@ exports[`delay willUpdateProps 2`] = `
 exports[`delay willUpdateProps with rendering grandchild 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Parent\`, true, false, false, ["state"]);
   
@@ -1266,7 +1266,7 @@ exports[`delay willUpdateProps with rendering grandchild 1`] = `
 exports[`delay willUpdateProps with rendering grandchild 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`DelayedChild\`, true, false, false, ["value"]);
   const comp2 = createComponent(app, \`ReactiveChild\`, true, false, false, []);
@@ -1282,7 +1282,7 @@ exports[`delay willUpdateProps with rendering grandchild 2`] = `
 exports[`delay willUpdateProps with rendering grandchild 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1297,7 +1297,7 @@ exports[`delay willUpdateProps with rendering grandchild 3`] = `
 exports[`delay willUpdateProps with rendering grandchild 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -1310,7 +1310,7 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, []);
   
@@ -1325,7 +1325,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -1340,7 +1340,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
@@ -1355,7 +1355,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`D\`);
@@ -1366,7 +1366,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
 exports[`delayed render does not go through when t-component value changed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
   
@@ -1382,7 +1382,7 @@ exports[`delayed render does not go through when t-component value changed 1`] =
 exports[`delayed render does not go through when t-component value changed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1396,7 +1396,7 @@ exports[`delayed render does not go through when t-component value changed 2`] =
 exports[`delayed render does not go through when t-component value changed 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`C\`);
@@ -1407,7 +1407,7 @@ exports[`delayed render does not go through when t-component value changed 4`] =
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -1420,7 +1420,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["value"]);
   
@@ -1433,7 +1433,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
   const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
@@ -1451,7 +1451,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1468,7 +1468,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, destruction, stuff happens 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -1483,7 +1483,7 @@ exports[`delayed rendering, destruction, stuff happens 1`] = `
 exports[`delayed rendering, destruction, stuff happens 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["value"]);
   
@@ -1501,7 +1501,7 @@ exports[`delayed rendering, destruction, stuff happens 2`] = `
 exports[`delayed rendering, destruction, stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
   const comp1 = createComponent(app, \`D\`, true, false, false, []);
   
@@ -1520,7 +1520,7 @@ exports[`delayed rendering, destruction, stuff happens 3`] = `
 exports[`delayed rendering, destruction, stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1539,7 +1539,7 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 exports[`delayed rendering, reusing fiber and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -1552,7 +1552,7 @@ exports[`delayed rendering, reusing fiber and stuff 1`] = `
 exports[`delayed rendering, reusing fiber and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -1569,7 +1569,7 @@ exports[`delayed rendering, reusing fiber and stuff 2`] = `
 exports[`delayed rendering, reusing fiber and stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1586,7 +1586,7 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -1604,7 +1604,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -1619,7 +1619,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1636,7 +1636,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   
@@ -1649,7 +1649,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
 exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -1667,7 +1667,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
 exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1684,7 +1684,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   const comp2 = createComponent(app, \`C\`, true, false, false, ["value"]);
@@ -1705,7 +1705,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1719,7 +1719,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1731,7 +1731,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -1749,7 +1749,7 @@ exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 exports[`destroying/recreating a subcomponent, other scenario 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`child\`);
@@ -1760,7 +1760,7 @@ exports[`destroying/recreating a subcomponent, other scenario 3`] = `
 exports[`destroying/recreating a subwidget with different props (if start is not over) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
@@ -1779,7 +1779,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 exports[`destroying/recreating a subwidget with different props (if start is not over) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>child:<block-child-0/></span>\`);
@@ -1794,7 +1794,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 exports[`parent and child rendered at exact same time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -1807,7 +1807,7 @@ exports[`parent and child rendered at exact same time 1`] = `
 exports[`parent and child rendered at exact same time 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1819,7 +1819,7 @@ exports[`parent and child rendered at exact same time 2`] = `
 exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
   
@@ -1838,7 +1838,7 @@ exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`SubChild\`, true, false, false, ["val"]);
   
@@ -1854,7 +1854,7 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -1867,7 +1867,7 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 exports[`rendering component again in next microtick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
@@ -1888,7 +1888,7 @@ exports[`rendering component again in next microtick 1`] = `
 exports[`rendering component again in next microtick 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>Child</div>\`);
   
@@ -1901,7 +1901,7 @@ exports[`rendering component again in next microtick 3`] = `
 exports[`rendering parent twice, with different props on child and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -1914,7 +1914,7 @@ exports[`rendering parent twice, with different props on child and stuff 1`] = `
 exports[`rendering parent twice, with different props on child and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -1926,7 +1926,7 @@ exports[`rendering parent twice, with different props on child and stuff 2`] = `
 exports[`renderings, destruction, patch, stuff, ... yet another variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["value"]);
   const comp2 = createComponent(app, \`D\`, true, false, false, []);
@@ -1943,7 +1943,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 1`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -1961,7 +1961,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1980,7 +1980,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
@@ -1999,7 +1999,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 exports[`sibling rendering: child without willStart renders before async sibling 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, []);
   const comp2 = createComponent(app, \`ChildB\`, true, false, false, []);
@@ -2017,7 +2017,7 @@ exports[`sibling rendering: child without willStart renders before async sibling
 exports[`sibling rendering: child without willStart renders before async sibling 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2032,7 +2032,7 @@ exports[`sibling rendering: child without willStart renders before async sibling
 exports[`sibling rendering: child without willStart renders before async sibling 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2047,7 +2047,7 @@ exports[`sibling rendering: child without willStart renders before async sibling
 exports[`slot content renders after microtick when child has willStart 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, markRaw, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, true, false, []);
   const comp2 = createComponent(app, \`Sibling\`, true, false, false, []);
@@ -2071,7 +2071,7 @@ exports[`slot content renders after microtick when child has willStart 1`] = `
 exports[`slot content renders after microtick when child has willStart 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2086,7 +2086,7 @@ exports[`slot content renders after microtick when child has willStart 2`] = `
 exports[`slot content renders after microtick when child has willStart 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2101,7 +2101,7 @@ exports[`slot content renders after microtick when child has willStart 3`] = `
 exports[`slot content renders synchronously when child has no willStart 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, markRaw, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, true, false, []);
   const comp2 = createComponent(app, \`Sibling\`, true, false, false, []);
@@ -2125,7 +2125,7 @@ exports[`slot content renders synchronously when child has no willStart 1`] = `
 exports[`slot content renders synchronously when child has no willStart 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2140,7 +2140,7 @@ exports[`slot content renders synchronously when child has no willStart 2`] = `
 exports[`slot content renders synchronously when child has no willStart 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2155,7 +2155,7 @@ exports[`slot content renders synchronously when child has no willStart 3`] = `
 exports[`t-foreach with dynamic async component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
   const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
@@ -2182,7 +2182,7 @@ exports[`t-foreach with dynamic async component 1`] = `
 exports[`t-foreach with dynamic async component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2197,7 +2197,7 @@ exports[`t-foreach with dynamic async component 2`] = `
 exports[`t-key on dom node having a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
@@ -2215,7 +2215,7 @@ exports[`t-key on dom node having a component 1`] = `
 exports[`t-key on dom node having a component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -2227,7 +2227,7 @@ exports[`t-key on dom node having a component 2`] = `
 exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, null, false, false, false, ["key"]);
   
@@ -2242,7 +2242,7 @@ exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
 exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2257,7 +2257,7 @@ exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
 exports[`two renderings initiated between willPatch and patched 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Panel\`, true, false, false, ["val"]);
   
@@ -2277,7 +2277,7 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
 exports[`two renderings initiated between willPatch and patched 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<abc><block-child-0/><block-child-1/></abc>\`);
@@ -2293,7 +2293,7 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
 exports[`two sequential renderings before an animation frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
@@ -2306,7 +2306,7 @@ exports[`two sequential renderings before an animation frame 1`] = `
 exports[`two sequential renderings before an animation frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -2318,7 +2318,7 @@ exports[`two sequential renderings before an animation frame 2`] = `
 exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   
@@ -2334,7 +2334,7 @@ exports[`update a sub-component twice in the same frame 1`] = `
 exports[`update a sub-component twice in the same frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2349,7 +2349,7 @@ exports[`update a sub-component twice in the same frame 2`] = `
 exports[`update a sub-component twice in the same frame, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildA\`, true, false, false, ["val"]);
   
@@ -2365,7 +2365,7 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
 exports[`update a sub-component twice in the same frame, 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);

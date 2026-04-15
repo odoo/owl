@@ -3,7 +3,7 @@
 exports[`simple templates, mostly static > can render a table row 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<tr><td>cell</td></tr>\`);
   
@@ -16,7 +16,7 @@ exports[`simple templates, mostly static > can render a table row 1`] = `
 exports[`simple templates, mostly static > div with a class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="abc">foo</div>\`);
   
@@ -29,7 +29,7 @@ exports[`simple templates, mostly static > div with a class attribute 1`] = `
 exports[`simple templates, mostly static > div with a class attribute with a quote 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="a'bc">word</div>\`);
   
@@ -42,7 +42,7 @@ exports[`simple templates, mostly static > div with a class attribute with a quo
 exports[`simple templates, mostly static > div with a span child node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><span>word</span></div>\`);
   
@@ -55,7 +55,7 @@ exports[`simple templates, mostly static > div with a span child node 1`] = `
 exports[`simple templates, mostly static > div with an arbitrary attribute with a quote 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div abc="a'bc">word</div>\`);
   
@@ -68,7 +68,7 @@ exports[`simple templates, mostly static > div with an arbitrary attribute with 
 exports[`simple templates, mostly static > div with an empty class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>word</div>\`);
   
@@ -81,7 +81,7 @@ exports[`simple templates, mostly static > div with an empty class attribute 1`]
 exports[`simple templates, mostly static > div with content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>foo</div>\`);
   
@@ -94,7 +94,7 @@ exports[`simple templates, mostly static > div with content 1`] = `
 exports[`simple templates, mostly static > dom node with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -109,7 +109,7 @@ exports[`simple templates, mostly static > dom node with t-out 1`] = `
 exports[`simple templates, mostly static > dom node with t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -124,7 +124,7 @@ exports[`simple templates, mostly static > dom node with t-out 2`] = `
 exports[`simple templates, mostly static > dynamic text value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -136,7 +136,7 @@ exports[`simple templates, mostly static > dynamic text value 1`] = `
 exports[`simple templates, mostly static > empty div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -149,7 +149,7 @@ exports[`simple templates, mostly static > empty div 1`] = `
 exports[`simple templates, mostly static > empty string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`\`);
@@ -160,7 +160,7 @@ exports[`simple templates, mostly static > empty string 1`] = `
 exports[`simple templates, mostly static > empty string in a template set 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`\`);
@@ -171,7 +171,7 @@ exports[`simple templates, mostly static > empty string in a template set 1`] = 
 exports[`simple templates, mostly static > inline template string in t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -183,7 +183,7 @@ exports[`simple templates, mostly static > inline template string in t-out 1`] =
 exports[`simple templates, mostly static > inline template string with content in t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -197,7 +197,7 @@ exports[`simple templates, mostly static > inline template string with content i
 exports[`simple templates, mostly static > inline template string with variable in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -209,7 +209,7 @@ exports[`simple templates, mostly static > inline template string with variable 
 exports[`simple templates, mostly static > multiple root nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block2 = createBlock(\`<div>foo</div>\`);
   let block3 = createBlock(\`<span>hey</span>\`);
@@ -225,7 +225,7 @@ exports[`simple templates, mostly static > multiple root nodes 1`] = `
 exports[`simple templates, mostly static > simple string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`hello vdom\`);
@@ -236,7 +236,7 @@ exports[`simple templates, mostly static > simple string 1`] = `
 exports[`simple templates, mostly static > simple string in t tag 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`hello vdom\`);
@@ -247,7 +247,7 @@ exports[`simple templates, mostly static > simple string in t tag 1`] = `
 exports[`simple templates, mostly static > static text and dynamic text (no t tag) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -261,7 +261,7 @@ exports[`simple templates, mostly static > static text and dynamic text (no t ta
 exports[`simple templates, mostly static > static text and dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -275,7 +275,7 @@ exports[`simple templates, mostly static > static text and dynamic text 1`] = `
 exports[`simple templates, mostly static > t-out in dom node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -290,7 +290,7 @@ exports[`simple templates, mostly static > t-out in dom node 1`] = `
 exports[`simple templates, mostly static > t-out in dom node, variations 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hello <block-child-0/></div>\`);
@@ -305,7 +305,7 @@ exports[`simple templates, mostly static > t-out in dom node, variations 1`] = `
 exports[`simple templates, mostly static > t-out in dom node, variations 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hello <block-child-0/> world</div>\`);
@@ -320,7 +320,7 @@ exports[`simple templates, mostly static > t-out in dom node, variations 2`] = `
 exports[`simple templates, mostly static > template with multiple t tag with multiple content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/>Loading<block-child-2/></div>\`);
@@ -337,7 +337,7 @@ exports[`simple templates, mostly static > template with multiple t tag with mul
 exports[`simple templates, mostly static > template with t tag with multiple content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>Loading<block-child-0/></div>\`);
   
@@ -354,7 +354,7 @@ exports[`simple templates, mostly static > template with t tag with multiple con
 exports[`simple templates, mostly static > text node with backslash at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`\\\\\`);
@@ -365,7 +365,7 @@ exports[`simple templates, mostly static > text node with backslash at top level
 exports[`simple templates, mostly static > text node with backtick at top-level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`\\\`\`);
@@ -376,7 +376,7 @@ exports[`simple templates, mostly static > text node with backtick at top-level 
 exports[`simple templates, mostly static > text node with interpolation sigil at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`\\\${very cool}\`);
@@ -387,7 +387,7 @@ exports[`simple templates, mostly static > text node with interpolation sigil at
 exports[`simple templates, mostly static > two t-outs next to each other 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -401,7 +401,7 @@ exports[`simple templates, mostly static > two t-outs next to each other 1`] = `
 exports[`simple templates, mostly static > two t-outs next to each other 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -415,7 +415,7 @@ exports[`simple templates, mostly static > two t-outs next to each other 2`] = `
 exports[`simple templates, mostly static > two t-outs next to each other, in a div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);

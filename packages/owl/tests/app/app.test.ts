@@ -196,4 +196,18 @@ describe("useApp", () => {
     await app.createRoot(SomeComponent).mount(fixture);
     expect(appFromComponent).toBe(app);
   });
+
+  test("destroying app does not crash if root component crashed in setup", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        throw new Error("setup error");
+      }
+    }
+
+    const app = new App();
+    const root = app.createRoot(SomeComponent);
+    await expect(root.mount(fixture)).rejects.toThrow("setup error");
+    expect(() => app.destroy()).not.toThrow();
+  });
 });

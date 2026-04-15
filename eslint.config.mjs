@@ -4,6 +4,7 @@ import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
 
 export default defineConfig([{
+    files: ["**/*.ts"],
     plugins: {
         "@typescript-eslint": typescriptEslint,
     },

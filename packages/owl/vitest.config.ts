@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     root: ".",
     include: ["tests/**/*.test.ts"],
-    setupFiles: ["./tests/mocks/mockEventTarget.js", "./tests/setup.ts"],
+    setupFiles: ["./tests/setup.ts"],
     globals: true,
     testTimeout: 10000,
   },

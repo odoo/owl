@@ -4,6 +4,7 @@ import {
   snapshotEverything,
   TestContext,
   makeTestFixture,
+  getConsoleOutput,
 } from "../helpers";
 import { mount, patch } from "../../src/runtime/blockdom";
 import { createBlock } from "../../src/runtime/blockdom/index";
@@ -260,27 +261,21 @@ describe("t-out", () => {
 describe("t-esc is deprecated", () => {
   test("should warn", () => {
     const template = `<div t-esc="var" />`;
-    const warn = console.warn;
-    const steps: string[] = [];
-    console.warn = (msg: any) => steps.push(msg);
-
     expect(renderToString(template, { var: "<div>escaped</div>" })).toBe(
       "<div>&lt;div&gt;escaped&lt;/div&gt;</div>"
     );
-    expect(steps).toEqual([
-      't-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+    expect(getConsoleOutput()).toEqual([
+      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
     ]);
-    console.warn = warn;
   });
 
   test("t-out is actually called in t-esc's place", () => {
     const template = `<div t-esc="var" />`;
-    const warn = console.warn;
-    console.warn = (msg: any) => msg;
-
     expect(renderToString(template, { var: markup("<div>esc</div>") })).toBe(
       "<div><div>esc</div></div>"
     );
-    console.warn = warn;
+    expect(getConsoleOutput()).toEqual([
+      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+    ]);
   });
 });

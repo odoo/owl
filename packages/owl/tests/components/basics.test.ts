@@ -8,6 +8,7 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
+  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -216,8 +217,6 @@ describe("basics", () => {
   });
 
   test("a component cannot be mounted in a detached node (even if node is detached later)", async () => {
-    const warn = console.warn;
-    console.warn = vi.fn();
     class Test extends Component {
       static template = xml`<div/>`;
     }
@@ -233,8 +232,7 @@ describe("basics", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.cause.message).toBe("Cannot mount a component on a detached dom node");
-    expect(console.warn).toHaveBeenCalledTimes(0);
-    console.warn = warn;
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("crashes if it cannot find a template", async () => {

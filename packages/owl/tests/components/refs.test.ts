@@ -119,8 +119,6 @@ describe("refs", () => {
   });
 
   test.skip("throws if there are 2 same refs at the same time", async () => {
-    const consoleWarn = console.warn;
-    console.warn = vi.fn();
     class Test extends Component {
       static template = xml`
         <div t-ref="this.ref"/>
@@ -141,8 +139,6 @@ describe("refs", () => {
       'Cannot set the same ref more than once in the same component, ref "coucou" was set multiple times in Test'
     );
     await mountProm;
-    expect(console.warn).toHaveBeenCalledTimes(1);
-    console.warn = consoleWarn;
   });
 
   test("refs and recursive templates", async () => {

@@ -16,7 +16,14 @@ import {
   useListener,
   xml,
 } from "../../src/index";
-import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  elem,
+  logStep,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  getConsoleOutput,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -264,6 +271,7 @@ describe("hooks", () => {
     expect(received).toBeDefined();
     expect(received.value).toBe(2);
     app.destroy();
+    expect(getConsoleOutput()).toEqual([`info:Owl is running in 'dev' mode.`]);
   });
 
   test("useListener", async () => {
@@ -511,10 +519,6 @@ describe("hooks", () => {
     });
 
     test("properly behaves when the effect function throws", async () => {
-      let originalconsoleError = console.error;
-      let originalconsoleWarn = console.warn;
-      console.error = vi.fn(() => {});
-      console.warn = vi.fn(() => {});
       class MyComponent extends Component {
         static template = xml`<div/>`;
         setup() {
@@ -531,10 +535,7 @@ describe("hooks", () => {
         error = e;
       }
       expect(error!.message).toBe("Intentional error");
-      expect(console.error).toHaveBeenCalledTimes(0);
-      console.error = originalconsoleError;
-      expect(console.warn).toHaveBeenCalledTimes(0);
-      console.warn = originalconsoleWarn;
+      expect(getConsoleOutput()).toEqual([]);
     });
   });
 });

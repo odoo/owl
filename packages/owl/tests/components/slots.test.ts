@@ -1,19 +1,17 @@
 import { App, Component, mount, onMounted, props, proxy, signal, xml } from "../../src/index";
-import { children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  children,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  getConsoleOutput,
+} from "../helpers";
 
 snapshotEverything();
-let originalconsoleWarn = console.warn;
-let mockConsoleWarn: any;
 let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = vi.fn(() => {});
-  console.warn = mockConsoleWarn;
-});
-
-afterEach(() => {
-  console.warn = originalconsoleWarn;
 });
 
 describe("slots", () => {
@@ -259,7 +257,7 @@ describe("slots", () => {
       error = e;
     }
     expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'bool')");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("simple default slot with params and bound function", async () => {
@@ -820,9 +818,6 @@ describe("slots", () => {
   });
 
   test("t-debug on a t-set-slot (defining a slot)", async () => {
-    const consoleLog = console.log;
-    console.log = vi.fn();
-
     class Dialog extends Component {
       static template = xml`<span><t t-call-slot="content"/></span>`;
     }
@@ -835,8 +830,7 @@ describe("slots", () => {
     }
 
     await mount(Parent, fixture);
-    expect(console.log).toHaveBeenCalledTimes(0);
-    console.log = consoleLog;
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("slot preserves properly parented relationship", async () => {

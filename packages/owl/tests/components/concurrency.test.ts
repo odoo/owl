@@ -4360,7 +4360,7 @@ test("slot content renders synchronously when child has no willStart", async () 
   // template (including slot content) synchronously. Sibling also has no
   // willStart. Both render in the same synchronous frame.
   class Child extends Component {
-    static template = xml`<div><t t-slot="default"/></div>`;
+    static template = xml`<div><t t-call-slot="default"/></div>`;
   }
   class Sibling extends Component {
     static template = xml`<span t-out="this.log()"/>`;
@@ -4395,7 +4395,7 @@ test("slot content renders after microtick when child has willStart", async () =
   // (including slot content) renders after a microtick. Sibling has no
   // willStart and renders synchronously via the fast path.
   class Child extends Component {
-    static template = xml`<div><t t-slot="default"/></div>`;
+    static template = xml`<div><t t-call-slot="default"/></div>`;
     setup() {
       onWillStart(() => {});
     }

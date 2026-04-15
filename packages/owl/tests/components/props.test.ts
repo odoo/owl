@@ -1,5 +1,12 @@
 import { Component, mount, onWillUpdateProps, props, proxy, signal, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import {
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
+  getConsoleOutput,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -169,6 +176,9 @@ describe("basics", () => {
     }
     await mount(Parent, fixture);
     expect(Object.keys(childProps)).toEqual(["onClick"]);
+    expect(getConsoleOutput()).toEqual([
+      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+    ]);
   });
 
   test("support prop names that aren't valid bare object property names", async () => {

@@ -20,28 +20,15 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
+  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
 
 snapshotEverything();
 
-let originalconsoleError = console.error;
-let mockConsoleError: any;
-let originalconsoleWarn = console.warn;
-let mockConsoleWarn: any;
-
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleError = vi.fn(() => {});
-  mockConsoleWarn = vi.fn(() => {});
-  console.error = mockConsoleError;
-  console.warn = mockConsoleWarn;
-});
-
-afterEach(() => {
-  console.error = originalconsoleError;
-  console.warn = originalconsoleWarn;
 });
 
 describe("basics", () => {
@@ -64,7 +51,7 @@ describe("basics", () => {
     const error = await nextAppError(parent.__owl__.app);
     expect(error.message).toContain("[Owl] Unhandled error. Destroying the root component");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("display a nice error if it cannot find component", async () => {
@@ -85,9 +72,7 @@ describe("basics", () => {
     expect(error!.cause!.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
-    expect(console.error).toHaveBeenCalledTimes(0);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("display a nice error if it cannot find component (in dev mode)", async () => {
@@ -106,9 +91,7 @@ describe("basics", () => {
     expect(error!.cause.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
-    expect(console.error).toHaveBeenCalledTimes(0);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("display a nice error if a component is not a component", async () => {
@@ -231,8 +214,7 @@ function(app, bdom, helpers) {
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("render from above on error -- handler is not a Root or MountFiber", async () => {
@@ -270,8 +252,7 @@ function(app, bdom, helpers) {
     }
     await mount(GrandParent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 });
 
@@ -303,8 +284,7 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause!.message).toMatch(regexp);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("an error in mounted call will reject the mount promise", async () => {
@@ -326,8 +306,7 @@ describe("errors and promises", () => {
     expect(error).toBeDefined();
     expect(error.message).toBe("[Owl] Unhandled error. Destroying the root component");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("an error in onMounted callback will have the component's setup in its stack trace", async () => {
@@ -349,8 +328,7 @@ describe("errors and promises", () => {
     expect(error).toBeDefined();
     expect(error.cause.stack).toContain("error_handling.test.ts");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("wrapped errors in async code are correctly caught", async () => {
@@ -393,8 +371,7 @@ describe("errors and promises", () => {
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`boom`);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("an error in patched call will reject the render promise", async () => {
@@ -416,8 +393,7 @@ describe("errors and promises", () => {
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`boom`);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("a rendering error in a sub component will reject the mount promise", async () => {
@@ -439,8 +415,7 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("a rendering error will reject the render promise", async () => {
@@ -462,8 +437,7 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("a rendering error will reject the render promise (with sub components)", async () => {
@@ -485,8 +459,7 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("errors in mounted and in willUnmount", async () => {
@@ -511,8 +484,7 @@ describe("errors and promises", () => {
       error = e;
     }
     expect(error!.cause.message).toBe(`Error in mounted`);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("errors in rerender", async () => {
@@ -528,7 +500,7 @@ describe("errors and promises", () => {
     const error: any = await nextAppError(root.__owl__.app)!;
     expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'b')");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 });
 
@@ -564,8 +536,7 @@ describe("can catch errors", () => {
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in onmounted", async () => {
@@ -809,8 +780,7 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the initial call of a component render function (parent updated)", async () => {
@@ -842,8 +812,7 @@ describe("can catch errors", () => {
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the constructor call of a component render function", async () => {
@@ -873,8 +842,7 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the constructor call of a component render function 2", async () => {
@@ -908,8 +876,7 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the willStart call", async () => {
@@ -942,8 +909,7 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error origination from a child's willStart function", async () => {
@@ -979,8 +945,7 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the mounted call", async () => {
@@ -1032,8 +997,7 @@ describe("can catch errors", () => {
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the mounted call (in root component)", async () => {
@@ -1073,8 +1037,7 @@ describe("can catch errors", () => {
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the mounted call (in child of child)", async () => {
@@ -1136,8 +1099,7 @@ describe("can catch errors", () => {
         "A:mounted",
       ]
     `);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("error in mounted on a component with a sibling (properly mounted)", async () => {
@@ -1200,8 +1162,7 @@ describe("can catch errors", () => {
         "Root:mounted",
       ]
     `);
-    expect(mockConsoleError).toHaveBeenCalledTimes(0);
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("can catch an error in the willPatch call", async () => {
@@ -1243,7 +1204,7 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>def</span><div>Error handled</div></div>");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("catchError in catchError", async () => {
@@ -1287,7 +1248,7 @@ describe("can catch errors", () => {
 
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("onError in class inheritance is not called if no rethrown", async () => {
@@ -1331,7 +1292,7 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError"]);
     expect(fixture.innerHTML).toBe("<div>Concrete</div>");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("onError in class inheritance is called if rethrown", async () => {
@@ -1376,7 +1337,7 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError", "Abstract onError"]);
     expect(fixture.innerHTML).toBe("<div>Abstract</div>");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("catching error, rethrow, render parent  -- a main component loop implementation", async () => {

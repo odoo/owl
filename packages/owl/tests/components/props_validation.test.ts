@@ -4,22 +4,8 @@ import { makeTestFixture, nextTick, render, snapshotEverything } from "../helper
 let fixture: HTMLElement;
 
 snapshotEverything();
-const info = console.info;
 let originalconsoleWarn = console.warn;
 let mockConsoleWarn: any;
-
-beforeAll(() => {
-  console.info = (message: any) => {
-    if (message === `Owl is running in 'dev' mode.`) {
-      return;
-    }
-    info(message);
-  };
-});
-
-afterAll(() => {
-  console.info = info;
-});
 
 beforeEach(() => {
   fixture = makeTestFixture();

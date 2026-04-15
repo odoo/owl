@@ -12,7 +12,8 @@ export function batched(callback: Callback): Callback {
   return function batchedCall(...args) {
     if (!scheduled) {
       scheduled = true;
-      queueMicrotask(() => {
+      // todo: maybe make it a queueMicrotask call instead
+      Promise.resolve().then(() => {
         scheduled = false;
         callback(...args);
       });

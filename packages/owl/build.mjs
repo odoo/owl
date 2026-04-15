@@ -43,8 +43,8 @@ async function buildVariant(entry, suffix) {
   await Promise.all([
     esbuild.build({ ...common, outfile: esm, format: "esm" }),
     esbuild.build({ ...common, outfile: cjs, format: "cjs" }),
-    esbuild.build({ ...common, outfile: iife, format: "iife", globalName: "owl" }),
-    esbuild.build({ ...common, outfile: iifeMin, format: "iife", globalName: "owl", minify: true }),
+    esbuild.build({ ...common, outfile: iife, format: "iife", globalName: "owl", footer: { js: "\nowl = {...owl};" } }),
+    esbuild.build({ ...common, outfile: iifeMin, format: "iife", globalName: "owl", minify: true, footer: { js: "owl={...owl};" } }),
   ]);
 }
 

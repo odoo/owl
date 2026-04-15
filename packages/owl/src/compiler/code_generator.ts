@@ -2,7 +2,6 @@ import { OwlError } from "../common/owl_error";
 import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
 import {
   AST,
-  ASTComment,
   ASTComponent,
   ASTDebug,
   ASTDomNode,
@@ -27,7 +26,7 @@ import {
 
 const zero = Symbol("zero");
 
-type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
+type BlockType = "block" | "text" | "multi" | "list" | "html";
 const whitespaceRE = /\s+/g;
 
 export interface Config {
@@ -151,7 +150,7 @@ class BlockDescription {
   }
 
   asXmlString() {
-    // Can't use outerHTML on text/comment nodes
+    // Can't use outerHTML on text nodes
     // append dom to any element and use innerHTML instead
     const t = xmlDoc.createElement("t");
     t.appendChild(this.dom!);
@@ -310,7 +309,7 @@ export class CodeGenerator {
       tKeyExpr: null,
     });
     // define blocks and utility functions
-    let mainCode = [`  let { text, createBlock, list, multi, html, toggler, comment } = bdom;`];
+    let mainCode = [`  let { text, createBlock, list, multi, html, toggler } = bdom;`];
     if (this.helpers.size) {
       mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
     }
@@ -437,8 +436,6 @@ export class CodeGenerator {
    */
   compileAST(ast: AST, ctx: Context): string | null {
     switch (ast.type) {
-      case ASTType.Comment:
-        return this.compileComment(ast, ctx);
       case ASTType.Text:
         return this.compileText(ast, ctx);
       case ASTType.DomNode:
@@ -489,22 +486,6 @@ export class CodeGenerator {
     }
     return null;
   }
-  compileComment(ast: ASTComment, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-    const isNewBlock = !block || forceNewBlock;
-    if (isNewBlock) {
-      block = this.createBlock(block, "comment", ctx);
-      this.insertBlock(`comment(${toStringExpression(ast.value)})`, block, {
-        ...ctx,
-        forceNewBlock: forceNewBlock && !block,
-      });
-    } else {
-      const text = xmlDoc.createComment(ast.value);
-      block!.insert(text);
-    }
-    return block!.varName;
-  }
-
   compileText(ast: ASTText, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
 

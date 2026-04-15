@@ -3,7 +3,7 @@
 exports[`translation context > body of t-sets are translated in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -17,7 +17,7 @@ exports[`translation context > body of t-sets are translated in context 1`] = `
 exports[`translation context > default slot params and content translated in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -36,7 +36,7 @@ exports[`translation context > default slot params and content translated in con
 exports[`translation context > props with modifier .translate are translated in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildComponent\`, true, false, false, []);
   
@@ -49,7 +49,7 @@ exports[`translation context > props with modifier .translate are translated in 
 exports[`translation context > props with modifier .translate are translated in context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -64,7 +64,7 @@ exports[`translation context > props with modifier .translate are translated in 
 exports[`translation context > slot attrs and text contents are translated in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent } = helpers;
   const comp1 = createComponent(app, \`ChildComponent\`, true, true, false, []);
   
@@ -81,7 +81,7 @@ exports[`translation context > slot attrs and text contents are translated in co
 exports[`translation context > slot attrs and text contents are translated in context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -96,7 +96,7 @@ exports[`translation context > slot attrs and text contents are translated in co
 exports[`translation context > t-translation-context with several children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><div/><div/><block-child-0/></div>\`);
   
@@ -113,7 +113,7 @@ exports[`translation context > t-translation-context with several children 1`] =
 exports[`translation context > translation of attributes in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div title="titre" label="game"/>\`);
   
@@ -126,7 +126,7 @@ exports[`translation context > translation of attributes in context 1`] = `
 exports[`translation context > translation of text in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block2 = createBlock(\`<div>word</div>\`);
   let block3 = createBlock(\`<div>mot</div>\`);
@@ -142,7 +142,7 @@ exports[`translation context > translation of text in context 1`] = `
 exports[`translation support > body of t-sets are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -156,7 +156,7 @@ exports[`translation support > body of t-sets are translated 1`] = `
 exports[`translation support > body of t-sets inside translation=off are not translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -170,7 +170,7 @@ exports[`translation support > body of t-sets inside translation=off are not tra
 exports[`translation support > body of t-sets inside translation=off are not translated 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -184,7 +184,7 @@ exports[`translation support > body of t-sets inside translation=off are not tra
 exports[`translation support > body of t-sets with html content are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { LazyValue, withDefault, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>translated</div>\`);
@@ -204,7 +204,7 @@ exports[`translation support > body of t-sets with html content are translated 1
 exports[`translation support > body of t-sets with text and html content are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { LazyValue, withDefault, safeOutput } = helpers;
   
   let block3 = createBlock(\`<div>translated</div>\`);
@@ -226,7 +226,7 @@ exports[`translation support > body of t-sets with text and html content are tra
 exports[`translation support > can set and remove translatable attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div tomato="word" potato="mot" title="mot" label="word">text</div>\`);
   
@@ -239,7 +239,7 @@ exports[`translation support > can set and remove translatable attributes 1`] = 
 exports[`translation support > can translate node content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>mot</div>\`);
   
@@ -252,7 +252,7 @@ exports[`translation support > can translate node content 1`] = `
 exports[`translation support > does not translate node content if disabled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><span>mot</span><span>word</span></div>\`);
   
@@ -265,7 +265,7 @@ exports[`translation support > does not translate node content if disabled 1`] =
 exports[`translation support > some attributes are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>\`);
   
@@ -278,7 +278,7 @@ exports[`translation support > some attributes are translated 1`] = `
 exports[`translation support > t-set and falsy t-value: t-body are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -292,7 +292,7 @@ exports[`translation support > t-set and falsy t-value: t-body are translated 1`
 exports[`translation support > t-translation with several children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div><div/><div/><block-child-0/></div>\`);
   
@@ -309,7 +309,7 @@ exports[`translation support > t-translation with several children 1`] = `
 exports[`translation support > translation is done on the trimmed text, with extra spaces readded after 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div> mot </div>\`);
   
@@ -322,7 +322,7 @@ exports[`translation support > translation is done on the trimmed text, with ext
 exports[`translation support > translation works, even if initial string has inner consecutive white space 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div>un mot</div>\`);
   

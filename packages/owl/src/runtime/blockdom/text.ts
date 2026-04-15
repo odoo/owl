@@ -11,7 +11,7 @@ if (typeof Node !== "undefined") {
   characterDataSetData = getDescriptor(CharacterData.prototype, "data").set!;
 }
 
-abstract class VSimpleNode {
+class VText {
   text: string | String;
   parentEl?: HTMLElement | undefined;
   el?: any;
@@ -20,8 +20,9 @@ abstract class VSimpleNode {
     this.text = text;
   }
 
-  mountNode(node: Node, parent: HTMLElement, afterNode: Node | null) {
+  mount(parent: HTMLElement, afterNode: Node | null) {
     this.parentEl = parent;
+    const node = document.createTextNode(toText(this.text));
     nodeInsertBefore.call(parent, node, afterNode);
     this.el = node;
   }
@@ -45,16 +46,6 @@ abstract class VSimpleNode {
     return this.el!;
   }
 
-  toString() {
-    return this.text;
-  }
-}
-
-class VText extends VSimpleNode {
-  mount(parent: HTMLElement, afterNode: Node | null) {
-    this.mountNode(document.createTextNode(toText(this.text)), parent, afterNode);
-  }
-
   patch(other: VText) {
     const text2 = other.text;
     if (this.text !== text2) {
@@ -62,22 +53,14 @@ class VText extends VSimpleNode {
       this.text = text2;
     }
   }
-}
 
-class VComment extends VSimpleNode {
-  mount(parent: HTMLElement, afterNode: Node | null) {
-    this.mountNode(document.createComment(toText(this.text)), parent, afterNode);
+  toString() {
+    return this.text;
   }
-
-  patch() {}
 }
 
 export function text(str: string | String): VNode<VText> {
   return new VText(str);
-}
-
-export function comment(str: string): VNode<VComment> {
-  return new VComment(str);
 }
 
 export function toText(value: any): string {

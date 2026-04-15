@@ -161,7 +161,7 @@ describe("basics", () => {
 
 generated code:
 function(app, bdom, helpers) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
   
@@ -186,7 +186,7 @@ function(app, bdom, helpers) {
 
 generated code:
 function(app, bdom, helpers) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
   

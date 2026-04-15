@@ -3,7 +3,7 @@
 exports[`t-props > basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
@@ -19,7 +19,7 @@ exports[`t-props > basic use 1`] = `
 exports[`t-props > basic use 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -34,7 +34,7 @@ exports[`t-props > basic use 2`] = `
 exports[`t-props > child receives a copy of the t-props object, not the original 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
@@ -47,7 +47,7 @@ exports[`t-props > child receives a copy of the t-props object, not the original
 exports[`t-props > child receives a copy of the t-props object, not the original 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -60,7 +60,7 @@ exports[`t-props > child receives a copy of the t-props object, not the original
 exports[`t-props > t-props and other props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Comp\`, true, false, true, ["a"]);
   
@@ -76,7 +76,7 @@ exports[`t-props > t-props and other props 1`] = `
 exports[`t-props > t-props and other props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -92,7 +92,7 @@ exports[`t-props > t-props and other props 2`] = `
 exports[`t-props > t-props only 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Comp\`, true, false, true, []);
   
@@ -108,7 +108,7 @@ exports[`t-props > t-props only 1`] = `
 exports[`t-props > t-props only 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -123,7 +123,7 @@ exports[`t-props > t-props only 2`] = `
 exports[`t-props > t-props with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, true, ["a","b"]);
   
@@ -139,7 +139,7 @@ exports[`t-props > t-props with props 1`] = `
 exports[`t-props > t-props with props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   

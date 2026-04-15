@@ -58,10 +58,10 @@ describe("qweb parser", () => {
     });
   });
 
-  test("simple comment node", async () => {
+  test("comment nodes are ignored", async () => {
     expect(parse("<!-- comment -->")).toEqual({
-      type: ASTType.Comment,
-      value: " comment ",
+      type: ASTType.Text,
+      value: "",
     });
   });
 

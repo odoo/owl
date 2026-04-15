@@ -3,7 +3,7 @@
 exports[`t-call-slot > compile t-props correctly multiple time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = "") {

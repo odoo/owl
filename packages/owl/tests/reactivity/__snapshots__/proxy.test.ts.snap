@@ -3,7 +3,7 @@
 exports[`Reactivity: proxy > destroyed component before being mounted is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -22,7 +22,7 @@ exports[`Reactivity: proxy > destroyed component before being mounted is inactiv
 exports[`Reactivity: proxy > destroyed component before being mounted is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -39,7 +39,7 @@ exports[`Reactivity: proxy > destroyed component before being mounted is inactiv
 exports[`Reactivity: proxy > destroyed component is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -58,7 +58,7 @@ exports[`Reactivity: proxy > destroyed component is inactive 1`] = `
 exports[`Reactivity: proxy > destroyed component is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -73,7 +73,7 @@ exports[`Reactivity: proxy > destroyed component is inactive 2`] = `
 exports[`Reactivity: proxy > one components can subscribe twice to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -91,7 +91,7 @@ exports[`Reactivity: proxy > one components can subscribe twice to same context 
 exports[`Reactivity: proxy > parent and children subscribed to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -110,7 +110,7 @@ exports[`Reactivity: proxy > parent and children subscribed to same context 1`] 
 exports[`Reactivity: proxy > parent and children subscribed to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -127,7 +127,7 @@ exports[`Reactivity: proxy > parent and children subscribed to same context 2`] 
 exports[`Reactivity: proxy > two components are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   const comp2 = createComponent(app, \`Child\`, true, false, false, []);
@@ -145,7 +145,7 @@ exports[`Reactivity: proxy > two components are updated in parallel 1`] = `
 exports[`Reactivity: proxy > two components are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -160,7 +160,7 @@ exports[`Reactivity: proxy > two components are updated in parallel 2`] = `
 exports[`Reactivity: proxy > two components can subscribe to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   const comp2 = createComponent(app, \`Child\`, true, false, false, []);
@@ -178,7 +178,7 @@ exports[`Reactivity: proxy > two components can subscribe to same context 1`] = 
 exports[`Reactivity: proxy > two components can subscribe to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -193,7 +193,7 @@ exports[`Reactivity: proxy > two components can subscribe to same context 2`] = 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   const comp2 = createComponent(app, \`Parent\`, true, false, false, []);
@@ -211,7 +211,7 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -226,7 +226,7 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -242,7 +242,7 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > useContext=proxy hook is proxy, for one component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -257,7 +257,7 @@ exports[`Reactivity: proxy > useContext=proxy hook is proxy, for one component 1
 exports[`Reactivity: proxy > useless atoms should be deleted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey, safeOutput } = helpers;
   const comp1 = createComponent(app, \`Quantity\`, true, false, false, ["id"]);
   
@@ -285,7 +285,7 @@ exports[`Reactivity: proxy > useless atoms should be deleted 1`] = `
 exports[`Reactivity: proxy > useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -302,7 +302,7 @@ exports[`Reactivity: proxy > useless atoms should be deleted 2`] = `
 exports[`Reactivity: proxy > very simple use, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);

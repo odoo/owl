@@ -3,7 +3,7 @@
 exports[`children, default props and renderings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -18,7 +18,7 @@ exports[`children, default props and renderings 1`] = `
 exports[`children, default props and renderings 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`child\`);
@@ -29,7 +29,7 @@ exports[`children, default props and renderings 2`] = `
 exports[`force render in case of existing render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["val"]);
   
@@ -42,7 +42,7 @@ exports[`force render in case of existing render 1`] = `
 exports[`force render in case of existing render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, []);
   
@@ -57,7 +57,7 @@ exports[`force render in case of existing render 2`] = `
 exports[`force render in case of existing render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`C\`);
@@ -68,7 +68,7 @@ exports[`force render in case of existing render 3`] = `
 exports[`rendering semantics > can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -85,7 +85,7 @@ exports[`rendering semantics > can force a render to update sub tree 1`] = `
 exports[`rendering semantics > can force a render to update sub tree 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -98,7 +98,7 @@ exports[`rendering semantics > can force a render to update sub tree 2`] = `
 exports[`rendering semantics > can render a parent without rendering child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -113,7 +113,7 @@ exports[`rendering semantics > can render a parent without rendering child 1`] =
 exports[`rendering semantics > can render a parent without rendering child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   
   return function template(ctx, node, key = "") {
     return text(\`child\`);
@@ -124,7 +124,7 @@ exports[`rendering semantics > can render a parent without rendering child 2`] =
 exports[`rendering semantics > props are proxy (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
@@ -137,7 +137,7 @@ exports[`rendering semantics > props are proxy (nested prop) 1`] = `
 exports[`rendering semantics > props are proxy (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -149,7 +149,7 @@ exports[`rendering semantics > props are proxy (nested prop) 2`] = `
 exports[`rendering semantics > props are proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
@@ -162,7 +162,7 @@ exports[`rendering semantics > props are proxy 1`] = `
 exports[`rendering semantics > props are proxy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -174,7 +174,7 @@ exports[`rendering semantics > props are proxy 2`] = `
 exports[`rendering semantics > render with deep=true followed by render with deep=false work as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
@@ -190,7 +190,7 @@ exports[`rendering semantics > render with deep=true followed by render with dee
 exports[`rendering semantics > render with deep=true followed by render with deep=false work as expected 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -204,7 +204,7 @@ exports[`rendering semantics > render with deep=true followed by render with dee
 exports[`rendering semantics > rendering is atomic (for one subtree) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`B\`, true, false, false, ["obj"]);
   
@@ -219,7 +219,7 @@ exports[`rendering semantics > rendering is atomic (for one subtree) 1`] = `
 exports[`rendering semantics > rendering is atomic (for one subtree) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`C\`, true, false, false, ["obj"]);
   
@@ -232,7 +232,7 @@ exports[`rendering semantics > rendering is atomic (for one subtree) 2`] = `
 exports[`rendering semantics > rendering is atomic (for one subtree) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
@@ -244,7 +244,7 @@ exports[`rendering semantics > rendering is atomic (for one subtree) 3`] = `
 exports[`rendering semantics > works as expected for dynamic number of props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
@@ -257,7 +257,7 @@ exports[`rendering semantics > works as expected for dynamic number of props 1`]
 exports[`rendering semantics > works as expected for dynamic number of props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {

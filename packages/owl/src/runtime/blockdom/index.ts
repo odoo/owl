@@ -4,7 +4,7 @@ export { toggler } from "./toggler";
 export { createBlock } from "./block_compiler";
 export { list } from "./list";
 export { multi } from "./multi";
-export { text, comment } from "./text";
+export { text } from "./text";
 export { html } from "./html";
 export { createCatcher } from "./event_catcher";
 

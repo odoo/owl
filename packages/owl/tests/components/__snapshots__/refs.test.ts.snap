@@ -3,7 +3,7 @@
 exports[`refs > basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div block-ref="0"/>\`);
@@ -18,7 +18,7 @@ exports[`refs > basic use 1`] = `
 exports[`refs > ref is set by child component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["ref"]);
   
@@ -31,7 +31,7 @@ exports[`refs > ref is set by child component 1`] = `
 exports[`refs > ref is set by child component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div id="ref" block-ref="0"/>\`);
@@ -46,7 +46,7 @@ exports[`refs > ref is set by child component 2`] = `
 exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block2 = createBlock(\`<div block-attribute-0="class" block-ref="1"/>\`);
@@ -66,7 +66,7 @@ exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] 
 exports[`refs > refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, safeOutput, createComponent } = helpers;
   const comp1 = createComponent(app, \`Test\`, true, false, false, ["tree"]);
   
@@ -87,7 +87,7 @@ exports[`refs > refs and recursive templates 1`] = `
 exports[`refs > refs and t-key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].state.renderId++;
   
@@ -108,7 +108,7 @@ exports[`refs > refs and t-key 1`] = `
 exports[`refs > refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, callHandler, createRef, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx, ev);
   const comp1 = createComponent(app, \`Dialog\`, true, true, false, []);
@@ -133,7 +133,7 @@ exports[`refs > refs are properly bound in slots 1`] = `
 exports[`refs > refs are properly bound in slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -148,7 +148,7 @@ exports[`refs > refs are properly bound in slots 2`] = `
 exports[`refs > resource can be used for multi ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createRef, withKey } = helpers;
   
   let block2 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
@@ -172,7 +172,7 @@ exports[`refs > resource can be used for multi ref 1`] = `
 exports[`refs > use 2 refs in a t-if/t-else situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef } = helpers;
   
   let block2 = createBlock(\`<div block-ref="0"/>\`);

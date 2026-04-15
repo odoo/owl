@@ -253,18 +253,12 @@ function buildTree(
       }
       return tree;
     }
-    case Node.TEXT_NODE:
-    case Node.COMMENT_NODE: {
-      // text node or comment node
-      const el =
-        node.nodeType === Node.TEXT_NODE
-          ? document.createTextNode(node.textContent!)
-          : document.createComment(node.textContent!);
+    case Node.TEXT_NODE: {
       return {
         parent: parent,
         firstChild: null,
         nextSibling: null,
-        el,
+        el: document.createTextNode(node.textContent!),
         info: [],
         refN: 0,
         currentNS: null,

@@ -7,14 +7,14 @@ snapshotEverything();
 // -----------------------------------------------------------------------------
 
 describe("comments", () => {
-  test("properly handle comments", () => {
+  test("comments are ignored", () => {
     const template = `<div>hello <!-- comment-->owl</div>`;
-    expect(renderToString(template)).toBe("<div>hello <!-- comment-->owl</div>");
+    expect(renderToString(template)).toBe("<div>hello owl</div>");
   });
 
   test("only a comment", () => {
     const template = `<!-- comment-->`;
-    expect(renderToString(template)).toBe(`<!-- comment-->`);
+    expect(renderToString(template)).toBe("");
   });
 
   test("properly handle comments between t-if/t-else", () => {
@@ -25,20 +25,5 @@ describe("comments", () => {
           <span t-else="">owl</span>
         </div>`;
     expect(renderToString(template)).toBe("<div><span>true</span></div>");
-  });
-
-  test("comment node with backslash at top level", () => {
-    const template = "<!-- \\ -->";
-    expect(renderToString(template)).toBe("<!-- \\ -->");
-  });
-
-  test("comment node with backtick at top-level", () => {
-    const template = "<!-- ` -->";
-    expect(renderToString(template)).toBe("<!-- ` -->");
-  });
-
-  test("comment node with interpolation sigil at top level", () => {
-    const template = "<!-- ${very cool} -->";
-    expect(renderToString(template)).toBe("<!-- ${very cool} -->");
   });
 });

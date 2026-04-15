@@ -11,7 +11,6 @@ import {
   remove,
   text,
   toggler,
-  comment,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
 export { Resource, useResource } from "./resource";
@@ -33,7 +32,6 @@ export const blockDom = {
   toggler,
   createBlock,
   html,
-  comment,
 };
 export { App, mount } from "./app";
 export { xml } from "./template_set";

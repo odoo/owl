@@ -134,7 +134,7 @@ describe("async protection", () => {
     app.destroy();
     expect(steps.splice(0)).toEqual(["destroy"]);
 
-    expect(
+    await expect(
       context!.runWithAsyncProtection(async () => {
         steps.push("crash");
       })

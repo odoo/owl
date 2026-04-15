@@ -18,7 +18,13 @@ import {
   useResource,
   xml,
 } from "../../src";
-import { makeTestFixture, nextMicroTick, snapshotEverything, nextTick } from "../helpers";
+import {
+  makeTestFixture,
+  nextMicroTick,
+  snapshotEverything,
+  nextTick,
+  getConsoleOutput,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -254,6 +260,7 @@ test("plugin config are validated", async () => {
   await expect(mount(Test, fixture, { dev: true })).rejects.toThrow(
     "Config does not match the type"
   );
+  expect(getConsoleOutput()).toEqual([`info:Owl is running in 'dev' mode.`]);
 });
 
 test("optional plugin config work as expected (value given)", async () => {

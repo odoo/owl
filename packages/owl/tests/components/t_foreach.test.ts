@@ -6,23 +6,15 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
+  getConsoleOutput,
 } from "../helpers";
 
 snapshotEverything();
-
-let originalconsoleWarn = console.warn;
-let mockConsoleWarn: any;
 
 let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = vi.fn(() => {});
-  console.warn = mockConsoleWarn;
-});
-
-afterEach(() => {
-  console.warn = originalconsoleWarn;
 });
 
 describe("list of components", () => {
@@ -311,8 +303,6 @@ describe("list of components", () => {
   });
 
   test("crash on duplicate key in dev mode", async () => {
-    const consoleInfo = console.info;
-    console.info = vi.fn();
     class Child extends Component {
       static template = xml``;
     }
@@ -332,13 +322,10 @@ describe("list of components", () => {
       error = e;
     }
     expect(error.cause.message).toBe("Got duplicate key in t-foreach: child");
-    console.info = consoleInfo;
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("crash when using object as keys that serialize to the same string", async () => {
-    const consoleInfo = console.info;
-    console.info = vi.fn();
     class Child extends Component {
       static template = xml``;
     }
@@ -359,8 +346,7 @@ describe("list of components", () => {
       error = e;
     }
     expect(error.cause.message).toBe("Got duplicate key in t-foreach: [object Object]");
-    console.info = consoleInfo;
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 
   test("order is correct when slots are not of same type", async () => {

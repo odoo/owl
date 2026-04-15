@@ -25,6 +25,7 @@ import {
   steps,
   useLogLifecycle,
   render,
+  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -113,8 +114,6 @@ describe("lifecycle hooks", () => {
   });
 
   test("timeout in onWillStart doesn't emit a console log if app is destroyed", async () => {
-    const { log } = console;
-    console.log = vi.fn();
     const { setTimeout } = window;
     let timeoutCbs: any = {};
     let timeoutId = 0;
@@ -138,9 +137,8 @@ describe("lifecycle hooks", () => {
       }
       await nextMicroTick();
       await nextMicroTick();
-      expect(console.log).toHaveBeenCalledTimes(0);
+      expect(getConsoleOutput()).toEqual([]);
     } finally {
-      console.log = log;
       window.setTimeout = setTimeout;
     }
   });

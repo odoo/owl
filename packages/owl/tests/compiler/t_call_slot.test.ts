@@ -1,5 +1,6 @@
 import { parseXML } from "../../src/common/utils";
 import { compile } from "../../src/compiler";
+import { getConsoleOutput } from "../helpers";
 
 describe("t-call-slot", () => {
   test("compile t-props correctly multiple time", () => {
@@ -16,11 +17,7 @@ describe("t-call-slot", () => {
   test("warn on t-slot", () => {
     const template = `<t t-slot="default"/>`;
     const parsedTemplate = parseXML(template).firstChild as Element;
-    const originalConsoleWarn = console.warn;
-    const mockConsoleWarn = vi.fn(() => {});
-    console.warn = mockConsoleWarn;
     compile(parsedTemplate);
-    console.warn = originalConsoleWarn;
-    expect(mockConsoleWarn).toHaveBeenCalledWith("t-slot has been renamed t-call-slot.");
+    expect(getConsoleOutput()).toEqual(["warn:t-slot has been renamed t-call-slot."]);
   });
 });

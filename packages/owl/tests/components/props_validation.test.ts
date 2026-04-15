@@ -1,20 +1,18 @@
 import { Component, mount, onError, props, types as t, xml } from "../../src";
-import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
+import {
+  makeTestFixture,
+  nextTick,
+  render,
+  snapshotEverything,
+  getConsoleOutput,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
 snapshotEverything();
-let originalconsoleWarn = console.warn;
-let mockConsoleWarn: any;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = vi.fn(() => {});
-  console.warn = mockConsoleWarn;
-});
-
-afterEach(() => {
-  console.warn = originalconsoleWarn;
 });
 
 //------------------------------------------------------------------------------
@@ -84,6 +82,7 @@ describe("props validation", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toMatch("Invalid component props (Root)");
+    expect(getConsoleOutput()).toEqual([`info:Owl is running in 'dev' mode.`]);
   });
 
   test("validate simple types", async () => {

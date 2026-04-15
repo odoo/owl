@@ -1,19 +1,11 @@
 import { Component, mount, onMounted, props, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, getConsoleOutput } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
-let originalconsoleWarn = console.warn;
-let mockConsoleWarn: any;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  mockConsoleWarn = vi.fn(() => {});
-  console.warn = mockConsoleWarn;
-});
-
-afterEach(() => {
-  console.warn = originalconsoleWarn;
 });
 
 describe("style and class handling", () => {
@@ -476,6 +468,6 @@ describe("style and class handling", () => {
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
+    expect(getConsoleOutput()).toEqual([]);
   });
 });

@@ -23,6 +23,7 @@ const wordRegexp = /\s+/;
 function setAttribute(this: HTMLElement, key: string, value: any) {
   switch (value) {
     case false:
+    case null:
     case undefined:
       removeAttribute.call(this, key);
       break;

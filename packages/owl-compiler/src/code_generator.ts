@@ -990,10 +990,11 @@ export class CodeGenerator {
     if (ast.context) {
       const dynCtxVar = generateId("ctx");
       this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
-      if (attrs.length) {
-        ctxExpr = `Object.assign({this: ${dynCtxVar}}, ${ctxString})`;
+      if (ast.attrs) {
+        ctxExpr = `Object.assign({}, ${dynCtxVar}, {this: ${dynCtxVar}}${attrs.length ? ", " + ctxString : ""})`;
       } else {
-        ctxExpr = `{this: ${dynCtxVar}}`;
+        const thisCtx = `{this: ${dynCtxVar}, __owl__: this.__owl__}`;
+        ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
       }
     } else {
       if (attrs.length === 0) {

@@ -52,6 +52,7 @@ export {
   asyncComputed,
   computed,
   effect,
+  immediateEffect,
   markRaw,
   proxy,
   signal,

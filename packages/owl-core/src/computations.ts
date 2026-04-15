@@ -62,11 +62,13 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  immediate?: boolean;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
+let immediateObservers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 // Derived computations that were notified of a write while nothing observed
 // them. Left alone, they would stay subscribed to their sources forever (a
@@ -81,7 +83,8 @@ let pendingDisposals = new Set<ComputationAtom>();
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
+  immediate: boolean = false
 ): ComputationAtom {
   return {
     state,
@@ -90,6 +93,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    immediate,
   };
 }
 
@@ -106,6 +110,8 @@ export function onWriteAtom(atom: Atom) {
     if (ctx.state === ComputationState.EXECUTED) {
       if (ctx.isDerived) {
         markDownstream(ctx);
+      } else if (ctx.immediate) {
+        immediateObservers.push(ctx);
       } else {
         observers.push(ctx);
       }
@@ -113,6 +119,13 @@ export function onWriteAtom(atom: Atom) {
     ctx.state = ComputationState.STALE;
     if (ctx.isDerived && ctx.observers.size === 0) {
       pendingDisposals.add(ctx);
+    }
+  }
+  if (immediateObservers.length) {
+    const toRun = immediateObservers;
+    immediateObservers = [];
+    for (const ctx of toRun) {
+      updateComputation(ctx);
     }
   }
   batchProcessEffects();

@@ -46,6 +46,34 @@ export function effect<T>(fn: () => T) {
   };
 }
 
+export function immediateEffect<T>(fn: () => T) {
+  const computation = createComputation(
+    () => {
+      if (computation.value || computation.observers.size) {
+        setComputation(undefined);
+        unsubscribeEffect(computation);
+        setComputation(computation);
+      } else {
+        removeSources(computation);
+      }
+      return fn();
+    },
+    false,
+    ComputationState.STALE,
+    true
+  );
+  getCurrentComputation()?.observers.add(computation);
+  updateComputation(computation);
+
+  return function cleanupImmediateEffect() {
+    computation.state = ComputationState.EXECUTED;
+    const previousComputation = getCurrentComputation();
+    setComputation(undefined);
+    unsubscribeEffect(computation);
+    setComputation(previousComputation);
+  };
+}
+
 function unsubscribeEffect(effect: ComputationAtom) {
   removeSources(effect);
   cleanupEffect(effect);

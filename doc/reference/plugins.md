@@ -1,16 +1,4 @@
-# 🦉 Plugins 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Defining a Plugin](#defining-a-plugin)
-- [Using a Plugin](#using-a-plugin)
-- [Providing Plugins](#providing-plugins)
-- [Plugin Dependencies](#plugin-dependencies)
-- [Configuration](#configuration)
-- [Plugin Shadowing](#plugin-shadowing)
-- [Resources](#resources)
-- [Lifecycle and Cleanup](#lifecycle-and-cleanup)
+# Plugins
 
 ## Overview
 

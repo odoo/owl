@@ -1,4 +1,4 @@
-# 🦉 References 🦉
+# References
 
 References provide a way to interact with DOM elements rendered by a component.
 In Owl 3, references are signal-based: you create a `signal(null)` and bind it

@@ -1,15 +1,4 @@
-# 🦉 Hooks 🦉
-
-## Content
-
-- [Overview](#overview)
-- [The Hook Rule](#the-hook-rule)
-- [Lifecycle hooks](#lifecycle-hooks)
-- [Other hooks](#other-hooks)
-  - [`useEffect`](#useeffect)
-  - [`useListener`](#uselistener)
-  - [`useApp`](#useapp)
-- [Example: Mouse Position](#example-mouse-position)
+# Hooks
 
 ## Overview
 

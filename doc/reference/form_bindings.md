@@ -1,4 +1,4 @@
-# 🦉 Form Bindings 🦉
+# Form Bindings
 
 It is very common to need to be able to read the value out of an html `input` (or
 `textarea`, or `select`) in order to use it (note: it does not need to be in a

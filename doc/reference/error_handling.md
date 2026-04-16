@@ -1,10 +1,4 @@
-# 🦉 Error Handling 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Managing Errors](#managing-errors)
-- [Example](#example)
+# Error Handling
 
 ## Overview
 

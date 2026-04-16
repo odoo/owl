@@ -1,4 +1,4 @@
-# 🦉OWL Release Notes (DRAFT)
+# OWL Release Notes (DRAFT)
 
 ## Overview
 

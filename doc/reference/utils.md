@@ -1,13 +1,7 @@
-# 🦉 Utils 🦉
+# Utils
 
 Owl export a few useful utility functions, to help with common issues. Those
 functions are all available in the `owl.utils` namespace.
-
-## Content
-
-- [`whenReady`](#whenready): executing code when DOM is ready
-- [`EventBus`](#eventbus): a simple EventBus
-- [`batched`](#batched): batch function calls
 
 ## `whenReady`
 

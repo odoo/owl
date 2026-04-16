@@ -1,16 +1,4 @@
-# 🦉 Slots 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Named slots](#named-slots)
-- [Rendering Context](#rendering-context)
-- [Default Slot](#default-slot)
-- [Default Content](#default-content)
-- [Dynamic slots](#dynamic-slots)
-- [Slots and props](#slots-and-props)
-- [Slot params](#slot-params)
-- [Slot scopes](#slot-scopes)
+# Slots
 
 ## Overview
 
@@ -136,9 +124,11 @@ The `t-call-slot` directive is able to use any expressions, using string
 interpolation:
 
 ::: v-pre
+
 ```xml
  <t t-call-slot="{{current}}" />
 ```
+
 :::
 
 This will evaluate the `current` expression, and insert the corresponding slot
@@ -172,6 +162,7 @@ with multiple page, and a tab bar, which only render the current active page,
 and each page has a title).
 
 ::: v-pre
+
 ```js
 class Notebook extends Component {
   static template = xml`
@@ -198,6 +189,7 @@ class Notebook extends Component {
   }
 }
 ```
+
 :::
 
 Notice how one can read the `title` value for each slots. Here is how one could

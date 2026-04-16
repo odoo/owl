@@ -1,4 +1,4 @@
-# 🦉 Notes On Owl Compiled Templates 🦉
+# Notes On Owl Compiled Templates
 
 This page will explain what an Owl compiled template look like. This is a
 technical document intended for developers interested in understanding how Owl

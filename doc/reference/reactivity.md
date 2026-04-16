@@ -1,15 +1,4 @@
-# 🦉 Reactivity 🦉
-
-## Content
-
-- [Introduction](#introduction)
-- [Signals](#signals)
-- [Computed Values](#computed-values)
-- [Proxy](#proxy)
-- [Effects](#effects)
-- [Manual Invalidation](#manual-invalidation)
-- [Escape Hatches](#escape-hatches)
-- [Batching](#batching)
+# Reactivity
 
 ## Introduction
 

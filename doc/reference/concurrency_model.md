@@ -1,11 +1,4 @@
-# 🦉 Concurrency Model 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Rendering Components](#rendering-components)
-- [Semantics](#semantics)
-- [Asynchronous Rendering](#asynchronous-rendering)
+# Concurrency Model
 
 ## Overview
 

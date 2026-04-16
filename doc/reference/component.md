@@ -1,22 +1,4 @@
-# 🦉 Owl Component 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Properties and methods](#properties-and-methods)
-- [Static Properties](#static-properties)
-- [Lifecycle](#lifecycle)
-  - [`setup`](#setup)
-  - [`willStart`](#willstart)
-  - [`mounted`](#mounted)
-  - [`willPatch`](#willpatch)
-  - [`patched`](#patched)
-  - [`willUnmount`](#willunmount)
-  - [`willDestroy`](#willdestroy)
-  - [`onError`](#onerror)
-- [Sub components](#sub-components)
-- [Dynamic Sub components](#dynamic-sub-components)
-- [`status` helper](#status-helper)
+# Owl Component
 
 ## Overview
 

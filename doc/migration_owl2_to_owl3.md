@@ -1,4 +1,4 @@
-# 🦉🦉 Migration 🦉🦉🦉 Guide (DRAFT)
+# Migration Guide (DRAFT)
 
 > **Note:** This migration guide is primarily focused on migrating the Odoo codebase from Owl 2 to Owl 3, but it may still be helpful for other projects using Owl.
 

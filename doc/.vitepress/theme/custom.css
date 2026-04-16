@@ -1,0 +1,88 @@
+/* Static navbar — injected outside Vue's DOM via transformHtml */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #1e293b;
+  padding: 0 12px;
+  height: 44px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.site-nav-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.site-nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+}
+
+.site-nav-link.active {
+  color: #fff;
+  font-weight: 700;
+}
+
+.site-nav-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 2px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  font-size: 12px;
+  height: 28px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.site-nav-search:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #94a3b8;
+}
+
+.site-nav-search kbd {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 1px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  color: #64748b;
+}
+
+.site-nav-github {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  color: #94a3b8;
+  transition: color 0.15s, background 0.15s;
+}
+
+.site-nav-github:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Hide VitePress's navbar entirely — our static navbar replaces it */
+:root {
+  --vp-nav-height: 44px;
+}
+
+.VPNav {
+  display: none !important;
+}

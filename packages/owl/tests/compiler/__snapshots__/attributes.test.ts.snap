@@ -224,6 +224,34 @@ exports[`attributes > dynamic formatted attributes with a dash 1`] = `
 }"
 `;
 
+exports[`attributes > dynamic null class attribute 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['c'];
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes > dynamic null generic attribute 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="thing"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['c'];
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes > dynamic undefined class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

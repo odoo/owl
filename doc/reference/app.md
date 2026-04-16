@@ -1,13 +1,4 @@
-# 🦉 App 🦉
-
-## Content
-
-- [Overview](#overview)
-- [API](#api)
-- [Configuration](#configuration)
-- [`mount` helper](#mount-helper)
-- [Roots](#roots)
-- [Loading templates](#loading-templates)
+# App
 
 ## Overview
 

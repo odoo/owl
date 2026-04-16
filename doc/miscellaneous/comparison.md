@@ -7,16 +7,6 @@ In this page, we try to highlight some of these differences. Obviously, a lot of
 effort was put to be fair. However, if you disagree with some of the points
 discussed, feel free to open an issue/submit a PR to correct this text.
 
-## Content
-
-- [Size](#size)
-- [Class Based](#class-based)
-- [Tooling/Build Step](#toolingbuild-step)
-- [Templating](#templating)
-- [Asynchronous rendering](#asynchronous-rendering)
-- [Reactivity](#reactivity)
-- [Hooks](#hooks)
-
 ## Size
 
 OWL is intended to be small and to work at a slightly lower level of abstraction

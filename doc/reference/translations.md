@@ -1,4 +1,4 @@
-# 🦉 Translations 🦉
+# Translations
 
 If properly setup, Owl can translate all rendered templates. To do
 so, it needs a translate function, which takes

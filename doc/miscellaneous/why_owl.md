@@ -1,4 +1,4 @@
-# 🦉 Why Owl ? 🦉
+# Why Owl ?
 
 The common wisdom is that one should not reinvent the wheel, because that would
 waste effort and resources. It is certainly true in many cases. A javascript

@@ -1,16 +1,4 @@
-# 🦉 Props 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Definition](#definition)
-- [The `props` function](#the-props-function)
-- [Translatable props](#translatable-props)
-- [Dynamic Props](#dynamic-props)
-- [Props validation](#props-validation)
-- [Props comparison](#props-comparison)
-- [Binding function props](#binding-function-props)
-- [Good Practices](#good-practices)
+# Props
 
 ## Overview
 

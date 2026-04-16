@@ -23,7 +23,7 @@ and is the recommended way to learn about Owl.
 
 ## What is Owl?
 
-Owl is a modern UI framework (~20kb gzipped, zero dependencies) written in TypeScript,
+Owl is a modern UI framework (~30kb gzipped, zero dependencies) written in TypeScript,
 built by [Odoo](https://www.odoo.com/). It powers Odoo's web client, one of the largest
 open-source business applications, but is equally suited for small projects and prototypes.
 

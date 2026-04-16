@@ -1,28 +1,4 @@
-# 🦉 Template Syntax 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Directives](#directives)
-- [QWeb Template reference](#qweb-template-reference)
-  - [White Spaces](#white-spaces)
-  - [Expression Evaluation](#expression-evaluation)
-  - [Static html Nodes](#static-html-nodes)
-  - [Outputting Data](#outputting-data)
-  - [Setting Variables](#setting-variables)
-  - [Conditionals](#conditionals)
-  - [Dynamic Attributes](#dynamic-attributes)
-  - [Dynamic Class Attribute](#dynamic-class-attribute)
-  - [Dynamic Tag Names](#dynamic-tag-names)
-  - [Loops](#loops)
-  - [Sub Templates](#sub-templates)
-  - [Dynamic Sub Templates](#dynamic-sub-templates)
-  - [Debugging](#debugging)
-  - [Custom Directives](#custom-directives)
-- [Fragments](#fragments)
-- [Inline templates](#inline-templates)
-- [Rendering svg](#rendering-svg)
-- [Restrictions](#restrictions)
+# Template Syntax
 
 ## Overview
 
@@ -306,6 +282,7 @@ specified with either `{{...}}` or `#{...}`:
 <div t-attf-foo="a {{value1}} is #{value2} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
+
 :::
 
 If we need completely dynamic attribute names, then there is an additional
@@ -592,6 +569,7 @@ The `t-call` directive can also be used to dynamically call a sub template,
 using string interpolation. For example:
 
 ::: v-pre
+
 ```xml
 <div t-name="main-template">
     <t t-call="{{template}}">
@@ -599,6 +577,7 @@ using string interpolation. For example:
     </t>
 </div>
 ```
+
 :::
 
 Here, the name of the template is obtained from the `template` value in the

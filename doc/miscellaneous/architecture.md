@@ -1,4 +1,4 @@
-# 🦉 Notes On Owl Architecture 🦉
+# Notes On Owl Architecture
 
 We explain here how Owl is designed
 
@@ -48,7 +48,7 @@ interface. Whenever a rendering is initiated in a component `C`:
 - once it is done, the scheduler will call the task callback, which will apply
   the patch (if it was not cancelled in the meantime).
 
-# 🦉 VDom 🦉
+# VDom
 
 Owl is a declarative component system: we declare the structure of the component
 tree, and Owl will translate that to a list of imperative operations. This

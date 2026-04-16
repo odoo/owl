@@ -1,4 +1,4 @@
-# 🦉 Precompiling templates 🦉
+# Precompiling templates
 
 Owl is designed to be used by the Odoo javascript framework. Since Odoo handles
 its assets in its own non standard way, it was decided/assumed that Owl would

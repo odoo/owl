@@ -1,32 +1,4 @@
-# 🦉 Types Validation 🦉
-
-## Content
-
-- [Overview](#overview)
-- [`validateType`](#validatetype)
-- [`assertType`](#asserttype)
-- [Validators](#validators)
-  - [`t.any()`](#tany)
-  - [`t.boolean()`](#tboolean)
-  - [`t.number()`](#tnumber)
-  - [`t.string()`](#tstring)
-  - [`t.array`](#tarrayelementtype)
-  - [`t.object`](#tobjectshape)
-  - [`t.strictObject`](#tstrictobjectshape)
-  - [`t.record`](#trecordvaluetype)
-  - [`t.tuple`](#ttupletypes)
-  - [`t.function`](#tfunctionparams-returntype)
-  - [`t.promise`](#tpromisetype)
-  - [`t.literal`](#tliteralvalue)
-  - [`t.selection`](#tselectionvalues)
-  - [`t.instanceOf`](#tinstanceofconstructor)
-  - [`t.component()`](#tcomponent)
-  - [`t.constructor`](#tconstructorconstructor)
-  - [`t.signal`](#tsignaltype)
-  - [`t.ref`](#treftype)
-  - [`t.or`](#tortypes)
-  - [`t.and`](#tandtypes)
-  - [`t.customValidator`](#tcustomvalidatortype-predicate-errormessage)
+# Types Validation
 
 ## Overview
 

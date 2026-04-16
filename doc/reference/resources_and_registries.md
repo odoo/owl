@@ -1,19 +1,4 @@
-# 🦉 Resources and Registries 🦉
-
-## Content
-
-- [Overview](#overview)
-- [Resource](#resource)
-  - [Creating a Resource](#creating-a-resource)
-  - [Sequencing](#sequencing)
-  - [useResource](#useresource)
-  - [Type Validation](#type-validation)
-- [Registry](#registry)
-  - [Creating a Registry](#creating-a-registry)
-  - [addById](#addbyid)
-  - [Sequencing](#registry-sequencing)
-  - [Type Validation](#registry-type-validation)
-- [Reactivity](#reactivity)
+# Resources and Registries
 
 ## Overview
 

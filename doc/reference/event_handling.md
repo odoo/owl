@@ -1,11 +1,4 @@
-# 🦉 Event Handling 🦉
-
-## Content
-
-- [Event Handling](#event-handling)
-- [Modifiers](#modifiers)
-- [Synthetic Events](#synthetic-events)
-- [On Components](#on-components)
+# Event Handling
 
 ## Event Handling
 

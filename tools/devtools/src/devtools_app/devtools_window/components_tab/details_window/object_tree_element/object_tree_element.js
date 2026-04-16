@@ -1,29 +1,29 @@
-import { useStore } from "../../../../store/store";
+import { StorePlugin } from "../../../../store/store";
+import { ComponentsPlugin } from "../../../../store/components_plugin";
 
-const { Component, useState, useEffect, useRef } = owl;
+const { Component, proxy, useEffect, signal, plugin, props, types: t } = owl;
 
 export class ObjectTreeElement extends Component {
   static template = "devtools.ObjectTreeElement";
-
   static components = { ObjectTreeElement };
 
+  props = props({ object: t.object(), "class?": t.string, "index?": t.number });
+
   setup() {
-    this.state = useState({
+    this.state = proxy({
       editMode: false,
       menuTop: 0,
       menuLeft: 0,
     });
-    const inputRef = useRef("input");
-    this.store = useStore();
-    useEffect(
-      (editMode) => {
-        // Focus on the input when it is created
-        if (editMode) {
-          inputRef.el.select();
-        }
-      },
-      () => [this.state.editMode]
-    );
+    this.inputRef = signal(null);
+    this.store = plugin(StorePlugin);
+    this.components = plugin(ComponentsPlugin);
+    useEffect(() => {
+      // Focus on the input when it is created
+      if (this.state.editMode) {
+        this.inputRef()?.select();
+      }
+    });
   }
 
   get pathAsString() {
@@ -57,28 +57,28 @@ export class ObjectTreeElement extends Component {
       {
         title: "Store as global variable",
         show: true,
-        action: () => this.store.logObjectInConsole(this.props.object.path),
+        action: () => this.components.logObjectInConsole(this.props.object.path),
       },
       {
         title: "Inspect function source code",
         show: this.props.object.contentType === "function",
-        action: () => this.store.inspectFunctionSource(this.props.object.path),
+        action: () => this.components.inspectFunctionSource(this.props.object.path),
       },
       {
         title: "Observe variable",
         show: this.props.object.objectType !== "observed",
-        action: () => this.store.observeVariable(this.props.object.path),
+        action: () => this.components.observeVariable(this.props.object.path),
       },
       {
         title: "Unobserve variable",
         show: this.props.object.objectType === "observed",
-        action: () => this.store.clearObservedVariable(this.props.index),
+        action: () => this.components.clearObservedVariable(this.props.index),
       },
       {
         title: "Inject breakpoint on component",
         show: this.props.object.contentType === "array" && this.props.object.objectType === "hook",
         action: () =>
-          this.store.injectBreakpoint(this.props.object.name, this.store.activeComponent.path),
+          this.components.injectBreakpoint(this.props.object.name, this.components.activeComponent().path),
       },
       {
         title: "Inject conditional breakpoint on component",
@@ -86,9 +86,9 @@ export class ObjectTreeElement extends Component {
         action: () => {
           const condition = window.prompt("Enter the condition");
           if (condition) {
-            this.store.injectBreakpoint(
+            this.components.injectBreakpoint(
               this.props.object.name,
-              this.store.activeComponent.path,
+              this.components.activeComponent().path,
               false,
               condition
             );
@@ -102,9 +102,9 @@ export class ObjectTreeElement extends Component {
           this.props.object.objectType === "hook" &&
           !["mounted", "willStart"].includes(this.props.object.name),
         action: () =>
-          this.store.injectBreakpoint(
+          this.components.injectBreakpoint(
             this.props.object.name,
-            this.store.activeComponent.path,
+            this.components.activeComponent().path,
             true
           ),
       },
@@ -128,7 +128,7 @@ export class ObjectTreeElement extends Component {
   editObject(ev) {
     let value = ev.target.value;
     if (ev.keyCode === 13 && value !== "") {
-      this.store.editObjectTreeElement(this.props.object.path, value, this.props.object.objectType);
+      this.components.editObjectTreeElement(this.props.object.path, value, this.props.object.objectType);
       this.state.editMode = false;
     }
   }

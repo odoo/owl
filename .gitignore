@@ -29,8 +29,6 @@ node_modules
 # useful in some cases
 /temp
 
-# vitepress
-doc/.vitepress
 
 # owl-vision
 */owl-vision/out/

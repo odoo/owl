@@ -60,7 +60,7 @@
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
     "prettier": "^3.8.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.0",
     "vitepress": "^1.6.4",
     "vitest": "^4.1.4"
   },

@@ -6,7 +6,7 @@
   "compilerOptions": {
                                                                 // Main options
     "target": "ES2022",
-    "module": "es6",
+    "module": "es2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
                                                                 // Strict typechecking options
     "strict": true,
@@ -16,8 +16,9 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
                                                                 // Module resolution options
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "types": [
       "node"
     ],

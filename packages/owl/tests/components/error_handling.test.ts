@@ -360,7 +360,7 @@ describe("errors and promises", () => {
         onWillPatch(() => {
           throw new Error("boom");
         });
-        onError((e) => (error = e));
+        onError((e) => (error = e as Error));
       }
     }
 
@@ -382,7 +382,7 @@ describe("errors and promises", () => {
         onPatched(() => {
           throw new Error("boom");
         });
-        onError((e) => (error = e));
+        onError((e) => (error = e as Error));
       }
     }
 
@@ -423,7 +423,7 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-if="this.flag" t-out="this.will.crash"/></div>`;
       flag = false;
       setup() {
-        onError((cause) => (error = cause));
+        onError((cause) => (error = cause as Error));
       }
     }
 

@@ -164,7 +164,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.status = STATUS.CANCELLED;
     const children = this.children;
     for (let childKey in children) {
-      children[childKey]._cancel();
+      children[childKey]!._cancel();
     }
   }
 
@@ -184,7 +184,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       }
     }
     for (let childKey in this.children) {
-      this.children[childKey]._destroy();
+      this.children[childKey]!._destroy();
     }
     if (this.willDestroy.length) {
       try {
@@ -247,7 +247,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       // If the error was handled by some child component, we need to find it to
       // apply its change
       for (let k in this.children) {
-        const child = this.children[k];
+        const child = this.children[k]!;
         child.updateDom();
       }
     } else {

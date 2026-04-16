@@ -326,7 +326,7 @@ describe("hooks", () => {
     await mount(MyComponent, fixture);
 
     expect(fixture.innerHTML).toBe("<span>0</span>");
-    const span = fixture.getElementsByTagName("span")[0];
+    const span = fixture.getElementsByTagName("span")[0]!;
     span.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>1</span>");

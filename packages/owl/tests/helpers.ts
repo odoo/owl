@@ -211,7 +211,7 @@ export function useLogLifecycle(
 
 export function children(w: Component): Component[] {
   const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+  return Object.keys(childrenMap).map((id) => childrenMap[id]!.component);
 }
 
 export function isDirectChildOf(child: Component, parent: Component): boolean {

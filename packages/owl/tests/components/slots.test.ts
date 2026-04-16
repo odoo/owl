@@ -619,7 +619,7 @@ describe("slots", () => {
     );
 
     // test updateprops here
-    app.state.users[1].name = "Mathieu";
+    app.state.users[1]!.name = "Mathieu";
     await nextTick();
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
@@ -659,7 +659,7 @@ describe("slots", () => {
     );
 
     // test updateprops here
-    app.state.users[1].name = "Mathieu";
+    app.state.users[1]!.name = "Mathieu";
     await nextTick();
     expect(fixture.innerHTML).toBe(
       '<div><u><li><a href="/user/1">User Aaron</a></li><li><a href="/user/2">User Mathieu</a></li></u></div>'
@@ -858,7 +858,7 @@ describe("slots", () => {
     expect(parentChildren.length).toBe(1);
     expect(parentChildren[0]).toBeInstanceOf(Child);
 
-    const childrenChildren = children(parentChildren[0]);
+    const childrenChildren = children(parentChildren[0]!);
     expect(childrenChildren.length).toBe(1);
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
@@ -896,7 +896,7 @@ describe("slots", () => {
     expect(parentChildren.length).toBe(1);
     expect(parentChildren[0]).toBeInstanceOf(Child);
 
-    const childrenChildren = children(parentChildren[0]);
+    const childrenChildren = children(parentChildren[0]!);
     expect(childrenChildren.length).toBe(1);
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
@@ -1039,10 +1039,10 @@ describe("slots", () => {
 
     expect(parent).toBeInstanceOf(UsingTcallInSlotted);
     expect(children(parent).length).toBe(1);
-    const slotted = children(parent)[0];
+    const slotted = children(parent)[0]!;
     expect(slotted).toBeInstanceOf(Slotted);
     expect(children(slotted).length).toBe(1);
-    const child = children(slotted)[0];
+    const child = children(slotted)[0]!;
     expect(child).toBeInstanceOf(Child);
 
     expect(fixture.innerHTML).toBe(

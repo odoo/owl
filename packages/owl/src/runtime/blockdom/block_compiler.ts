@@ -62,7 +62,7 @@ const cache: { [key: string]: BlockType } = {};
  */
 export function createBlock(str: string): BlockType {
   if (str in cache) {
-    return cache[str];
+    return cache[str]!;
   }
 
   // step 0: prepare html base element
@@ -175,8 +175,8 @@ function buildTree(
         }
         const attrs = (node as Element).attributes;
         for (let i = 0; i < attrs.length; i++) {
-          const attrName = attrs[i].name;
-          const attrValue = attrs[i].value;
+          const attrName = attrs[i]!.name;
+          const attrValue = attrs[i]!.value;
           if (attrName.startsWith("block-handler-")) {
             const idx = parseInt(attrName.slice(14), 10);
             info.push({
@@ -211,7 +211,7 @@ function buildTree(
               idx: parseInt(attrValue, 10),
             });
           } else {
-            el.setAttribute(attrs[i].name, attrValue);
+            el.setAttribute(attrs[i]!.name, attrValue);
           }
         }
       }
@@ -227,7 +227,7 @@ function buildTree(
       };
 
       if (node.firstChild) {
-        const childNode = node.childNodes[0];
+        const childNode = node.childNodes[0]!;
         if (
           node.childNodes.length === 1 &&
           childNode.nodeType === Node.ELEMENT_NODE &&
@@ -566,15 +566,15 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       this.refs = refs;
       refs[0] = el;
       for (let i = 0; i < colN; i++) {
-        const packed = colPacked[i];
-        refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1].call(refs[(packed >> 15) & 0x7fff])!;
+        const packed = colPacked[i]!;
+        refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1]!.call(refs[(packed >> 15) & 0x7fff]!)!;
       }
 
       // applying data to all update points
       if (locN) {
         const data = this.data!;
         for (let i = 0; i < locN; i++) {
-          locSetters[i].call(refs[locRefIdxs[i]], data[i]);
+          locSetters[i]!.call(refs[locRefIdxs[i]!], data[i]);
         }
       }
 
@@ -584,9 +584,9 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         for (let i = 0; i < childN; i++) {
           const child = children![i];
           if (child) {
-            const info = childInfos[i];
+            const info = childInfos[i]!;
             const afterRefIdx = (info >> 16) & 0x7fff;
-            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
+            const afterNode = afterRefIdx ? refs[afterRefIdx]! : null;
             child.isOnlyChild = !!(info & (1 << 15));
             child.mount(refs[info & 0x7fff] as any, afterNode);
           }
@@ -602,7 +602,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         const refs = this.refs!;
         for (let cbRef of cbRefs) {
           const fn = data[cbRef];
-          fn(refs[locRefIdxs[cbRef]], null);
+          fn(refs[locRefIdxs[cbRef]!], null);
         }
       }
     };
@@ -620,7 +620,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
           const val1 = data1[i];
           const val2 = data2[i];
           if (val1 !== val2) {
-            locUpdaters[i].call(refs[locRefIdxs[i]], val2, val1);
+            locUpdaters[i]!.call(refs[locRefIdxs[i]!], val2, val1);
           }
         }
         this.data = data2;
@@ -644,9 +644,9 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
               children1![i] = undefined;
             }
           } else if (child2) {
-            const info = childInfos[i];
+            const info = childInfos[i]!;
             const afterRefIdx = (info >> 16) & 0x7fff;
-            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
+            const afterNode = afterRefIdx ? refs[afterRefIdx]! : null;
             child2.mount(refs[info & 0x7fff] as any, afterNode);
             children1![i] = child2;
           }
@@ -660,7 +660,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         const refs = this.refs!;
         for (let cbRef of cbRefs) {
           const fn = data[cbRef];
-          fn(null, refs[locRefIdxs[cbRef]]);
+          fn(null, refs[locRefIdxs[cbRef]!]);
         }
       }
 

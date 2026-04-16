@@ -85,8 +85,8 @@ describe("t-on", () => {
     );
     expect(comp.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll("button");
-    buttons[0].click();
-    buttons[1].click();
+    buttons[0]!.click();
+    buttons[1]!.click();
     expect(comp.otherState.vals).toStrictEqual(["a", "b"]);
   });
 
@@ -111,8 +111,8 @@ describe("t-on", () => {
     );
     expect(comp.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll("button");
-    buttons[0].click();
-    buttons[1].click();
+    buttons[0]!.click();
+    buttons[1]!.click();
     expect(comp.otherState.vals).toStrictEqual(["a_nova_0_1", "b_nova_0_1"]);
   });
 
@@ -138,8 +138,8 @@ describe("t-on", () => {
     );
     expect(comp.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll("button");
-    buttons[0].click();
-    buttons[1].click();
+    buttons[0]!.click();
+    buttons[1]!.click();
     expect(comp.otherState.vals).toStrictEqual(["a", "b"]);
   });
 
@@ -163,8 +163,8 @@ describe("t-on", () => {
     );
     expect(comp.otherState.vals).toStrictEqual([]);
     const buttons = fixture.querySelectorAll("button");
-    buttons[0].click();
-    buttons[1].click();
+    buttons[0]!.click();
+    buttons[1]!.click();
     expect(comp.otherState.vals).toStrictEqual(["2_2", "2_2"]);
   });
 
@@ -370,15 +370,15 @@ describe("t-on", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>John</div><div>Raoul</div><div>Gérald</div>");
     expect([]).toBeLogged();
-    fixture.querySelectorAll("div")[0].click();
+    fixture.querySelectorAll("div")[0]!.click();
     await nextTick();
     expect(["John"]).toBeLogged();
 
-    fixture.querySelectorAll("div")[1].click();
+    fixture.querySelectorAll("div")[1]!.click();
     await nextTick();
     expect(["Raoul"]).toBeLogged();
 
-    fixture.querySelectorAll("div")[2].click();
+    fixture.querySelectorAll("div")[2]!.click();
     await nextTick();
     expect(["Gérald"]).toBeLogged();
   });
@@ -404,7 +404,7 @@ describe("t-on", () => {
     expect(fixture.innerHTML).toBe("<div>aaron</div>");
     expect([]).toBeLogged();
 
-    fixture.querySelectorAll("div")[0].click();
+    fixture.querySelectorAll("div")[0]!.click();
     await nextTick();
     expect(["aaron"]).toBeLogged();
 
@@ -412,7 +412,7 @@ describe("t-on", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>lucas</div>");
 
-    fixture.querySelectorAll("div")[0].click();
+    fixture.querySelectorAll("div")[0]!.click();
     await nextTick();
     expect(["lucas"]).toBeLogged();
   });

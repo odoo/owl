@@ -10,13 +10,13 @@ interface EventHandlerCreator {
 }
 
 export function createEventHandler(rawEvent: string): EventHandlerCreator {
-  const eventName = rawEvent.split(".")[0];
+  const eventName = rawEvent.split(".")[0]!;
   const capture = rawEvent.includes(".capture");
   const passive = rawEvent.includes(".passive");
   if (rawEvent.includes(".synthetic")) {
     return createSyntheticHandler(eventName, capture, passive);
   } else {
-    return createElementHandler(eventName, capture, passive);
+    return createElementHandler(eventName!, capture, passive);
   }
 }
 

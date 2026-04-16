@@ -12,7 +12,7 @@ export function parseXML(xml: string): XMLDocument {
   const doc = parser.parseFromString(xml, "text/xml");
   if (doc.getElementsByTagName("parsererror").length) {
     let msg = "Invalid XML in template.";
-    const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
+    const parsererrorText = doc.getElementsByTagName("parsererror")[0]!.textContent;
     if (parsererrorText) {
       msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
       const re = /\d+/g;

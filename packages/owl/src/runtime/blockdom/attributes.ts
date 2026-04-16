@@ -121,7 +121,7 @@ function toClassObj(expr: string | number | { [c: string]: any }) {
       }
       let words = split.call(str, wordRegexp);
       for (let i = 0, l = words.length; i < l; i++) {
-        result[words[i]] = true;
+        result[words[i]!] = true;
       }
       return result;
     case "object":
@@ -159,7 +159,7 @@ const CSS_PROP_CACHE: { [key: string]: string } = {};
 
 function toKebabCase(prop: string): string {
   if (prop in CSS_PROP_CACHE) {
-    return CSS_PROP_CACHE[prop];
+    return CSS_PROP_CACHE[prop]!;
   }
   const result = prop.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
   CSS_PROP_CACHE[prop] = result;

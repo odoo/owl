@@ -28,10 +28,10 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
       parent.insertBefore(this.afterNode, afterNode);
       this.wrapHandlerData();
       for (let name in eventsSpec) {
-        const index = eventsSpec[name];
+        const index = eventsSpec[name]!;
         const handler = createEventHandler(name);
         this.handlerFns[index] = handler;
-        handler.setup.call(parent, this.handlerData[index]);
+        handler.setup.call(parent, this.handlerData[index]!);
       }
     }
 

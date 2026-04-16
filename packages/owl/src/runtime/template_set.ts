@@ -40,7 +40,7 @@ export class TemplateSet {
         this.addTemplates(config.templates);
       } else {
         for (const name in config.templates) {
-          this.addTemplate(name, config.templates[name]);
+          this.addTemplate(name, config.templates[name]!);
         }
       }
     }
@@ -56,7 +56,7 @@ export class TemplateSet {
       if (!this.dev) {
         return;
       }
-      const rawTemplate = this.rawTemplates[name];
+      const rawTemplate = this.rawTemplates[name]!;
       const currentAsString =
         typeof rawTemplate === "string"
           ? rawTemplate
@@ -102,12 +102,12 @@ export class TemplateSet {
       // recursive call to the template name
       const templates = this.templates;
       this.templates[cacheKey] = function (context, parent) {
-        return templates[cacheKey].call(this, context, parent);
+        return templates[cacheKey]!.call(this, context, parent);
       };
       const template = templateFn(this, bdom, this.runtimeUtils);
       this.templates[cacheKey] = template;
     }
-    return this.templates[cacheKey];
+    return this.templates[cacheKey]!;
   }
 
   private _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {

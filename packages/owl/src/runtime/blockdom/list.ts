@@ -1,6 +1,6 @@
 import type { VNode } from "./index";
 
-const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
+const getDescriptor = (o: object, p: string) => Object.getOwnPropertyDescriptor(o, p)!;
 let nodeInsertBefore: typeof Node.prototype.insertBefore;
 let nodeAppendChild: typeof Node.prototype.appendChild;
 let nodeRemoveChild: typeof Node.prototype.removeChild;
@@ -34,7 +34,7 @@ class VList {
     nodeInsertBefore.call(parent, _anchor, afterNode);
     const l = children.length;
     if (l) {
-      const mount = children[0].mount;
+      const mount = children[0]!.mount;
       for (let i = 0; i < l; i++) {
         mount.call(children[i], parent, _anchor);
       }
@@ -47,7 +47,7 @@ class VList {
     this.parentEl = parent;
     const children = this.children;
     for (let i = 0, l = children.length; i < l; i++) {
-      children[i].moveBeforeDOMNode(node, parent);
+      children[i]!.moveBeforeDOMNode(node, parent);
     }
     parent!.insertBefore(this.anchor!, node);
   }
@@ -59,7 +59,7 @@ class VList {
     }
     const children = this.children;
     for (let i = 0, l = children.length; i < l; i++) {
-      children[i].moveBeforeVNode(null, afterNode);
+      children[i]!.moveBeforeVNode(null, afterNode);
     }
     this.parentEl!.insertBefore(this.anchor!, afterNode);
   }
@@ -74,7 +74,7 @@ class VList {
       return;
     }
     this.children = ch2;
-    const proto = ch2[0] || ch1[0];
+    const proto = (ch2[0] || ch1[0])!;
     const {
       mount: cMount,
       patch: cPatch,
@@ -110,7 +110,7 @@ class VList {
     let endVn1 = ch1[endIdx1];
     let endVn2 = ch2[endIdx2];
 
-    let mapping: any = undefined;
+    let mapping: Record<string, number> | undefined = undefined;
 
     while (startIdx1 <= endIdx1 && startIdx2 <= endIdx2) {
       // -------------------------------------------------------------------
@@ -124,21 +124,21 @@ class VList {
         continue;
       }
       // -------------------------------------------------------------------
-      let startKey1 = startVn1.key;
-      let startKey2 = startVn2.key;
+      let startKey1 = startVn1!.key;
+      let startKey2 = startVn2!.key;
       if (startKey1 === startKey2) {
         cPatch.call(startVn1, startVn2, withBeforeRemove);
-        ch2[startIdx2] = startVn1;
+        ch2[startIdx2] = startVn1!;
         startVn1 = ch1[++startIdx1];
         startVn2 = ch2[++startIdx2];
         continue;
       }
       // -------------------------------------------------------------------
-      let endKey1 = endVn1.key;
-      let endKey2 = endVn2.key;
+      let endKey1 = endVn1!.key;
+      let endKey2 = endVn2!.key;
       if (endKey1 === endKey2) {
         cPatch.call(endVn1, endVn2, withBeforeRemove);
-        ch2[endIdx2] = endVn1;
+        ch2[endIdx2] = endVn1!;
         endVn1 = ch1[--endIdx1];
         endVn2 = ch2[--endIdx2];
         continue;
@@ -147,7 +147,7 @@ class VList {
       if (startKey1 === endKey2) {
         // bnode moved right
         cPatch.call(startVn1, endVn2, withBeforeRemove);
-        ch2[endIdx2] = startVn1;
+        ch2[endIdx2] = startVn1!;
         const nextChild = ch2[endIdx2 + 1];
         cMoveBefore.call(startVn1, nextChild, _anchor);
         startVn1 = ch1[++startIdx1];
@@ -158,7 +158,7 @@ class VList {
       if (endKey1 === startKey2) {
         // bnode moved left
         cPatch.call(endVn1, startVn2, withBeforeRemove);
-        ch2[startIdx2] = endVn1;
+        ch2[startIdx2] = endVn1!;
         const nextChild = ch1[startIdx1];
         cMoveBefore.call(endVn1, nextChild, _anchor);
         endVn1 = ch1[--endIdx1];
@@ -171,7 +171,7 @@ class VList {
       if (idxInOld === undefined) {
         cMount.call(startVn2, parent, cFirstNode.call(startVn1) || null);
       } else {
-        const elmToMove = ch1[idxInOld];
+        const elmToMove = ch1[idxInOld]!;
         cMoveBefore.call(elmToMove, startVn1, null);
         cPatch.call(elmToMove, startVn2, withBeforeRemove);
         ch2[startIdx2] = elmToMove;
@@ -205,7 +205,7 @@ class VList {
     const children = this.children;
     const l = children.length;
     if (l) {
-      const beforeRemove = children[0].beforeRemove;
+      const beforeRemove = children[0]!.beforeRemove;
       for (let i = 0; i < l; i++) {
         beforeRemove.call(children[i]);
       }
@@ -220,7 +220,7 @@ class VList {
       const children = this.children;
       const l = children.length;
       if (l) {
-        const remove = children[0].remove;
+        const remove = children[0]!.remove;
         for (let i = 0; i < l; i++) {
           remove.call(children[i]);
         }
@@ -243,10 +243,10 @@ export function list(children: VNode[]): VNode<VList> {
   return new VList(children);
 }
 
-function createMapping(ch1: any[], startIdx1: number, endIdx2: number): { [key: string]: any } {
-  let mapping: any = {};
+function createMapping(ch1: (VNode | null)[], startIdx1: number, endIdx2: number): Record<string, number> {
+  let mapping: Record<string, number> = {};
   for (let i = startIdx1; i <= endIdx2; i++) {
-    mapping[ch1[i].key] = i;
+    mapping[ch1[i]!.key] = i;
   }
   return mapping;
 }

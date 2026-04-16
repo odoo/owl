@@ -291,7 +291,7 @@ function parseTCustom(node: Element, ctx: ParsingContext): AST | null {
       throw new OwlError("Missing custom directive name with t-custom directive");
     }
     if (attr.startsWith("t-custom-")) {
-      const directiveName = attr.split(".")[0].slice(9);
+      const directiveName = attr.split(".")[0]!.slice(9);
       const customDirective = ctx.customDirectives[directiveName];
       if (!customDirective) {
         throw new OwlError(`Custom directive "${directiveName}" is not defined`);
@@ -704,7 +704,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     );
   }
 
-  if (!(firstLetter === firstLetter.toUpperCase() || isDynamic)) {
+  if (!(firstLetter === firstLetter!.toUpperCase() || isDynamic)) {
     return null;
   }
   if (isDynamic) {
@@ -760,7 +760,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       let el = slotNode.parentElement!;
       let isInSubComponent = false;
       while (el && el !== clone) {
-        if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0].toUpperCase()) {
+        if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0]!.toUpperCase()) {
           isInSubComponent = true;
           break;
         }
@@ -960,7 +960,7 @@ function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
     case 0:
       return null;
     case 1:
-      return children[0];
+      return children[0]!;
     default:
       return makeASTMulti(children);
   }
@@ -977,10 +977,10 @@ function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
 function normalizeTIf(el: Element) {
   let tbranch = el.querySelectorAll("[t-elif], [t-else]");
   for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
-    let node = tbranch[i];
+    let node = tbranch[i]!;
     let prevElem = node.previousElementSibling!;
     let pattr = (name: string) => prevElem.getAttribute(name);
-    let nattr = (name: string) => +!!node.getAttribute(name);
+    let nattr = (name: string) => +!!node!.getAttribute(name);
     if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
       if (pattr("t-foreach")) {
         throw new OwlError(
@@ -1021,7 +1021,7 @@ function normalizeTIf(el: Element) {
  */
 function normalizeTOut(el: Element) {
   const elements = [...el.querySelectorAll(`[t-out]`)].filter(
-    (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
+    (el) => el.tagName[0] === el.tagName[0]!.toUpperCase() || el.hasAttribute("t-component")
   );
   for (const el of elements) {
     if (el.childNodes.length) {

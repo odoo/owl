@@ -52,7 +52,7 @@ export function handleError(params: ErrorParams) {
       // execute in the opposite order
       for (let i = errorHandlers.length - 1; i >= 0; i--) {
         try {
-          errorHandlers[i](error, finalize);
+          errorHandlers[i]!(error, finalize);
           return; // handled
         } catch (e) {
           error = e;

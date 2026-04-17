@@ -13,7 +13,7 @@ import {
   toggler,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
-export { Resource, useResource } from "./resource";
+export { Resource } from "./resource";
 export { Registry } from "./registry";
 
 config.shouldNormalizeDom = false;

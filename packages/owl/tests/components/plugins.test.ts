@@ -15,7 +15,6 @@ import {
   types as t,
   useApp,
   useEffect,
-  useResource,
   xml,
 } from "../../src";
 import {
@@ -352,7 +351,7 @@ test("components can register resources", async () => {
 
     a = plugin(PluginA);
     setup() {
-      useResource(this.a.colors, ["from lvl 2"]);
+      this.a.colors.use("from lvl 2");
       expect(this.a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
     }
   }
@@ -363,7 +362,7 @@ test("components can register resources", async () => {
 
     setup() {
       const a = plugin(PluginA);
-      useResource(a.colors, ["from lvl 1"]);
+      a.colors.use("from lvl 1");
       expect(a.colors.items()).toEqual(["from lvl 1"]);
     }
   }

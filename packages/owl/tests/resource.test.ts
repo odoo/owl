@@ -1,5 +1,5 @@
-import { effect, types as t } from "../src";
-import { Resource } from "../src/runtime/resource";
+import { App, effect, Plugin, Resource, types as t } from "../src";
+import { PluginManager } from "../src/runtime/plugin_manager";
 import { waitScheduler } from "./helpers";
 
 test("can add and get values", () => {
@@ -90,4 +90,97 @@ test("validation schema, with a class", async () => {
   expect(() => {
     resource.add(new B());
   }).toThrow("Resource item does not match the type");
+});
+
+describe("use()", () => {
+  test("throws when called outside a component/plugin context", () => {
+    const resource = new Resource<string>();
+    expect(() => resource.use("red")).toThrow("No active context");
+  });
+
+  test("does not mutate when called outside a context", () => {
+    const resource = new Resource<string>();
+    expect(() => resource.use("red")).toThrow();
+    expect(resource.has("red")).toBe(false);
+    expect(resource.items()).toEqual([]);
+  });
+
+  test("adds within plugin setup and removes on plugin destroy", () => {
+    const shared = new Resource<string>();
+
+    class A extends Plugin {
+      setup() {
+        shared.use("red");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A]);
+    expect(shared.items()).toEqual(["red"]);
+
+    manager.destroy();
+    expect(shared.items()).toEqual([]);
+  });
+
+  test("is chainable", () => {
+    const shared = new Resource<string>();
+
+    class A extends Plugin {
+      setup() {
+        shared.use("a").use("b").use("c");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A]);
+    expect(shared.items()).toEqual(["a", "b", "c"]);
+
+    manager.destroy();
+    expect(shared.items()).toEqual([]);
+  });
+
+  test("respects sequence option", () => {
+    const shared = new Resource<string>();
+
+    class A extends Plugin {
+      setup() {
+        shared.use("a", { sequence: 100 });
+        shared.use("b", { sequence: 10 });
+        shared.use("c");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A]);
+    expect(shared.items()).toEqual(["b", "c", "a"]);
+  });
+
+  test("only items from destroyed scope are removed", () => {
+    const shared = new Resource<string>();
+
+    class A extends Plugin {
+      setup() {
+        shared.use("a");
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        shared.use("b");
+      }
+    }
+
+    const app = new App();
+    const parent = new PluginManager(app);
+    parent.startPlugins([A]);
+
+    const child = new PluginManager(app, { parent });
+    child.startPlugins([B]);
+    expect(shared.items()).toEqual(["a", "b"]);
+
+    child.destroy();
+    expect(shared.items()).toEqual(["a"]);
+
+    parent.destroy();
+    expect(shared.items()).toEqual([]);
+  });
 });

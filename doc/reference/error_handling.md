@@ -68,3 +68,42 @@ Using the `ErrorBoundary` is then simple simple:
 Note that we need to be careful here: the fallback UI should not throw any
 error, otherwise we risk going into an infinite loop (also, see the page on
 [slots](slots.md) for more information on slots).
+
+## OwlError
+
+Errors raised by Owl itself are instances of `OwlError`, a small subclass
+of the built-in `Error` that is exported from the main entry point:
+
+```js
+import { OwlError } from "@odoo/owl";
+```
+
+Use it to distinguish framework errors from errors thrown by application
+code or the JavaScript engine inside an `onError` handler:
+
+```js
+onError((error) => {
+  if (error instanceof OwlError) {
+    // error originated from Owl (invalid template, missing registry key,
+    // failed validation, lifecycle misuse, ...)
+  } else {
+    // error from user code or the runtime (TypeError, custom errors, ...)
+  }
+});
+```
+
+When an unhandled error bubbles out of the rendering cycle, Owl wraps it
+in a new `OwlError` and stores the original on the `.cause` field:
+
+```js
+onError((error) => {
+  // error.message: "[Owl] Unhandled error. Destroying the root component"
+  // error.cause:   the original error that triggered the failure
+  console.error(error.cause ?? error);
+});
+```
+
+`OwlError` is a plain `Error` subclass — `.message`, `.stack`, and all the
+usual tooling work as expected. Owl does not attach numeric error codes;
+identification is either through `instanceof OwlError` or by reading the
+`.message` string.

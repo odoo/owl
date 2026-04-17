@@ -241,10 +241,13 @@ function createComponent<P extends Record<string, any>>(
         if (node.patched.length) parentRoot.patched.push(fiber);
         let promises: Promise<any>[] | undefined;
         if (hooks.length) {
-          props = Object.assign({}, props) as P;
-          for (const k in node.defaultProps) {
-            if ((props as any)[k] === undefined) {
-              (props as any)[k] = node.defaultProps[k];
+          const defaultProps = node.defaultProps;
+          if (defaultProps) {
+            props = Object.assign({}, props) as P;
+            for (const k in defaultProps) {
+              if ((props as any)[k] === undefined) {
+                (props as any)[k] = defaultProps[k];
+              }
             }
           }
           const component = node.component;

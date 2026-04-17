@@ -48,7 +48,9 @@ export function props<Shape extends {}, Defaults>(
 ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
 export function props(type?: any, defaults?: any): Props<{}> {
   const { node, app, componentName } = getContext("component");
-  Object.assign(node.defaultProps, defaults);
+  if (defaults) {
+    node.defaultProps = Object.assign(node.defaultProps || {}, defaults);
+  }
 
   function getProp(key: string) {
     if (node.props[key] === undefined && defaults) {

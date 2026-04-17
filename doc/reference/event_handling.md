@@ -41,6 +41,7 @@ specified as additional suffixes of the `t-on` directive.
 | `.self`      | calls the method only if the `event.target` is the element itself                                                        |
 | `.capture`   | bind the event handler in [capture](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) mode. |
 | `.synthetic` | define a synthetic event handler (see below)                                                                             |
+| `.passive`   | bind the handler with the [`passive`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#passive) option, hinting to the browser that the handler will never call `preventDefault()`. Useful for `scroll` and `touch*` events. |
 
 ```xml
 <button t-on-click.stop="this.someMethod">Do something</button>
@@ -50,6 +51,9 @@ Note that modifiers can be combined (ex: `t-on-click.stop.prevent`), and that
 the order may matter. For instance `t-on-click.prevent.self` will prevent all
 clicks while `t-on-click.self.prevent` will only prevent clicks on the element
 itself.
+
+Combining `.passive` with `.prevent` is contradictory: the browser will ignore
+`preventDefault()` calls in a passive listener and log a console warning.
 
 Finally, empty handlers are tolerated as they could be defined only to apply
 modifiers. For example,

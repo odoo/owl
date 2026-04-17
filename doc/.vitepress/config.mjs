@@ -61,6 +61,7 @@ export default defineConfig({
           { text: "Refs", link: "/reference/refs" },
           { text: "Registries", link: "/reference/registries" },
           { text: "Resources", link: "/reference/resources" },
+          { text: "Scope", link: "/reference/scope" },
           { text: "Slots", link: "/reference/slots" },
           { text: "Template Syntax", link: "/reference/template_syntax" },
           { text: "Translations", link: "/reference/translations" },

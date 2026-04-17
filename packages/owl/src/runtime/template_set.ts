@@ -2,8 +2,9 @@ import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
 import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
 import { createBlock, html, list, multi, text, toggler } from "./blockdom";
-import { getContext } from "./context";
 import { helpers } from "./rendering/template_helpers";
+import { ComponentNode } from "./component_node";
+import { getScope } from "./scope";
 
 const bdom = { text, createBlock, list, multi, html, toggler };
 
@@ -90,10 +91,10 @@ export class TemplateSet {
       const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
         let extraInfo = "";
-        try {
-          const { componentName } = getContext("component");
-          extraInfo = ` (for component "${componentName}")`;
-        } catch {}
+        const scope = getScope();
+        if (scope instanceof ComponentNode) {
+          extraInfo = ` (for component "${scope.componentName}")`;
+        }
         throw new OwlError(`Missing template: "${name}"${extraInfo}`);
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);

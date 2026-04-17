@@ -341,7 +341,7 @@ describe("basic features", () => {
 
   test("plugin fn cannot be called outside Plugin and Component", () => {
     class A extends Plugin {}
-    expect(() => plugin(A)).toThrow(`No active context`);
+    expect(() => plugin(A)).toThrow(`No active scope`);
   });
 
   test("plugin lifecycle", () => {

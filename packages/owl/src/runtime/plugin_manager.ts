@@ -1,9 +1,9 @@
 import { OwlError } from "../common/owl_error";
-import { App } from "./app";
-import { contextStack } from "./context";
-import { ComputationAtom, disposeComputation, untrack } from "./reactivity/computations";
+import type { App } from "./app";
+import { untrack } from "./reactivity/computations";
 import { effect } from "./reactivity/effect";
 import { Resource } from "./resource";
+import { Scope, scopeStack } from "./scope";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {
@@ -34,21 +34,17 @@ interface PluginManagerOptions {
   config?: Record<string, any>;
 }
 
-export class PluginManager {
-  app: App;
+export class PluginManager extends Scope {
   config: Record<string, any>;
-  onDestroyCb: Function[] = [];
-  computations: ComputationAtom[] = [];
   plugins: Record<string, Plugin>;
-  status: STATUS = STATUS.NEW;
 
   constructor(app: App, options: PluginManagerOptions = {}) {
-    this.app = app;
+    super(app);
     this.config = options.config ?? {};
 
     if (options.parent) {
       const parent = options.parent;
-      parent.onDestroyCb.push(() => this.destroy());
+      parent.onDestroy(() => this.destroy());
       this.plugins = Object.create(parent.plugins);
     } else {
       this.plugins = {};
@@ -56,14 +52,7 @@ export class PluginManager {
   }
 
   destroy() {
-    const cbs = this.onDestroyCb;
-    while (cbs.length) {
-      cbs.pop()!();
-    }
-    for (const computation of this.computations) {
-      disposeComputation(computation);
-    }
-    this.status = STATUS.DESTROYED;
+    this.finalize((e) => console.error(e));
   }
 
   getPluginById<T extends Plugin>(id: string): T | null {
@@ -96,23 +85,14 @@ export class PluginManager {
   }
 
   startPlugins(pluginConstructors: PluginConstructor[]): void {
-    contextStack.push({
-      type: "plugin",
-      app: this.app,
-      manager: this,
-      get status() {
-        return this.manager.status;
-      },
-    });
-
+    scopeStack.push(this);
     try {
       for (const pluginConstructor of pluginConstructors) {
         this.startPlugin(pluginConstructor);
       }
     } finally {
-      contextStack.pop();
+      scopeStack.pop();
     }
-
     this.status = STATUS.MOUNTED;
   }
 }
@@ -124,7 +104,7 @@ export function startPlugins(
   if (Array.isArray(plugins)) {
     manager.startPlugins(plugins);
   } else {
-    manager.onDestroyCb.push(
+    manager.onDestroy(
       effect(() => {
         const pluginItems = plugins.items();
         untrack(() => manager.startPlugins(pluginItems));

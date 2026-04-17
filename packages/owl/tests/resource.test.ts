@@ -95,7 +95,7 @@ test("validation schema, with a class", async () => {
 describe("use()", () => {
   test("throws when called outside a component/plugin context", () => {
     const resource = new Resource<string>();
-    expect(() => resource.use("red")).toThrow("No active context");
+    expect(() => resource.use("red")).toThrow("No active scope");
   });
 
   test("does not mutate when called outside a context", () => {

@@ -163,7 +163,7 @@ describe("registry", () => {
   describe("use()", () => {
     test("throws when called outside a component/plugin context", () => {
       const registry = new Registry<string>();
-      expect(() => registry.use("key", "value")).toThrow("No active context");
+      expect(() => registry.use("key", "value")).toThrow("No active scope");
     });
 
     test("does not mutate when called outside a context", () => {

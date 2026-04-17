@@ -1,7 +1,6 @@
 import { version } from "../version";
 import { ComponentConstructor } from "./component";
 import { ComponentNode } from "./component_node";
-import { saveContext } from "./context";
 import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager";
 import { GetProps } from "./props";
 import { proxy, toRaw } from "./reactivity/proxy";
@@ -96,7 +95,6 @@ export class App extends TemplateSet {
       resolve = res;
       reject = rej;
     });
-    const restore = saveContext();
     let node: ComponentNode;
     let error: any = null;
     try {
@@ -104,8 +102,6 @@ export class App extends TemplateSet {
     } catch (e) {
       error = e;
       reject(e);
-    } finally {
-      restore();
     }
 
     const root = {

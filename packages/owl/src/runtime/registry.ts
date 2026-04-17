@@ -1,9 +1,9 @@
 import { OwlError } from "../common/owl_error";
-import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
 import { ResourceAddOptions } from "./resource";
+import { useScope } from "./scope";
 import { assertType } from "./validation";
 
 interface RegistryOptions<T> {
@@ -72,7 +72,7 @@ export class Registry<T> {
   }
 
   use(key: string, value: T, options: RegistryAddOptions = {}): Registry<T> {
-    getContext();
+    useScope();
     this.add(key, value, options);
     onWillDestroy(() => {
       if (this._map()[key]?.[1] === value) {

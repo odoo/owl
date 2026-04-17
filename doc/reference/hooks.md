@@ -135,6 +135,25 @@ setup() {
 }
 ```
 
+### `useScope`
+
+The `useScope` hook returns the current [`Scope`](scope.md) — the lifetime
+handle for the current component or plugin. It is the primary entry point for
+async cancellation (via `scope.abortSignal` or `scope.until`) and for capturing the
+current scope to run code in it later.
+
+```js
+setup() {
+  const scope = useScope();
+  onWillStart(async () => {
+    const data = await scope.until(fetchData());
+    this.data = data;
+  });
+}
+```
+
+See the [Scope page](scope.md) for full details.
+
 ## Example: mouse position
 
 Here is the classical example of a non trivial hook to track the mouse position.

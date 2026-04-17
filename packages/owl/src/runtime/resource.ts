@@ -1,7 +1,7 @@
-import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
+import { useScope } from "./scope";
 import { assertType } from "./validation";
 
 interface ResourceOptions<T> {
@@ -49,7 +49,7 @@ export class Resource<T> {
   }
 
   use(item: T, options: ResourceAddOptions = {}): Resource<T> {
-    getContext();
+    useScope();
     this.add(item, options);
     onWillDestroy(() => this.delete(item));
     return this;

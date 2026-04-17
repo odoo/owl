@@ -522,9 +522,9 @@ test("update a sub-component twice in the same frame", async () => {
     ]
   `);
 
-  defs[0].resolve();
+  defs[0]!.resolve();
   await Promise.resolve();
-  defs[1].resolve();
+  defs[1]!.resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -917,7 +917,7 @@ test("concurrent renderings scenario 2", async () => {
     ]
   `);
 
-  defs[1].resolve(); // resolve rendering initiated in B
+  defs[1]!.resolve(); // resolve rendering initiated in B
   await nextTick();
   expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -931,7 +931,7 @@ test("concurrent renderings scenario 2", async () => {
     ]
   `);
 
-  defs[0].resolve(); // resolve rendering initiated in A
+  defs[0]!.resolve(); // resolve rendering initiated in A
   await nextTick();
   expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
@@ -1008,12 +1008,12 @@ test("concurrent renderings scenario 2bis", async () => {
     ]
   `);
 
-  defs[0].resolve(); // resolve rendering initiated in A
+  defs[0]!.resolve(); // resolve rendering initiated in A
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>"); // TODO: is this what we want?? 2b could be ok too
   expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
-  defs[1].resolve(); // resolve rendering initiated in B
+  defs[1]!.resolve(); // resolve rendering initiated in B
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -1124,7 +1124,7 @@ test("concurrent renderings scenario 3", async () => {
     ]
   `);
 
-  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
+  defsD[0]!.resolve(); // resolve rendering initiated in C (should be ignored)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -1237,13 +1237,13 @@ test("concurrent renderings scenario 4", async () => {
     ]
   `);
 
-  defsD[1].resolve(); // completely resolve rendering initiated in A
+  defsD[1]!.resolve(); // completely resolve rendering initiated in A
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
   expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
-  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
+  defsD[0]!.resolve(); // resolve rendering initiated in C (should be ignored)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
   expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(2);
@@ -1319,13 +1319,13 @@ test("concurrent renderings scenario 5", async () => {
     ]
   `);
 
-  defsB[0].resolve(); // resolve first re-rendering (should be ignored)
+  defsB[0]!.resolve(); // resolve first re-rendering (should be ignored)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(ComponentB.prototype.someValue).toHaveBeenCalledTimes(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
-  defsB[1].resolve(); // resolve second re-rendering
+  defsB[1]!.resolve(); // resolve second re-rendering
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
   expect(ComponentB.prototype.someValue).toHaveBeenCalledTimes(2);
@@ -1398,7 +1398,7 @@ test("concurrent renderings scenario 6", async () => {
     ]
   `);
 
-  defsB[1].resolve(); // resolve second re-rendering
+  defsB[1]!.resolve(); // resolve second re-rendering
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
   expect(ComponentB.prototype.someValue).toHaveBeenCalledTimes(2);
@@ -1411,7 +1411,7 @@ test("concurrent renderings scenario 6", async () => {
     ]
   `);
 
-  defsB[0].resolve(); // resolve first re-rendering (should be ignored)
+  defsB[0]!.resolve(); // resolve first re-rendering (should be ignored)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
   expect(ComponentB.prototype.someValue).toHaveBeenCalledTimes(2);

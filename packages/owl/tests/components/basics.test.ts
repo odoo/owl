@@ -431,7 +431,7 @@ describe("basics", () => {
 
     await mount(Counter, fixture);
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
-    const button = fixture.getElementsByTagName("button")[0];
+    const button = fixture.getElementsByTagName("button")[0]!;
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
@@ -451,7 +451,7 @@ describe("basics", () => {
       static components = { Counter };
     }
     const parent = await mount(Parent, fixture);
-    const button = fixture.getElementsByTagName("button")[0];
+    const button = fixture.getElementsByTagName("button")[0]!;
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
@@ -752,12 +752,12 @@ describe("basics", () => {
       state = proxy({ flag: false });
     }
     const parent = await mount(Parent, fixture);
-    const child = Object.values(parent.__owl__.children)[0].component as any;
+    const child = Object.values(parent.__owl__.children)[0]!.component as any;
     expect(fixture.innerHTML).toBe(`<div><h2>noo</h2><span><span>child</span></span></div>`);
 
     parent.state.flag = true;
     await nextTick();
-    expect(Object.values(parent.__owl__.children)[0].component).toBe(child);
+    expect(Object.values(parent.__owl__.children)[0]!.component).toBe(child);
     expect(status(child)).toBe("mounted");
     expect(fixture.innerHTML).toBe(
       `<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`

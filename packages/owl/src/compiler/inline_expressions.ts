@@ -129,8 +129,8 @@ let tokenizeNumber: Tokenizer = function (expr) {
   let s = expr[0];
   if (s && s.match(/[0-9]/)) {
     let i = 1;
-    while (expr[i] && expr[i].match(/[0-9]|\./)) {
-      s += expr[i];
+    while (expr[i] && expr[i]!.match(/[0-9]|\./)) {
+      s += expr[i]!
       i++;
     }
     return { type: "VALUE", value: s };
@@ -143,12 +143,12 @@ let tokenizeSymbol: Tokenizer = function (expr) {
   let s = expr[0];
   if (s && s.match(/[a-zA-Z_\$]/)) {
     let i = 1;
-    while (expr[i] && expr[i].match(/[\w\$]/)) {
-      s += expr[i];
+    while (expr[i] && expr[i]!.match(/[\w\$]/)) {
+      s += expr[i]!
       i++;
     }
     if (s in WORD_REPLACEMENT) {
-      return { type: "OPERATOR", value: WORD_REPLACEMENT[s], size: s.length };
+      return { type: "OPERATOR", value: WORD_REPLACEMENT[s]!, size: s.length };
     }
     return { type: "SYMBOL", value: s };
   } else {
@@ -159,7 +159,7 @@ let tokenizeSymbol: Tokenizer = function (expr) {
 const tokenizeStatic: Tokenizer = function (expr) {
   const char = expr[0];
   if (char && char in STATIC_TOKEN_MAP) {
-    return { type: STATIC_TOKEN_MAP[char], value: char };
+    return { type: STATIC_TOKEN_MAP[char]!, value: char };
   }
   return false;
 };
@@ -277,7 +277,7 @@ export function processExpr(expr: string): ProcessedExpr {
   let topLevelArrowIndex = -1;
 
   while (i < tokens.length) {
-    let token = tokens[i];
+    let token = tokens[i]!;
     let prevToken = tokens[i - 1];
     let nextToken = tokens[i + 1];
     let groupType = stack[stack.length - 1];
@@ -301,10 +301,10 @@ export function processExpr(expr: string): ProcessedExpr {
         if (
           groupType === "LEFT_BRACE" &&
           isLeftSeparator(prevToken) &&
-          isRightSeparator(nextToken)
+          nextToken && isRightSeparator(nextToken)
         ) {
           tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
-          nextToken = tokens[i + 1];
+          nextToken = tokens[i + 1]!;
         }
 
         if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
@@ -325,10 +325,10 @@ export function processExpr(expr: string): ProcessedExpr {
       }
       if (token.type === "RIGHT_PAREN") {
         let j = i - 1;
-        while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
-          if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
-            tokens[j].value = tokens[j].originalValue!;
-            localVars.add(tokens[j].value);
+        while (j > 0 && tokens[j]!.type !== "LEFT_PAREN") {
+          if (tokens[j]!.type === "SYMBOL" && tokens[j]!.originalValue) {
+            tokens[j]!.value = tokens[j]!.originalValue!;
+            localVars.add(tokens[j]!.value);
           }
           j--;
         }
@@ -363,7 +363,7 @@ export function processExpr(expr: string): ProcessedExpr {
     freeVariables = [];
     const seen = new Set<string>();
     for (let i = topLevelArrowIndex + 1; i < tokens.length; i++) {
-      const t = tokens[i];
+      const t = tokens[i]!;
       if (t.varName && !t.isLocal && t.varName !== "this" && !seen.has(t.varName)) {
         seen.add(t.varName);
         freeVariables.push(t.varName);

@@ -560,8 +560,8 @@ test("arrow function props re-render when captured variable changes", async () =
       useLogLifecycle(this);
     }
     toggle(id: number) {
-      const index = this.state.elems.findIndex((el) => el.id === id)!;
-      const todo = this.state.elems[index];
+      const index = this.state.elems.findIndex((el) => el.id === id);
+      const todo = this.state.elems[index]!;
       this.state.elems[index] = { ...todo, isChecked: !todo.isChecked };
     }
   }

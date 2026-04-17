@@ -679,7 +679,7 @@ describe("props validation", () => {
       static components = { SubComp };
       state: any = { p: 1 };
       setup() {
-        onError((e) => (error = e));
+        onError((e) => (error = e as Error));
       }
     }
     const parent = await mount(Parent, fixture, { dev: true });

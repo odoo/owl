@@ -535,7 +535,7 @@ export class CodeGenerator {
     const bareArrowMatch = !arrowMatch && compiled.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/);
 
     if (arrowMatch) {
-      const inner = arrowMatch[1].slice(1, -1).trim();
+      const inner = arrowMatch[1]!.slice(1, -1).trim();
       const rest = compiled.slice(arrowMatch[0].length);
       hoistedExpr = inner ? `(ctx,${inner})=>${rest}` : `(ctx)=>${rest}`;
     } else if (bareArrowMatch) {
@@ -573,14 +573,14 @@ export class CodeGenerator {
     for (let key in ast.attrs) {
       let expr, attrName;
       if (key.startsWith("t-attf")) {
-        expr = interpolate(ast.attrs[key]);
+        expr = interpolate(ast.attrs[key]!);
         const idx = block!.insertData(expr, "attr");
 
         attrName = key.slice(7);
         attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
         attrName = key === "t-att" ? null : key.slice(6);
-        expr = compileExpr(ast.attrs[key]);
+        expr = compileExpr(ast.attrs[key]!);
         if (attrName && isProp(ast.tag, attrName)) {
           if (attrName === "readonly") {
             // the property has a different name than the attribute
@@ -605,11 +605,11 @@ export class CodeGenerator {
         }
       } else if (this.translatableAttributes.includes(key)) {
         const attrTranslationCtx = ast.attrsTranslationCtx?.[key] || ctx.translationCtx;
-        attrs[key] = this.translateFn(ast.attrs[key], attrTranslationCtx);
+        attrs[key] = this.translateFn(ast.attrs[key]!, attrTranslationCtx);
       } else {
-        expr = `"${ast.attrs[key]}"`;
+        expr = `"${ast.attrs[key]!}"`;
         attrName = key;
-        attrs[key] = ast.attrs[key];
+        attrs[key] = ast.attrs[key]!;
       }
 
       if (attrName === "value" && ctx.tModelSelectedExpr) {
@@ -679,7 +679,7 @@ export class CodeGenerator {
 
     // event handlers
     for (let ev in ast.on) {
-      const name = this.generateHandlerCode(ev, ast.on[ev]);
+      const name = this.generateHandlerCode(ev, ast.on[ev]!);
       const idx = block!.insertData(name, "hdlr");
       attrs[`block-handler-${idx}`] = ev;
     }
@@ -708,7 +708,7 @@ export class CodeGenerator {
       block!.currentDom = dom;
       const children = ast.content;
       for (let i = 0; i < children.length; i++) {
-        const child = ast.content[i];
+        const child = ast.content[i]!;
         const subCtx = createContext(ctx, {
           block,
           index: block!.childNumber,
@@ -729,11 +729,11 @@ export class CodeGenerator {
       if (block!.children.length && block!.hasDynamicChildren) {
         const code = this.target.code;
         const children = block!.children.slice();
-        let current = children.shift();
+        let current = children.shift()!;
         for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
+          if (code[i]!.trimStart().startsWith(`const ${current.varName} `)) {
+            code[i] = code[i]!.replace(`const ${current.varName}`, current.varName);
+            current = children.shift()!;
             if (!current) break;
           }
         }
@@ -817,11 +817,11 @@ export class CodeGenerator {
       if (block!.children.length) {
         const code = this.target.code;
         const children = block!.children.slice();
-        let current = children.shift();
+        let current = children.shift()!;
         for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
+          if (code[i]!.trimStart().startsWith(`const ${current.varName} `)) {
+            code[i] = code[i]!.replace(`const ${current.varName}`, current.varName);
+            current = children.shift()!;
             if (!current) break;
           }
         }
@@ -914,7 +914,7 @@ export class CodeGenerator {
         // Check if there are non-DOM directives (like t-set) after the DOM child.
         // If so, defer the return so those directives are compiled before it.
         const shouldDefer =
-          !this.target.hasRoot && ast.content[ast.content.length - 1].hasNoRepresentation;
+          !this.target.hasRoot && ast.content[ast.content.length - 1]!.hasNoRepresentation;
         if (shouldDefer) {
           this.target.deferReturn = true;
         }
@@ -932,7 +932,7 @@ export class CodeGenerator {
     }
     let index = 0;
     for (let i = 0, l = ast.content.length; i < l; i++) {
-      const child = ast.content[i];
+      const child = ast.content[i]!;
       const forceNewBlock = !child.hasNoRepresentation;
       const subCtx = createContext(ctx, {
         block,
@@ -948,11 +948,11 @@ export class CodeGenerator {
       if (block!.hasDynamicChildren && block!.children.length) {
         const code = this.target.code;
         const children = block!.children.slice();
-        let current = children.shift();
+        let current = children.shift()!;
         for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
+          if (code[i]!.trimStart().startsWith(`const ${current.varName} `)) {
+            code[i] = code[i]!.replace(`const ${current.varName}`, current.varName);
+            current = children.shift()!;
             if (!current) break;
           }
         }
@@ -1110,7 +1110,7 @@ export class CodeGenerator {
     }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
-      name = _name;
+      name = _name!;
       switch (suffix) {
         case "bind":
           value = `(${value}).bind(this)`;
@@ -1155,14 +1155,15 @@ export class CodeGenerator {
 
     for (let p in ast.props || {}) {
       let [name, suffix] = p.split(".");
+      name = name!;
 
       if (suffix) {
         // .alike, .bind, .translate — delegate to formatProp, no propList entry
-        props.push(this.formatProp(p, ast.props![p], ast.propsTranslationCtx, ctx.translationCtx));
+        props.push(this.formatProp(p, ast.props![p]!, ast.propsTranslationCtx, ctx.translationCtx));
         continue;
       }
 
-      const { expr: compiledValue, freeVariables } = processExpr(ast.props![p]);
+      const { expr: compiledValue, freeVariables } = processExpr(ast.props![p]!);
 
       const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
       props.push(`${propName}: ${compiledValue || undefined}`);
@@ -1183,21 +1184,21 @@ export class CodeGenerator {
     if (ast.slots) {
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
-        const slotAst = ast.slots[slotName];
+        const slotAst = ast.slots[slotName]!;
         const params = [];
         if (slotAst.content) {
           const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
           params.push(`__render: ${name}.bind(this), __ctx: ctx`);
         }
-        const scope = ast.slots[slotName].scope;
+        const scope = slotAst.scope;
         if (scope) {
           params.push(`__scope: "${scope}"`);
         }
-        if (ast.slots[slotName].attrs) {
+        if (slotAst.attrs) {
           params.push(
             ...this.formatPropObject(
-              ast.slots[slotName].attrs!,
-              ast.slots[slotName].attrsTranslationCtx,
+              slotAst.attrs!,
+              slotAst.attrsTranslationCtx,
               ctx.translationCtx
             )
           );
@@ -1285,7 +1286,7 @@ export class CodeGenerator {
       let handlerId = generateId("hdlr");
       let idx = handlers.push(handlerId) - 1;
       spec[ev] = idx;
-      const handler = this.generateHandlerCode(ev, on[ev]);
+      const handler = this.generateHandlerCode(ev, on[ev]!);
       this.define(handlerId, handler);
     }
     this.staticDefs.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
@@ -1309,7 +1310,7 @@ export class CodeGenerator {
       this.slotNames.add(ast.name);
     }
     const attrs = { ...ast.attrs };
-    const dynProps = attrs["t-props"];
+    const dynProps = attrs["t-props"] ?? null;
     delete attrs["t-props"];
     let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
     if (isMultiple) {

@@ -85,11 +85,11 @@ describe("signal.Array", () => {
     const reactiveArray = signal.Array<{ value: number }>([obj]);
     expect(reactiveArray()[0]).toBe(obj);
 
-    const e = spyEffect(() => reactiveArray()[0].value);
+    const e = spyEffect(() => reactiveArray()[0]!.value);
     e();
     expectSpy(e.spy, 1);
 
-    reactiveArray()[0].value = 1;
+    reactiveArray()[0]!.value = 1;
     expectSpy(e.spy, 1, { result: 0 });
     expect(reactiveArray()[0]).toBe(obj);
 

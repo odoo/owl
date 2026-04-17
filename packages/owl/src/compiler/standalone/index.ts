@@ -62,7 +62,7 @@ export async function compileTemplates(paths: string[]) {
     const fileContent = xmlStrings[i];
     process.stdout.write(`.`);
     const parser = new DOMParser();
-    const doc = parser.parseFromString(fileContent, "text/xml");
+    const doc = parser.parseFromString(fileContent!, "text/xml");
     for (const template of doc.querySelectorAll("[t-name]")) {
       const name = template.getAttribute("t-name");
       if (template.hasAttribute("owl")) {

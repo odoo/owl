@@ -48,7 +48,7 @@ export class Registry<T> {
     if (!hasKey && arguments.length < 2) {
       throw new Error(`KeyNotFoundError: Cannot find key "${key}" (registry '${this._name}')`);
     }
-    return hasKey ? this._map()[key][1] : defaultValue!;
+    return hasKey ? this._map()[key]![1] : defaultValue!;
   }
 
   delete(key: string) {

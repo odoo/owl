@@ -68,7 +68,7 @@ describe("event handling", () => {
     await mount(Counter, fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe(`<div><input type="text"></div>`);
-    const input = fixture.getElementsByTagName("input")[0];
+    const input = fixture.getElementsByTagName("input")[0]!;
     input.value = "test";
     input.dispatchEvent(new Event("input"));
     await nextTick();

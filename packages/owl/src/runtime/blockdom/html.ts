@@ -40,7 +40,7 @@ class VHtml {
   }
 
   moveBeforeVNode(other: VHtml | null, afterNode: Node | null) {
-    const target = other ? other.content[0] : afterNode;
+    const target = other ? other.content[0]! : afterNode;
     this.moveBeforeDOMNode(target);
   }
 
@@ -52,7 +52,7 @@ class VHtml {
     if (this.html !== html2) {
       const parent = this.parentEl;
       // insert new html in front of current
-      const afterNode = this.content[0];
+      const afterNode = this.content[0]!;
       const template = document.createElement("template");
       template.innerHTML = html2;
       const content = [...(template.content.childNodes as any)];

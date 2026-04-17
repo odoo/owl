@@ -331,7 +331,7 @@ describe("t-on", () => {
       };
       const node = mountToFixture(template, owner);
       const div = node.querySelector(".myClass");
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
       button.click();
       expect(steps).toEqual(["btnClicked", "divClicked"]);
     });
@@ -362,9 +362,9 @@ describe("t-on", () => {
       const node = mountToFixture(template, owner);
 
       const buttons = (<HTMLElement>node).getElementsByTagName("button");
-      buttons[0].click();
-      buttons[1].click();
-      buttons[2].click();
+      buttons[0]!.click();
+      buttons[1]!.click();
+      buttons[2]!.click();
     });
 
     test("t-on with self modifier", async () => {
@@ -386,10 +386,10 @@ describe("t-on", () => {
 
       const buttons = (<HTMLElement>node).getElementsByTagName("button");
       const spans = (<HTMLElement>node).getElementsByTagName("span");
-      spans[0].click();
-      spans[1].click();
-      buttons[0].click();
-      buttons[1].click();
+      spans[0]!.click();
+      spans[1]!.click();
+      buttons[0]!.click();
+      buttons[1]!.click();
 
       expect(steps).toEqual(["onClick", "onClick", "onClickSelf"]);
     });
@@ -408,8 +408,8 @@ describe("t-on", () => {
         steps.push(e.defaultPrevented);
       });
 
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
-      const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
+      const span = (<HTMLElement>node).getElementsByTagName("span")[0]!;
       span.click();
       button.click();
 
@@ -430,8 +430,8 @@ describe("t-on", () => {
         steps.push(e.defaultPrevented);
       });
 
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
-      const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
+      const span = (<HTMLElement>node).getElementsByTagName("span")[0]!;
       span.click();
       button.click();
 
@@ -465,9 +465,9 @@ describe("t-on", () => {
         `<div><a href="#"> Edit Project 1</a><a href="#"> Edit Project 2</a></div>`
       );
 
-      const links = node.querySelectorAll("a")!;
-      links[0].click();
-      links[1].click();
+      const links = node.querySelectorAll("a");
+      links[0]!.click();
+      links[1]!.click();
 
       expect(steps).toEqual([1, 2]);
     });
@@ -483,7 +483,7 @@ describe("t-on", () => {
         expect(e.defaultPrevented).toBe(true);
       });
 
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
       button.click();
     });
 
@@ -531,7 +531,7 @@ describe("t-on", () => {
       };
       const node = mountToFixture(template, owner);
 
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
       button.click();
       expect(steps).toEqual(["captured", "normal"]);
     });
@@ -588,7 +588,7 @@ describe("t-on", () => {
         },
       };
       const node = mountToFixture(template, owner);
-      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0]!;
       button.click();
       expect(steps).toEqual(["btnClicked", "divClicked"]);
     });

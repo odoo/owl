@@ -108,7 +108,7 @@ export class Fiber {
       this.root = root;
       parent.children.push(this);
     } else {
-      this.root = this as any;
+      this.root = this as unknown as RootFiber;
     }
   }
 

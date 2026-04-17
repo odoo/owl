@@ -23,37 +23,37 @@ function decorate(node: ComponentNode, f: Function, hookName: string) {
   return f.bind(node.component);
 }
 
-export function onWillStart(fn: () => Promise<void> | void | any) {
+export function onWillStart(fn: () => void | Promise<void>) {
   const { node } = getContext("component");
   node.willStart.push(decorate(node, fn, "onWillStart"));
 }
 
-export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
+export function onWillUpdateProps(fn: (nextProps: Record<string, any>) => void | Promise<void>) {
   const { node } = getContext("component");
   node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
 }
 
-export function onMounted(fn: () => void | any) {
+export function onMounted(fn: () => void) {
   const { node } = getContext("component");
   node.mounted.push(decorate(node, fn, "onMounted"));
 }
 
-export function onWillPatch(fn: () => any | void) {
+export function onWillPatch(fn: () => void) {
   const { node } = getContext("component");
   node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
 }
 
-export function onPatched(fn: () => void | any) {
+export function onPatched(fn: () => void) {
   const { node } = getContext("component");
   node.patched.push(decorate(node, fn, "onPatched"));
 }
 
-export function onWillUnmount(fn: () => void | any) {
+export function onWillUnmount(fn: () => void) {
   const { node } = getContext("component");
   node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
 }
 
-export function onWillDestroy(fn: () => void | any) {
+export function onWillDestroy(fn: () => void) {
   const context = getContext();
   if (context.type === "component") {
     context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
@@ -62,7 +62,7 @@ export function onWillDestroy(fn: () => void | any) {
   }
 }
 
-type OnErrorCallback = (error: any) => void | any;
+type OnErrorCallback = (error: unknown) => void;
 export function onError(callback: OnErrorCallback) {
   const { node } = getContext("component");
   let handlers = nodeErrorHandlers.get(node);

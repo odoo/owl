@@ -206,7 +206,7 @@ test("synthetic and native handlers can cohabitate (3)", async () => {
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe("<div><div></div><div></div></div>");
 
-  const children = fixture.children[0].children;
+  const children = fixture.children[0]!.children;
 
   (children[0] as HTMLElement).click();
   expect(steps).toEqual(["1", "0"]);
@@ -230,7 +230,7 @@ test("synthetic and native handlers can cohabitate (4)", async () => {
   mount(tree, fixture);
   expect(fixture.innerHTML).toBe("<div><div></div><div></div></div>");
 
-  const children = fixture.children[0].children;
+  const children = fixture.children[0]!.children;
 
   (children[0] as HTMLElement).click();
   expect(steps).toEqual(["1", "0"]);

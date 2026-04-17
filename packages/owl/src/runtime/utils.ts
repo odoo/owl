@@ -87,7 +87,7 @@ export class EventBus extends EventTarget {
   }
 }
 
-export function whenReady(fn?: any): Promise<void> {
+export function whenReady(fn?: () => void): Promise<void> {
   return new Promise(function (resolve) {
     if (document.readyState !== "loading") {
       resolve(true);
@@ -104,7 +104,7 @@ export function whenReady(fn?: any): Promise<void> {
  */
 export class Markup extends String {}
 
-export function htmlEscape(str: any): Markup {
+export function htmlEscape(str: unknown): Markup {
   if (str instanceof Markup) {
     return str;
   }
@@ -114,6 +114,7 @@ export function htmlEscape(str: any): Markup {
   if (typeof str === "number") {
     return markup(String(str));
   }
+  let result = String(str);
   [
     ["&", "&amp;"],
     ["<", "&lt;"],
@@ -122,9 +123,9 @@ export function htmlEscape(str: any): Markup {
     ['"', "&quot;"],
     ["`", "&#x60;"],
   ].forEach((pairs) => {
-    str = String(str).replace(new RegExp(pairs[0], "g"), pairs[1]);
+    result = result.replace(new RegExp(pairs[0]!, "g"), pairs[1]!);
   });
-  return markup(str);
+  return markup(result);
 }
 
 /*

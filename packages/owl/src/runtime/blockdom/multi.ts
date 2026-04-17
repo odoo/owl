@@ -52,7 +52,7 @@ export class VMulti {
       if (child) {
         child.moveBeforeDOMNode(node, parent);
       } else {
-        const anchor = anchors![i];
+        const anchor = anchors![i]!;
         nodeInsertBefore.call(parent, anchor, node);
       }
     }
@@ -61,7 +61,7 @@ export class VMulti {
   moveBeforeVNode(other: VMulti | null, afterNode: Node | null) {
     if (other) {
       const next = other!.children[0];
-      afterNode = (next ? next.firstNode() : other!.anchors![0]) || null;
+      afterNode = (next ? next.firstNode() : other!.anchors![0]!) || null;
     }
     const children = this.children;
     const parent = this.parentEl;
@@ -71,7 +71,7 @@ export class VMulti {
       if (child) {
         child.moveBeforeVNode(null, afterNode);
       } else {
-        const anchor = anchors![i];
+        const anchor = anchors![i]!;
         nodeInsertBefore.call(parent, anchor, afterNode);
       }
     }
@@ -104,7 +104,7 @@ export class VMulti {
         }
       } else if (vn2) {
         children1[i] = vn2;
-        const anchor = anchors[i];
+        const anchor = anchors[i]!;
         vn2.mount(parentEl, anchor);
         nodeRemoveChild.call(parentEl, anchor);
       }
@@ -133,7 +133,7 @@ export class VMulti {
         if (child) {
           child.remove();
         } else {
-          nodeRemoveChild.call(parentEl, anchors![i]);
+          nodeRemoveChild.call(parentEl, anchors![i]!);
         }
       }
     }

@@ -167,7 +167,7 @@ describe("t-model directive", () => {
       '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: One</span></div>'
     );
 
-    const secondInput = fixture.querySelectorAll("input")[1];
+    const secondInput = fixture.querySelectorAll("input")[1]!;
     secondInput.click();
     await nextTick();
     expect(comp.choice()).toBe("Two");
@@ -190,7 +190,7 @@ describe("t-model directive", () => {
       '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"></div>'
     );
 
-    const secondInput = fixture.querySelectorAll("input")[1];
+    const secondInput = fixture.querySelectorAll("input")[1]!;
     expect(secondInput.checked).toBe(true);
   });
 
@@ -410,9 +410,9 @@ describe("t-model directive", () => {
 
     const input = fixture.querySelectorAll("input")[1]!;
     input.click();
-    expect(comp.things[1].f()).toBe(true);
-    expect(comp.things[0].f()).toBe(false);
-    expect(comp.things[2].f()).toBe(false);
+    expect(comp.things[1]!.f()).toBe(true);
+    expect(comp.things[0]!.f()).toBe(false);
+    expect(comp.things[2]!.f()).toBe(false);
   });
 
   test("in a t-foreach, part 2", async () => {
@@ -565,7 +565,7 @@ describe("t-model directive", () => {
     expect(comp.choice()).toBe("");
     expect(comp.lastClicked()).toBe("");
 
-    const lastInput = fixture.querySelectorAll("input")[2];
+    const lastInput = fixture.querySelectorAll("input")[2]!;
     lastInput.click();
     await nextTick();
     expect(comp.choice()).toBe("Three");
@@ -682,7 +682,7 @@ describe("t-model directive", () => {
     expect(comp.value()).toBe(2);
 
     // emulate a click on the option=3 element
-    fixture.querySelectorAll("option")[2].selected = true;
+    fixture.querySelectorAll("option")[2]!.selected = true;
     fixture.querySelector("select")!.dispatchEvent(new Event("change"));
 
     await nextTick();
@@ -840,7 +840,7 @@ describe("t-model.proxy directive", () => {
       '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: </span></div>'
     );
 
-    const firstInput = fixture.querySelectorAll("input")[0];
+    const firstInput = fixture.querySelectorAll("input")[0]!;
     firstInput.click();
     await nextTick();
     expect(comp.state.choice).toBe("One");

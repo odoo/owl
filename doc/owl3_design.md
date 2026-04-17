@@ -1,4 +1,4 @@
-# OWL Release Notes (DRAFT)
+# OWL 3 Release Notes
 
 ## Overview
 

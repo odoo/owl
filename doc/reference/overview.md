@@ -1,4 +1,4 @@
-# API Reference
+# Reference
 
 Here is a list of everything exported by the Owl library.
 

@@ -54,10 +54,10 @@ which features interactive examples, a live editor, and guided tutorials:
 
 ## Reference
 
-Browse the [API Reference](reference/overview.md) for a complete list of everything
+Browse the [Reference](reference/overview.md) for a complete list of everything
 exported by the Owl library, or jump to a topic:
 
-- [App](reference/app.md) — Configure and mount an Owl application
+- [App and Roots](reference/app.md) — Configure and mount an Owl application
 - [Component](reference/component.md) — Define components with lifecycle methods
 - [Reactivity](reference/reactivity.md) — Signals, computed values, and reactive objects
 - [Template Syntax](reference/template_syntax.md) — XML templates with QWeb directives
@@ -70,4 +70,4 @@ exported by the Owl library, or jump to a topic:
 npm install @odoo/owl
 ```
 
-Or use it directly from a CDN with no build step — see the [App](reference/app.md) page for details.
+Or use it directly from a CDN with no build step — see the [App and Roots](reference/app.md) page for details.

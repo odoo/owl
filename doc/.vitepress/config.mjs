@@ -43,6 +43,7 @@ export default defineConfig({
     sidebar: [
       { text: "Introduction", link: "/" },
       { text: "Overview", link: "/reference/overview" },
+      { text: "Installation", link: "/installation" },
       {
         text: "Reference",
         items: [

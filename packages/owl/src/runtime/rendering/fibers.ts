@@ -113,22 +113,27 @@ export class Fiber {
   }
 
   render() {
-    // if some parent has a fiber => register in followup
-    let prev = this.root!.node;
-    let scheduler = prev.app.scheduler;
-    let current = prev.parent;
-    while (current) {
-      if (current.fiber) {
-        let root = current.fiber.root!;
-        if (root.counter === 0 && prev.parentKey! in current.fiber.childrenMap) {
-          current = root.node;
-        } else {
-          scheduler.delayedRenders.push(this);
-          return;
+    const scheduler = this.root!.node.app.scheduler;
+    // If more than one root fiber is in flight, an ancestor may be rendering —
+    // walk up to detect it and delay if needed. Otherwise no ancestor can have
+    // a fiber (every in-progress root lives in scheduler.tasks), so skip the
+    // walk.
+    if (scheduler.tasks.size > 1) {
+      let prev = this.root!.node;
+      let current = prev.parent;
+      while (current) {
+        if (current.fiber) {
+          let root = current.fiber.root!;
+          if (root.counter === 0 && prev.parentKey! in current.fiber.childrenMap) {
+            current = root.node;
+          } else {
+            scheduler.delayedRenders.push(this);
+            return;
+          }
         }
+        prev = current;
+        current = current.parent;
       }
-      prev = current;
-      current = current.parent;
     }
 
     // there are no current rendering from above => we can render
@@ -149,7 +154,7 @@ export class Fiber {
       const newCounter = root.counter - 1;
       root.counter = newCounter;
       if (newCounter === 0) {
-        this.node.app.scheduler.flush();
+        scheduler.flush();
       }
     }
   }

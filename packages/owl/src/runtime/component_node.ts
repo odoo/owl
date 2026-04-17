@@ -30,7 +30,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   forceNextRender: boolean = false;
   parentKey: string | null;
   props: Record<string, any>;
-  defaultProps: Record<string, any> = {};
+  defaultProps: Record<string, any> | null = null;
   renderFn: Function;
   parent: ComponentNode | null;
   children: { [key: string]: ComponentNode } = Object.create(null);

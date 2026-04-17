@@ -18,8 +18,17 @@ class OWLHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=REPO_ROOT, **kwargs)
 
     def do_GET(self):
-        # Serve OWL build
-        if self.path == '/playground/owl.js':
+        # Redirect /playground to /playground/ so that relative URLs in
+        # index.html (e.g. "playground.css") resolve under /playground/.
+        if self.path == '/playground':
+            self.send_response(301)
+            self.send_header('Location', '/playground/')
+            self.end_headers()
+            return
+        # Serve OWL build. The playground iframe's import map points at
+        # "../owl.js", which resolves to /owl.js when the iframe is hosted
+        # under /playground/ (matching the integrated site layout).
+        if self.path == '/owl.js' or self.path == '/playground/owl.js':
             self.path = '/packages/owl/dist/owl.es.js'
         # Map playground routes to tools/playground
         elif self.path.startswith('/playground/libs/'):

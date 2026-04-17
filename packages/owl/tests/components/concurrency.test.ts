@@ -1640,12 +1640,12 @@ test("concurrent renderings scenario 9", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "ComponentA:willPatch",
+      "ComponentB:willPatch",
       "ComponentC:willPatch",
       "ComponentD:willPatch",
-      "ComponentB:willPatch",
-      "ComponentB:patched",
       "ComponentD:patched",
       "ComponentC:patched",
+      "ComponentB:patched",
       "ComponentA:patched",
     ]
   `);
@@ -2844,10 +2844,10 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     [
       "GrandParent:willPatch",
       "Parent:willPatch",
-      "ReactiveChild:willPatch",
       "DelayedChild:willPatch",
-      "DelayedChild:patched",
+      "ReactiveChild:willPatch",
       "ReactiveChild:patched",
+      "DelayedChild:patched",
       "Parent:patched",
       "GrandParent:patched",
     ]

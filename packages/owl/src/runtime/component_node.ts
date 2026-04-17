@@ -12,7 +12,7 @@ import {
   setComputation,
 } from "./reactivity/computations";
 import { fibersInError, handleError } from "./rendering/error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -200,38 +200,6 @@ export class ComponentNode implements VNode<ComponentNode> {
     }
     disposeComputation(this.signalComputation);
     this.status = STATUS.DESTROYED;
-  }
-
-  async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
-    props = Object.assign({}, props);
-    for (const key in this.defaultProps) {
-      if (props[key] === undefined) {
-        props[key] = this.defaultProps[key];
-      }
-    }
-    // update
-    const fiber = makeChildFiber(this, parentFiber);
-    this.fiber = fiber;
-    const component = this.component;
-
-    let prev = getCurrentComputation();
-    setComputation(undefined);
-    let promises = this.willUpdateProps.map((f) => f.call(component, props));
-    setComputation(prev);
-    await Promise.all(promises!);
-
-    if (fiber !== this.fiber) {
-      return;
-    }
-    this.props = props;
-    fiber.render();
-    const parentRoot = parentFiber.root!;
-    if (this.willPatch.length) {
-      parentRoot.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentRoot.patched.push(fiber);
-    }
   }
 
   /**

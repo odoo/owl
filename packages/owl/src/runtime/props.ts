@@ -1,4 +1,4 @@
-import { getContext } from "./context";
+import { getComponentScope } from "./component_node";
 import { GetOptionalEntries, KeyedObject, PrettifyShape, ResolveObjectType, types } from "./types";
 import { assertType, ValidationContext } from "./validation";
 
@@ -47,7 +47,8 @@ export function props<Shape extends {}, Defaults>(
   defaults: Defaults & GetPropsDefaults<Shape>
 ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
 export function props(type?: any, defaults?: any): Props<{}> {
-  const { node, app, componentName } = getContext("component");
+  const node = getComponentScope();
+  const { app, componentName } = node;
   if (defaults) {
     node.defaultProps = Object.assign(node.defaultProps || {}, defaults);
   }

@@ -64,8 +64,7 @@ export { config, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "./plugin_manager";
 export type { PluginConstructor } from "./plugin_manager";
-export { useContext } from "./context";
-export type { CapturedContext } from "./context";
+export { getScope, Scope, useScope } from "./scope";
 
 export const __info__: Record<string, string> = {
   version: App.version,

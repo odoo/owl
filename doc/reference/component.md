@@ -123,6 +123,18 @@ should be made to make this method as fast as possible.
 Note that if there are more than one `onWillStart` registered callback, then they
 will all be run in parallel.
 
+The callback receives an `{ abortSignal }` argument — an `AbortSignal` that
+aborts if the component is destroyed while `willStart` is in flight. Pass it
+to any async API that accepts one to cancel work automatically. See the
+[Scope page](scope.md#async-cancellation) for details.
+
+```javascript
+onWillStart(async ({ abortSignal }) => {
+  const response = await fetch("/api/data", { signal: abortSignal });
+  this.data = await response.json();
+});
+```
+
 ### `mounted`
 
 The `mounted` hook is called each time a component is attached to the

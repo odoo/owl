@@ -9,7 +9,7 @@ import {
   proxy,
   xml,
 } from "../../src/index";
-import { getContext } from "../../src/runtime/context";
+import { useScope } from "../../src/runtime/scope";
 import {
   logStep,
   makeTestFixture,
@@ -612,7 +612,7 @@ describe("can catch errors", () => {
 
       setup() {
         onWillStart(() => {
-          getContext();
+          useScope();
         });
       }
     }
@@ -622,7 +622,7 @@ describe("can catch errors", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.cause.message).toBe(`No active context`);
+    expect(error!.cause.message).toBe(`No active scope`);
   });
 
   test("Errors have the right cause", async () => {

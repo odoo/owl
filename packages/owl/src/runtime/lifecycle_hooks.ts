@@ -1,74 +1,60 @@
-import { ComponentNode } from "./component_node";
-import { getContext } from "./context";
+import { ComponentNode, getComponentScope } from "./component_node";
 import { nodeErrorHandlers } from "./rendering/error_handling";
+import { Scope, useScope } from "./scope";
 
 // -----------------------------------------------------------------------------
 //  hooks
 // -----------------------------------------------------------------------------
 
-function decorate(node: ComponentNode, f: Function, hookName: string) {
-  if (node.app.dev) {
-    const component = node.component;
-    const componentName = component ? component.constructor.name : "Component";
-    const name = `${componentName}.${hookName}`;
-    // Create a named wrapper so the name appears in stack traces.
-    // V8 uses computed property keys as inferred function names.
-    const wrapper = {
-      [name](...args: any[]) {
-        return f.call(component, ...args);
-      },
-    };
-    return wrapper[name];
+export function onWillStart(fn: (scope: ComponentNode) => Promise<void> | void | any) {
+  const scope = getComponentScope();
+  scope.willStart.push(scope.decorate(fn, "onWillStart"));
+}
+
+export function onWillUpdateProps(
+  fn: (nextProps: any, scope: ComponentNode) => Promise<void> | void | any
+) {
+  const scope = getComponentScope();
+  // decorate prepends scope as the first arg, but onWillUpdateProps's public
+  // signature is (nextProps, scope) — swap back.
+  function swapped(this: any, s: ComponentNode, nextProps: any) {
+    return fn.call(this, nextProps, s);
   }
-  return f.bind(node.component);
+  scope.willUpdateProps.push(scope.decorate(swapped, "onWillUpdateProps"));
 }
 
-export function onWillStart(fn: () => Promise<void> | void | any) {
-  const { node } = getContext("component");
-  node.willStart.push(decorate(node, fn, "onWillStart"));
+export function onMounted(fn: (scope: ComponentNode) => void | any) {
+  const scope = getComponentScope();
+  scope.mounted.push(scope.decorate(fn, "onMounted"));
 }
 
-export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
-  const { node } = getContext("component");
-  node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
+export function onWillPatch(fn: (scope: ComponentNode) => any | void) {
+  const scope = getComponentScope();
+  scope.willPatch.unshift(scope.decorate(fn, "onWillPatch"));
 }
 
-export function onMounted(fn: () => void | any) {
-  const { node } = getContext("component");
-  node.mounted.push(decorate(node, fn, "onMounted"));
+export function onPatched(fn: (scope: ComponentNode) => void | any) {
+  const scope = getComponentScope();
+  scope.patched.push(scope.decorate(fn, "onPatched"));
 }
 
-export function onWillPatch(fn: () => any | void) {
-  const { node } = getContext("component");
-  node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
+export function onWillUnmount(fn: (scope: ComponentNode) => void | any) {
+  const scope = getComponentScope();
+  scope.willUnmount.unshift(scope.decorate(fn, "onWillUnmount"));
 }
 
-export function onPatched(fn: () => void | any) {
-  const { node } = getContext("component");
-  node.patched.push(decorate(node, fn, "onPatched"));
-}
-
-export function onWillUnmount(fn: () => void | any) {
-  const { node } = getContext("component");
-  node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
-}
-
-export function onWillDestroy(fn: () => void | any) {
-  const context = getContext();
-  if (context.type === "component") {
-    context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
-  } else {
-    context.manager.onDestroyCb.push(fn);
-  }
+export function onWillDestroy(fn: (scope: Scope) => void | any) {
+  const scope = useScope();
+  scope.onDestroy(scope.decorate(fn, "onWillDestroy") as () => void);
 }
 
 type OnErrorCallback = (error: any) => void | any;
 export function onError(callback: OnErrorCallback) {
-  const { node } = getContext("component");
-  let handlers = nodeErrorHandlers.get(node);
+  const scope = getComponentScope();
+  let handlers = nodeErrorHandlers.get(scope);
   if (!handlers) {
     handlers = [];
-    nodeErrorHandlers.set(node, handlers);
+    nodeErrorHandlers.set(scope, handlers);
   }
-  handlers.push(callback.bind(node.component));
+  handlers.push(callback.bind(scope.component));
 }

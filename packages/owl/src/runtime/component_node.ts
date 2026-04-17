@@ -1,7 +1,7 @@
+import { OwlError } from "../common/owl_error";
 import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
-import { contextStack } from "./context";
 import { PluginManager } from "./plugin_manager";
 import {
   ComputationAtom,
@@ -13,6 +13,7 @@ import {
 } from "./reactivity/computations";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import { isAbortError, Scope, scopeStack, useScope } from "./scope";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -21,17 +22,16 @@ import { STATUS } from "./status";
 
 type LifecycleHook = Function;
 
-export class ComponentNode implements VNode<ComponentNode> {
-  app: App;
+export class ComponentNode extends Scope implements VNode<ComponentNode> {
   fiber: Fiber | null = null;
-  component: Component;
+  component!: Component;
   bdom: BDom | null = null;
-  status: STATUS = STATUS.NEW;
+  componentName: string;
   forceNextRender: boolean = false;
   parentKey: string | null;
   props: Record<string, any>;
   defaultProps: Record<string, any> | null = null;
-  renderFn: Function;
+  renderFn!: Function;
   parent: ComponentNode | null;
   children: { [key: string]: ComponentNode } = Object.create(null);
 
@@ -41,9 +41,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
-  willDestroy: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
-  computations: ComputationAtom[] = [];
 
   pluginManager: PluginManager;
 
@@ -54,33 +52,46 @@ export class ComponentNode implements VNode<ComponentNode> {
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
-    this.app = app;
+    super(app);
     this.parent = parent;
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
+    this.componentName = C.name;
     this.signalComputation = createComputation(
       () => this.render(false),
       false,
       ComputationState.EXECUTED
     );
     this.props = props;
-    contextStack.push({
-      type: "component",
-      app,
-      componentName: C.name,
-      node: this,
-      get status() {
-        return this.node.status;
-      },
-    });
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
-    this.component = new C(this);
-    const ctx = { this: this.component, __owl__: this };
-    this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
-    this.component.setup();
-    setComputation(previousComputation);
-    contextStack.length = 0; // clear context stack
+    scopeStack.push(this);
+    try {
+      this.component = new C(this);
+      const ctx = { this: this.component, __owl__: this };
+      this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
+      this.component.setup();
+    } finally {
+      scopeStack.pop();
+      setComputation(previousComputation);
+    }
+  }
+
+  decorate(f: Function, hookName: string): Function {
+    const component = this.component;
+    const scope = this;
+    if (this.app.dev) {
+      const name = `${this.componentName}.${hookName}`;
+      // Create a named wrapper so the name appears in stack traces.
+      // V8 uses computed property keys as inferred function names.
+      const wrapper = {
+        [name](...args: any[]) {
+          return f.call(component, scope, ...args);
+        },
+      };
+      return wrapper[name];
+    }
+    return f.bind(component, scope);
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -97,6 +108,9 @@ export class ComponentNode implements VNode<ComponentNode> {
       await Promise.all(promises!);
     } catch (e) {
       setComputation(prev);
+      if (isAbortError(e) && this.status > STATUS.MOUNTED) {
+        return;
+      }
       handleError({ node: this, error: e });
       return;
     }
@@ -161,7 +175,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   }
 
   _cancel() {
-    this.status = STATUS.CANCELLED;
+    super.cancel();
     const children = this.children;
     for (let childKey in children) {
       children[childKey]._cancel();
@@ -186,20 +200,8 @@ export class ComponentNode implements VNode<ComponentNode> {
     for (let childKey in this.children) {
       this.children[childKey]._destroy();
     }
-    if (this.willDestroy.length) {
-      try {
-        for (let cb of this.willDestroy) {
-          cb.call(component);
-        }
-      } catch (e) {
-        handleError({ error: e, node: this });
-      }
-    }
-    for (const computation of this.computations) {
-      disposeComputation(computation);
-    }
+    this.finalize((e) => handleError({ error: e, node: this }));
     disposeComputation(this.signalComputation);
-    this.status = STATUS.DESTROYED;
   }
 
   /**
@@ -283,4 +285,15 @@ export class ComponentNode implements VNode<ComponentNode> {
   remove() {
     this.bdom!.remove();
   }
+}
+
+/**
+ * Returns the active scope narrowed to a ComponentNode, or throws.
+ */
+export function getComponentScope(): ComponentNode {
+  const scope = useScope();
+  if (!(scope instanceof ComponentNode)) {
+    throw new OwlError("Expected to be in a component scope");
+  }
+  return scope;
 }

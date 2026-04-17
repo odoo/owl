@@ -36,6 +36,11 @@ Here is a list of everything exported by the Owl library.
 - [`useEffect`](hooks.md#useeffect): create a reactive effect, cleaned up on destroy
 - [`useListener`](hooks.md#uselistener): add a listener to a target, removed on destroy
 - [`useApp`](hooks.md#useapp): get the current App instance
+- [`useScope`](scope.md): get the current scope (for async cancellation, captured execution)
+
+## Scope and Lifetime
+
+- [`Scope`](scope.md): lifetime handle for components and plugins
 
 ## Plugins
 

@@ -1,8 +1,8 @@
 import { App } from "./app";
-import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { effect } from "./reactivity/effect";
 import { Signal } from "./reactivity/signal";
+import { useScope } from "./scope";
 
 // -----------------------------------------------------------------------------
 // useEffect
@@ -69,5 +69,5 @@ export function useListener(
 // -----------------------------------------------------------------------------
 
 export function useApp(): App {
-  return getContext().app;
+  return useScope().app;
 }

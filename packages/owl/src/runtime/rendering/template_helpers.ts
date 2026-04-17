@@ -4,6 +4,7 @@ import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
 import { html } from "../blockdom/index";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
+import { getCurrentComputation, setComputation } from "../reactivity/computations";
 import { markRaw } from "../reactivity/proxy";
 import { Markup } from "../utils";
 import { Fiber, makeChildFiber } from "./fibers";
@@ -220,7 +221,6 @@ function createComponent<P extends Record<string, any>>(
     };
   }
 
-  const updateAndRender = ComponentNode.prototype.updateAndRender;
   const initiateRender = ComponentNode.prototype.initiateRender;
 
   return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
@@ -233,16 +233,40 @@ function createComponent<P extends Record<string, any>>(
     if (node) {
       if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
         node.forceNextRender = false;
-        if (node.willUpdateProps.length) {
-          updateAndRender.call(node, props, parentFiber);
+        const hooks = node.willUpdateProps;
+        const fiber = makeChildFiber(node, parentFiber);
+        node.fiber = fiber;
+        const parentRoot = parentFiber.root!;
+        if (node.willPatch.length) parentRoot.willPatch.push(fiber);
+        if (node.patched.length) parentRoot.patched.push(fiber);
+        let promises: Promise<any>[] | undefined;
+        if (hooks.length) {
+          props = Object.assign({}, props) as P;
+          for (const k in node.defaultProps) {
+            if ((props as any)[k] === undefined) {
+              (props as any)[k] = node.defaultProps[k];
+            }
+          }
+          const component = node.component;
+          const prev = getCurrentComputation();
+          setComputation(undefined);
+          for (const f of hooks) {
+            const r = f.call(component, props);
+            if (r && typeof r.then === "function") {
+              (promises ||= []).push(r);
+            }
+          }
+          setComputation(prev);
+        }
+        if (promises) {
+          const p = promises.length === 1 ? promises[0] : Promise.all(promises);
+          p.then(() => {
+            if (fiber !== node.fiber) return;
+            node.props = props;
+            fiber.render();
+          });
         } else {
-          // Synchronous fast path — no willUpdateProps hooks
-          const fiber = makeChildFiber(node, parentFiber);
-          node.fiber = fiber;
           node.props = props;
-          const parentRoot = parentFiber.root!;
-          if (node.willPatch.length) parentRoot.willPatch.push(fiber);
-          if (node.patched.length) parentRoot.patched.push(fiber);
           fiber.render();
         }
       }

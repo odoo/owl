@@ -1,7 +1,12 @@
 import { OwlError } from "../../common/owl_error";
 import { BDom, mount, type MountTarget } from "../blockdom";
 import type { ComponentNode } from "../component_node";
-import { getCurrentComputation, removeSources, setComputation } from "../reactivity/computations";
+import {
+  ComputationState,
+  getCurrentComputation,
+  removeSources,
+  setComputation,
+} from "../reactivity/computations";
 import { STATUS } from "../status";
 import { fibersInError, handleError } from "./error_handling";
 
@@ -133,6 +138,7 @@ export class Fiber {
       const c = getCurrentComputation();
       removeSources(node.signalComputation);
       setComputation(node.signalComputation);
+      node.signalComputation.state = ComputationState.EXECUTED;
       try {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();

@@ -30,6 +30,7 @@ jobs:
     - run: npm run build
     - run: npm run build:playground
     - run: npm run build:doc
+    - run: npm run build:doc-v2
     - name: Assemble site
       run: node tools/site/assemble.mjs
     - name: Upload artifact

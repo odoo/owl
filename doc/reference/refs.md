@@ -34,7 +34,7 @@ a reference signal.
 ## Multiple References with Resources
 
 When `t-ref` is used inside a loop, a single signal can only hold one element.
-For this case, `t-ref` also accepts a [Resource](resources_and_registries.md#resource):
+For this case, `t-ref` also accepts a [Resource](resources.md):
 it will automatically add elements to the resource when they are mounted and
 remove them when they are unmounted.
 

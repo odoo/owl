@@ -12,7 +12,6 @@ import {
   status,
   types as t,
   useListener,
-  useResource,
 } from "../src";
 import { atomSymbol, Atom } from "../src/runtime/reactivity/computations";
 import { PluginManager } from "../src/runtime/plugin_manager";
@@ -542,7 +541,7 @@ describe("plugins and resources", () => {
     }
     class C extends Plugin {
       setup() {
-        useResource(plugin(A).colors, ["green", "blue"]);
+        plugin(A).colors.use("green").use("blue");
       }
     }
 
@@ -558,12 +557,12 @@ describe("plugins and resources", () => {
     }
     class B extends Plugin {
       setup() {
-        useResource(plugin(A).colors, ["red"]);
+        plugin(A).colors.use("red");
       }
     }
     class C extends Plugin {
       setup() {
-        useResource(plugin(A).colors, ["green", "blue"]);
+        plugin(A).colors.use("green").use("blue");
       }
     }
 
@@ -588,12 +587,12 @@ describe("plugins and resources", () => {
 
     class B extends Plugin {
       setup() {
-        useResource(plugin(A).colors, ["red"]);
+        plugin(A).colors.use("red");
       }
     }
     class C extends Plugin {
       setup() {
-        useResource(plugin(A).colors, ["green", "blue"]);
+        plugin(A).colors.use("green").use("blue");
       }
     }
 

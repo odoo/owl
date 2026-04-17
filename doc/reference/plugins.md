@@ -214,14 +214,14 @@ class SystrayPlugin extends Plugin {
 }
 ```
 
-Components contribute items using `useResource()`:
+Components contribute items by calling `use()` on the resource:
 
 ```js
 class MyComponent extends Component {
   systray = plugin(SystrayPlugin);
 
   setup() {
-    useResource(this.systray.items, [{ label: "Settings", action: () => this.openSettings() }]);
+    this.systray.items.use({ label: "Settings", action: () => this.openSettings() });
   }
 }
 ```

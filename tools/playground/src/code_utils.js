@@ -112,7 +112,6 @@ const OWL_IMPORTS = [
 
   // Resources and Registries
   { label: "Resource", type: "class" },
-  { label: "useResource", type: "function" },
   { label: "Registry", type: "class" },
 
   // Type validation

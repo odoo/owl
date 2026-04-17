@@ -1,3 +1,4 @@
+import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
@@ -6,6 +7,10 @@ import { assertType } from "./validation";
 interface ResourceOptions<T> {
   name?: string;
   validation?: T;
+}
+
+export interface ResourceAddOptions {
+  sequence?: number;
 }
 
 export class Resource<T> {
@@ -24,7 +29,7 @@ export class Resource<T> {
       .map((elem) => elem[1]);
   });
 
-  add(item: T, options: { sequence?: number } = {}): Resource<T> {
+  add(item: T, options: ResourceAddOptions = {}): Resource<T> {
     if (this._validation) {
       const info = this._name ? ` (resource '${this._name}')` : "";
       assertType(item, this._validation, `Resource item does not match the type${info}`);
@@ -42,15 +47,11 @@ export class Resource<T> {
   has(item: T): boolean {
     return this._items().some(([s, value]) => value === item);
   }
-}
 
-export function useResource<T>(r: Resource<T>, elements: T[]) {
-  for (let elem of elements) {
-    r.add(elem);
+  use(item: T, options: ResourceAddOptions = {}): Resource<T> {
+    getContext();
+    this.add(item, options);
+    onWillDestroy(() => this.delete(item));
+    return this;
   }
-  onWillDestroy(() => {
-    for (let elem of elements) {
-      r.delete(elem);
-    }
-  });
 }

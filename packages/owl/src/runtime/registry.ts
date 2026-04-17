@@ -1,11 +1,18 @@
 import { OwlError } from "../common/owl_error";
+import { getContext } from "./context";
+import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
+import { ResourceAddOptions } from "./resource";
 import { assertType } from "./validation";
 
 interface RegistryOptions<T> {
   name?: string;
   validation?: T;
+}
+
+interface RegistryAddOptions extends ResourceAddOptions {
+  force?: boolean;
 }
 
 export class Registry<T> {
@@ -27,14 +34,19 @@ export class Registry<T> {
 
   items = computed(() => this.entries().map((e) => e[1]));
 
-  addById<U extends { id: string } & T>(item: U, options: { sequence?: number } = {}): Registry<T> {
+  addById<U extends { id: string } & T>(item: U, options: RegistryAddOptions = {}): Registry<T> {
     if (!item.id) {
       throw new OwlError(`Item should have an id key (registry '${this._name}')`);
     }
-    return this.add(item.id, item, { sequence: options.sequence ?? 50 });
+    return this.add(item.id, item, options);
   }
 
-  add(key: string, value: T, options: { sequence?: number } = {}): Registry<T> {
+  add(key: string, value: T, options: RegistryAddOptions = {}): Registry<T> {
+    if (!options.force && key in this._map()) {
+      throw new OwlError(
+        `Key "${key}" is already registered (registry '${this._name}'). Use { force: true } to overwrite.`
+      );
+    }
     if (this._validation) {
       const info = this._name ? ` (registry '${this._name}', key: '${key}')` : ` (key: '${key}')`;
       assertType(value, this._validation, `Registry entry does not match the type${info}`);
@@ -46,7 +58,7 @@ export class Registry<T> {
   get(key: string, defaultValue?: T): T {
     const hasKey = key in this._map();
     if (!hasKey && arguments.length < 2) {
-      throw new Error(`KeyNotFoundError: Cannot find key "${key}" (registry '${this._name}')`);
+      throw new OwlError(`Cannot find key "${key}" (registry '${this._name}')`);
     }
     return hasKey ? this._map()[key][1] : defaultValue!;
   }
@@ -57,5 +69,23 @@ export class Registry<T> {
 
   has(key: string): boolean {
     return key in this._map();
+  }
+
+  use(key: string, value: T, options: RegistryAddOptions = {}): Registry<T> {
+    getContext();
+    this.add(key, value, options);
+    onWillDestroy(() => {
+      if (this._map()[key]?.[1] === value) {
+        this.delete(key);
+      }
+    });
+    return this;
+  }
+
+  useById<U extends { id: string } & T>(item: U, options: RegistryAddOptions = {}): Registry<T> {
+    if (!item.id) {
+      throw new OwlError(`Item should have an id key (registry '${this._name}')`);
+    }
+    return this.use(item.id, item, options);
   }
 }

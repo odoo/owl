@@ -55,5 +55,5 @@ Here is a list of everything exported by the Owl library.
 - [`markup`](template_syntax.md#outputting-data): mark a string as safe HTML (not escaped by `t-out`)
 - [`batched`](utils.md#batched): batch function calls into a single microtask execution
 - [`whenReady`](utils.md#whenready): execute code when the DOM is ready
-- [`Registry`](resources_and_registries.md#registry): ordered key-value collection with reactivity
-- [`Resource`](resources_and_registries.md#resource): ordered set collection with reactivity
+- [`Registry`](registries.md): ordered key-value collection with reactivity
+- [`Resource`](resources.md): ordered set collection with reactivity

@@ -13,7 +13,7 @@
 }
 
 .site-nav-link {
-  color: #94a3b8;
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -42,7 +42,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
+  color: #cbd5e1;
   font-size: 12px;
   height: 28px;
   cursor: pointer;
@@ -51,7 +51,7 @@
 
 .site-nav-search:hover {
   border-color: rgba(255, 255, 255, 0.25);
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .site-nav-search kbd {
@@ -69,7 +69,7 @@
   align-items: center;
   padding: 6px;
   border-radius: 6px;
-  color: #94a3b8;
+  color: #cbd5e1;
   transition: color 0.15s, background 0.15s;
 }
 

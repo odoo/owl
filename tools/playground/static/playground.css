@@ -2959,7 +2959,7 @@ body {
 
 /* SITE NAVIGATION LINKS ****************************************/
 .navbar-site-link {
-  color: #94a3b8;
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -2985,7 +2985,7 @@ body {
   padding: 6px;
   margin-left: 4px;
   border-radius: 6px;
-  color: #94a3b8;
+  color: #cbd5e1;
   transition: color 0.15s, background 0.15s;
 }
 

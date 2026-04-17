@@ -338,7 +338,7 @@ footer a {
 }
 
 .site-nav-link {
-  color: #94a3b8;
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -364,7 +364,7 @@ footer a {
   align-items: center;
   padding: 6px;
   border-radius: 6px;
-  color: #94a3b8;
+  color: #cbd5e1;
   transition: color 0.15s, background 0.15s;
 }
 

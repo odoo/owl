@@ -7,10 +7,17 @@ import {
   updateComputation,
   createComputation,
 } from "./computations";
+import { OwlError } from "../../common/owl_error";
 import { getScope } from "../scope";
 
 interface ComputedOptions<TWrite> {
   set?(value: TWrite): void;
+}
+
+function readonlySetter(): never {
+  throw new OwlError(
+    "Cannot write to a read-only computed value. Pass a `set` option to make it writable."
+  );
 }
 
 export function computed<TRead, TWrite = TRead>(
@@ -33,7 +40,7 @@ export function computed<TRead, TWrite = TRead>(
     return computation.value;
   }
   readComputed[atomSymbol] = computation;
-  readComputed.set = options.set ?? (() => {});
+  readComputed.set = options.set ?? readonlySetter;
 
   getScope()?.computations.push(computation);
 

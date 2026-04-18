@@ -413,13 +413,13 @@ describe("nested computed", () => {
 });
 
 describe("writable computed", () => {
-  test("set is define but does nothing by default", () => {
+  test("set throws by default on a read-only computed", () => {
     const percentage = signal(0.5);
     const value = computed(() => percentage() * 100);
     expect(percentage()).toBe(0.5);
     expect(value()).toBe(50);
 
-    value.set(0.21);
+    expect(() => value.set(0.21)).toThrow(/read-only computed/);
     expect(percentage()).toBe(0.5);
     expect(value()).toBe(50);
   });
@@ -430,7 +430,7 @@ describe("writable computed", () => {
     expect(percentage()).toBe(0.5);
     expect(value()).toBe(0.5);
 
-    value.set(0.21);
+    expect(() => value.set(0.21)).toThrow(/read-only computed/);
     expect(percentage()).toBe(0.5);
     expect(value()).toBe(0.5);
   });

@@ -246,20 +246,53 @@ export interface MountOptions {
 }
 
 export class MountFiber extends RootFiber {
-  target: MountTarget;
+  target: MountTarget | null;
   position: Position;
+  // true once the render phase finishes (counter reaches 0). If target is
+  // set at that point, we mount immediately; otherwise we signal readiness
+  // via onPrepared and wait for commit() to supply a target.
+  prepared = false;
+  onPrepared: (() => void) | null = null;
 
-  constructor(node: ComponentNode, target: MountTarget, options: MountOptions = {}) {
+  constructor(
+    node: ComponentNode,
+    target: MountTarget | null,
+    options: MountOptions = {}
+  ) {
     super(node, null);
     this.target = target;
     this.position = options.position || "last-child";
   }
+
   complete() {
+    this.prepared = true;
+    if (this.target) {
+      this._mount();
+    } else {
+      // Prepare-only: the render phase is done, but no target has been
+      // supplied yet. Signal readiness and let the scheduler drop this
+      // fiber from its tasks — commit() will run _mount() when called.
+      this.appliedToDom = true;
+      this.onPrepared?.();
+    }
+  }
+
+  commit(target: MountTarget, options: MountOptions = {}) {
+    this.target = target;
+    this.position = options.position || "last-child";
+    if (this.prepared) {
+      this._mount();
+    }
+    // Otherwise the render phase is still in flight. complete() will fire
+    // when the counter reaches 0 and pick up the now-set target.
+  }
+
+  private _mount() {
     let current: Fiber | undefined = this;
     try {
       const node = this.node;
       node.children = this.childrenMap;
-      (node.app.constructor as any).validateTarget(this.target);
+      (node.app.constructor as any).validateTarget(this.target!);
       if (node.bdom) {
         // this is a complicated situation: if we mount a fiber with an existing
         // bdom, this means that this same fiber was already completed, mounted,
@@ -268,11 +301,11 @@ export class MountFiber extends RootFiber {
         node.updateDom();
       } else {
         node.bdom = this.bdom;
-        if (this.position === "last-child" || this.target.childNodes.length === 0) {
-          mount(node.bdom!, this.target);
+        if (this.position === "last-child" || this.target!.childNodes.length === 0) {
+          mount(node.bdom!, this.target!);
         } else {
-          const firstChild = this.target.childNodes[0];
-          mount(node.bdom!, this.target, firstChild);
+          const firstChild = this.target!.childNodes[0];
+          mount(node.bdom!, this.target!, firstChild);
         }
       }
 

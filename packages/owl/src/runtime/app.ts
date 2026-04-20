@@ -50,6 +50,15 @@ import type { MountTarget } from "./blockdom";
 interface Root<T extends ComponentConstructor> {
   node: ComponentNode;
   promise: Promise<ComponentInstance<T>>;
+  // Kick off rendering without a DOM target. Descendants' onWillStart fires
+  // immediately and the bdom is built in memory. Idempotent — second call
+  // returns the same promise. Resolves when the render phase finishes.
+  prepare(): Promise<void>;
+  // Mount the (possibly already-prepared) bdom into target, then fire
+  // onMounted hooks. If prepare() was not called, commit() prepares first.
+  commit(target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>>;
+  // Convenience: equivalent to prepare() + commit(target). Kept for back
+  // compat with the original one-shot API.
   mount(target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>>;
   destroy(): void;
 }
@@ -109,52 +118,86 @@ export class App extends TemplateSet {
       reject(e);
     }
 
+    let fiber: MountFiber | null = null;
+    let preparedPromise: Promise<void> | null = null;
+
+    const prepare = (): Promise<void> => {
+      if (preparedPromise) {
+        return preparedPromise;
+      }
+      if (error) {
+        return Promise.reject(error);
+      }
+      fiber = new MountFiber(node, null);
+
+      // Set up error handler. We install it at prepare() time so that errors
+      // during the render phase (e.g. a descendant's onWillStart rejecting)
+      // reject both `promise` (the mount result) and the prepared promise.
+      let handlers = nodeErrorHandlers.get(node);
+      if (!handlers) {
+        handlers = [];
+        nodeErrorHandlers.set(node, handlers);
+      }
+      handlers.unshift((_, finalize) => {
+        const finalError = finalize();
+        reject(finalError);
+      });
+
+      const ready = new Promise<void>((res) => {
+        fiber!.onPrepared = () => res();
+      });
+      preparedPromise = ready;
+
+      // Install the mount-resolve callback up front so the sync render path's
+      // `if (node.mounted.length)` check sees it and registers the fiber in
+      // root.mounted. Without this ordering the callback would never fire for
+      // the commit-after-prepare sequence.
+      node.mounted.push(() => {
+        resolve(node.component);
+        handlers!.shift();
+      });
+
+      this.scheduler.addFiber(fiber);
+      if (this.pluginManager.status < STATUS.MOUNTED) {
+        // Plugins have pending onWillStart callbacks — await them before the
+        // root renders, so plugin state is populated during first render.
+        node.willStart.unshift(() => this.pluginManager.ready);
+      }
+      if (node.willStart.length) {
+        node.initiateRender(fiber);
+      } else {
+        node.fiber = fiber;
+        if (node.mounted.length) {
+          fiber.root!.mounted.push(fiber);
+        }
+        try {
+          fiber.render();
+        } catch (e) {
+          reject(e);
+        }
+      }
+      return preparedPromise;
+    };
+
+    const commit = (
+      target: MountTarget,
+      options?: MountOptions
+    ): Promise<ComponentInstance<T>> => {
+      if (error) {
+        return promise;
+      }
+      App.validateTarget(target);
+      prepare();
+      fiber!.commit(target, options);
+      return promise;
+    };
+
     const root = {
       node: node!,
       promise,
-      mount: (target: MountTarget, options?: MountOptions) => {
-        if (error) {
-          return promise;
-        }
-        App.validateTarget(target);
-
-        // Set up error handler and onMounted callback
-        let handlers = nodeErrorHandlers.get(node);
-        if (!handlers) {
-          handlers = [];
-          nodeErrorHandlers.set(node, handlers);
-        }
-        handlers.unshift((e, finalize) => {
-          const finalError = finalize();
-          reject(finalError);
-        });
-        node.mounted.push(() => {
-          resolve(node.component);
-          handlers!.shift();
-        });
-
-        const fiber = new MountFiber(node, target, options);
-        this.scheduler.addFiber(fiber);
-        if (this.pluginManager.status < STATUS.MOUNTED) {
-          // Plugins have pending onWillStart callbacks — await them before
-          // the root renders, so plugin state is populated during first render.
-          node.willStart.unshift(() => this.pluginManager.ready);
-        }
-        if (node.willStart.length) {
-          node.initiateRender(fiber);
-        } else {
-          node.fiber = fiber;
-          if (node.mounted.length) {
-            fiber.root!.mounted.push(fiber);
-          }
-          try {
-            fiber.render();
-          } catch (e) {
-            reject(e);
-          }
-        }
-        return promise;
-      },
+      prepare,
+      commit,
+      mount: commit,
       destroy: () => {
         this.roots.delete(root);
         node?.destroy();

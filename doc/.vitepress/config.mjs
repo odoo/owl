@@ -51,6 +51,7 @@ export default defineConfig({
           { text: "Asynchronous Patterns", link: "/reference/async_patterns" },
           { text: "Component", link: "/reference/component" },
           { text: "Environment", link: "/reference/environment" },
+          { text: "Error Boundary", link: "/reference/error_boundary" },
           { text: "Error Handling", link: "/reference/error_handling" },
           { text: "Event Handling", link: "/reference/event_handling" },
           { text: "Form Bindings", link: "/reference/form_bindings" },

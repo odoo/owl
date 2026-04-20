@@ -98,8 +98,8 @@ To create a root, one can use the `createRoot` method, which takes two arguments
 - **`config (optional)`**: a config object that may contain a `props` object or a
   `env` object.
 
-The `createRoot` method returns an object with a `mount` method (same API as
-the `App.mount` method), and a `destroy` method.
+The `createRoot` method returns an object with `prepare`, `mount`, and
+`destroy` methods.
 
 ```js
 const root = app.createRoot(MyComponent, { props: { someProps: true } });
@@ -112,6 +112,47 @@ root.destroy();
 Note that, like with owl `App`, it is the responsibility of the code that created
 the root to properly destroy it (before it has been removed from the DOM!). Owl
 has no way of doing it itself.
+
+### Two-phase mounting: `prepare` and `mount`
+
+`mount(target)` is the common case and does everything in one step: start
+the render phase, wait for `onWillStart` callbacks to settle, then attach
+to the target. For more control, the root exposes these as two distinct
+phases:
+
+- **`prepare()`** starts the render phase without a DOM target.
+  Descendants' `onWillStart` fires immediately, and the bdom is built in
+  memory. Returns a `Promise<void>` that resolves once the render phase is
+  complete. Idempotent — a second call returns the same promise. No DOM
+  elements exist yet.
+- **`mount(target, options?)`** attaches the prepared bdom into `target`
+  and fires `onMounted` hooks. Calling `mount` without a prior `prepare`
+  prepares implicitly. Returns a promise that resolves with the component
+  instance.
+
+The pattern is useful for:
+
+- **Pre-warming**: start loading a subtree's data before you have a place
+  to put it.
+- **Off-screen rendering**: build the DOM in memory, inspect or
+  pre-measure it, then mount later.
+- **Parallel loading**: call `prepare()` on multiple roots at once and
+  wait on `Promise.all([...])` before mounting them.
+
+```js
+const root = app.createRoot(MyComponent, { props });
+// Kick off willStart now, in parallel with other work.
+const ready = root.prepare();
+// ... later, when the target is known ...
+await ready;
+await root.mount(targetElement);
+```
+
+If you call `prepare()` but never `mount()`, the root never attaches to
+the DOM. `destroy()` still cleans up the prepared subtree in either case.
+
+`validateTarget` runs at `mount` time, not at `prepare`, so a bad
+target surfaces synchronously when you actually try to mount.
 
 ## Loading templates
 

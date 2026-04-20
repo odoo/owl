@@ -37,6 +37,7 @@ export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
+export { ErrorBoundary } from "./error_boundary";
 export { Portal } from "./portal";
 export { Suspense } from "./suspense";
 export { props } from "./props";

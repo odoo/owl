@@ -1085,6 +1085,14 @@ export class CodeGenerator {
     return `${currentKey} + \`${parts.join("__")}\``;
   }
 
+  generateSignalCacheKey() {
+    const parts = [generateId("__sig_")];
+    for (let i = 0; i < this.target.loopLevel; i++) {
+      parts.push(`\${key${i + 1}}`);
+    }
+    return `\`${parts.join("__")}\``;
+  }
+
   /**
    * Formats a prop name and value into a string suitable to be inserted in the
    * generated code. For example:
@@ -1155,6 +1163,15 @@ export class CodeGenerator {
 
     for (let p in ast.props || {}) {
       let [name, suffix] = p.split(".");
+
+      if (suffix === "signal") {
+        const compiledValue = compileExpr(ast.props![p]);
+        const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
+        this.helpers.add("toSignal");
+        const cacheKey = this.generateSignalCacheKey();
+        props.push(`${propName}: toSignal(node, ${cacheKey}, ${compiledValue})`);
+        continue;
+      }
 
       if (suffix) {
         // .alike, .bind, .translate — delegate to formatProp, no propList entry

@@ -274,6 +274,39 @@ class SomeComponent extends Component {
 The `.bind` suffix also implies `.alike`, so these props will not cause additional
 renderings.
 
+## Promoting values to signals
+
+Generic components often declare their props as [signals](reactivity.md#signals):
+
+```js
+class Counter extends Component {
+  static template = xml`<span t-out="this.props.count()"/>`;
+  props = props({ count: t.signal(t.number()) });
+}
+```
+
+A signal-based prop API is generally preferable: when the signal value changes,
+only the components that subscribe to it re-render — the parent that passes the
+signal along stays untouched. Generic components tend to expose their inputs as
+signals for this reason.
+
+Not every caller has a signal handy, though. The `.signal` suffix wraps a plain
+value at the call site:
+
+```xml
+<Counter count.signal="this.state.count"/>
+```
+
+Owl creates the signal once per call site (per loop iteration inside a
+`t-foreach`), keeps it across renders, and updates its value on each parent
+render. The signal reference is stable, so `effect` and `computed` subscriptions
+inside the child remain valid across parent updates.
+
+`.signal` is an adapter, not a parent-side performance optimization: the parent
+still re-renders when its own state changes, and that re-render is what updates
+the wrapper's value. The suffix simply lets you use a signal-API component from
+a context where the data is not yet a signal.
+
 ## Good Practices
 
 A `props` object is a collection of values that come from the parent. As such,

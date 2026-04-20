@@ -1,4 +1,14 @@
-import { Component, mount, onWillUpdateProps, props, proxy, signal, xml } from "../../src";
+import {
+  Component,
+  effect,
+  mount,
+  onWillUpdateProps,
+  props,
+  proxy,
+  signal,
+  types as t,
+  xml,
+} from "../../src";
 import {
   makeTestFixture,
   nextTick,
@@ -624,4 +634,146 @@ test("no props validation and default props", async () => {
   width.set(undefined);
   await nextTick();
   expect(fixture.innerHTML).toBe("1 / 123");
+});
+
+test(".signal suffix promotes a plain value to a signal", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.count()"/>`;
+    props = props({ count: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child count.signal="this.state.val"/>`;
+    static components = { Child };
+    state = proxy({ val: 7 });
+  }
+
+  await mount(Parent, fixture, { test: true });
+  expect(fixture.innerHTML).toBe("7");
+});
+
+test(".signal suffix: child re-reads updated value when parent state changes", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.count()"/>`;
+    props = props({ count: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child count.signal="this.state.val"/>`;
+    static components = { Child };
+    state = proxy({ val: 1 });
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("1");
+
+  parent.state.val = 42;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("42");
+});
+
+test(".signal suffix: signal reference is stable across updates", async () => {
+  let sameRef: boolean | null = null;
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.count()"/><t t-out="this.props.tick"/>`;
+    props = props();
+    setup() {
+      onWillUpdateProps((nextProps: any) => {
+        sameRef = nextProps.count === this.props.count;
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child count.signal="this.state.val" tick="this.state.tick"/>`;
+    static components = { Child };
+    state = proxy({ val: 1, tick: 0 });
+  }
+
+  const parent = await mount(Parent, fixture);
+  parent.state.val = 2;
+  parent.state.tick = 1;
+  await nextTick();
+  expect(sameRef).toBe(true);
+  expect(fixture.innerHTML).toBe("21");
+});
+
+test(".signal suffix: effects in child react to parent value changes", async () => {
+  const observed: number[] = [];
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.count()"/>`;
+    props = props({ count: t.signal(t.number()) });
+    setup() {
+      effect(() => {
+        observed.push(this.props.count());
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child count.signal="this.state.val"/>`;
+    static components = { Child };
+    state = proxy({ val: 10 });
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(observed).toEqual([10]);
+
+  parent.state.val = 20;
+  await nextTick();
+  expect(observed).toEqual([10, 20]);
+
+  parent.state.val = 20;
+  await nextTick();
+  expect(observed).toEqual([10, 20]);
+});
+
+test(".signal suffix works in a t-foreach loop", async () => {
+  class Item extends Component {
+    static template = xml`<span><t t-out="this.props.value()"/></span>`;
+    props = props({ value: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="this.state.items" t-as="item" t-key="item.id">
+        <Item value.signal="item.n"/>
+      </t>`;
+    static components = { Item };
+    state = proxy({
+      items: [
+        { id: "a", n: 1 },
+        { id: "b", n: 2 },
+      ],
+    });
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
+
+  parent.state.items[0].n = 11;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<span>11</span><span>2</span>");
+});
+
+test(".signal suffix accepts a signal-typed prop without validation error", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.count()"/>`;
+    props = props({ count: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child count.signal="this.state.val"/>`;
+    static components = { Child };
+    state = proxy({ val: 3 });
+  }
+
+  let error: any;
+  try {
+    await mount(Parent, fixture, { test: true });
+  } catch (e) {
+    error = e;
+  }
+  expect(error).toBeUndefined();
+  expect(fixture.innerHTML).toBe("3");
 });

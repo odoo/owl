@@ -6,6 +6,7 @@ import { Component } from "../component";
 import { ComponentNode } from "../component_node";
 import { getCurrentComputation, setComputation } from "../reactivity/computations";
 import { markRaw } from "../reactivity/proxy";
+import { signal, Signal } from "../reactivity/signal";
 import { Markup } from "../utils";
 import { Fiber, makeChildFiber } from "./fibers";
 
@@ -177,6 +178,18 @@ function callHandler(fn: any, ctx: any, ev: Event) {
   fn.call(ctx["this"], ev);
 }
 
+function toSignal(node: ComponentNode, cacheKey: string, value: any): Signal<any> {
+  const cache = (node.signalCache ||= new Map());
+  const existing = cache.get(cacheKey);
+  if (existing) {
+    existing.set(value);
+    return existing;
+  }
+  const s = signal(value);
+  cache.set(cacheKey, s);
+  return s;
+}
+
 function modelExpr(value: any) {
   if (typeof value !== "function" || typeof value.set !== "function") {
     throw new OwlError(
@@ -339,4 +352,5 @@ export const helpers = {
   createComponent,
   callTemplate,
   callHandler,
+  toSignal,
 };

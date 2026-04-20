@@ -13,6 +13,7 @@ import {
 } from "./reactivity/computations";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import type { Signal } from "./reactivity/signal";
 import { isAbortError, Scope, scopeStack, useScope } from "./scope";
 import { STATUS } from "./status";
 
@@ -41,6 +42,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
+  signalCache: Map<string, Signal<any>> | null = null;
 
   pluginManager: PluginManager;
 

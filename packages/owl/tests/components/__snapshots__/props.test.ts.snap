@@ -69,6 +69,171 @@ exports[`.alike suffix in a simple case 2`] = `
 }"
 `;
 
+exports[`.signal suffix accepts a signal-typed prop without validation error 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toSignal, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix accepts a signal-typed prop without validation error 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`.signal suffix promotes a plain value to a signal 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toSignal, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix promotes a plain value to a signal 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`.signal suffix works in a t-foreach loop 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, toSignal, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`Item\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.items);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`item\`] = k_block1[i1];
+      const key1 = ctx['item'].id;
+      c_block1[i1] = withKey(comp1({value: toSignal(node, \`__sig_1__\${key1}\`, ctx['item'].n)}, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`.signal suffix works in a t-foreach loop 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix: child re-reads updated value when parent state changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toSignal, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix: child re-reads updated value when parent state changes 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`.signal suffix: effects in child react to parent value changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toSignal, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix: effects in child react to parent value changes 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`.signal suffix: signal reference is stable across updates 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toSignal, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["tick"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val),tick: ctx['this'].state.tick}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix: signal reference is stable across updates 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.count());
+    const b3 = safeOutput(ctx['this'].props.tick);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`.translate props are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

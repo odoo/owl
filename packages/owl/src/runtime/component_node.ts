@@ -35,7 +35,6 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   parent: ComponentNode | null;
   children: { [key: string]: ComponentNode } = Object.create(null);
 
-  willStart: LifecycleHook[] = [];
   willUpdateProps: LifecycleHook[] = [];
   willUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];

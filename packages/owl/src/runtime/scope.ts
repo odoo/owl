@@ -40,6 +40,7 @@ export abstract class Scope {
   app: App;
   status: STATUS = STATUS.NEW;
   computations: ComputationAtom[] = [];
+  willStart: Array<() => any> = [];
   private _controller: AbortController | null = null;
   private _destroyCbs: Array<() => void> | null = null;
 

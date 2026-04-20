@@ -8,6 +8,7 @@ import { nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountFiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
 import { Resource } from "./resource";
+import { STATUS } from "./status";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 
@@ -74,6 +75,10 @@ export class App extends TemplateSet {
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
       startPlugins(this.pluginManager, config.plugins);
+    } else {
+      // No plugins provided: nothing to await, mark as MOUNTED so mount()
+      // takes the sync fast path.
+      this.pluginManager.status = STATUS.MOUNTED;
     }
     if (config.test) {
       this.dev = true;
@@ -130,6 +135,11 @@ export class App extends TemplateSet {
 
         const fiber = new MountFiber(node, target, options);
         this.scheduler.addFiber(fiber);
+        if (this.pluginManager.status < STATUS.MOUNTED) {
+          // Plugins have pending onWillStart callbacks — await them before
+          // the root renders, so plugin state is populated during first render.
+          node.willStart.unshift(() => this.pluginManager.ready);
+        }
         if (node.willStart.length) {
           node.initiateRender(fiber);
         } else {

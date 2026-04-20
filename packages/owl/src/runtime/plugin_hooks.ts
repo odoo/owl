@@ -1,9 +1,10 @@
 import { OwlError } from "../common/owl_error";
 import { ComponentNode, getComponentScope } from "./component_node";
-import { onWillDestroy } from "./lifecycle_hooks";
+import { onWillDestroy, onWillStart } from "./lifecycle_hooks";
 import { startPlugins, PluginConstructor, PluginManager } from "./plugin_manager";
 import { Resource } from "./resource";
 import { useScope } from "./scope";
+import { STATUS } from "./status";
 import { types } from "./types";
 import { assertType } from "./validation";
 
@@ -47,4 +48,10 @@ export function providePlugins(
   onWillDestroy(() => manager.destroy());
 
   startPlugins(manager, pluginConstructors);
+
+  if (manager.status < STATUS.MOUNTED) {
+    // Provided plugins registered onWillStart — defer the owning component's
+    // first render until they resolve.
+    onWillStart(() => manager.ready);
+  }
 }

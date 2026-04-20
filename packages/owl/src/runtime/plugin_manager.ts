@@ -38,6 +38,12 @@ export class PluginManager extends Scope {
   config: Record<string, any>;
   plugins: Record<string, Plugin>;
 
+  // Resolves once all pending plugin willStart callbacks have settled. The
+  // scope transitions to MOUNTED as the last step of this chain. Consumers
+  // (App.mount, providePlugins) await this before treating the manager as
+  // ready. `willStart` itself is inherited from Scope.
+  ready: Promise<void> = Promise.resolve();
+
   constructor(app: App, options: PluginManagerOptions = {}) {
     super(app);
     this.config = options.config ?? {};
@@ -93,7 +99,18 @@ export class PluginManager extends Scope {
     } finally {
       scopeStack.pop();
     }
-    this.status = STATUS.MOUNTED;
+    const pending = this.willStart.splice(0);
+    if (pending.length) {
+      this.ready = Promise.all(pending.map((fn) => fn())).then(() => {
+        if (this.status < STATUS.MOUNTED) {
+          this.status = STATUS.MOUNTED;
+        }
+      });
+    } else if (this.status < STATUS.MOUNTED) {
+      // Fast path: no async init, transition synchronously so consumers that
+      // read `status` right after `startPlugins` see MOUNTED immediately.
+      this.status = STATUS.MOUNTED;
+    }
   }
 }
 

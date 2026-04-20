@@ -1,22 +1,26 @@
 import {
   App,
+  Component,
   computed,
   config,
   effect,
   onWillDestroy,
+  onWillStart,
   plugin,
   Plugin,
   PluginInstance,
+  providePlugins,
   Resource,
   signal,
   status,
   types as t,
   useListener,
+  xml,
 } from "../src";
 import { atomSymbol, Atom } from "../src/runtime/reactivity/computations";
 import { PluginManager } from "../src/runtime/plugin_manager";
 import { STATUS } from "../src/runtime/status";
-import { nextMicroTick, waitScheduler } from "./helpers";
+import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 
 describe("basic features", () => {
   test("can instantiate and destroy a plugin", () => {
@@ -642,6 +646,160 @@ test("destroying a plugin with computed cleans up signal observers", () => {
 
   // After destruction, the computed should be cleaned up from selectedId's observers
   expect(selectedIdAtom.observers.size).toBe(0);
+});
+
+describe("onWillStart in plugins", () => {
+  test("plugin onWillStart delays app mount", async () => {
+    const rpc = makeDeferred<string>();
+
+    class AsyncPlugin extends Plugin {
+      static id = "async";
+      data: string | null = null;
+      setup() {
+        onWillStart(async () => {
+          this.data = await rpc;
+        });
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<span>ok</span>`;
+      p = plugin(AsyncPlugin);
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [AsyncPlugin] });
+    const mounted = app.createRoot(Root).mount(fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    rpc.resolve("hello");
+    const instance = await mounted;
+    expect(instance.p.data).toBe("hello");
+    expect(fixture.innerHTML).toBe("<span>ok</span>");
+    app.destroy();
+  });
+
+  test("multiple plugin willStarts run in parallel", async () => {
+    const rpc1 = makeDeferred<number>();
+    const rpc2 = makeDeferred<number>();
+    const started: string[] = [];
+
+    class A extends Plugin {
+      static id = "a";
+      setup() {
+        onWillStart(async () => {
+          started.push("a:start");
+          await rpc1;
+        });
+      }
+    }
+    class B extends Plugin {
+      static id = "b";
+      setup() {
+        onWillStart(async () => {
+          started.push("b:start");
+          await rpc2;
+        });
+      }
+    }
+
+    const app = new App({ plugins: [A, B] });
+    expect(started).toEqual(["a:start", "b:start"]);
+
+    rpc1.resolve(1);
+    rpc2.resolve(2);
+    await app.pluginManager.ready;
+    expect(app.pluginManager.status).toBe(STATUS.MOUNTED);
+    app.destroy();
+  });
+
+  test("plugin onWillStart rejection rejects mount", async () => {
+    class Broken extends Plugin {
+      setup() {
+        onWillStart(async () => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    class Root extends Component {
+      static template = xml``;
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [Broken] });
+    await expect(app.createRoot(Root).mount(fixture)).rejects.toMatchObject({
+      cause: expect.objectContaining({ message: "boom" }),
+    });
+    app.destroy();
+  });
+
+  test("abortSignal passed to plugin willStart aborts on destroy", async () => {
+    let captured: AbortSignal | undefined;
+    const rpc = makeDeferred<number>();
+
+    class SlowPlugin extends Plugin {
+      setup() {
+        onWillStart(async ({ abortSignal }) => {
+          captured = abortSignal;
+          await rpc;
+        });
+      }
+    }
+
+    const app = new App({ plugins: [SlowPlugin] });
+    expect(captured!.aborted).toBe(false);
+
+    app.destroy();
+    expect(captured!.aborted).toBe(true);
+    // Let the pending willStart resolve to avoid leaking its promise.
+    rpc.resolve(0);
+  });
+
+  test("providePlugins defers owning component render", async () => {
+    const rpc = makeDeferred<number>();
+    let valueAtChildSetup = -1;
+
+    class AsyncPlugin extends Plugin {
+      static id = "async";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc;
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span>child</span>`;
+      p = plugin(AsyncPlugin);
+      setup() {
+        valueAtChildSetup = this.p.value;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+      setup() {
+        providePlugins([AsyncPlugin]);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    const mounted = app.createRoot(Parent).mount(fixture);
+    await nextTick();
+    expect(valueAtChildSetup).toBe(-1);
+    expect(fixture.innerHTML).toBe("");
+
+    rpc.resolve(42);
+    await mounted;
+    expect(valueAtChildSetup).toBe(42);
+    expect(fixture.innerHTML).toBe("<span>child</span>");
+    app.destroy();
+  });
 });
 
 test("can use useListener in a plugin", () => {

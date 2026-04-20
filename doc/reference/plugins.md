@@ -229,12 +229,42 @@ class MyComponent extends Component {
 When `MyComponent` is destroyed, its contributed items are automatically
 removed from the resource.
 
+## Async Initialization
+
+A plugin can load data asynchronously during startup with `onWillStart()`. The
+owning `App.mount()` (or `providePlugins()` owner component) waits for all
+plugin `onWillStart` callbacks to settle before rendering:
+
+```js
+class SessionPlugin extends Plugin {
+  user = null;
+
+  setup() {
+    onWillStart(async ({ abortSignal }) => {
+      const res = await fetch("/api/session", { signal: abortSignal });
+      this.user = await res.json();
+    });
+  }
+}
+```
+
+With app-level plugins, `app.createRoot(Root).mount(...)` does not render the
+root until every plugin's `onWillStart` resolves — so components can read
+`this.user` during their first render.
+
+When multiple plugins register `onWillStart`, their callbacks run in parallel.
+
+The `abortSignal` passed to the callback is aborted if the plugin manager is
+destroyed before initialization completes. Pass it to `fetch` or check
+`abortSignal.throwIfAborted()` between awaits to short-circuit abandoned work.
+See [Scope](./scope.md) for the full cancellation model.
+
 ## Lifecycle and Cleanup
 
 Plugins follow a simple lifecycle:
 
 1. The plugin is instantiated
-2. `setup()` is called
+2. `setup()` is called (may register `onWillStart` for async init)
 3. The plugin is active and can be used
 4. On destroy, cleanup runs in reverse order (LIFO)
 

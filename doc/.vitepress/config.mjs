@@ -55,6 +55,7 @@ export default defineConfig({
           { text: "Form Bindings", link: "/reference/form_bindings" },
           { text: "Hooks", link: "/reference/hooks" },
           { text: "Plugins", link: "/reference/plugins" },
+          { text: "Portal", link: "/reference/portal" },
           { text: "Precompiling Templates", link: "/reference/precompiling_templates" },
           { text: "Props", link: "/reference/props" },
           { text: "Reactivity", link: "/reference/reactivity" },

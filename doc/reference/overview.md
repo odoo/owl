@@ -6,6 +6,7 @@ Here is a list of everything exported by the Owl library.
 
 - [`App`](app.md): an Owl application (root components, templates, and config)
 - [`Component`](component.md): base class for Owl components
+- [`Suspense`](suspense.md): render a fallback while descendants' `onWillStart` is pending
 - [`mount`](app.md#mount-helper): mount a component to a DOM target
 - [`xml`](template_syntax.md#inline-templates): define an inline template
 - [`props`](props.md): declare and validate component props

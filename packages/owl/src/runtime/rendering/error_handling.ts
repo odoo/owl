@@ -9,6 +9,51 @@ export const nodeErrorHandlers: WeakMap<
   ((error: any, finalize: Function) => void)[]
 > = new WeakMap();
 
+// Walks up from `node` (inclusive), invoking the latest error handler at each
+// level. Returns whether a handler caught and the final (possibly rethrown)
+// error. When `markFibers` is true, each visited fiber is recorded in
+// `fibersInError` so re-renders can detect and clear in-error state — this is
+// what `handleError` wants, but sub-root forwarders (Suspense, Portal) want
+// to leave the outer tree's fibers alone.
+function invokeErrorHandlers(
+  node: ComponentNode | null,
+  error: any,
+  finalize: Function,
+  markFibers: boolean
+): { handled: boolean; error: any } {
+  while (node) {
+    if (markFibers && node.fiber) {
+      fibersInError.set(node.fiber, error);
+    }
+    const handlers = nodeErrorHandlers.get(node);
+    if (handlers) {
+      for (let i = handlers.length - 1; i >= 0; i--) {
+        try {
+          handlers[i](error, finalize);
+          return { handled: true, error };
+        } catch (e) {
+          error = e;
+        }
+      }
+    }
+    node = node.parent;
+  }
+  return { handled: false, error };
+}
+
+// Builds a sub-root error handler that re-routes errors to `boundary`'s
+// parent chain. Used by Suspense/Portal so a descendant failure reaches the
+// consumer's `onError` without the main `handleError` entry point (which
+// would mark the outer tree's fibers as in-error and stall its mount).
+export function forwardErrorToParent(boundary: ComponentNode) {
+  return (error: any, finalize: Function): void => {
+    const { handled } = invokeErrorHandlers(boundary, error, finalize, false);
+    if (!handled) {
+      boundary.app._handleError(finalize());
+    }
+  };
+}
+
 type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
 export function handleError(params: ErrorParams) {
   let { error } = params;
@@ -40,31 +85,11 @@ export function handleError(params: ErrorParams) {
     });
   };
 
-  // Walk up the component tree looking for error handlers
-  while (node) {
-    const nodeFiber = node.fiber;
-    if (nodeFiber) {
-      fibersInError.set(nodeFiber, error);
-    }
-
-    const errorHandlers = nodeErrorHandlers.get(node);
-    if (errorHandlers) {
-      // execute in the opposite order
-      for (let i = errorHandlers.length - 1; i >= 0; i--) {
-        try {
-          errorHandlers[i](error, finalize);
-          return; // handled
-        } catch (e) {
-          error = e;
-        }
-      }
-    }
-    node = node.parent;
+  const result = invokeErrorHandlers(node, error, finalize, true);
+  if (!result.handled) {
+    // Sync outer `error` with the last rethrown one so finalize()'s OwlError
+    // surfaces that cause, not the original.
+    error = result.error;
+    app._handleError(finalize());
   }
-
-  // No handler found — create the OwlError, then let the app handle it.
-  // app._handleError is called after error creation, so it doesn't appear
-  // in the error's .stack property.
-  const owlError = finalize();
-  app._handleError(owlError);
 }

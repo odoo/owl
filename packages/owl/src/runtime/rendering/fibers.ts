@@ -243,11 +243,16 @@ type Position = "first-child" | "last-child";
 
 export interface MountOptions {
   position?: Position;
+  // If set, the bdom is inserted immediately before this node inside `target`
+  // (ignoring `position`). Used by Suspense to anchor its sub-root next to
+  // an in-template text node instead of requiring a dedicated wrapper.
+  afterNode?: Node | null;
 }
 
 export class MountFiber extends RootFiber {
   target: MountTarget | null;
   position: Position;
+  afterNode: Node | null = null;
   // true once the render phase finishes (counter reaches 0). If target is
   // set at that point, we mount immediately; otherwise we signal readiness
   // via onPrepared and wait for commit() to supply a target.
@@ -258,6 +263,7 @@ export class MountFiber extends RootFiber {
     super(node, null);
     this.target = target;
     this.position = options.position || "last-child";
+    this.afterNode = options.afterNode ?? null;
   }
 
   complete() {
@@ -276,6 +282,7 @@ export class MountFiber extends RootFiber {
   commit(target: MountTarget, options: MountOptions = {}) {
     this.target = target;
     this.position = options.position || "last-child";
+    this.afterNode = options.afterNode ?? null;
     if (this.prepared) {
       this._mount();
     }
@@ -297,7 +304,9 @@ export class MountFiber extends RootFiber {
         node.updateDom();
       } else {
         node.bdom = this.bdom;
-        if (this.position === "last-child" || this.target!.childNodes.length === 0) {
+        if (this.afterNode) {
+          mount(node.bdom!, this.target!, this.afterNode);
+        } else if (this.position === "last-child" || this.target!.childNodes.length === 0) {
           mount(node.bdom!, this.target!);
         } else {
           const firstChild = this.target!.childNodes[0];

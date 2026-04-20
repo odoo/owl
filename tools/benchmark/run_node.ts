@@ -101,6 +101,10 @@ const bundleResult = await build({
   platform: "browser",
   target: "es2022",
   sourcemap: false,
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+    __BUILD_HASH__: JSON.stringify("benchmark"),
+  },
   tsconfigRaw: `{
     "compilerOptions": {
       "target": "ESNext",
@@ -133,6 +137,19 @@ log.write("Launching browser… ");
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
+
+// Surface browser-side errors and console output so runtime failures don't
+// manifest as a silent hang until the poll timeout fires.
+page.on("pageerror", (err) => {
+  process.stderr.write(`\n${RED}[browser pageerror]${RESET} ${err.message}\n${err.stack ?? ""}\n`);
+});
+page.on("console", (msg) => {
+  const type = msg.type();
+  if (type === "error" || type === "warning") {
+    process.stderr.write(`[browser ${type}] ${msg.text()}\n`);
+  }
+});
+
 await page.setContent("<!DOCTYPE html><html><body></body></html>");
 
 log.write("done.\n");

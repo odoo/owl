@@ -13,6 +13,10 @@ export default defineConfig({
       allow: [OWL_ROOT],
     },
   },
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+    __BUILD_HASH__: JSON.stringify("benchmark"),
+  },
   plugins: [
     react({ include: /\/react\.tsx$/ }),
     solid({ include: /\/solid\.tsx$/ }),

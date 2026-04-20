@@ -218,6 +218,10 @@ export default function snapshotsPlugin(): Plugin {
                 format: "esm",
                 outfile: path.join(snapshotDir, "owl.js"),
                 sourcemap: false,
+                define: {
+                  __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+                  __BUILD_HASH__: JSON.stringify("benchmark"),
+                },
               });
 
               // Write setup.js

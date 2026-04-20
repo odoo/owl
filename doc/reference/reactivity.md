@@ -112,7 +112,8 @@ Dependency tracking is dynamic: only the values read during the **last**
 evaluation are tracked. If a branch is not taken, the values it would have
 read are not subscribed to.
 
-A computed value has a no-op `.set()` method by default, making it read-only.
+A computed value is read-only by default: calling `.set()` on one throws an
+`OwlError`. Pass a `set` option to make it writable (see below).
 
 ### Writable Computed
 
@@ -335,11 +336,11 @@ reference hasn't changed. In that case, you can manually invalidate the signal:
 const list = signal([1, 2, 3]);
 
 list().push(4); // mutates in-place — no update triggered
-signal.invalidate(list); // manually notify subscribers
+list.invalidate(); // manually notify subscribers
 ```
 
 In general, prefer collection signals (`signal.Array`, `signal.Object`, etc.)
-which handle this automatically. Use `signal.invalidate` only when collection
+which handle this automatically. Use `.invalidate()` only when collection
 signals are not appropriate for your use case.
 
 ## Escape Hatches

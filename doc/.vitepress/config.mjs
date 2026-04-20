@@ -48,6 +48,7 @@ export default defineConfig({
         text: "Reference",
         items: [
           { text: "App and Roots", link: "/reference/app" },
+          { text: "Asynchronous Patterns", link: "/reference/async_patterns" },
           { text: "Component", link: "/reference/component" },
           { text: "Environment", link: "/reference/environment" },
           { text: "Error Handling", link: "/reference/error_handling" },

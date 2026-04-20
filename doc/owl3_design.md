@@ -163,7 +163,7 @@ const list = signal([1, 2, 3]);
 // does not change the content of the signal
 list().push(4);
 // so we have to manually tell owl it is no longer up to date
-signal.invalidate(list);
+list.invalidate();
 ```
 
 Since manipulating collections of elements is a very common need, we introduce
@@ -1390,7 +1390,7 @@ class MyComponent extends Component {
     this.model = signal(
       new VeryBigModel({
         onUpdate: () => {
-          signal.invalidate(this.model);
+          this.model.invalidate();
         },
       })
     );

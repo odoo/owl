@@ -56,8 +56,8 @@ The `config` object is an object with some of the following keys:
   needs a template. If undefined is returned, owl looks into the app templates.
 - **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning
   whenever it encounters a component that does not provide a [static props description](props.md#props-validation).
-- **`customDirectives (object)`**: if given, the corresponding function on the object will be called
-  on the template custom directives: `t-custom-*` (see [Custom Directives](template_syntax.md#custom-directives)).
+- **`customDirectives (object)`**: extends the template compiler with custom
+  `t-custom-*` directives (see [Custom Directives](#custom-directives) below).
 - **`globalValues (object)`**: Global object of elements available at compilations.
 
 ## `mount` helper
@@ -177,6 +177,51 @@ const { mount } = owl;
   mount(Root, document.body, { env });
 })();
 ```
+
+## Custom Directives
+
+The `customDirectives` config option extends the template compiler with new
+`t-custom-*` directives. This is the supported way to plug application-level
+template behaviour into Owl without forking the framework.
+
+A custom directive is a function that runs **at template compile time** and
+rewrites the element it's attached to. It receives three arguments:
+
+- **`node` (Element)**: the DOM-like element the directive was applied to.
+  The function may mutate it: set or remove attributes, add other Owl
+  directives (`t-on-click`, `t-att-*`, etc.), wrap it, and so on.
+- **`value` (string)**: the string value the directive was set to in the
+  template (e.g. `"this.click"` for `t-custom-foo="this.click"`).
+- **`modifiers` (string[])**: dot-suffix modifiers, in source order. For
+  `t-custom-foo.mouse.stop="..."`, this is `["mouse", "stop"]`.
+
+```js
+new App(Root, {
+  customDirectives: {
+    plop: (node, value, modifiers) => {
+      node.setAttribute("t-on-click", value);
+      if (modifiers.includes("stop")) {
+        node.setAttribute("t-on-click", `(ev) => { ev.stopPropagation(); ${value}(ev); }`);
+      }
+    },
+  },
+});
+```
+
+In a template:
+
+```xml
+<div t-custom-plop.stop="this.click"/>
+```
+
+After compilation, this is equivalent to a `<div>` with the rewritten
+`t-on-click` attribute. The directive runs once per template compilation,
+not once per render — there is no per-render overhead.
+
+Because rewrites happen at compile time, custom directives can call any
+other Owl directive: they are a way to express composite directives in
+terms of the existing primitives. They cannot, however, observe runtime
+state — for that, use a [hook](hooks.md) inside the component.
 
 ## Dev mode
 

@@ -1,152 +1,128 @@
 # Concurrency Model
 
-## Overview
+This page explains how Owl schedules renders and integrates asynchronous work.
+For a higher-level decision guide on **which async tool to reach for**
+(`onWillStart`, `<Suspense>`, or `asyncComputed`), see
+[Asynchronous Patterns](async_patterns.md).
 
-Owl was designed from the very beginning with asynchronous components. This comes
-from the `willStart` lifecycle hook. With this asynchronous hook, it is possible
-to build complex highly concurrent applications.
+## Reactive, Component-Granular Updates
 
-Owl concurrent mode has several benefits: it makes it possible to delay the
-rendering until some asynchronous operation is complete, it makes it possible
-to lazy load libraries, while keeping the previous screen completely functional.
-It is also good for performance reasons: Owl uses it to only apply the result of
-many different renderings only once in an animation frame. Owl can cancel
-a rendering that is no longer relevant, restart it, reuse it in some cases.
+Owl 3's reactivity is fine-grained: when a component's template reads a
+[signal](reactivity.md#signals), [computed](reactivity.md#computed-values),
+or [proxy](reactivity.md#proxy) property, that read creates a subscription on
+the component's _render computation_. When the underlying reactive value
+changes, only the components that subscribed to it are invalidated — not the
+whole subtree, and not their parents.
 
-But even though using concurrency is quite simple (and is the default behaviour),
-asynchrony is difficult, because it introduces an additional dimension that
-vastly increase the complexity of an application. This section will explain
-how Owl manages this complexity, how concurrent rendering works in a general way.
+```js
+const count = signal(0);
 
-## Rendering Components
+class Counter extends Component {
+  static template = xml`<button t-on-click="() => this.count.set(this.count() + 1)">
+    <t t-out="count()"/>
+  </button>`;
+  count = count;
+}
 
-The word _rendering_ is a little vague, so, let us explain more precisely the
-process by which Owl components are displayed on a screen.
-
-When a component is mounted or updated, a new rendering is started. It has
-two phases: _virtual rendering_ and _patching_.
-
-### Virtual rendering
-
-This phase represent the process of rendering a template, in memory, which creates
-a virtual representation of the desired component html). The output of this phase is a
-virtual DOM.
-
-It is asynchronous: each sub component needs to either be created (so, `willStart`
-will need to be called), or updated. This is completely a recursive process: a
-component is the root of a component tree, and each sub component needs to be
-(virtually) rendered.
-
-### Patching
-
-Once a rendering is complete, it will be applied on the next animation frame.
-This is done synchronously: the whole component tree is patched to the real
-DOM.
-
-## Semantics
-
-We give here an informal description of the way components are created/updated
-in an application. Here, ordered lists describe actions that are executed
-sequentially, bullet lists describe actions that are executed in parallel.
-
-**Scenario 1: initial rendering** Imagine we want to render the following component tree:
-
-```
-        A
-       / \
-      B   C
-         / \
-        D   E
+class App extends Component {
+  static template = xml`<div><Counter/><ExpensiveSibling/></div>`;
+}
 ```
 
-Here is what happen whenever we mount the root
-component (with some code like `app.mount(document.body)`).
+When the button is clicked, `count` changes. Only `Counter` re-renders.
+`ExpensiveSibling` and `App` do not — their templates never read `count`.
 
-1. `willStart` is called on `A`
+This is the main difference from Owl 2 (and from React's default model), where
+a state change re-runs the parent's render and walks the tree to diff.
 
-2. when it is done, template `A` is rendered.
-   - component `B` is created
-     1. `willStart` is called on `B`
-     2. template `B` is rendered
-   - component `C` is created
-     1. `willStart` is called on `C`
-     2. template `C` is rendered
-        - component `D` is created
-          1. `willStart` is called on `D`
-          2. template `D` is rendered
-        - component `E` is created
-          1. `willStart` is called on `E`
-          2. template `E` is rendered
+## The Scheduler
 
-3. each components are patched into a detached DOM element, in the following order:
-   `E`, `D`, `C`, `B`, `A`. (so the actual full DOM tree is created
-   in one pass)
+When an invalidation marks a component as needing a re-render, the scheduler
+queues a fiber for that component. **All queued fibers are flushed once per
+animation frame**, via `requestAnimationFrame`. Multiple synchronous writes
+to multiple
+signals therefore produce a single render per affected component:
 
-4. the component `A` root element is actually appended to `document.body`
-
-5. The method `mounted` is called recursively on all components in the following
-   order: `E`, `D`, `C`, `B`, `A`.
-
-**Scenario 2: updating a component**. Now, let's assume that the user clicked on some
-button in `C`, and this results in a state update, which is supposed to:
-
-- update `D`,
-- remove `E`,
-- add new component `F`.
-
-So, the component tree should look like this:
-
-```
-        A
-       / \
-      B   C
-         / \
-        D   F
+```js
+count.set(1);
+count.set(2);
+unrelatedSignal.set("x");
+// — one rAF later: Counter renders once, the component reading
+//   unrelatedSignal renders once.
 ```
 
-Here is what Owl will do:
+Within a single frame, work happens in two phases:
 
-1. because of a state change, the method `render` is called on `C`
-2. template `C` is rendered again
-   - component `D` is updated:
-     1. template `D` is rerendered
-   - component `F` is created:
-     1. hook `willStart` is called on `F` (async)
-     2. template `F` is rendered
+1. **Virtual rendering** — each scheduled component renders its template into
+   a virtual DOM ("bdom"). New child components are created and their own
+   templates rendered, recursively. This phase may be _asynchronous_ if any
+   newly created child has an `onWillStart` (see below).
+2. **Patching** — once all virtual rendering for a frame is complete, the
+   resulting bdom is applied to the real DOM in a single synchronous pass,
+   bottom-up.
 
-3. `willPatch` hooks are called recursively on components `C`, `D` (not on `F`,
-   because it is not mounted yet)
+The split keeps the DOM in a consistent state: callers never see a partially
+updated tree.
 
-4. components `F`, `D` are patched in that order
+## Asynchrony: `onWillStart`
 
-5. component `C` is patched, which will cause recursively:
-   1. `willUnmount` hook on `E`
-   2. destruction of `E`,
+A component that needs data before it can render declares it with
+[`onWillStart`](component.md#willstart):
 
-6. `mounted` hook is called on `F`, `patched` hooks are called on `D`, `C`
+```js
+setup() {
+  onWillStart(async ({ abortSignal }) => {
+    this.user = await fetch(`/api/users/${this.props.id}`, { signal: abortSignal });
+  });
+}
+```
 
-Tags are very small helpers to make it easy to write inline templates. There is
-only one currently available tag: `xml`.
+`onWillStart` runs once, before the component's first render. **Until it
+resolves, the parent's patch is held back** — the user keeps seeing the
+previous DOM and the new tree appears all at once when ready. This is what
+"concurrent" means in Owl: the previous UI stays interactive while a new
+subtree is being prepared.
 
-### Asynchronous Rendering
+The trade-off is that a slow `onWillStart` deep in a tree delays the entire
+patch above it. For non-blocking alternatives, see
+[Asynchronous Patterns](async_patterns.md#options-at-a-glance).
 
-Working with asynchronous code always adds a lot of complexity to a system. Whenever
-different parts of a system are active at the same time, one needs to think
-carefully about all possible interactions. Clearly, this is also true for Owl
-components.
+## Render Cancellation
 
-There are two different common problems with Owl asynchronous rendering model:
+If a new render is scheduled for a component while a previous render of that
+component is still in flight (for example, props change again before
+`onWillStart` resolves), the older render is cancelled:
 
-- any component can delay the rendering (initial and subsequent) of the whole
-  application
-- for a given component, there are two independant situations that will trigger an
-  asynchronous rerendering: a change in the state, or a change in the props.
-  These changes may be done at different times, and Owl has no way of knowing
-  how to reconcile the resulting renderings.
+- Its fiber is dropped from the scheduler.
+- Its scope's `abortSignal` fires, so any `fetch` keyed to it is aborted by
+  the browser.
+- `await scope.until(...)` calls reject with `AbortError`.
+- The newer render takes over from scratch.
 
-Here are a few tips on how to work with asynchronous components:
+This makes it safe to drive renders from rapidly-changing input (search
+boxes, sliders, etc.) without worrying about stale results clobbering fresh
+ones.
 
-1. Minimize the use of asynchronous components!
-2. Lazy loading external libraries is a good use case for async rendering. This
-   is mostly fine, because we can assume that it will only takes a fraction of a
-   second, and only once.
+## Two Sources of Re-render
+
+For any given component, two independent things can trigger a re-render:
+
+1. **A reactive read it made changed** (signal, computed, proxy property).
+2. **Its props changed** because the parent re-rendered.
+
+Both flow through the same scheduler and end up in the same per-frame batch,
+so multiple causes of "this component needs to update" collapse to one render.
+
+## Practical Tips
+
+- Prefer reactivity (`signal`, `computed`) over manually calling `render()`.
+  The framework already deduplicates and batches.
+- Use `onWillStart` only when you cannot render anything meaningful without
+  the data. For "render now, fill in later," use
+  [`asyncComputed`](reactivity.md#async-computed-values) or
+  [`<Suspense>`](suspense.md) — they don't gate the parent's patch.
+- An expensive `onWillStart` near the root delays first paint of the whole
+  app. Push it down to the smallest possible subtree, or wrap it in
+  `<Suspense>` with a fallback.
+- Reactive reads inside `untrack(() => ...)` do not subscribe — useful for
+  reads that should not trigger re-renders.

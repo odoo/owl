@@ -6,9 +6,9 @@ import { Scope, useScope } from "./scope";
 //  hooks
 // -----------------------------------------------------------------------------
 
-export function onWillStart(fn: (scope: ComponentNode) => Promise<void> | void | any) {
-  const scope = getComponentScope();
-  scope.willStart.push(scope.decorate(fn, "onWillStart"));
+export function onWillStart(fn: (scope: Scope) => Promise<void> | void | any) {
+  const scope = useScope();
+  scope.willStart.push(scope.decorate(fn, "onWillStart") as () => any);
 }
 
 export function onWillUpdateProps(

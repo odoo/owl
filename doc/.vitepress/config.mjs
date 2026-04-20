@@ -63,6 +63,7 @@ export default defineConfig({
           { text: "Resources", link: "/reference/resources" },
           { text: "Scope", link: "/reference/scope" },
           { text: "Slots", link: "/reference/slots" },
+          { text: "Suspense", link: "/reference/suspense" },
           { text: "Template Syntax", link: "/reference/template_syntax" },
           { text: "Translations", link: "/reference/translations" },
           { text: "Types & Validation", link: "/reference/types_validation" },

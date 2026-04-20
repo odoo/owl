@@ -10,7 +10,7 @@
  * Progress is reported via window.__benchProgress__(msg).
  */
 
-import * as owl from "../../../src";
+import * as owl from "../../../packages/owl/src";
 import {
   BENCHMARKS,
   buildData,

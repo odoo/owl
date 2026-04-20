@@ -1,7 +1,7 @@
 /**
  * Compare Owl benchmark results between two git commits.
  *
- * Checks out the Owl source (src/) from each commit, runs the full benchmark
+ * Checks out the Owl source (packages/owl/src/) from each commit, runs the full benchmark
  * suite in headless Chromium, then prints a side-by-side comparison with
  * Welch's t-test to determine statistical significance.
  *
@@ -97,12 +97,12 @@ try {
   process.exit(1);
 }
 
-// Check for uncommitted changes in src/
-const srcDirty = git("diff HEAD -- src/").length > 0;
-const srcStaged = git("diff --cached -- src/").length > 0;
+// Check for uncommitted changes in packages/owl/src/
+const srcDirty = git("diff HEAD -- packages/owl/src/").length > 0;
+const srcStaged = git("diff --cached -- packages/owl/src/").length > 0;
 if (srcDirty || srcStaged) {
   console.error(
-    "Error: uncommitted changes in src/. Please commit or stash them first."
+    "Error: uncommitted changes in packages/owl/src/. Please commit or stash them first."
   );
   process.exit(1);
 }
@@ -120,9 +120,9 @@ function runBenchmarkAt(ref: string, label: string): BenchData {
   const hash = shortHash(ref);
   console.log(`\n${BOLD}=== ${label}: ${hash} (${commitSubject(ref)}) ===${RESET}`);
 
-  // Checkout only src/ from the target ref
-  git(`checkout ${ref} -- src/`);
-  git("reset HEAD -- src/"); // unstage to keep index clean
+  // Checkout only packages/owl/src/ from the target ref
+  git(`checkout ${ref} -- packages/owl/src/`);
+  git("reset HEAD -- packages/owl/src/"); // unstage to keep index clean
 
   try {
     const json = execSync(
@@ -137,8 +137,8 @@ function runBenchmarkAt(ref: string, label: string): BenchData {
     );
     return JSON.parse(json);
   } finally {
-    // Always restore src/ to HEAD
-    git("checkout HEAD -- src/");
+    // Always restore packages/owl/src/ to HEAD
+    git("checkout HEAD -- packages/owl/src/");
   }
 }
 

@@ -4,7 +4,7 @@ import path from "node:path";
 import { build } from "esbuild";
 
 const SNAPSHOTS_DIR = path.resolve(import.meta.dirname, "snapshots");
-const OWL_ENTRY = path.resolve(import.meta.dirname, "../../src/index.ts");
+const OWL_ENTRY = path.resolve(import.meta.dirname, "../../packages/owl/src/index.ts");
 
 function generateSetupJs(id: string, name: string): string {
   return `import * as owl from "./owl.js";

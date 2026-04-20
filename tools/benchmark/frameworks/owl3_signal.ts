@@ -1,5 +1,5 @@
-import * as owl from "../../../src";
-import { Component, signal, Signal, xml, props } from "../../../src";
+import * as owl from "../../../packages/owl/src";
+import { Component, signal, Signal, xml, props } from "../../../packages/owl/src";
 import { addSetup, buildData, createIsolatedContainer, type BenchmarkApp, type Row } from "../src/utils";
 
 interface SignalRow {

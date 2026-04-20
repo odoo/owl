@@ -1,5 +1,5 @@
-import * as owl from "../../../src";
-import { Component, props, proxy, xml } from "../../../src";
+import * as owl from "../../../packages/owl/src";
+import { Component, props, proxy, xml } from "../../../packages/owl/src";
 import { addSetup, buildData, createIsolatedContainer, type BenchmarkApp, type Row } from "../src/utils";
 
 class Counter extends Component {

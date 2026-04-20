@@ -108,7 +108,7 @@ as an investment for the future, and we want to make onboarding developers as
 easy as possible.
 
 While many javascript professionals clearly think that react/vue is not difficult
-(which is true to some extent), it is alsy true that many non js specialists are
+(which is true to some extent), it is also true that many non js specialists are
 overwhelmed with the frontend world: functional components, hooks, and many other
 fancy words. Also, what is available in the compilation context may be difficult,
 there is a lot of black magic going on in pretty much every framework. Vue

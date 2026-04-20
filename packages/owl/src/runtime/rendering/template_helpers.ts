@@ -4,8 +4,10 @@ import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
 import { html } from "../blockdom/index";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
-import { getCurrentComputation, setComputation } from "../reactivity/computations";
+import { getCurrentComputation, ReactiveValue, setComputation } from "../reactivity/computations";
+import { computed } from "../reactivity/computed";
 import { markRaw } from "../reactivity/proxy";
+import { signal, Signal } from "../reactivity/signal";
 import { Markup } from "../utils";
 import { Fiber, makeChildFiber } from "./fibers";
 
@@ -177,6 +179,27 @@ function callHandler(fn: any, ctx: any, ev: Event) {
   fn.call(ctx["this"], ev);
 }
 
+type CachedSignal<T> = Signal<T> & { readonly: ReactiveValue<T> };
+
+const signalCaches = new WeakMap<ComponentNode, Map<string, CachedSignal<any>>>();
+
+function toSignal(node: ComponentNode, cacheKey: string, value: any): ReactiveValue<any> {
+  let cache = signalCaches.get(node);
+  if (!cache) {
+    cache = new Map();
+    signalCaches.set(node, cache);
+  }
+  const existing = cache.get(cacheKey);
+  if (existing) {
+    existing.set(value);
+    return existing.readonly;
+  }
+  const s = signal(value) as CachedSignal<any>;
+  s.readonly = computed(s);
+  cache.set(cacheKey, s);
+  return s.readonly;
+}
+
 function modelExpr(value: any) {
   if (typeof value !== "function" || typeof value.set !== "function") {
     throw new OwlError(
@@ -339,4 +362,5 @@ export const helpers = {
   createComponent,
   callTemplate,
   callHandler,
+  toSignal,
 };

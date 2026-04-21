@@ -430,7 +430,7 @@
       <div class="navbar">
         <div class="navbar-left">
           <a class="navbar-site-link" href="../">🦉 Owl</a>
-          <a class="navbar-site-link" href="../documentation/">Documentation</a>
+          <a class="navbar-site-link" href="../documentation/v3/owl/">Documentation</a>
           <a class="navbar-site-link active" href="./">Playground</a>
         </div>
         <div class="navbar-center">

@@ -1,20 +1,30 @@
 // Shared static navbar for the documentation builds (v3 and v2).
 // Injected outside Vue's DOM via transformHtml.
+//
+// Every <a> here sets target="_self". VitePress's SPA router intercepts
+// anchor clicks during the capture phase and routes in-app. We need full
+// page navigations here because: (1) links like /owl/ and /owl/playground/
+// live outside the VitePress base and can't be resolved by its router;
+// (2) the redirect pages at /owl/documentation/ and /owl/documentation/v3/
+// rely on inline <script> tags in <head> that only execute on a fresh HTML
+// parse, not on SPA route changes. VitePress skips anchors with a
+// target attribute (see vitepress/dist/client/app/router.js), so target="_self"
+// cleanly opts out of SPA hijacking while keeping default same-tab behavior.
 
 export function buildNavbar({ docsVersion }) {
   const v3Selected = docsVersion === "3" ? "selected" : "";
   const v2Selected = docsVersion === "2" ? "selected" : "";
-  return `<nav class="site-nav" onclick="if(event.target.closest('a')){window.location=event.target.closest('a').href;event.preventDefault()}">
-      <a class="site-nav-link" href="/owl/">🦉 Owl</a>
-      <a class="site-nav-link active" href="/owl/documentation/">Documentation</a>
-      <a class="site-nav-link" href="/owl/playground/">Playground</a>
+  return `<nav class="site-nav">
+      <a class="site-nav-link" href="/owl/" target="_self">🦉 Owl</a>
+      <a class="site-nav-link active" href="/owl/documentation/v3/owl/" target="_self">Documentation</a>
+      <a class="site-nav-link" href="/owl/playground/" target="_self">Playground</a>
       <button class="site-nav-search" onclick="event.stopPropagation();document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true}))">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <span>Search</span>
         <kbd>Ctrl K</kbd>
       </button>
       <select class="site-nav-version" aria-label="Documentation version" onclick="event.stopPropagation()" onchange="window.location.href=this.value">
-        <option value="/owl/documentation/" ${v3Selected}>v3 (current)</option>
+        <option value="/owl/documentation/v3/" ${v3Selected}>v3 (current)</option>
         <option value="/owl/documentation/v2/" ${v2Selected}>v2</option>
       </select>
       <a class="site-nav-github" href="https://github.com/odoo/owl" target="_blank" aria-label="GitHub">

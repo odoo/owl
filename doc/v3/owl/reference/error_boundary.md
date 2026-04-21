@@ -3,7 +3,7 @@
 `<ErrorBoundary>` is a built-in component that catches errors thrown by
 its descendants during render, lifecycle hooks (including `onWillStart`),
 or event handlers, and renders a `fallback` slot in their place. It's the
-declarative counterpart of the [`onError`](hooks.md#onerror) hook.
+declarative counterpart of the [`onError`](error_handling.md) hook.
 
 ## Basic usage
 

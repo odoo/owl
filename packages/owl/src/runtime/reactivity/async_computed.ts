@@ -1,4 +1,5 @@
-import { getScope, isAbortError } from "../scope";
+import { isAbortError } from "../scope";
+import { atomSymbol, createComputation, getCurrentComputation } from "./computations";
 import { effect } from "./effect";
 import { signal } from "./signal";
 
@@ -25,13 +26,21 @@ export function asyncComputed<T>(
   fetcher: (ctx: AsyncComputedContext) => Promise<T>,
   options: AsyncComputedOptions<T> = {}
 ): AsyncComputed<T> {
+  const computation = createComputation(() => {}, true);
+  computation.onDetach = dispose;
+  const parent = getCurrentComputation();
+  if (parent) {
+    parent.onAttach?.(computation);
+    if (parent.abortSignal) {
+      computation.abortSignal = parent.abortSignal;
+    }
+  }
+
   const value = signal<T | undefined>(options.initial);
   const loading = signal(false);
   const error = signal<Error | null>(null);
   const refreshTick = signal(0);
-
-  const scope = getScope();
-  const scopeAbortSignal = scope?.abortSignal ?? null;
+  const scopeAbortSignal = computation.abortSignal;
 
   let runId = 0;
   let runController: AbortController | null = null;
@@ -109,9 +118,8 @@ export function asyncComputed<T>(
     runController = null;
   }
 
-  scope?.onDestroy(dispose);
-
   const read = (() => value()) as AsyncComputed<T>;
+  (read as any)[atomSymbol] = computation;
   read.loading = () => loading();
   read.error = () => error();
   read.refresh = () => refreshTick.set(refreshTick() + 1);

@@ -40,18 +40,9 @@ export function asyncComputed<T>(
   const loading = signal(false);
   const error = signal<Error | null>(null);
   const refreshTick = signal(0);
-  const scopeAbortSignal = computation.abortSignal;
 
   let runId = 0;
   let runController: AbortController | null = null;
-  let scopeAbortListener: (() => void) | null = null;
-
-  function detachScopeListener() {
-    if (scopeAbortSignal && scopeAbortListener) {
-      scopeAbortSignal.removeEventListener("abort", scopeAbortListener);
-      scopeAbortListener = null;
-    }
-  }
 
   const stopEffect = effect(() => {
     refreshTick();
@@ -59,18 +50,13 @@ export function asyncComputed<T>(
 
     if (runController) {
       runController.abort();
-      detachScopeListener();
     }
     const controller = new AbortController();
     runController = controller;
 
-    if (scopeAbortSignal) {
-      if (scopeAbortSignal.aborted) {
-        controller.abort();
-      } else {
-        scopeAbortListener = () => controller.abort();
-        scopeAbortSignal.addEventListener("abort", scopeAbortListener, { once: true });
-      }
+    const abortSignals = [controller.signal];
+    if (computation.abortSignal) {
+      abortSignals.push(computation.abortSignal);
     }
 
     loading.set(true);
@@ -78,10 +64,9 @@ export function asyncComputed<T>(
 
     let promise: Promise<T>;
     try {
-      promise = fetcher({ abortSignal: controller.signal });
+      promise = fetcher({ abortSignal: AbortSignal.any(abortSignals) });
     } catch (e) {
       if (myRunId !== runId) return;
-      detachScopeListener();
       if (isAbortError(e)) {
         loading.set(false);
         return;
@@ -94,13 +79,11 @@ export function asyncComputed<T>(
     promise.then(
       (result) => {
         if (myRunId !== runId) return;
-        detachScopeListener();
         value.set(result);
         loading.set(false);
       },
       (e) => {
         if (myRunId !== runId) return;
-        detachScopeListener();
         if (isAbortError(e)) {
           loading.set(false);
           return;
@@ -113,7 +96,6 @@ export function asyncComputed<T>(
 
   function dispose() {
     stopEffect();
-    detachScopeListener();
     runController?.abort();
     runController = null;
   }

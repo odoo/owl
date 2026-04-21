@@ -26,6 +26,9 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  onAttach?: (computation: ComputationAtom) => void;
+  onDetach?: () => void;
+  abortSignal?: AbortSignal;
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -36,7 +39,7 @@ let currentComputation: ComputationAtom | undefined;
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
 ): ComputationAtom {
   return {
     state,

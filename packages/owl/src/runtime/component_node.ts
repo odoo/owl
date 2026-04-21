@@ -63,7 +63,19 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     );
     this.props = props;
     const previousComputation = getCurrentComputation();
-    setComputation(undefined);
+    const componentComputation = createComputation(
+      () => {},
+      false,
+      ComputationState.EXECUTED
+    );
+    componentComputation.onAttach = (computation) => {
+      this.computations.push(computation);
+      if (computation.onDetach) {
+        this.onDestroy(computation.onDetach);
+      }
+    };
+    componentComputation.abortSignal = this.abortSignal;
+    setComputation(componentComputation);
     scopeStack.push(this);
     try {
       this.component = new C(this);

@@ -6,9 +6,9 @@ import {
   ReactiveValue,
   updateComputation,
   createComputation,
+  getCurrentComputation,
 } from "./computations";
 import { OwlError } from "../../common/owl_error";
-import { getScope } from "../scope";
 
 interface ComputedOptions<TWrite> {
   set?(value: TWrite): void;
@@ -42,7 +42,8 @@ export function computed<TRead, TWrite = TRead>(
   readComputed[atomSymbol] = computation;
   readComputed.set = options.set ?? readonlySetter;
 
-  getScope()?.computations.push(computation);
+  const parent = getCurrentComputation();
+  parent?.onAttach?.(computation);
 
   return readComputed;
 }

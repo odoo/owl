@@ -6,6 +6,7 @@ import {
   setComputation,
   updateComputation,
   createComputation,
+  atomSymbol,
 } from "./computations";
 
 export function effect<T>(fn: () => T) {
@@ -17,11 +18,9 @@ export function effect<T>(fn: () => T) {
     setComputation(computation);
     return fn();
   }, false);
-  getCurrentComputation()?.observers.add(computation);
-  updateComputation(computation);
 
   // Remove sources and unsubscribe
-  return function cleanupEffect() {
+  function cleanupEffect() {
     // In case the cleanup read an atom.
     // todo: test it
     const previousComputation = getCurrentComputation();
@@ -29,6 +28,17 @@ export function effect<T>(fn: () => T) {
     unsubscribeEffect(computation);
     setComputation(previousComputation);
   };
+  cleanupEffect[atomSymbol] = computation;
+  computation.onDetach = cleanupEffect;
+  computation.onAttach = (child) => {
+    computation.observers.add(child);
+  };
+
+  const parent = getCurrentComputation();
+  parent?.onAttach?.(computation);
+
+  updateComputation(computation);
+  return cleanupEffect;
 }
 
 function unsubscribeEffect(effect: ComputationAtom) {

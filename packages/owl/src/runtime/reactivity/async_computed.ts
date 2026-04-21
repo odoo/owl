@@ -1,4 +1,5 @@
-import { getScope, isAbortError } from "../scope";
+import { isAbortError } from "../scope";
+import { atomSymbol, createComputation, getCurrentComputation } from "./computations";
 import { effect } from "./effect";
 import { signal } from "./signal";
 
@@ -25,24 +26,23 @@ export function asyncComputed<T>(
   fetcher: (ctx: AsyncComputedContext) => Promise<T>,
   options: AsyncComputedOptions<T> = {}
 ): AsyncComputed<T> {
+  const computation = createComputation(() => {}, true);
+  computation.onDetach = dispose;
+  const parent = getCurrentComputation();
+  if (parent) {
+    parent.onAttach?.(computation);
+    if (parent.abortSignal) {
+      computation.abortSignal = parent.abortSignal;
+    }
+  }
+
   const value = signal<T | undefined>(options.initial);
   const loading = signal(false);
   const error = signal<Error | null>(null);
   const refreshTick = signal(0);
 
-  const scope = getScope();
-  const scopeAbortSignal = scope?.abortSignal ?? null;
-
   let runId = 0;
   let runController: AbortController | null = null;
-  let scopeAbortListener: (() => void) | null = null;
-
-  function detachScopeListener() {
-    if (scopeAbortSignal && scopeAbortListener) {
-      scopeAbortSignal.removeEventListener("abort", scopeAbortListener);
-      scopeAbortListener = null;
-    }
-  }
 
   const stopEffect = effect(() => {
     refreshTick();
@@ -50,18 +50,13 @@ export function asyncComputed<T>(
 
     if (runController) {
       runController.abort();
-      detachScopeListener();
     }
     const controller = new AbortController();
     runController = controller;
 
-    if (scopeAbortSignal) {
-      if (scopeAbortSignal.aborted) {
-        controller.abort();
-      } else {
-        scopeAbortListener = () => controller.abort();
-        scopeAbortSignal.addEventListener("abort", scopeAbortListener, { once: true });
-      }
+    const abortSignals = [controller.signal];
+    if (computation.abortSignal) {
+      abortSignals.push(computation.abortSignal);
     }
 
     loading.set(true);
@@ -69,10 +64,9 @@ export function asyncComputed<T>(
 
     let promise: Promise<T>;
     try {
-      promise = fetcher({ abortSignal: controller.signal });
+      promise = fetcher({ abortSignal: AbortSignal.any(abortSignals) });
     } catch (e) {
       if (myRunId !== runId) return;
-      detachScopeListener();
       if (isAbortError(e)) {
         loading.set(false);
         return;
@@ -85,13 +79,11 @@ export function asyncComputed<T>(
     promise.then(
       (result) => {
         if (myRunId !== runId) return;
-        detachScopeListener();
         value.set(result);
         loading.set(false);
       },
       (e) => {
         if (myRunId !== runId) return;
-        detachScopeListener();
         if (isAbortError(e)) {
           loading.set(false);
           return;
@@ -104,14 +96,12 @@ export function asyncComputed<T>(
 
   function dispose() {
     stopEffect();
-    detachScopeListener();
     runController?.abort();
     runController = null;
   }
 
-  scope?.onDestroy(dispose);
-
   const read = (() => value()) as AsyncComputed<T>;
+  (read as any)[atomSymbol] = computation;
   read.loading = () => loading();
   read.error = () => error();
   read.refresh = () => refreshTick.set(refreshTick() + 1);

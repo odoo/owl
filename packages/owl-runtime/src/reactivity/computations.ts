@@ -1,0 +1,16 @@
+export {
+  untrack,
+  type ReactiveValue,
+  type Atom,
+  type ComputationAtom,
+  ComputationState,
+  atomSymbol,
+  createComputation,
+  onReadAtom,
+  onWriteAtom,
+  getCurrentComputation,
+  setComputation,
+  updateComputation,
+  removeSources,
+  disposeComputation,
+} from "@odoo/owl-core";

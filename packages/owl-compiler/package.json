@@ -1,18 +1,22 @@
 {
-  "name": "@odoo/owl",
+  "name": "@odoo/owl-compiler",
   "version": "3.0.0-alpha.26",
-  "description": "Odoo Web Library (OWL)",
-  "main": "dist/owl.cjs.js",
-  "module": "dist/owl.es.js",
-  "types": "dist/types/owl.d.ts",
+  "description": "Template compiler for Odoo Web Library (OWL)",
+  "main": "dist/owl-compiler.cjs.js",
+  "module": "dist/owl-compiler.es.js",
+  "types": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/owl.d.ts",
-      "import": "./dist/owl.es.js",
-      "require": "./dist/owl.cjs.js",
-      "default": "./dist/owl.es.js"
+      "types": "./src/index.ts",
+      "import": "./dist/owl-compiler.es.js",
+      "require": "./dist/owl-compiler.cjs.js",
+      "default": "./dist/owl-compiler.es.js"
     },
-    "./dist/*": "./dist/*",
+    "./standalone": {
+      "types": "./src/standalone/index.ts",
+      "import": "./dist/compile_templates.mjs",
+      "default": "./dist/compile_templates.mjs"
+    },
     "./package.json": "./package.json"
   },
   "type": "module",
@@ -23,12 +27,10 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build:bundle": "node build.mjs",
-    "build": "npm run build:bundle",
+    "build": "node build.mjs",
     "build:types": "node build.mjs types",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:types": "tsc --project tsconfig.tests.json"
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -41,9 +43,7 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "dependencies": {
-    "@odoo/owl-compiler": "*",
     "@odoo/owl-core": "*",
-    "@odoo/owl-runtime": "*",
     "jsdom": "^25.0.1"
   }
 }

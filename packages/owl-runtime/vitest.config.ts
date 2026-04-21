@@ -11,11 +11,14 @@ export default defineConfig({
       "@odoo/owl-core": fileURLToPath(
         new URL("../owl-core/src/index.ts", import.meta.url)
       ),
+      "@odoo/owl-compiler/src/parser": fileURLToPath(
+        new URL("../owl-compiler/src/parser.ts", import.meta.url)
+      ),
+      "@odoo/owl-compiler/src/inline_expressions": fileURLToPath(
+        new URL("../owl-compiler/src/inline_expressions.ts", import.meta.url)
+      ),
       "@odoo/owl-compiler": fileURLToPath(
         new URL("../owl-compiler/src/index.ts", import.meta.url)
-      ),
-      "@odoo/owl-runtime": fileURLToPath(
-        new URL("../owl-runtime/src/index.ts", import.meta.url)
       ),
     },
   },

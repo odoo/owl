@@ -1,7 +1,7 @@
-import { TemplateSet } from "./runtime/template_set";
-import { compile } from "./compiler";
+import { TemplateSet } from "@odoo/owl-runtime";
+import { compile, parseXML } from "@odoo/owl-compiler";
 
-export * from "./runtime";
+export * from "@odoo/owl-runtime";
 
 (TemplateSet.prototype as any)._compileTemplate = function _compileTemplate(
   name: string,
@@ -15,4 +15,8 @@ export * from "./runtime";
     customDirectives: this.customDirectives,
     hasGlobalValues: this.hasGlobalValues,
   });
+};
+
+(TemplateSet.prototype as any)._parseXML = function _parseXML(xml: string) {
+  return parseXML(xml);
 };

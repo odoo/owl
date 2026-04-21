@@ -1,0 +1,48 @@
+{
+  "name": "@odoo/owl-compiler",
+  "version": "3.0.0-alpha.26",
+  "description": "Template compiler for Odoo Web Library (OWL)",
+  "main": "dist/owl-compiler.cjs.js",
+  "module": "dist/owl-compiler.es.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/owl-compiler.es.js",
+      "require": "./dist/owl-compiler.cjs.js",
+      "default": "./dist/owl-compiler.es.js"
+    },
+    "./standalone": {
+      "import": "./dist/compile_templates.mjs",
+      "default": "./dist/compile_templates.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "build:types": "node build.mjs types",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odoo/owl.git"
+  },
+  "author": "Odoo",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/odoo/owl/issues"
+  },
+  "homepage": "https://github.com/odoo/owl#readme",
+  "dependencies": {
+    "@odoo/owl-core": "*",
+    "jsdom": "^25.0.1"
+  }
+}

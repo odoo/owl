@@ -24,8 +24,6 @@
   },
   "scripts": {
     "build:bundle": "node build.mjs",
-    "build:runtime": "node build.mjs runtime",
-    "build:compiler": "node build.mjs compiler",
     "build": "npm run build:bundle",
     "build:types": "node build.mjs types",
     "test": "vitest run",
@@ -43,6 +41,9 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "dependencies": {
+    "@odoo/owl-compiler": "*",
+    "@odoo/owl-core": "*",
+    "@odoo/owl-runtime": "*",
     "jsdom": "^25.0.1"
   }
 }

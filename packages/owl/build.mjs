@@ -48,27 +48,6 @@ async function buildVariant(entry, suffix) {
   ]);
 }
 
-async function buildCompiler() {
-  await Promise.all([
-    esbuild.build({
-      entryPoints: ["src/compiler/index.ts"],
-      outfile: "dist/compiler.js",
-      bundle: true,
-      format: "cjs",
-      target: "es2022",
-    }),
-    esbuild.build({
-      entryPoints: ["src/compiler/standalone/index.ts"],
-      outfile: "dist/compile_templates.mjs",
-      bundle: true,
-      format: "esm",
-      target: "es2022",
-      platform: "node",
-      external: ["fs", "fs/promises", "path", "jsdom"],
-    }),
-  ]);
-}
-
 function buildTypes() {
   mkdirSync("dist/types", { recursive: true });
   execSync(
@@ -80,16 +59,9 @@ function buildTypes() {
 const target = process.argv[2];
 
 switch (target) {
-  case "runtime":
-    await buildVariant("src/runtime/index.ts", "runtime");
-    break;
-  case "compiler":
-    await buildCompiler();
-    break;
   case "types":
     buildTypes();
     break;
   default:
     await buildVariant("src/index.ts");
-    await buildCompiler();
 }

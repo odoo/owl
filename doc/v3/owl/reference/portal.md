@@ -129,7 +129,7 @@ container:
 ## How it works
 
 `<Portal>` uses `app.createRoot` plus the
-[two-phase `prepare`/`commit` API](app.md#two-phase-mounting-prepare-and-commit).
+[two-phase `prepare`/`mount` API](app.md#two-phase-mounting-prepare-and-mount).
 On every effect run with a valid target, it builds a fresh sub-root,
 chains its scope and plugin manager onto the Portal's, installs an
 error handler that walks up the source-tree chain, then commits into

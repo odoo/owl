@@ -28,7 +28,9 @@
     "build:types": "node build.mjs types",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:types": "tsc --project tsconfig.tests.json"
+    "test:types": "tsc --project tsconfig.tests.json",
+    "prepack": "cp ../../README.md ../../LICENSE .",
+    "postpack": "rm -f README.md LICENSE"
   },
   "repository": {
     "type": "git",

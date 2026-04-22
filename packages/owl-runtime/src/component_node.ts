@@ -36,8 +36,6 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   children: { [key: string]: ComponentNode } = Object.create(null);
 
   willUpdateProps: LifecycleHook[] = [];
-  willUnmount: LifecycleHook[] = [];
-  mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;

@@ -23,8 +23,8 @@ export function onWillUpdateProps(
   scope.willUpdateProps.push(scope.decorate(swapped, "onWillUpdateProps"));
 }
 
-export function onMounted(fn: (scope: ComponentNode) => void | any) {
-  const scope = getComponentScope();
+export function onMounted(fn: (scope: Scope) => void | any) {
+  const scope = useScope();
   scope.mounted.push(scope.decorate(fn, "onMounted"));
 }
 
@@ -38,8 +38,8 @@ export function onPatched(fn: (scope: ComponentNode) => void | any) {
   scope.patched.push(scope.decorate(fn, "onPatched"));
 }
 
-export function onWillUnmount(fn: (scope: ComponentNode) => void | any) {
-  const scope = getComponentScope();
+export function onWillUnmount(fn: (scope: Scope) => void | any) {
+  const scope = useScope();
   scope.willUnmount.unshift(scope.decorate(fn, "onWillUnmount"));
 }
 

@@ -1656,3 +1656,84 @@ exports[`errors and promises > wrapped errors in async code are correctly caught
   }
 }"
 `;
+
+exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caught by child's own onError 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {val: ctx['this'].state.val};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caught by child's own onError 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caught by parent onError 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {val: ctx['this'].state.val};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caught by parent onError 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`errors in onWillUpdateProps > sync error in onWillUpdateProps is caught by parent onError 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {val: ctx['this'].state.val};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`errors in onWillUpdateProps > sync error in onWillUpdateProps is caught by parent onError 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;

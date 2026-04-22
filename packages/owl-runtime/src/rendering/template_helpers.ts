@@ -14,6 +14,7 @@ import { html } from "../blockdom/index";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
 import { Markup } from "../utils";
+import { handleError } from "./error_handling";
 import { Fiber, makeChildFiber } from "./fibers";
 
 const ObjectCreate = Object.create;
@@ -291,11 +292,16 @@ function createComponent<P extends Record<string, any>>(
         }
         if (promises) {
           const p = promises.length === 1 ? promises[0] : Promise.all(promises);
-          p.then(() => {
-            if (fiber !== node.fiber) return;
-            node.props = props;
-            fiber.render();
-          });
+          p.then(
+            () => {
+              if (fiber !== node.fiber) return;
+              node.props = props;
+              fiber.render();
+            },
+            (error) => {
+              handleError({ node, error });
+            }
+          );
         } else {
           node.props = props;
           fiber.render();

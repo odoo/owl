@@ -1,5 +1,5 @@
 import { Component, mount, signal, xml } from "@odoo/owl";
-import { HtmlEditor } from "./html_editor/html_editor.js";
+import { HtmlEditor } from "./html_editor.js";
 
 class Root extends Component {
   static template = xml`<HtmlEditor html="this.html"/>`;

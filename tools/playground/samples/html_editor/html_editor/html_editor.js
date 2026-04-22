@@ -1,18 +1,18 @@
-import { Component, signal, useEffect } from "@odoo/owl";
+import { Component, signal, onMounted, props, types as t } from "@odoo/owl";
 
 export class HtmlEditor extends Component {
   static template = "demo.HtmlEditor";
-  static props = {
-    html: { type: Object, optional: true },
-  };
+  props = props({
+    "html?": t.signal(),
+  });
 
   setup() {
     this.editorRef = signal(null);
 
-    useEffect(() => {
+    onMounted(() => {
       const el = this.editorRef();
       if (el && this.props.html) {
-        el.innerHTML = this.props.html.value;
+        el.innerHTML = this.props.html();
       }
     });
   }

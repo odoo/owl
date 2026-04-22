@@ -16,9 +16,9 @@
         <button t-on-click="this.insertLink" title="Insert link">🔗</button>
       </div>
       <div class="editor-content" contenteditable="true" t-ref="this.editorRef" t-on-input="this.updateHtml"/>
-      <details class="html-output">
+      <details class="html-output" t-if="this.props.html">
         <summary>HTML Output</summary>
-        <pre t-out="this.props.html.value"/>
+        <pre t-out="this.props.html()"/>
       </details>
     </div>
   </t>

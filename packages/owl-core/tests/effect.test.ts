@@ -1,4 +1,4 @@
-import { effect, proxy, signal } from "../src";
+import { effect, proxy, signal, untrack } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -117,6 +117,144 @@ describe("effect", () => {
   });
 
   describe("unsubscribe", () => {
+    test("B re-running unsubscribes nested A, which prevents C from re-running", async () => {
+      // Three effects shaped like a component render pipeline:
+      //   A (compute) — nested inside B (sort) — nested inside C (template render)
+      //   When B re-runs, unsubscribeEffect(B) iterates B.observers and removes A's
+      //   sources. If A is not recreated by B's second run (e.g. guarded creation),
+      //   A is silently dead — later source changes no longer propagate to C.
+      const source = signal(1); // raw data A reads
+      const sortKey = signal("asc"); // what B reads
+      const result = signal(0); // A writes, C reads (simulates the chain)
+
+      const spyA = vi.fn();
+      const spyC = vi.fn();
+
+      // C: template render effect
+      effect(() => {
+        spyC(result());
+      });
+
+      // B: sort effect, creates A only on its first run
+      let aCreated = false;
+      effect(() => {
+        sortKey();
+        if (!aCreated) {
+          aCreated = true;
+          // A: compute effect, nested child of B
+          effect(() => {
+            const v = source();
+            spyA(v);
+            result.set(v * 10);
+          });
+        }
+      });
+
+      await waitScheduler();
+      expectSpy(spyA, 1, { args: [1] });
+      expectSpy(spyC, 2, { args: [10] });
+
+      // Source changes: A re-runs, propagates to C
+      source.set(2);
+      await waitScheduler();
+      expectSpy(spyA, 2, { args: [2] });
+      expectSpy(spyC, 3, { args: [20] });
+
+      // Sort key changes: B re-runs. unsubscribeEffect(B) silently kills A.
+      sortKey.set("desc");
+      await waitScheduler();
+      // A is not recreated (the guard blocks it).
+
+      // Source changes again — but A is no longer subscribed to `source`.
+      source.set(3);
+      await waitScheduler();
+      // A did not re-run, so `result` stays stale and C never re-renders.
+      expectSpy(spyA, 2, { args: [2] });
+      expectSpy(spyC, 3, { args: [20] });
+    });
+
+    test("wrapping A creation in untrack escapes B's ownership", async () => {
+      // Same shape as the previous test, but A is created inside untrack(...)
+      // so currentComputation is undefined when A attaches — A is NOT added to
+      // B.observers, so B re-running does not dispose A.
+      const source = signal(1);
+      const sortKey = signal("asc");
+      const result = signal(0);
+
+      const spyA = vi.fn();
+      const spyC = vi.fn();
+
+      effect(() => {
+        spyC(result());
+      });
+
+      let aCreated = false;
+      effect(() => {
+        sortKey();
+        if (!aCreated) {
+          aCreated = true;
+          untrack(() => {
+            effect(() => {
+              const v = source();
+              spyA(v);
+              result.set(v * 10);
+            });
+          });
+        }
+      });
+
+      await waitScheduler();
+      expectSpy(spyA, 1, { args: [1] });
+      expectSpy(spyC, 2, { args: [10] });
+
+      source.set(2);
+      await waitScheduler();
+      expectSpy(spyA, 2, { args: [2] });
+      expectSpy(spyC, 3, { args: [20] });
+
+      // B re-runs — but A is not its child anymore, so A survives.
+      sortKey.set("desc");
+      await waitScheduler();
+
+      source.set(3);
+      await waitScheduler();
+      // A is still alive and subscribed to `source`.
+      expectSpy(spyA, 3, { args: [3] });
+      expectSpy(spyC, 4, { args: [30] });
+    });
+
+    test("disposing a parent effect removes child effect's sources", async () => {
+      // If effect A is created inside effect B, A is a child of B (A is in B.observers).
+      // Disposing B then calls unsubscribeEffect(B), which iterates B.observers and
+      // calls removeSources(A). So A is silently unsubscribed from all its atoms.
+      const a = signal(1);
+      const b = signal(10);
+      const spyA = vi.fn();
+      const cleanupA = vi.fn();
+
+      const disposeB = effect(() => {
+        // B depends on signal a
+        a();
+        // A is created as a child of B and tracks signal b independently
+        effect(() => {
+          spyA(b());
+          return cleanupA;
+        });
+      });
+      expectSpy(spyA, 1, { args: [10] });
+      expect(cleanupA).toHaveBeenCalledTimes(0);
+
+      // Dispose B. Since A is a child of B (A ∈ B.observers),
+      // unsubscribeEffect(B) cascades: removeSources(A) is called and A's cleanup runs.
+      disposeB();
+      expect(cleanupA).toHaveBeenCalledTimes(1);
+
+      // A has been silently unsubscribed from signal b.
+      b.set(20);
+      await waitScheduler();
+      expectSpy(spyA, 1, { args: [10] });
+    });
+
     test("should be able to unsubscribe", async () => {
       const state = proxy({ a: 1 });
       const spy = vi.fn();

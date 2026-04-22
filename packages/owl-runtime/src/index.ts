@@ -42,6 +42,7 @@ export { Portal } from "./portal";
 export { Suspense } from "./suspense";
 export { props } from "./props";
 export type { GetProps } from "./props";
+export { prop } from "./prop";
 export { status } from "./status";
 export {
   asyncComputed,

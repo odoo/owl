@@ -40,7 +40,7 @@
     "url": "https://github.com/odoo/owl/issues"
   },
   "homepage": "https://github.com/odoo/owl#readme",
-  "dependencies": {
+  "devDependencies": {
     "@odoo/owl-compiler": "*",
     "@odoo/owl-core": "*",
     "@odoo/owl-runtime": "*",

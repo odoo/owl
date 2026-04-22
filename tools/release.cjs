@@ -53,13 +53,14 @@ async function startRelease() {
   const STEPS = 12;
   let step = 1;
   // ---------------------------------------------------------------------------
-  // Cheapest check first: if we're not authenticated to npm, fail before any
-  // build/commit/push work happens. Otherwise the publish at step 12 blows up
-  // after everything else has already landed.
-  log(`Step ${step++}/${STEPS}: checking npm authentication...`);
-  const whoami = await execCommand("npm whoami");
-  if (whoami !== 0) {
-    logError("Not logged in to npm. Run `npm login` first, then re-run this script.");
+  // Authenticate first: handles 2FA in the browser, so the publish at step 12
+  // doesn't blow up after everything else has already landed. Requires npm
+  // account 2FA mode to be "Authorization only" — if it's "Authorization and
+  // writes", publish will still prompt for an OTP on the CLI.
+  log(`Step ${step++}/${STEPS}: logging in to npm via browser...`);
+  const loginResult = await execCommand("npm login --auth-type=web");
+  if (loginResult !== 0) {
+    logError("npm login failed. Aborting.");
     return;
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@odoo/owl",
-  "version": "3.0.0-alpha.27",
+  "version": "3.0.0-alpha.28",
   "description": "Odoo Web Library (OWL)",
   "main": "dist/owl.cjs.js",
   "module": "dist/owl.es.js",
@@ -41,9 +41,9 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "devDependencies": {
-    "@odoo/owl-compiler": "*",
-    "@odoo/owl-core": "*",
-    "@odoo/owl-runtime": "*",
+    "@odoo/owl-compiler": "3.0.0-alpha.28",
+    "@odoo/owl-core": "3.0.0-alpha.28",
+    "@odoo/owl-runtime": "3.0.0-alpha.28",
     "jsdom": "^25.0.1"
   }
 }

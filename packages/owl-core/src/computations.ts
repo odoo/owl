@@ -99,15 +99,12 @@ export function updateComputation(computation: ComputationAtom) {
       updateComputation(source as ComputationAtom);
     }
     // If the state is still not stale after processing the sources, it means
-    // none of the dependencies have changed.
-    // todo: test it
+    // none of the dependencies have changed — skip re-running compute.
     if (computation.state !== ComputationState.STALE) {
       computation.state = ComputationState.EXECUTED;
       return;
     }
   }
-  // todo: test performance. We might want to avoid removing the atoms to
-  // directly re-add them at compute. Especially as we are making them stale.
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
@@ -116,13 +113,15 @@ export function updateComputation(computation: ComputationAtom) {
   currentComputation = previousComputation;
 }
 
+// Unhooks `computation` from its sources' observer sets. Called during update
+// cycles (sources are about to be re-established during compute) AND during
+// effect unsubscribe. Final-disposal cascade cleanup for derived sources with
+// no remaining observers lives in `disposeComputation`, not here — doing it
+// during normal updates would disconnect atoms that are about to be re-added.
 export function removeSources(computation: ComputationAtom) {
   const sources = computation.sources;
   for (const source of sources) {
-    const observers = source.observers;
-    observers.delete(computation);
-    // todo: if source has no effect observer anymore, remove its sources too
-    // todo: test it
+    source.observers.delete(computation);
   }
   sources.clear();
 }

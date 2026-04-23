@@ -92,8 +92,9 @@ onError((error) => {
 });
 ```
 
-When an unhandled error bubbles out of the rendering cycle, Owl wraps it
-in a new `OwlError` and stores the original on the `.cause` field:
+When a non-`OwlError` (e.g. a plain `TypeError` from user code) bubbles out
+of the rendering cycle unhandled, Owl wraps it in a new `OwlError` and
+stores the original on the `.cause` field:
 
 ```js
 onError((error) => {
@@ -102,6 +103,10 @@ onError((error) => {
   console.error(error.cause ?? error);
 });
 ```
+
+Errors that are already `OwlError` instances (invalid template, missing
+registry key, failed validation, ...) are propagated as-is without an extra
+wrapper, since their message already identifies the failure.
 
 `OwlError` is a plain `Error` subclass — `.message`, `.stack`, and all the
 usual tooling work as expected. Owl does not attach numeric error codes;

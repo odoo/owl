@@ -47,6 +47,9 @@ function invokeErrorHandlers(
 // would mark the outer tree's fibers as in-error and stall its mount).
 export function forwardErrorToParent(boundary: ComponentNode) {
   return (error: any, finalize: Function): void => {
+    if (boundary.app.destroyed) {
+      throw error;
+    }
     const { handled } = invokeErrorHandlers(boundary, error, finalize, false);
     if (!handled) {
       boundary.app._handleError(finalize());
@@ -60,6 +63,14 @@ export function handleError(params: ErrorParams) {
   let node: ComponentNode | null = "node" in params ? params.node : params.fiber.node;
   const fiber = "fiber" in params ? params.fiber : node!.fiber;
   const app = node!.app;
+
+  // Once the app has been destroyed (e.g. by a prior unhandled error), stop
+  // re-running error handling as the stack unwinds through ancestor renders.
+  // Otherwise each catch frame would re-wrap the already-thrown OwlError,
+  // producing nested "Caused by" chains for every component level.
+  if (app.destroyed) {
+    throw error;
+  }
 
   if (fiber) {
     // resets the fibers on components if possible. This is important so that
@@ -79,6 +90,11 @@ export function handleError(params: ErrorParams) {
       app.destroy();
     } catch (e) {
       // mute all errors here because we are in a corrupted state anyway
+    }
+    // If the error is already an OwlError, it already conveys a clear,
+    // framework-specific message — no need to wrap it in another OwlError.
+    if (error instanceof OwlError) {
+      return error;
     }
     return Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
       cause: error,

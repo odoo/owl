@@ -78,6 +78,7 @@ export class App extends TemplateSet {
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
+  destroyed = false;
 
   constructor(config: AppConfig = {}) {
     super(config);
@@ -213,6 +214,7 @@ export class App extends TemplateSet {
     this.pluginManager.destroy();
     this.scheduler.processTasks();
     apps.delete(this);
+    this.destroyed = true;
   }
 
   _handleError(error: any) {

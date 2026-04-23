@@ -321,7 +321,7 @@ describe("list of components", () => {
     } catch (e) {
       error = e;
     }
-    expect(error.cause.message).toBe("Got duplicate key in t-foreach: child");
+    expect(error.message).toBe("Got duplicate key in t-foreach: child");
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -345,7 +345,7 @@ describe("list of components", () => {
     } catch (e) {
       error = e;
     }
-    expect(error.cause.message).toBe("Got duplicate key in t-foreach: [object Object]");
+    expect(error.message).toBe("Got duplicate key in t-foreach: [object Object]");
     expect(getConsoleOutput()).toEqual([]);
   });
 

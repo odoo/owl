@@ -231,7 +231,7 @@ describe("basics", () => {
       error = e;
     }
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Cannot mount a component on a detached dom node");
+    expect(error!.message).toBe("Cannot mount a component on a detached dom node");
     expect(getConsoleOutput()).toEqual([]);
   });
 

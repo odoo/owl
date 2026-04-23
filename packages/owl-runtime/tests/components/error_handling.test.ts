@@ -69,8 +69,7 @@ describe("basics", () => {
       .catch((e: Error) => (error = e));
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
-    expect(error!.cause!.message).toBe(
+    expect(error!.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
     expect(getConsoleOutput()).toEqual([]);
@@ -88,8 +87,7 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
-    expect(error!.cause.message).toBe(
+    expect(error!.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
     expect(getConsoleOutput()).toEqual([]);
@@ -107,8 +105,7 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
-    expect(error!.cause.message).toBe(
+    expect(error!.message).toBe(
       '"SomeComponent" is not a Component. It must inherit from the Component class'
     );
   });
@@ -123,10 +120,43 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
-    expect(error!.cause.message).toBe(
+    expect(error!.message).toBe(
       'Cannot find the definition of component "MissingChild", missing static components key in parent'
     );
+  });
+
+  test("a sync re-render error deep in the tree is only wrapped once", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
+      props = props();
+    }
+    class Parent extends Component {
+      static template = xml`<Child flag="this.props.flag"/>`;
+      static components = { Child };
+      props = props();
+    }
+    class GrandParent extends Component {
+      static template = xml`<Parent flag="this.state.flag"/>`;
+      static components = { Parent };
+      state = { flag: false };
+    }
+    const gp = await mount(GrandParent, fixture);
+    gp.state.flag = true;
+
+    // Can't use nextAppError here: it monkey-patches _handleError which
+    // breaks the throw-through cascade we're testing. Instead, let the sync
+    // re-render error reject the render promise directly.
+    let error: any;
+    try {
+      await render(gp);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toMatch(/Cannot read propert/);
+    // As the throw unwinds through Parent and GrandParent renders, their
+    // handleError frames must not re-wrap the already-wrapped error.
+    expect(error!.cause.cause).toBeUndefined();
   });
 
   test("display a nice error if the root component template fails to compile", async () => {
@@ -186,7 +216,7 @@ function(app, bdom, helpers) {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe(expectedErrorMessage);
+    expect(error!.message).toBe(expectedErrorMessage);
   });
 
   test("simple catchError", async () => {
@@ -623,7 +653,7 @@ describe("can catch errors", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.cause.message).toBe(`No active scope`);
+    expect(error!.message).toBe(`No active scope`);
   });
 
   test("Errors have the right cause", async () => {

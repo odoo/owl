@@ -50,7 +50,7 @@ describe("basics", () => {
 
     render(parent);
     const error = await nextAppError(parent.__owl__.app);
-    expect(error.message).toContain("[Owl] Unhandled error. Destroying the root component");
+    expect(error).toBeInstanceOf(TypeError);
     expect(fixture.innerHTML).toBe("");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -152,11 +152,10 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
-    expect(error!.cause.message).toMatch(/Cannot read propert/);
+    expect(error!.message).toMatch(/Cannot read propert/);
     // As the throw unwinds through Parent and GrandParent renders, their
-    // handleError frames must not re-wrap the already-wrapped error.
-    expect(error!.cause.cause).toBeUndefined();
+    // handleError frames must not wrap the error that is already propagating.
+    expect(error!.cause).toBeUndefined();
   });
 
   test("display a nice error if the root component template fails to compile", async () => {
@@ -301,20 +300,10 @@ describe("errors and promises", () => {
       error = e as Error;
     }
 
-    // const app = new App();
-    // let error: OwlError;
-    // const mountProm = app
-    //   .createRoot(Root)
-    //   .mount(fixture)
-    //   .catch((e: Error) => (error = e));
-    // await expect(nextAppError(app)).resolves.toThrow(
-    //   "[Owl] Unhandled error. Destroying the root component"
-    // );
-    // await mountProm;
     expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.cause!.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -335,7 +324,7 @@ describe("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -357,12 +346,12 @@ describe("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.stack).toContain("error_handling.test.ts");
+    expect(error.stack).toContain("error_handling.test.ts");
     expect(fixture.innerHTML).toBe("");
     expect(getConsoleOutput()).toEqual([]);
   });
 
-  test("wrapped errors in async code are correctly caught", async () => {
+  test("errors thrown from async hooks propagate through the mount rejection", async () => {
     class Root extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
@@ -380,7 +369,7 @@ describe("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toBe("boom in onWillStart");
+    expect(error.message).toBe("boom in onWillStart");
   });
 
   test("an error in willPatch call will reject the render promise", async () => {
@@ -445,7 +434,7 @@ describe("errors and promises", () => {
     }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.cause.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -489,7 +478,7 @@ describe("errors and promises", () => {
 
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
-    expect(error!.cause.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -514,7 +503,7 @@ describe("errors and promises", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe(`Error in mounted`);
+    expect(error!.message).toBe(`Error in mounted`);
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -529,7 +518,7 @@ describe("errors and promises", () => {
     root.state = "boom";
     render(root);
     const error: any = await nextAppError(root.__owl__.app)!;
-    expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'b')");
+    expect(error.message).toBe("Cannot read properties of undefined (reading 'b')");
     expect(fixture.innerHTML).toBe("");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -656,7 +645,7 @@ describe("can catch errors", () => {
     expect(error!.message).toBe(`No active scope`);
   });
 
-  test("Errors have the right cause", async () => {
+  test("Errors thrown from user hooks surface as-is (sync)", async () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
@@ -674,10 +663,10 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error.cause).toBe(err);
+    expect(error).toBe(err);
   });
 
-  test("Errors in owl lifecycle are wrapped in dev mode: async hook", async () => {
+  test("Errors thrown from user hooks surface as-is (async)", async () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
@@ -696,10 +685,10 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error.cause).toBe(err);
+    expect(error).toBe(err);
   });
 
-  test("Errors in owl lifecycle are wrapped outside dev mode: sync hook", async () => {
+  test("Errors thrown outside dev mode also surface as-is (sync)", async () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
@@ -717,11 +706,10 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe(`test error`);
-    expect(error.cause).toBe(err);
+    expect(error).toBe(err);
   });
 
-  test("Errors in owl lifecycle are wrapped out of dev mode: async hook", async () => {
+  test("Errors thrown outside dev mode also surface as-is (async)", async () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
@@ -740,10 +728,10 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe(`test error`);
+    expect(error).toBe(err);
   });
 
-  test("Thrown values that are not errors are wrapped in dev mode", async () => {
+  test("Thrown non-error values surface as-is (dev mode)", async () => {
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
@@ -760,10 +748,10 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause).toBe(`This is not an error`);
+    expect(error).toBe(`This is not an error`);
   });
 
-  test("Thrown values that are not errors are wrapped outside dev mode", async () => {
+  test("Thrown non-error values surface as-is (outside dev mode)", async () => {
     class Root extends Component {
       static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
@@ -780,7 +768,7 @@ describe("can catch errors", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause).toBe(`This is not an error`);
+    expect(error).toBe(`This is not an error`);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {

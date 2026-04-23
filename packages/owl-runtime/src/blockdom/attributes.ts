@@ -166,17 +166,50 @@ function toKebabCase(prop: string): string {
   return result;
 }
 
+const IMPORTANT_RE = /\s*!\s*important\s*$/i;
+
+function setStyleProp(style: CSSStyleDeclaration, prop: string, value: string) {
+  if (IMPORTANT_RE.test(value)) {
+    style.setProperty(prop, value.replace(IMPORTANT_RE, ""), "important");
+  } else {
+    style.setProperty(prop, value);
+  }
+}
+
 function toStyleObj(expr: string | { [prop: string]: any }): { [prop: string]: string } {
   const result: { [prop: string]: string } = {};
   switch (typeof expr) {
     case "string": {
-      const str = trim.call(expr);
-      if (!str) {
-        return {};
-      }
-      const parts = str.split(";");
-      for (let part of parts) {
-        part = trim.call(part);
+      const str = expr;
+      const len = str.length;
+      let i = 0;
+      while (i < len) {
+        const start = i;
+        let depth = 0;
+        let quote = 0;
+        while (i < len) {
+          const c = str.charCodeAt(i);
+          if (quote) {
+            if (c === 92 /* \ */) {
+              i += 2;
+              continue;
+            }
+            if (c === quote) {
+              quote = 0;
+            }
+          } else if (c === 34 /* " */ || c === 39 /* ' */) {
+            quote = c;
+          } else if (c === 40 /* ( */) {
+            depth++;
+          } else if (c === 41 /* ) */) {
+            if (depth > 0) depth--;
+          } else if (c === 59 /* ; */ && depth === 0) {
+            break;
+          }
+          i++;
+        }
+        const part = trim.call(str.slice(start, i));
+        i++;
         if (!part) {
           continue;
         }
@@ -239,7 +272,7 @@ export function setStyle(this: HTMLElement, val: any) {
   val = val === "" ? {} : toStyleObj(val);
   const style = this.style;
   for (let prop in val) {
-    style.setProperty(prop, val[prop]);
+    setStyleProp(style, prop, val[prop]);
   }
 }
 
@@ -254,7 +287,7 @@ export function updateStyle(this: HTMLElement, val: any, oldVal: any) {
   }
   for (let prop in val) {
     if (val[prop] !== oldVal[prop]) {
-      style.setProperty(prop, val[prop]);
+      setStyleProp(style, prop, val[prop]);
     }
   }
   if (!style.cssText) {

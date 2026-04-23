@@ -51,7 +51,7 @@ async function buildVariant(entry, suffix) {
 function buildTypes() {
   mkdirSync("dist/types", { recursive: true });
   execSync(
-    "npx dts-bundle-generator --project tsconfig.json -o dist/types/owl.d.ts src/index.ts --no-banner",
+    "npx dts-bundle-generator --project tsconfig.types.json -o dist/types/owl.d.ts src/index.ts --no-banner",
     { stdio: "inherit" }
   );
 }

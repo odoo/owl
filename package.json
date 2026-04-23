@@ -16,7 +16,7 @@
     "build:runtime": "npm run build -w packages/owl-core && npm run build -w packages/owl-runtime",
     "build:compiler": "npm run build -w packages/owl-core && npm run build -w packages/owl-compiler",
     "build:core": "npm run build -w packages/owl-core",
-    "build:types": "npm run build:types -w packages/owl-core && npm run build:types -w packages/owl-compiler && npm run build:types -w packages/owl-runtime && npm run build:types -w packages/owl",
+    "build:types": "npm run build:types -w packages/owl",
     "build:devtools": "node tools/devtools/build.mjs",
     "dev:devtools-chrome": "node tools/devtools/build.mjs --browser=chrome",
     "dev:devtools-firefox": "node tools/devtools/build.mjs --browser=firefox",

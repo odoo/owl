@@ -1,7 +1,7 @@
 import { atomSymbol, type ReactiveValue } from "./computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
-type Constructor<T = any> = { new (...args: any[]): T };
+export type Constructor<T = any> = { new (...args: any[]): T };
 
 export type GetOptionalEntries<T> = {
   [K in keyof T as K extends `${infer P}?` ? P : never]?: T[K];
@@ -10,7 +10,7 @@ type GetRequiredEntries<T> = {
   [K in keyof T as K extends `${string}?` ? never : K]: T[K];
 };
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
-type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
+export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
 
 export type KeyedObject<K extends string[]> = {
   [P in K[number]]: any;
@@ -21,7 +21,9 @@ export type ResolveObjectType<T extends {}> = ResolveShapedObject<
   T extends string[] ? KeyedObject<T> : T
 >;
 
-type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) extends (_: infer I) => void
+export type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) extends (
+  _: infer I
+) => void
   ? I
   : never;
 
@@ -126,7 +128,7 @@ function intersection<T extends any[]>(types: T): UnionToIntersection<T[number]>
   } as any;
 }
 
-type LiteralTypes = number | string | boolean | null | undefined;
+export type LiteralTypes = number | string | boolean | null | undefined;
 function literalType<const T extends LiteralTypes>(literal: T): T {
   return function validateLiteral(context: ValidationContext) {
     if (context.value !== literal) {

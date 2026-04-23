@@ -1,6 +1,16 @@
 import { beforeEach, describe, expect, test, vi, type Mock } from "vitest";
-import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
-import { effect, markRaw, props, proxy, toRaw } from "../../src";
+import {
+  Component,
+  effect,
+  markRaw,
+  mount,
+  onWillStart,
+  onWillUpdateProps,
+  props,
+  proxy,
+  toRaw,
+  xml,
+} from "../../src";
 
 import {
   makeDeferred,

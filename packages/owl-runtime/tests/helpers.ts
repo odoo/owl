@@ -1,5 +1,4 @@
-import { vi, type Mock } from "vitest";
-
+import { afterEach, beforeEach, expect, vi, type Mock } from "vitest";
 export function getConsoleOutput(): string[] {
   return (globalThis as any).__owl_console_output.splice(0);
 }

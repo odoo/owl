@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { assertType, computed, signal, types as t, validateType } from "../src";
 
 class A {}

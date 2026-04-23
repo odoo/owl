@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { parseXML } from "@odoo/owl-compiler";
 import { compile } from "@odoo/owl-compiler";
 import { getConsoleOutput } from "../helpers";

@@ -8,6 +8,6 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node", "vitest/globals"]
+    "types": ["node"]
   }
 }

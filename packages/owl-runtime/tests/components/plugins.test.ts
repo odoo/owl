@@ -1,3 +1,4 @@
+import { beforeEach, expect, it, test } from "vitest";
 import {
   App,
   Component,

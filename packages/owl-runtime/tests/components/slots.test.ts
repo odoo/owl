@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { App, Component, mount, onMounted, props, proxy, signal, xml } from "../../src";
 import {
   children,

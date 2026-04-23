@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { App, Component, mount, props, proxy, signal, xml } from "../../src";
 import { isDirectChildOf, makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 

@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { compile } from "@odoo/owl-compiler";
 import { renderToString, snapshotEverything, TestContext } from "../helpers";
 

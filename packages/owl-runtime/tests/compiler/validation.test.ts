@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { TemplateSet } from "../../src/template_set";
 import { renderToString, snapshotTemplate, TestContext } from "../helpers";
 

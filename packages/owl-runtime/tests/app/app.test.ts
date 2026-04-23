@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { App, Component, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { useApp } from "../../src/hooks";
 import { STATUS, status } from "../../src/status";

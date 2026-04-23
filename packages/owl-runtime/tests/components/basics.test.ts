@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { App, Component, mount, props, proxy, status, types as t, toRaw, xml } from "../../src";
 import { markup } from "../../src/utils";
 import {

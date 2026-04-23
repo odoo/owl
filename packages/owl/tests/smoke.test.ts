@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { App, Component, mount, xml } from "../src";
 
 function makeFixture() {

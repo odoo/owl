@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.TreeElement" owl="1">
-    <div t-ref="element"
-      t-att-class="{'component-selected': props.component.selected,'component-highlighted': props.component.highlighted}"
+    <div t-ref="this.element"
+      t-att-class="{'component-selected': this.props.component.selected,'component-highlighted': this.props.component.highlighted}"
       class="tree-component m-0 p-0 w-100 text-nowrap user-select-none"
       t-on-contextmenu.prevent="openMenu"
-      t-on-mouseover.stop="() => this.store.highlightComponent(props.component.path)"
-      t-on-click.stop="toggleComponent"
+      t-on-mouseover.stop="() => this.store.highlightComponent(this.props.component.path)"
+      t-on-click.stop="this.toggleComponent"
     >
-      <div class="component-wrapper" t-attf-style="padding-left: {{componentPadding}}rem">
+      <div class="component-wrapper" t-attf-style="padding-left: {{this.componentPadding}}rem">
         <i class="fa px-1 pointer-icon caret"
-          t-att-class="{'fa-caret-right': !props.component.toggled, 'fa-caret-down': props.component.toggled}"
+          t-att-class="{'fa-caret-right': !this.props.component.toggled, 'fa-caret-down': this.props.component.toggled}"
           t-on-click.stop="toggleDisplay"
-          t-attf-style="{{props.component.children.length > 0 ? '' : 'visibility: hidden;'}}"
+          t-attf-style="{{this.props.component.children.length > 0 ? '' : 'visibility: hidden;'}}"
         />
-        <span t-if="props.component.depth">&lt;</span>
+        <span t-if="this.props.component.depth">&lt;</span>
         <span style="color: var(--component-color);">
-          <HighlightText originalText="props.component.name" searchValue="state.searched ? store.componentSearch.search : ''"/>
-          <t t-if="minimizedKey.length > 0">
-            <span t-if="minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
-              <t t-esc="minimizedKey"/>
+          <HighlightText originalText="this.props.component.name" searchValue="this.state.searched ? this.store.componentSearch.search : ''"/>
+          <t t-if="this.minimizedKey.length > 0">
+            <span t-if="this.minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
+              <t t-out="this.minimizedKey"/>
             </span>
           </t>
         </span>
-        <span t-if="props.component.depth">&gt;</span>
-        <span class="version" t-else="">owl=<t t-esc="props.component.version"/></span>
+        <span t-if="this.props.component.depth">&gt;</span>
+        <span class="version" t-else="">owl=<t t-out="this.props.component.version"/></span>
       </div>
     </div>
-    <t t-if="props.component.toggled">
-      <t t-foreach="props.component.children" t-as="child" t-key="child.key">
+    <t t-if="this.props.component.toggled">
+      <t t-foreach="this.props.component.children" t-as="child" t-key="child.key">
         <TreeElement component="child_value"/>
       </t>
     </t>

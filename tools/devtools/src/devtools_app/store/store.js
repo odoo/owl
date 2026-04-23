@@ -1,9 +1,9 @@
-const { reactive, useState, toRaw } = owl;
+const { proxy, toRaw } = owl;
 import { fuzzySearch, IS_FIREFOX, getActiveTabURL, browserInstance } from "../../utils";
 import globalHook from "../../page_scripts/owl_devtools_global_hook";
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
-export const store = reactive({
+export const store = proxy({
   devtoolsId: 0,
   settings: {
     expandByDefault: true,
@@ -389,25 +389,37 @@ export const store = reactive({
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
   async updateIFrameList() {
-    const frames = await evalFunctionInWindow("getIFrameUrls");
+    let frames;
+    try {
+      frames = await evalFunctionInWindow("getIFrameUrls");
+    } catch (e) {
+      frames = [];
+    }
     this.frameUrls = ["top"];
-    if (this.activeFrame !== "top") {
+    if (this.activeFrame !== "top" && !frames.includes(this.activeFrame)) {
       this.selectFrame("top");
     }
     for (const frame of frames) {
-      const hasOwl = await evalInWindow("window.__OWL_DEVTOOLS__?.Fiber !== undefined;", frame);
-      if (hasOwl) {
-        const scriptsLoaded = await evalInWindow(
-          "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
-          frame
-        );
-        if (!scriptsLoaded) {
-          await loadScripts(frame);
+      try {
+        const hasOwl = await evalInWindow("window.__OWL_DEVTOOLS__?.Fiber !== undefined;", frame);
+        if (hasOwl) {
+          const scriptsLoaded = await evalInWindow(
+            "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
+            frame
+          );
+          if (!scriptsLoaded) {
+            await loadScripts(frame);
+          }
+          evalFunctionInWindow("initDevtools", [frame], frame);
+          // Only add unique URLs to the dropdown list for now, 
+          // as chrome eval only supports targeting by URL.
+          if (!this.frameUrls.includes(frame)) {
+            this.frameUrls = [...this.frameUrls, frame];
+          }
         }
-        evalFunctionInWindow("initDevtools", [frame], frame);
-        if (!this.frameUrls.includes(frame)) {
-          this.frameUrls = [...this.frameUrls, frame];
-        }
+      } catch (e) {
+        // Silently ignore frames that fail to be evaluated (e.g. cross-origin or about:blank)
+        console.warn(`Could not check iframe ${frame}:`, e);
       }
     }
   },
@@ -653,7 +665,7 @@ export const store = reactive({
 
 // Instantiate the store
 export function useStore() {
-  return useState(store);
+  return store;
 }
 
 init();
@@ -1006,26 +1018,18 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
   const argsString = "(" + stringifiedArgs.join(", ") + ");";
   let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
   return await new Promise((resolve, reject) => {
+    const callback = (result, isException) => {
+      if (!isException) {
+        resolve(result);
+      } else {
+        const errorMsg = isException.value || isException.description || isException.code || "Unknown error";
+        reject(new Error(`Error evaluating "${fn}" in frame "${frameUrl}": ${errorMsg}\nScript: ${script}`));
+      }
+    };
     if (frameUrl !== "top") {
-      browserInstance.devtools.inspectedWindow.eval(
-        script,
-        { frameURL: frameUrl },
-        (result, isException) => {
-          if (!isException) {
-            resolve(result);
-          } else {
-            reject(script);
-          }
-        }
-      );
+      browserInstance.devtools.inspectedWindow.eval(script, { frameURL: frameUrl }, callback);
     } else {
-      browserInstance.devtools.inspectedWindow.eval(script, (result, isException) => {
-        if (!isException) {
-          resolve(result);
-        } else {
-          reject(script);
-        }
-      });
+      browserInstance.devtools.inspectedWindow.eval(script, callback);
     }
   });
 }
@@ -1033,26 +1037,18 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 // General method for executing code in the window using chrome.devtools.inspectedWindow.eval.
 async function evalInWindow(code, frameUrl = "top") {
   return await new Promise((resolve, reject) => {
+    const callback = (result, isException) => {
+      if (!isException) {
+        resolve(result);
+      } else {
+        const errorMsg = isException.value || isException.description || isException.code || "Unknown error";
+        reject(new Error(`Error evaluating script in frame "${frameUrl}": ${errorMsg}\nCode: ${code}`));
+      }
+    };
     if (frameUrl !== "top") {
-      browserInstance.devtools.inspectedWindow.eval(
-        code,
-        { frameURL: frameUrl },
-        (result, isException) => {
-          if (!isException) {
-            resolve(result);
-          } else {
-            reject(code);
-          }
-        }
-      );
+      browserInstance.devtools.inspectedWindow.eval(code, { frameURL: frameUrl }, callback);
     } else {
-      browserInstance.devtools.inspectedWindow.eval(code, (result, isException) => {
-        if (!isException) {
-          resolve(result);
-        } else {
-          reject(code);
-        }
-      });
+      browserInstance.devtools.inspectedWindow.eval(code, callback);
     }
   });
 }

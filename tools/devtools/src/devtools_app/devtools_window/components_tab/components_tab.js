@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-const { Component, onWillUnmount, useExternalListener } = owl;
+const { Component, onWillUnmount, useListener } = owl;
 import { TreeElement } from "./tree_element/tree_element";
 import { DetailsWindow } from "./details_window/details_window";
 import { ComponentSearchBar } from "./component_search_bar/component_search_bar";
@@ -14,8 +14,8 @@ export class ComponentsTab extends Component {
   setup() {
     this.store = useStore();
     this.flushRendersTimeout = false;
-    useExternalListener(document, "keydown", this.onKeyboardEvent);
-    useExternalListener(window, "resize", this.onWindowResize);
+    useListener(document, "keydown", this.onKeyboardEvent);
+    useListener(window, "resize", this.onWindowResize);
 
     onWillUnmount(() => {
       window.removeEventListener("mousemove", this.onMouseMove);

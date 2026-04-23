@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Tab" owl="1">
-    <div t-on-click="selectTab" class="navbar-btn d-block" t-att-class="active
+    <div t-on-click="this.selectTab" class="navbar-btn d-block" t-att-class="this.active
                 ? 'btn-selected'
                 : ''">
-      <t t-esc="name" />
+      <t t-out="this.name" />
     </div>
   </t>
 </templates>

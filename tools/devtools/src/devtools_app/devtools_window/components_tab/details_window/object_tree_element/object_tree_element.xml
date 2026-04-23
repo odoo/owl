@@ -2,37 +2,37 @@
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
     <div class="m-0 p-0 text-nowrap w-100 object-line"
-      t-att-class="props.class + (props.object.hasChildren ? ' bg-feedback' : '')"
+      t-att-class="this.props.class + (this.props.object.hasChildren ? ' bg-feedback' : '')"
       t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)"
-      t-on-contextmenu.prevent="openMenu"
+      t-on-contextmenu.prevent="this.openMenu"
     >
-      <div t-attf-style="padding-left: {{objectPadding}}rem">
+      <div t-attf-style="padding-left: {{this.objectPadding}}rem">
         <i class="fa px-1 pointer-icon caret"
-          t-att-class="{'fa-caret-right': !props.object.toggled, 'fa-caret-down': props.object.toggled}"
-          t-attf-style="visibility: {{props.object.hasChildren ? '' : 'hidden'}};"
+          t-att-class="{'fa-caret-right': !this.props.object.toggled, 'fa-caret-down': this.props.object.toggled}"
+          t-attf-style="visibility: {{this.props.object.hasChildren ? '' : 'hidden'}};"
         />
-        <t t-esc="props.object.name"/>
-        <t t-if="props.object.content.length > 0">: </t>
-        <t t-if="props.object.contentType == 'getter'">
-          <span class="getter-content object-content" t-att-class="objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
-            <t t-esc="props.object.content"/>
+        <t t-out="this.props.object.name"/>
+        <t t-if="this.props.object.content.length > 0">: </t>
+        <t t-if="this.props.object.contentType == 'getter'">
+          <span class="getter-content object-content" t-att-class="this.objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
+            <t t-out="this.props.object.content"/>
           </span>
         </t>
         <t t-else="">
-          <span class="object-content" t-att-class="objectLineClass" t-on-dblclick.stop="setupEditMode">
-            <t t-if="state.editMode">
-              <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keydown.stop="editObject"/>
+          <span class="object-content" t-att-class="this.objectLineClass" t-on-dblclick.stop="this.setupEditMode">
+            <t t-if="this.state.editMode">
+              <input t-attf-id="objectEditionInput/{{this.pathAsString}}" t-ref="inputRef" type="text" placeholder="" t-att-value="this.props.object.content" t-on-keydown.stop="this.editObject"/>
             </t>
             <t t-else="">
-              <t t-esc="props.object.content"/>
+              <t t-out="this.props.object.content"/>
             </t>
           </span>
         </t>
-        <span t-if="keyChanges" class="key-changes ms-1 badge p-1" title="Key additions/deletions are observed">+/-</span>
+        <span t-if="this.keyChanges" class="key-changes ms-1 badge p-1" title="Key additions/deletions are observed">+/-</span>
       </div>
     </div>
-    <t t-if="props.object.toggled" t-key="contextMenuId">
-      <t t-foreach="props.object.children" t-as="child" t-key="child_index">
+    <t t-if="this.props.object.toggled" t-key="contextMenuId">
+      <t t-foreach="this.props.object.children" t-as="child" t-key="child_index">
         <ObjectTreeElement object="child" class="this.classFor(child)"/>
       </t>
     </t>

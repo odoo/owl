@@ -2,9 +2,12 @@ import { minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 
 const { Component } = owl;
+const getProps = owl.props;
 
 export class Event extends Component {
   static template = "devtools.Event";
+
+  props = getProps();
 
   setup() {
     this.store = useStore();

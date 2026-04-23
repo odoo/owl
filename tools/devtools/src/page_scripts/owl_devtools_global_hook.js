@@ -5,6 +5,7 @@
 
   class OwlDevtoolsGlobalHook {
     constructor() {
+      console.log("OWL DevTools Hook Loaded - v3-compat-patch-1");
       // The set of apps exposed by owl
       this.apps = window.__OWL_DEVTOOLS__.apps;
       // Class definition of an owl Fiber
@@ -14,7 +15,11 @@
       // This is for retrocompatibility purposes since new versions of owl should always expose toRaw and reactive
       // in __OWL_DEVTOOLS__
       this.toRaw = window.__OWL_DEVTOOLS__.toRaw ?? window.owl?.toRaw;
-      this.reactive = window.__OWL_DEVTOOLS__.reactive ?? window.owl?.reactive;
+      // OWL 3 exposes 'proxy' instead of 'reactive'
+      this.IS_OWL3 = "proxy" in window.__OWL_DEVTOOLS__;
+      this.reactive = this.IS_OWL3
+        ? window.__OWL_DEVTOOLS__.proxy ?? window.owl?.proxy
+        : window.__OWL_DEVTOOLS__.reactive ?? window.owl?.reactive;
       // Set to keep track of the HTML elements we added to the page
       this.addedElements = [];
       // To keep track of the succession order of the render events
@@ -222,6 +227,17 @@
         this.devtoolsInit = true;
       }
     }
+    // Returns the root ComponentNode of an app, compatible with OWL 2 and OWL 3.
+    // In OWL 2: app.root is the ComponentNode directly.
+    // In OWL 3: app.roots is a Set of {node, ...} objects.
+    getAppRoot(app) {
+      if (!app) return null;
+      if (this.IS_OWL3) {
+        return [...(app.roots || [])][0]?.node || null;
+      }
+      return app.root || null;
+    }
+
     // Modify the methods of the apps set in order to send a message each time it is modified.
     patchAppsSetMethods() {
       const originalAdd = this.apps.add;
@@ -246,11 +262,12 @@
     patchAppMethods() {
       let app;
       for (const appItem of this.apps) {
-        if (appItem.root) {
+        if (this.getAppRoot(appItem)) {
           app = appItem;
+          break;
         }
       }
-      if (!app.root) {
+      if (!app || !this.getAppRoot(app)) {
         return;
       }
       const self = this;
@@ -266,7 +283,6 @@
       const originalRender = self.Fiber.prototype.render;
       self.Fiber.prototype.render = function () {
         const id = self.eventId++;
-        _render = false;
         let flushed = false;
         // We know if a render comes from flush before calling the render method
         if (this instanceof self.RootFiber && inFlush) {
@@ -287,20 +303,31 @@
           return result;
         };
 
-        originalRender.call(this, ...arguments);
+        if (self.IS_OWL3) {
+          // OWL 3: detect delayed renders by checking if this fiber was pushed to delayedRenders
+          const fiberRef = this;
+          originalRender.call(this, ...arguments);
+          const scheduler = fiberRef.root?.node?.app?.scheduler;
+          _render = !scheduler || !scheduler.delayedRenders.includes(fiberRef);
+        } else {
+          _render = false;
+          originalRender.call(this, ...arguments);
+        }
+
+        const nodeName = node.component.constructor.name;
         if (_render && self.traceRenderings && this instanceof self.RootFiber) {
-          console.groupCollapsed(`Rendering <${this.node.name}>`);
+          console.groupCollapsed(`Rendering <${nodeName}>`);
           console.trace();
           console.groupEnd();
         }
         if (self.recordEvents) {
-          const path = self.getComponentPath(this.node);
+          const path = self.getComponentPath(node);
           // if the render comes from flush
           if (flushed) {
             self.eventsBatch.push({
               type: "render (flushed)",
-              component: this.node.name,
-              key: this.node.parentKey ? this.node.parentKey : "",
+              component: nodeName,
+              key: node.parentKey ? node.parentKey : "",
               path: path,
               time: time,
               id: id,
@@ -311,18 +338,18 @@
             if (this instanceof self.RootFiber) {
               self.eventsBatch.push({
                 type: this.deep ? "render (deep)" : "render",
-                component: this.node.name,
-                key: this.node.parentKey ? this.node.parentKey : "",
+                component: nodeName,
+                key: node.parentKey ? node.parentKey : "",
                 path: path,
                 time: time,
                 id: id,
               });
               // if the node status is NEW, the node has been created just before rendering
-            } else if (this.node.status === 0) {
+            } else if (node.status === 0) {
               self.eventsBatch.push({
                 type: "create",
-                component: this.node.name,
-                key: this.node.parentKey ? this.node.parentKey : "",
+                component: nodeName,
+                key: node.parentKey ? node.parentKey : "",
                 path: path,
                 time: time,
                 id: id,
@@ -331,8 +358,8 @@
             } else {
               self.eventsBatch.push({
                 type: "update",
-                component: this.node.name,
-                key: this.node.parentKey ? this.node.parentKey : "",
+                component: nodeName,
+                key: node.parentKey ? node.parentKey : "",
                 path: path,
                 time: time,
                 id: id,
@@ -342,8 +369,8 @@
           } else {
             self.eventsBatch.push({
               type: "render (delayed)",
-              component: this.node.name,
-              key: this.node.parentKey ? this.node.parentKey : "",
+              component: nodeName,
+              key: node.parentKey ? node.parentKey : "",
               path: path,
               time: time,
               id: id,
@@ -351,19 +378,23 @@
           }
         }
       };
-      const original_Render = self.Fiber.prototype._render;
-      self.Fiber.prototype._render = function () {
-        _render = true;
-        original_Render.call(this, ...arguments);
-      };
+      // OWL 2 only: patch _render to detect real renders vs delayed
+      if (!self.IS_OWL3) {
+        const original_Render = self.Fiber.prototype._render;
+        self.Fiber.prototype._render = function () {
+          _render = true;
+          original_Render.call(this, ...arguments);
+        };
+      }
       // Signals when a component is destroyed
-      const originalDestroy = app.root.constructor.prototype._destroy;
-      app.root.constructor.prototype._destroy = function () {
+      const appRoot = self.getAppRoot(app);
+      const originalDestroy = appRoot.constructor.prototype._destroy;
+      appRoot.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
           const event = {
             type: "destroy",
-            component: this.name,
+            component: this.component.constructor.name,
             key: this.parentKey,
             path: path,
             time: 0,
@@ -381,6 +412,9 @@
 
     // patch reactivity system to activate subscription tracing
     patchReactivity() {
+      if (this.IS_OWL3) {
+        return; // Subscription tracing not yet implemented for OWL 3
+      }
       // i am simultaneously proud and ashamed of this code...
       const WeakMapGet = WeakMap.prototype.get;
       const MapGet = Map.prototype.get;
@@ -475,8 +509,19 @@
     // Get the urls of all iframes present on the page
     getIFrameUrls() {
       let frames = [];
+      const restrictedProtocols = ["chrome:", "devtools:", "data:", "file:", "view-source:"];
       for (const frame of document.querySelectorAll("iframe")) {
-        frames.push(frame.contentDocument.location.href);
+        try {
+          const href = frame.contentDocument?.location?.href;
+          if (href) {
+            const isRestricted = restrictedProtocols.some(p => href.startsWith(p));
+            if (!isRestricted) {
+              frames.push(href);
+            }
+          }
+        } catch (e) {
+          // Ignore cross-origin frames or inaccessible ones
+        }
       }
       return frames;
     }
@@ -1134,7 +1179,7 @@
       // If the path is longer and its first item is indeed an app number, it is a regular path
       if (!isNaN(path[0])) {
         // The second element in the path will always be the root of the app
-        node = [...this.apps][path[0]]?.root;
+        node = this.getAppRoot([...this.apps][path[0]]);
         if (!node) {
           return null;
         }
@@ -1153,14 +1198,14 @@
         // are a series of component names and indexes separated by slashes
       } else {
         const simplifiedPathArray = path[0].split("/");
-        node = [...this.apps][simplifiedPathArray[0]]?.root;
-        if (node.name !== simplifiedPathArray[1]) {
+        node = this.getAppRoot([...this.apps][simplifiedPathArray[0]]);
+        if (node.component.constructor.name !== simplifiedPathArray[1]) {
           return null;
         }
         for (let i = 2; i < simplifiedPathArray.length; i += 2) {
           const key = Reflect.ownKeys(node.children)[simplifiedPathArray[i]];
           node = node.children[key];
-          if (node.name !== simplifiedPathArray[i + 1]) {
+          if (node.component.constructor.name !== simplifiedPathArray[i + 1]) {
             return null;
           }
         }
@@ -1179,7 +1224,9 @@
         path = this.getElementPath($0);
       }
       component.path = path;
-      let node = this.getComponentNode(path) || [...this.apps].find((app) => app.root)?.root;
+      let node =
+        this.getComponentNode(path) ||
+        this.getAppRoot([...this.apps].find((app) => !!this.getAppRoot(app)));
       if (!node) {
         return null;
       }
@@ -1191,14 +1238,20 @@
           : "<2.0.8";
       }
       // Load props of the component
-      const props = isApp ? node.props : node.component.props;
+      // OWL 3: node.props is on the ComponentNode directly; OWL 2: on node.component.props
+      const props = isApp
+        ? node.props || {}
+        : this.IS_OWL3
+          ? node.props || {}
+          : node.component.props || {};
       component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: [] };
       component.name = isApp
         ? node?.name
           ? `App (${node.name})`
           : "App " + (Number(path[0]) + 1)
-        : node.component.constructor.name;
-      const propsPath = isApp
+        : node.component?.constructor.name || node.name || "Component";
+      // OWL 3: props are directly on the node; OWL 2: under node.component.props
+      const propsPath = isApp || this.IS_OWL3
         ? [...path, { type: "item", value: "props" }]
         : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
       Reflect.ownKeys(props)
@@ -1219,70 +1272,76 @@
           }
         });
       // Load env of the component
-      const env = isApp ? node.env : node.component.env;
+      // OWL 3: env is removed; return empty. OWL 2: use node.component.env / node.env
       component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
-      const envPath = isApp
-        ? [...path, { type: "item", value: "env" }]
-        : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
-      Reflect.ownKeys(env)
-        .sort(compareKeys)
-        .forEach((key) => {
-          let oldBranch = oldTree?.env.children[component.env.children.length];
-          const envElement = this.serializeObjectChild(
-            env,
-            { type: "item", value: key, childIndex: component.env.children.length },
-            0,
-            "env",
-            envPath,
-            oldBranch,
-            oldTree
-          );
-          if (envElement) {
-            component.env.children.push(envElement);
+      if (!this.IS_OWL3) {
+        const env = isApp ? node.env : node.component.env;
+        const envPath = isApp
+          ? [...path, { type: "item", value: "env" }]
+          : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
+        Reflect.ownKeys(env)
+          .sort(compareKeys)
+          .forEach((key) => {
+            let oldBranch = oldTree?.env.children[component.env.children.length];
+            const envElement = this.serializeObjectChild(
+              env,
+              { type: "item", value: key, childIndex: component.env.children.length },
+              0,
+              "env",
+              envPath,
+              oldBranch,
+              oldTree
+            );
+            if (envElement) {
+              component.env.children.push(envElement);
+            }
+          });
+        // Load env getters
+        let envObj = Object.getPrototypeOf(env);
+        Reflect.ownKeys(envObj).forEach((key) => {
+          if (
+            key !== "__proto__" &&
+            Object.getOwnPropertyDescriptor(envObj, key).hasOwnProperty("get")
+          ) {
+            let child = {
+              name: key,
+              depth: 0,
+              toggled: false,
+              objectType: "env",
+              path: [
+                ...envPath,
+                { type: "prototype getter", value: key, childIndex: component.env.children.length },
+              ],
+              contentType: "getter",
+              content: "(...)",
+              hasChildren: false,
+              children: [],
+            };
+            component.env.children.push(child);
           }
         });
-      // Load env getters
-      let obj = Object.getPrototypeOf(env);
-      Reflect.ownKeys(obj).forEach((key) => {
-        if (
-          key !== "__proto__" &&
-          Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-        ) {
-          let child = {
-            name: key,
-            depth: 0,
-            toggled: false,
-            objectType: "env",
-            path: [
-              ...envPath,
-              { type: "prototype getter", value: key, childIndex: component.env.children.length },
-            ],
-            contentType: "getter",
-            content: "(...)",
-            hasChildren: false,
-            children: [],
-          };
-          component.env.children.push(child);
-        }
-      });
-      const envPrototype = this.serializeObjectChild(
-        env,
-        { type: "prototype", childIndex: component.env.children.length },
-        0,
-        "env",
-        envPath,
-        oldTree?.env[component.env.children.length],
-        oldTree
-      );
-      component.env.children.push(envPrototype);
+        const envPrototype = this.serializeObjectChild(
+          env,
+          { type: "prototype", childIndex: component.env.children.length },
+          0,
+          "env",
+          envPath,
+          oldTree?.env.children[component.env.children.length],
+          oldTree
+        );
+        component.env.children.push(envPrototype);
+      }
       // Load instance of the component
       const instance = isApp ? node : node.component;
       component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: [] };
       const instancePath = isApp ? path : [...path, { type: "item", value: "component" }];
+      // In OWL 2, exclude env/props from instance (they are shown in their own sections).
+      // In OWL 3, exclude __owl__ (the node ref) and props is on the node not component.
+      const instanceExcludeKeys = this.IS_OWL3 ? ["__owl__"] : ["env", "props"];
       Reflect.ownKeys(instance)
         .sort(compareKeys)
         .forEach((key) => {
-          if (!["env", "props"].includes(key)) {
+          if (!instanceExcludeKeys.includes(key)) {
             let oldBranch = oldTree?.instance.children[component.instance.children.length];
             const instanceElement = this.serializeObjectChild(
               instance,
@@ -1299,12 +1358,12 @@
           }
         });
       // Load instance getters
-      obj = Object.getPrototypeOf(instance);
-      while (obj) {
-        Reflect.ownKeys(obj).forEach((key) => {
+      let instanceObj = Object.getPrototypeOf(instance);
+      while (instanceObj) {
+        Reflect.ownKeys(instanceObj).forEach((key) => {
           if (
             key !== "__proto__" &&
-            Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
+            Object.getOwnPropertyDescriptor(instanceObj, key).hasOwnProperty("get")
           ) {
             let child = {
               name: key,
@@ -1327,7 +1386,7 @@
             component.instance.children.push(child);
           }
         });
-        obj = Object.getPrototypeOf(obj);
+        instanceObj = Object.getPrototypeOf(instanceObj);
       }
       const instancePrototype = this.serializeObjectChild(
         instance,
@@ -1335,7 +1394,7 @@
         0,
         "instance",
         instancePath,
-        oldTree?.instance[component.instance.children.length],
+        oldTree?.instance.children[component.instance.children.length],
         oldTree
       );
       component.instance.children.push(instancePrototype);
@@ -1567,10 +1626,15 @@
           if (component.__proto__.hasOwnProperty("render")) {
             this.getComponentNode(path).render();
           } else {
-            component.root.render();
+            const root = this.getAppRoot(component);
+            if (root) {
+              root.render();
+            }
           }
         } else if (objectType === "env") {
-          [...this.apps][path[0]].root.render(true);
+          const appNode = [...this.apps][path[0]];
+          const rootNode = this.getAppRoot(appNode);
+          if (rootNode) rootNode.render(true);
         }
       }
     }
@@ -1615,7 +1679,9 @@
         // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
         for (const elem of parentsList) {
           for (const [index, app] of appsArray.entries()) {
-            const inspectedPath = this.searchElement(app.root, ["root"], elem);
+            const appRoot = this.getAppRoot(app);
+            if (!appRoot) continue;
+            const inspectedPath = this.searchElement(appRoot, ["root"], elem);
             if (inspectedPath) {
               inspectedPath.unshift(index.toString());
               return inspectedPath;
@@ -1624,7 +1690,7 @@
         }
       }
       // If nothing was found, return the path of the first root component found in the apps
-      const appIndex = [...this.apps].findIndex((app) => app.root);
+      const appIndex = [...this.apps].findIndex((app) => !!this.getAppRoot(app));
       return [appIndex.toString(), "root"];
     }
     // Returns the tree of components of the inspected page in a parsed format
@@ -1653,9 +1719,10 @@
             : "<2.0.8",
           children: [],
         };
-        if (app.root) {
+        const appRoot = this.getAppRoot(app);
+        if (appRoot) {
           const root = {
-            name: app.root.component.constructor.name,
+            name: appRoot.component.constructor.name,
             path: [index.toString(), "root"],
             key: "",
             depth: 1,
@@ -1680,7 +1747,7 @@
           } else if (inspectedPath.join("/") === index.toString() + "/root") {
             root.selected = true;
           }
-          root.children = this.fillTree(app.root, root, inspectedPath.join("/"), oldTree);
+          root.children = this.fillTree(appRoot, root, inspectedPath.join("/"), oldTree);
           appNode.children.push(root);
         }
         return appNode;
@@ -1769,12 +1836,12 @@
     }
     // Returns the simplified path of the given component node (using component names and indexes)
     getComponentSimplifiedPath(componentNode) {
-      let path = componentNode.name;
+      let path = componentNode.component.constructor.name;
       if (componentNode.parentKey) {
         while (componentNode.parent) {
           const previousKey = componentNode.parentKey;
           componentNode = componentNode.parent;
-          path = `${componentNode.name}/${Reflect.ownKeys(componentNode.children).indexOf(
+          path = `${componentNode.component.constructor.name}/${Reflect.ownKeys(componentNode.children).indexOf(
             previousKey
           )}/${path}`;
         }
@@ -1881,8 +1948,9 @@
           return key;
         }
       }
-      // check on props
-      for (const [key, value] of Object.entries(component.props)) {
+      // check on props (OWL 2: component.props; OWL 3: node.props)
+      const props = this.IS_OWL3 ? node.props : component.props;
+      for (const [key, value] of Object.entries(props || {})) {
         if (target === this.toRaw(value)) {
           return `props.${key}`;
         }
@@ -1899,6 +1967,9 @@
      *  subscriptions of the node
      */
     topLevelSubscriptions(node) {
+      if (this.IS_OWL3) {
+        return []; // Subscriptions not available in OWL 3
+      }
       const subscriptions = node.subscriptions.map((s, index) => ({ ...s, index }));
       const topLevelValues = new Set(Object.values(node.component).map((o) => this.toRaw(o)));
       const toOmit = new Set(
@@ -1910,6 +1981,9 @@
     }
 
     addHighlightedKeys(child) {
+      if (this.IS_OWL3) {
+        return; // Subscriptions not available in OWL 3
+      }
       const { path } = child;
       const subscriptionIndex = path.findIndex((item) => typeof item !== "string");
       if (path[subscriptionIndex]?.value === "subscriptions") {

@@ -1,0 +1,20 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@odoo/owl": "3.0.0-alpha.29"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

@@ -18,6 +18,9 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "./dist/compile_templates.mjs"
+  ],
   "type": "module",
   "files": [
     "dist"

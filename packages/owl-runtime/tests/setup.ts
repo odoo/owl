@@ -2,9 +2,15 @@ import { afterEach } from "vitest";
 // Wire compile + parseXML into TemplateSet for tests that use xml templates.
 import { compile, parseXML } from "@odoo/owl-compiler";
 import { TemplateSet } from "../src/template_set";
+import { Scheduler } from "../src/rendering/scheduler";
 
 TemplateSet.compile = compile;
 TemplateSet.parseXML = parseXML;
+
+// Disable frame budgeting in tests: nextTick() awaits one RAF and expects the
+// scheduler fully drained by then. Individual tests that exercise budgeting
+// set Scheduler.frameBudgetMs back to a finite value and restore it after.
+Scheduler.frameBudgetMs = Infinity;
 
 const consoleOutput: string[] = [];
 (globalThis as any).__owl_console_output = consoleOutput;

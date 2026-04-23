@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, expect, test } from "vitest";
 import { mount, createBlock, multi, config, patch } from "../../src/blockdom";
 import { makeTestFixture } from "./helpers";
 

@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
 import { mount } from "../../src/blockdom";
 import { mount as mountComponent, Component, xml } from "../../src";

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
 import {
   makeTestFixture,

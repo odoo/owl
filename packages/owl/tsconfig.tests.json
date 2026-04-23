@@ -8,7 +8,7 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node", "vitest/globals"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@odoo/owl-core": ["../owl-core/src/index.ts"],

@@ -1,4 +1,4 @@
-import { vi, type Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
 import { effect, markRaw, props, proxy, toRaw } from "../../src";
 

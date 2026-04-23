@@ -1,3 +1,4 @@
+import { afterEach } from "vitest";
 // Wire compile + parseXML into TemplateSet for tests that use xml templates.
 import { compile, parseXML } from "@odoo/owl-compiler";
 import { TemplateSet } from "../src/template_set";

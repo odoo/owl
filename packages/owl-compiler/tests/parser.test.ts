@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { ASTType, ForEachNoFlag, parse } from "../src/parser";
 import { getConsoleOutput } from "./helpers";
 

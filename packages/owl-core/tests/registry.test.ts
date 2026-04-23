@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { effect, Plugin, PluginManager, Registry, types as t } from "../src";
 import { waitScheduler } from "./helpers";
 

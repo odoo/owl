@@ -1,3 +1,4 @@
+import { describe, expect, it, test, vi } from "vitest";
 import { effect, proxy, signal, untrack } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 

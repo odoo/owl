@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { signal } from "../src";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 

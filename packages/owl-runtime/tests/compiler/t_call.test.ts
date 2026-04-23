@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { snapshotEverything, TestContext } from "../helpers";
 
 snapshotEverything();

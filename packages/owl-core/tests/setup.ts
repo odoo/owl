@@ -1,3 +1,4 @@
+import { afterEach } from "vitest";
 const consoleOutput: string[] = [];
 (globalThis as any).__owl_console_output = consoleOutput;
 

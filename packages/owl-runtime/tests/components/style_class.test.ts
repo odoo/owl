@@ -448,6 +448,53 @@ describe("style and class handling", () => {
     expect(span.style.color).toBe("");
   });
 
+  test("t-att-style string with a data URI containing semicolons", async () => {
+    const dataUri =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z9DwHwAGBQKA3H7sNwAAAABJRU5ErkJggg==";
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: `background-image: url(${dataUri}); color: red;` });
+    }
+    await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.backgroundImage).toBe(`url("${dataUri}")`);
+    expect(div.style.color).toBe("red");
+  });
+
+  test("t-att-style string value with !important applies priority", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: "color: red !important; font-weight: bold;" });
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.getPropertyPriority("color")).toBe("important");
+    expect(div.style.fontWeight).toBe("bold");
+    expect(div.style.getPropertyPriority("font-weight")).toBe("");
+
+    widget.state.style = "color: red;";
+    await nextTick();
+    expect(div.style.color).toBe("red");
+    expect(div.style.getPropertyPriority("color")).toBe("");
+  });
+
+  test("t-att-style object value with !important applies priority", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-style="this.state.style" />`;
+      state = proxy({ style: { color: "red !important" } as any });
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.color).toBe("red");
+    expect(div.style.getPropertyPriority("color")).toBe("important");
+
+    widget.state.style = { color: "red" };
+    await nextTick();
+    expect(div.style.color).toBe("red");
+    expect(div.style.getPropertyPriority("color")).toBe("");
+  });
+
   // TODO: does this test need to be moved? (class now a standard prop)
   test("error in subcomponent with class", async () => {
     class Child extends Component {

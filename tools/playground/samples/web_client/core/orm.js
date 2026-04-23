@@ -56,7 +56,7 @@ class Field {
     }
     dp.changes()[this.index] = value;
     this.table.dirtyRecords().add(dp.record.id);
-    signal.invalidate(dp.changes);
+    signal.trigger(dp.changes);
   }
   getValue(dp) {
     const index = this.index;
@@ -456,7 +456,7 @@ export class ORM {
             changes[table.fieldToIndex[k]] = update[k];
           }
         }
-        signal.invalidate(dp.changes);
+        signal.trigger(dp.changes);
         table.dirtyRecords().add(id);
       }
     }

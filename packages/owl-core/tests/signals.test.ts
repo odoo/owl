@@ -24,7 +24,7 @@ test("updating a signal trigger an effect", async () => {
   expectSpy(e.spy, 2, { result: 22 });
 });
 
-test("invalidate a signal", async () => {
+test("trigger a signal", async () => {
   const s = signal(1);
   const e = spyEffect(() => s());
   e();
@@ -33,14 +33,14 @@ test("invalidate a signal", async () => {
   expectSpy(e.spy, 1, { result: 1 });
   await waitScheduler();
   expectSpy(e.spy, 1, { result: 1 });
-  signal.invalidate(s);
+  signal.trigger(s);
   expectSpy(e.spy, 1, { result: 1 });
   await waitScheduler();
   expectSpy(e.spy, 2, { result: 1 });
 
   const fakeSignal = () => {};
   fakeSignal.set = () => {};
-  expect(() => signal.invalidate(fakeSignal)).toThrow(/Value is not a signal/);
+  expect(() => signal.trigger(fakeSignal)).toThrow(/Value is not a signal/);
 });
 
 describe("signal.Array", () => {

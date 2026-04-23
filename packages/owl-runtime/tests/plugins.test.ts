@@ -729,7 +729,7 @@ describe("onWillStart in plugins", () => {
     const fixture = makeTestFixture();
     const app = new App({ plugins: [Broken] });
     await expect(app.createRoot(Root).mount(fixture)).rejects.toMatchObject({
-      cause: expect.objectContaining({ message: "boom" }),
+      message: "boom",
     });
     app.destroy();
   });

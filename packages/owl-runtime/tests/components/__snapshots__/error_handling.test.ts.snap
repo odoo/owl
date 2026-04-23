@@ -226,7 +226,7 @@ exports[`basics > simple catchError 2`] = `
 }"
 `;
 
-exports[`can catch errors > Errors have the right cause 1`] = `
+exports[`can catch errors > Errors thrown from user hooks surface as-is (async) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -238,7 +238,7 @@ exports[`can catch errors > Errors have the right cause 1`] = `
 }"
 `;
 
-exports[`can catch errors > Errors in owl lifecycle are wrapped in dev mode: async hook 1`] = `
+exports[`can catch errors > Errors thrown from user hooks surface as-is (sync) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -250,7 +250,7 @@ exports[`can catch errors > Errors in owl lifecycle are wrapped in dev mode: asy
 }"
 `;
 
-exports[`can catch errors > Errors in owl lifecycle are wrapped out of dev mode: async hook 1`] = `
+exports[`can catch errors > Errors thrown outside dev mode also surface as-is (async) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -262,7 +262,7 @@ exports[`can catch errors > Errors in owl lifecycle are wrapped out of dev mode:
 }"
 `;
 
-exports[`can catch errors > Errors in owl lifecycle are wrapped outside dev mode: sync hook 1`] = `
+exports[`can catch errors > Errors thrown outside dev mode also surface as-is (sync) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -274,7 +274,7 @@ exports[`can catch errors > Errors in owl lifecycle are wrapped outside dev mode
 }"
 `;
 
-exports[`can catch errors > Thrown values that are not errors are wrapped in dev mode 1`] = `
+exports[`can catch errors > Thrown non-error values surface as-is (dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -286,7 +286,7 @@ exports[`can catch errors > Thrown values that are not errors are wrapped in dev
 }"
 `;
 
-exports[`can catch errors > Thrown values that are not errors are wrapped outside dev mode 1`] = `
+exports[`can catch errors > Thrown non-error values surface as-is (outside dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -1685,7 +1685,7 @@ exports[`errors and promises > errors in rerender 1`] = `
 }"
 `;
 
-exports[`errors and promises > wrapped errors in async code are correctly caught 1`] = `
+exports[`errors and promises > errors thrown from async hooks propagate through the mount rejection 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

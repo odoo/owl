@@ -1,4 +1,3 @@
-import { OwlError } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
 
@@ -66,8 +65,6 @@ export function handleError(params: ErrorParams) {
 
   // Once the app has been destroyed (e.g. by a prior unhandled error), stop
   // re-running error handling as the stack unwinds through ancestor renders.
-  // Otherwise each catch frame would re-wrap the already-thrown OwlError,
-  // producing nested "Caused by" chains for every component level.
   if (app.destroyed) {
     throw error;
   }
@@ -91,20 +88,11 @@ export function handleError(params: ErrorParams) {
     } catch (e) {
       // mute all errors here because we are in a corrupted state anyway
     }
-    // If the error is already an OwlError, it already conveys a clear,
-    // framework-specific message — no need to wrap it in another OwlError.
-    if (error instanceof OwlError) {
-      return error;
-    }
-    return Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
-      cause: error,
-    });
+    return error;
   };
 
   const result = invokeErrorHandlers(node, error, finalize, true);
   if (!result.handled) {
-    // Sync outer `error` with the last rethrown one so finalize()'s OwlError
-    // surfaces that cause, not the original.
     error = result.error;
     app._handleError(finalize());
   }

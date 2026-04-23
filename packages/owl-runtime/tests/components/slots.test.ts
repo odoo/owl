@@ -256,7 +256,7 @@ describe("slots", () => {
     } catch (e) {
       error = e;
     }
-    expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'bool')");
+    expect(error.message).toBe("Cannot read properties of undefined (reading 'bool')");
     expect(getConsoleOutput()).toEqual([]);
   });
 

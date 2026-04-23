@@ -148,7 +148,24 @@ export class Fiber {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();
       } catch (e) {
-        handleError({ node, error: e });
+        // Fast path for the cascade: an ancestor `fiber.render` already ran
+        // `handleError` for this error and `app._handleError` rethrew. Every
+        // subsequent catch up the render stack would call `handleError` again
+        // only to short-circuit on `app.destroyed`. Skip straight to the
+        // rethrow instead.
+        if (e && (e as any).__owlHandled) {
+          setComputation(c);
+          throw e;
+        }
+        try {
+          handleError({ node, error: e });
+        } catch (rethrown) {
+          if (rethrown && typeof rethrown === "object") {
+            (rethrown as any).__owlHandled = true;
+          }
+          setComputation(c);
+          throw rethrown;
+        }
       }
       setComputation(c);
       const newCounter = root.counter - 1;

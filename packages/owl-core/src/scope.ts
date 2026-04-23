@@ -43,6 +43,8 @@ export abstract class Scope {
   status: StatusValue = STATUS.NEW;
   computations: ComputationAtom[] = [];
   willStart: Array<() => any> = [];
+  mounted: Function[] = [];
+  willUnmount: Function[] = [];
   private _controller: AbortController | null = null;
   private _destroyCbs: Array<() => void> | null = null;
 

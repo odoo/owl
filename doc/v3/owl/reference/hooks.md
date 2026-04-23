@@ -52,10 +52,13 @@ All lifecycle hooks are documented in detail in their specific
 | **[onWillDestroy](component.md#willdestroy)** | just before component is destroyed                                     |
 | **[onError](component.md#onerror)**           | catch and handle errors (see [error handling page](error_handling.md)) |
 
-`onWillStart` and `onWillDestroy` also work inside a plugin's `setup()`.
-`onWillStart` defers the owning `App.mount()` (or the `providePlugins` owner
-component's first render) until all plugin async initialization resolves. See
-[Plugins — Async Initialization](plugins.md#async-initialization).
+`onWillStart`, `onMounted`, `onWillUnmount`, and `onWillDestroy` also work
+inside a plugin's `setup()`. `onWillStart` defers the owning `App.mount()`
+(or the `providePlugins` owner component's first render) until all plugin
+async initialization resolves. `onMounted` / `onWillUnmount` fire relative to
+the plugin's host (the App for app-level plugins, the owning component for
+`providePlugins`). See [Plugins — Async Initialization](plugins.md#async-initialization)
+and [Plugins — DOM Lifecycle](plugins.md#dom-lifecycle-onmounted--onwillunmount).
 
 ## Other Hooks
 

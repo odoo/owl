@@ -7,7 +7,7 @@ import {
   startPlugins,
 } from "@odoo/owl-core";
 import { ComponentNode, getComponentScope } from "./component_node";
-import { onWillDestroy, onWillStart } from "./lifecycle_hooks";
+import { onMounted, onWillDestroy, onWillStart, onWillUnmount } from "./lifecycle_hooks";
 import { useScope } from "./scope";
 import { STATUS } from "./status";
 import { types } from "./types";
@@ -52,6 +52,21 @@ export function providePlugins(
   onWillDestroy(() => manager.destroy());
 
   startPlugins(manager, pluginConstructors);
+
+  // Forward plugin mounted/willUnmount onto the host via single wrapper hooks
+  // — same idiom used just below for onWillStart / above for onWillDestroy.
+  // The wrappers iterate `manager.{mounted,willUnmount}` at fire time, which
+  // preserves the LIFO unshift semantics of onWillUnmount for plugin cbs.
+  if (manager.mounted.length) {
+    onMounted(() => {
+      for (const cb of manager.mounted) cb();
+    });
+  }
+  if (manager.willUnmount.length) {
+    onWillUnmount(() => {
+      for (const cb of manager.willUnmount) cb();
+    });
+  }
 
   if (manager.status < STATUS.MOUNTED) {
     // Provided plugins registered onWillStart — defer the owning component's

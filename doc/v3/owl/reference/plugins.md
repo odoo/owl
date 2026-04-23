@@ -259,6 +259,62 @@ destroyed before initialization completes. Pass it to `fetch` or check
 `abortSignal.throwIfAborted()` between awaits to short-circuit abandoned work.
 See [Scope](./scope.md) for the full cancellation model.
 
+## DOM Lifecycle: `onMounted` / `onWillUnmount`
+
+Plugins can observe the DOM lifecycle of their host using `onMounted()` and
+`onWillUnmount()` — the same hooks components use. The definition of "host"
+depends on how the plugin was provided:
+
+- **App-level plugin** (passed to `mount(...)` or `new App({plugins: [...]})`):
+  the host is the App itself. `onMounted` fires once, when the **first root
+  mounts** successfully. `onWillUnmount` fires at the start of `app.destroy()`,
+  before any root is torn down.
+- **Component-provided plugin** (passed to `providePlugins(...)`): the host is
+  the component that called `providePlugins`. `onMounted` fires when that
+  component mounts. `onWillUnmount` fires when it is about to be destroyed
+  (only if it had previously mounted).
+
+Typical use: attach browser subscriptions that only make sense while the host
+is visible, or take DOM measurements.
+
+```js
+class ResizePlugin extends Plugin {
+  width = signal(0);
+
+  setup() {
+    const handler = () => this.width.set(window.innerWidth);
+    onMounted(() => {
+      window.addEventListener("resize", handler);
+      handler();
+    });
+    onWillUnmount(() => window.removeEventListener("resize", handler));
+  }
+}
+```
+
+These hooks fire only once per host lifetime. They do **not** fire on
+re-renders, nor when a `Portal` reparents a node, nor on a `Suspense` swap.
+
+### Ordering
+
+A plugin is conceptually a **child of the host that provides it** (its
+`setup()` runs *during* the host's construction). Its callbacks fire in the
+"child-of-host" slot:
+
+- **Mount** (bottom-up): host's child components → plugin → host's own
+  `onMounted`.
+- **Unmount** (top-down): host's own `onWillUnmount` → plugin → host's child
+  components.
+
+Within a single host's mount/unmount batch, plugin callbacks fire relative to
+host-own callbacks by call order in `setup()`. The natural idiom is to call
+`providePlugins(...)` at the top of `setup()`, which yields the ordering
+above.
+
+`onMounted` / `onWillUnmount` are not fired for plugins added dynamically
+(via a `Resource` of plugin constructors) after the host has already mounted
+— the mount moment has passed.
+
 ## Lifecycle and Cleanup
 
 Plugins follow a simple lifecycle:
@@ -266,7 +322,9 @@ Plugins follow a simple lifecycle:
 1. The plugin is instantiated
 2. `setup()` is called (may register `onWillStart` for async init)
 3. The plugin is active and can be used
-4. On destroy, cleanup runs in reverse order (LIFO)
+4. When the host is in the DOM, `onMounted` callbacks fire; when the host is
+   about to leave the DOM, `onWillUnmount` callbacks fire
+5. On destroy, cleanup runs in reverse order (LIFO)
 
 All reactive values (signals, computed, effects) created during `setup()` are
 automatically cleaned up when the plugin is destroyed. For manual cleanup,

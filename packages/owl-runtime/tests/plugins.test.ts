@@ -4,8 +4,10 @@ import {
   computed,
   config,
   effect,
+  onMounted,
   onWillDestroy,
   onWillStart,
+  onWillUnmount,
   plugin,
   Plugin,
   PluginInstance,
@@ -798,6 +800,242 @@ describe("onWillStart in plugins", () => {
     expect(valueAtChildSetup).toBe(42);
     expect(fixture.innerHTML).toBe("<span>child</span>");
     app.destroy();
+  });
+});
+
+describe("onMounted / onWillUnmount in plugins", () => {
+  test("plugin onMounted fires inside host's mount batch, after children", async () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onMounted(() => steps.push("plugin:mounted"));
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span>c</span>`;
+      setup() {
+        onMounted(() => steps.push("child:mounted"));
+      }
+    }
+
+    class Host extends Component {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+      setup() {
+        providePlugins([P]);
+        onMounted(() => steps.push("host:mounted"));
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    await app.createRoot(Host).mount(fixture);
+    expect(steps).toEqual(["child:mounted", "plugin:mounted", "host:mounted"]);
+    app.destroy();
+  });
+
+  test("plugin onWillUnmount fires inside host's unmount batch, before children", async () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onWillUnmount(() => steps.push("plugin:willUnmount"));
+        onWillDestroy(() => steps.push("plugin:willDestroy"));
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span>c</span>`;
+      setup() {
+        onWillUnmount(() => steps.push("child:willUnmount"));
+      }
+    }
+
+    class Host extends Component {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+      setup() {
+        providePlugins([P]);
+        onWillUnmount(() => steps.push("host:willUnmount"));
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    await app.createRoot(Host).mount(fixture);
+    app.destroy();
+    expect(steps).toEqual([
+      "host:willUnmount",
+      "plugin:willUnmount",
+      "child:willUnmount",
+      "plugin:willDestroy",
+    ]);
+  });
+
+  test("plugin onWillUnmount does not fire if host never mounts", async () => {
+    const steps: string[] = [];
+    const rpc = makeDeferred<void>();
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onWillUnmount(() => steps.push("plugin:willUnmount"));
+        onWillDestroy(() => steps.push("plugin:willDestroy"));
+      }
+    }
+
+    class Host extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        providePlugins([P]);
+        onWillStart(() => rpc);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    app.createRoot(Host).mount(fixture);
+    await nextTick();
+    app.destroy();
+    rpc.resolve();
+    await nextTick();
+    expect(steps).toEqual(["plugin:willDestroy"]);
+  });
+
+  test("app-level plugin onMounted fires once after first root mounts", async () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onMounted(() => steps.push("plugin:mounted"));
+      }
+    }
+
+    class A extends Component {
+      static template = xml`<span>a</span>`;
+      setup() {
+        onMounted(() => steps.push("a:mounted"));
+      }
+    }
+    class B extends Component {
+      static template = xml`<span>b</span>`;
+      setup() {
+        onMounted(() => steps.push("b:mounted"));
+      }
+    }
+
+    const fixtureA = document.createElement("div");
+    const fixtureB = document.createElement("div");
+    document.body.appendChild(fixtureA);
+    document.body.appendChild(fixtureB);
+    const app = new App({ plugins: [P] });
+    await app.createRoot(A).mount(fixtureA);
+    await app.createRoot(B).mount(fixtureB);
+    expect(steps).toEqual(["plugin:mounted", "a:mounted", "b:mounted"]);
+    app.destroy();
+    fixtureA.remove();
+    fixtureB.remove();
+  });
+
+  test("app-level plugin onWillUnmount fires before any root teardown", async () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onWillUnmount(() => steps.push("plugin:willUnmount"));
+      }
+    }
+
+    class A extends Component {
+      static template = xml`<span>a</span>`;
+      setup() {
+        onWillUnmount(() => steps.push("a:willUnmount"));
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [P] });
+    await app.createRoot(A).mount(fixture);
+    app.destroy();
+    expect(steps).toEqual(["plugin:willUnmount", "a:willUnmount"]);
+  });
+
+  test("app destroyed without mount — no mounted, no willUnmount", () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      static id = "p";
+      setup() {
+        onMounted(() => steps.push("plugin:mounted"));
+        onWillUnmount(() => steps.push("plugin:willUnmount"));
+      }
+    }
+
+    const app = new App({ plugins: [P] });
+    app.destroy();
+    expect(steps).toEqual([]);
+  });
+
+  test("nested providePlugins — inner plugin mounts with its own host only", async () => {
+    const steps: string[] = [];
+
+    class Outer extends Plugin {
+      static id = "outer";
+      setup() {
+        onMounted(() => steps.push("outer:mounted"));
+        onWillUnmount(() => steps.push("outer:willUnmount"));
+      }
+    }
+    class Inner extends Plugin {
+      static id = "inner";
+      setup() {
+        onMounted(() => steps.push("inner:mounted"));
+        onWillUnmount(() => steps.push("inner:willUnmount"));
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span>c</span>`;
+      setup() {
+        providePlugins([Inner]);
+        onMounted(() => steps.push("child:mounted"));
+        onWillUnmount(() => steps.push("child:willUnmount"));
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child/></div>`;
+      static components = { Child };
+      setup() {
+        providePlugins([Outer]);
+        onMounted(() => steps.push("parent:mounted"));
+        onWillUnmount(() => steps.push("parent:willUnmount"));
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
+    expect(steps).toEqual([
+      "inner:mounted",
+      "child:mounted",
+      "outer:mounted",
+      "parent:mounted",
+    ]);
+    steps.length = 0;
+    app.destroy();
+    expect(steps).toEqual([
+      "parent:willUnmount",
+      "outer:willUnmount",
+      "child:willUnmount",
+      "inner:willUnmount",
+    ]);
   });
 });
 

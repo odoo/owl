@@ -78,6 +78,7 @@ export class App extends TemplateSet {
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
+  private _pmMountedForwarded = false;
 
   constructor(config: AppConfig = {}) {
     super(config);
@@ -150,6 +151,21 @@ export class App extends TemplateSet {
       });
       preparedPromise = ready;
 
+      // On the first root mount, fire app-level plugin onMounted callbacks and
+      // arm the willUnmount hooks for App.destroy. Unshifted so it runs before
+      // the root component's own onMounted — app-level plugins wrap the App,
+      // mirroring how plugins wrap their host in providePlugins.
+      if (!this._pmMountedForwarded) {
+        const firstMount = () => {
+          if (this._pmMountedForwarded) return;
+          this._pmMountedForwarded = true;
+          const cbs = this.pluginManager.mounted;
+          this.pluginManager.mounted = [];
+          for (const cb of cbs) cb();
+        };
+        node.mounted.unshift(firstMount);
+      }
+
       // Install the mount-resolve callback up front so the sync render path's
       // `if (node.mounted.length)` check sees it and registers the fiber in
       // root.mounted. Without this ordering the callback would never fire for
@@ -207,6 +223,12 @@ export class App extends TemplateSet {
   }
 
   destroy() {
+    if (this._pmMountedForwarded) {
+      for (const cb of this.pluginManager.willUnmount) {
+        cb();
+      }
+      this.pluginManager.willUnmount = [];
+    }
     for (let root of this.roots) {
       root.destroy();
     }

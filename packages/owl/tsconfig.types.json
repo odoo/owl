@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@odoo/owl-core": ["../owl-core/src/index.ts"],
+      "@odoo/owl-compiler": ["../owl-compiler/src/index.ts"],
+      "@odoo/owl-runtime": ["../owl-runtime/src/index.ts"]
+    }
+  }
+}

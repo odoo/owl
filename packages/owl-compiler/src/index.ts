@@ -40,11 +40,10 @@ export function compile(
   } catch (originalError: any) {
     const { name } = options;
     const nameStr = name ? `template "${name}"` : "anonymous template";
-    const err = new OwlError(
-      `Failed to compile ${nameStr}: ${originalError.message}\n\ngenerated code:\nfunction(app, bdom, helpers) {\n${code}\n}`
+    throw new OwlError(
+      `Failed to compile ${nameStr}: ${originalError.message}\n\ngenerated code:\nfunction(app, bdom, helpers) {\n${code}\n}`,
+      { cause: originalError }
     );
-    err.cause = originalError;
-    throw err;
   }
 }
 

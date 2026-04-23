@@ -5,22 +5,8 @@
 import { compile, parseXML } from "@odoo/owl-compiler";
 import { TemplateSet } from "../src/template_set";
 
-(TemplateSet.prototype as any)._compileTemplate = function _compileTemplate(
-  name: string,
-  template: string | Element
-) {
-  return compile(template, {
-    name,
-    dev: this.dev,
-    translateFn: this.translateFn,
-    translatableAttributes: this.translatableAttributes,
-    customDirectives: this.customDirectives,
-    hasGlobalValues: this.hasGlobalValues,
-  });
-};
-(TemplateSet.prototype as any)._parseXML = function _parseXML(xml: string) {
-  return parseXML(xml);
-};
+TemplateSet.compile = compile;
+TemplateSet.parseXML = parseXML;
 
 const consoleOutput: string[] = [];
 (globalThis as any).__owl_console_output = consoleOutput;

@@ -1,9 +1,8 @@
-import { OwlError } from "@odoo/owl-core";
+import { getScope, OwlError } from "@odoo/owl-core";
 import { compile, CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { helpers } from "./rendering/template_helpers";
 import { ComponentNode } from "./component_node";
-import { getScope } from "./scope";
 
 const bdom = { text, createBlock, list, multi, html, toggler };
 

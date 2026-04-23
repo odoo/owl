@@ -5,10 +5,10 @@ import {
   PluginManager,
   Resource,
   startPlugins,
+  useScope,
 } from "@odoo/owl-core";
 import { ComponentNode, getComponentScope } from "./component_node";
 import { onWillDestroy, onWillStart } from "./lifecycle_hooks";
-import { useScope } from "./scope";
 import { STATUS } from "./status";
 import { types } from "./types";
 

@@ -10,7 +10,7 @@ import {
   proxy,
   xml,
 } from "../../src";
-import { useScope } from "../../src/scope";
+import { useScope } from "@odoo/owl-core";
 import {
   logStep,
   makeTestFixture,

@@ -4,8 +4,12 @@ import {
   createComputation,
   disposeComputation,
   getCurrentComputation,
+  isAbortError,
   OwlError,
+  Scope,
+  scopeStack,
   setComputation,
+  useScope,
 } from "@odoo/owl-core";
 import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
@@ -13,7 +17,6 @@ import { Component, ComponentConstructor } from "./component";
 import { PluginManager } from "@odoo/owl-core";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
-import { isAbortError, Scope, scopeStack, useScope } from "./scope";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------

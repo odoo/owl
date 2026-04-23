@@ -1,7 +1,6 @@
-import { effect, Signal } from "@odoo/owl-core";
+import { effect, Signal, useScope } from "@odoo/owl-core";
 import { App } from "./app";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { useScope } from "./scope";
 
 // -----------------------------------------------------------------------------
 // useEffect

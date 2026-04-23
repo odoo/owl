@@ -37,7 +37,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
 
     error = undefined;
     try {
@@ -65,7 +65,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("validate props for root component", async () => {
@@ -117,7 +117,7 @@ describe("props validation", () => {
         error = e;
       }
       expect(error).toBeDefined();
-      expect(error.cause.message).toMatch(`Invalid component props (SubComp)`);
+      expect(error.message).toMatch(`Invalid component props (SubComp)`);
 
       error = undefined;
       state = { p: test.ok };
@@ -136,7 +136,7 @@ describe("props validation", () => {
         error = e;
       }
       expect(error).toBeDefined();
-      expect(error.cause.message).toMatch(`Invalid component props (SubComp)`);
+      expect(error.message).toMatch(`Invalid component props (SubComp)`);
     }
   });
 
@@ -175,7 +175,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an optional props", async () => {
@@ -213,7 +213,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an array with given primitive type", async () => {
@@ -250,7 +250,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e as Error;
     }
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
     try {
       state = { p: [1] };
       await mount(Parent, fixture, { test: true });
@@ -302,7 +302,7 @@ describe("props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate an object with simple shape", async () => {
@@ -341,7 +341,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error!.message).toMatch("Invalid component props (SubComp)");
     error = undefined;
     state = { p: { id: 1 } };
     try {
@@ -349,7 +349,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error!.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate recursively complicated prop def", async () => {
@@ -391,7 +391,7 @@ describe("props validation", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error!.message).toMatch("Invalid component props (SubComp)");
   });
 
   test("can validate optional attributes in nested sub props", async () => {
@@ -664,7 +664,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
+    expect(error!.message).toMatch("Invalid component props (SubComp)");
   });
 
   test.skip("props are validated whenever component is updated", async () => {
@@ -729,7 +729,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (Child)");
+    expect(error!.message).toMatch("Invalid component props (Child)");
   });
 
   test("additional props are allowed (array)", async () => {
@@ -782,7 +782,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (Child)");
+    expect(error!.message).toMatch("Invalid component props (Child)");
   });
 
   test("can use custom class as type", async () => {
@@ -823,7 +823,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toMatch("Invalid component props (Child)");
+    expect(error!.message).toMatch("Invalid component props (Child)");
   });
 });
 
@@ -892,6 +892,6 @@ describe("default props", () => {
       error = e;
     }
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toMatch("Invalid component props (Child)");
+    expect(error!.message).toMatch("Invalid component props (Child)");
   });
 });

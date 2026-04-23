@@ -77,7 +77,7 @@ describe("t-model directive", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe(
+    expect(error!.message).toBe(
       `Invalid t-model expression: expression should evaluate to a function with a 'set' method defined on it`
     );
   });

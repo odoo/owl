@@ -169,7 +169,7 @@ describe("dev mode", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.cause.message).toMatch("Invalid prop 'value' in 'Child'");
+    expect(error.message).toMatch("Invalid prop 'value' in 'Child'");
   });
 
   test("throws if prop reference changes on re-render", async () => {
@@ -188,7 +188,7 @@ describe("dev mode", () => {
     parent.state.todo = new Todo(); // different reference
     render(parent);
     const error = await nextAppError(parent.__owl__.app);
-    expect(error.cause.message).toMatch("Prop 'todo' changed in component 'Child'");
+    expect(error.message).toMatch("Prop 'todo' changed in component 'Child'");
   });
 
   test("does not throw if signal reference is stable across re-renders", async () => {

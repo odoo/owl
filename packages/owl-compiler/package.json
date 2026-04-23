@@ -45,7 +45,17 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "dependencies": {
-    "@odoo/owl-core": "*",
+    "@odoo/owl-core": "*"
+  },
+  "peerDependencies": {
+    "jsdom": "^25.0.1"
+  },
+  "peerDependenciesMeta": {
+    "jsdom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
     "jsdom": "^25.0.1"
   }
 }

@@ -1,13 +1,11 @@
-import { config, createBlock, createCatcher, mount } from "../../src/blockdom";
+import { createBlock, createCatcher, mount } from "../../src/blockdom";
 import { makeTestFixture } from "./helpers";
-import { mainEventHandler } from "../../src/event_handling";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
 let fixture: HTMLElement;
-config.mainEventHandler = mainEventHandler;
 
 beforeEach(() => {
   fixture = makeTestFixture();

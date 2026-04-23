@@ -149,13 +149,10 @@ export function snapshotEverything() {
     snapshottedTemplates.clear();
   });
 
-  const originalCompileTemplate = (TemplateSet.prototype as any)._compileTemplate;
-  (TemplateSet.prototype as any)._compileTemplate = function (
-    name: string,
-    template: string | Element
-  ) {
-    const fn = originalCompileTemplate.call(this, "", template);
-    if (!globalTemplateNames.has(name)) {
+  const originalCompile = TemplateSet.compile!;
+  TemplateSet.compile = function (template, options = { hasGlobalValues: false }) {
+    const fn = originalCompile(template, { ...options, name: "" });
+    if (!globalTemplateNames.has(options.name ?? "")) {
       expect(fn.toString()).toMatchSnapshot();
     }
     return fn;

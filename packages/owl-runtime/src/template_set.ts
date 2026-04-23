@@ -1,10 +1,13 @@
 import { getScope, OwlError } from "@odoo/owl-core";
-import { compile, CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
+import { CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { helpers } from "./rendering/template_helpers";
 import { ComponentNode } from "./component_node";
 
 const bdom = { text, createBlock, list, multi, html, toggler };
+
+export type CompileFn = typeof import("@odoo/owl-compiler").compile;
+export type ParseXMLFn = typeof import("@odoo/owl-compiler").parseXML;
 
 export interface TemplateSetConfig {
   dev?: boolean;
@@ -20,6 +23,8 @@ export class TemplateSet {
   static registerTemplate(name: string, fn: TemplateFunction) {
     globalTemplates[name] = fn;
   }
+  static compile: CompileFn | null = null;
+  static parseXML: ParseXMLFn | null = null;
   dev: boolean;
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
@@ -76,8 +81,19 @@ export class TemplateSet {
       // empty string
       return;
     }
-    xml = xml instanceof Document ? xml : this._parseXML(xml);
-    for (const template of xml.querySelectorAll("[t-name]")) {
+    let doc: Document;
+    if (xml instanceof Document) {
+      doc = xml;
+    } else {
+      const parseXML = TemplateSet.parseXML;
+      if (!parseXML) {
+        throw new OwlError(
+          `Unable to parse XML templates: no parser installed. Use the full "@odoo/owl" build, or pass a Document instance.`
+        );
+      }
+      doc = parseXML(xml);
+    }
+    for (const template of doc.querySelectorAll("[t-name]")) {
       const name = template.getAttribute("t-name")!;
       this.addTemplate(name, template);
     }
@@ -96,7 +112,25 @@ export class TemplateSet {
         throw new OwlError(`Missing template: "${name}"${extraInfo}`);
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
-      const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
+      let templateFn: TemplateFunction;
+      if (isFn) {
+        templateFn = rawTemplate as TemplateFunction;
+      } else {
+        const compile = TemplateSet.compile;
+        if (!compile) {
+          throw new OwlError(
+            `Unable to compile template "${name}": no compiler installed. Use the full "@odoo/owl" build, or pre-compile templates with compile_owl_templates.`
+          );
+        }
+        templateFn = compile(rawTemplate, {
+          name,
+          dev: this.dev,
+          translateFn: this.translateFn,
+          translatableAttributes: this.translatableAttributes,
+          customDirectives: this.customDirectives,
+          hasGlobalValues: this.hasGlobalValues,
+        });
+      }
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
@@ -107,16 +141,6 @@ export class TemplateSet {
       this.templates[cacheKey] = template;
     }
     return this.templates[cacheKey];
-  }
-
-  private _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
-    throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
-  }
-
-  private _parseXML(xml: string): Document {
-    throw new OwlError(
-      `Unable to parse XML templates. Please use owl full build instead, or pass a Document instance.`
-    );
   }
 }
 

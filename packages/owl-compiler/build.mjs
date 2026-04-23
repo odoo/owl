@@ -10,6 +10,7 @@ async function buildBundle() {
     entryPoints: ["src/index.ts"],
     bundle: true,
     target: "es2022",
+    external: ["@odoo/owl-core"],
   };
   await Promise.all([
     esbuild.build({ ...common, outfile: ES_FILENAME, format: "esm" }),

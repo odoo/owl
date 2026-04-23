@@ -24,6 +24,7 @@ async function buildBundle() {
     bundle: true,
     define,
     target: "es2022",
+    external: ["@odoo/owl-core", "@odoo/owl-compiler"],
   };
   await Promise.all([
     esbuild.build({ ...common, outfile: ES_FILENAME, format: "esm" }),

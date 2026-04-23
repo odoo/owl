@@ -1,14 +1,19 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { App, Component, mount, onWillDestroy, props, types } from "../../src";
 import {
+  App,
+  Component,
+  mount,
   onError,
   onMounted,
   onPatched,
+  onWillDestroy,
   onWillPatch,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
+  props,
   proxy,
+  types,
   xml,
 } from "../../src";
 import { useScope } from "@odoo/owl-core";

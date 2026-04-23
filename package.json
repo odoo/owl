@@ -35,7 +35,7 @@
     "prettier": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",
     "prettier-fast": "git diff-tree --no-commit-id --name-only -r HEAD --diff-filter=d | xargs prettier --write",
     "check-formatting": "prettier {packages/owl/src/*.ts,packages/owl/src/**/*.ts,packages/owl/tests/*.ts,packages/owl/tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
-    "lint": "eslint packages/owl/src/**/*.ts packages/owl/tests/**/*.ts",
+    "lint": "eslint \"packages/*/src/**/*.ts\" \"packages/*/tests/**/*.ts\"",
     "release": "node tools/release.cjs",
     "compile_templates": "node tools/compile_owl_templates.mjs"
   },

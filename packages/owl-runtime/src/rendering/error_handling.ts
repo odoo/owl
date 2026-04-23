@@ -91,7 +91,7 @@ export function handleError(params: ErrorParams) {
   const finalize: Finalize = () => {
     try {
       app.destroy();
-    } catch (e) {
+    } catch {
       // mute all errors here because we are in a corrupted state anyway
     }
     // If the error is already an OwlError, it already conveys a clear,

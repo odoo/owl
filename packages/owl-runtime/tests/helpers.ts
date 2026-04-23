@@ -314,10 +314,10 @@ declare module "vitest" {
   }
 }
 
-export type SpyEffect<T> = (() => () => void) & { spy: Mock };
-export function spyEffect<T>(fn: () => T): SpyEffect<T> {
+export type SpyEffect = (() => () => void) & { spy: Mock };
+export function spyEffect<T>(fn: () => T): SpyEffect {
   const spy = vi.fn(fn);
   const unsubscribeWrapper = () => effect(spy);
-  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
+  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect;
   return wrapped;
 }

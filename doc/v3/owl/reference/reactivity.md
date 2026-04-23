@@ -380,21 +380,21 @@ class MyComponent extends Component {
 }
 ```
 
-## Manual Invalidation
+## Manual Trigger
 
 When using a plain `signal` (not a collection variant) that holds a mutable
 value, mutating the value in-place does not trigger updates because the
-reference hasn't changed. In that case, you can manually invalidate the signal:
+reference hasn't changed. In that case, you can manually trigger the signal:
 
 ```js
 const list = signal([1, 2, 3]);
 
 list().push(4); // mutates in-place — no update triggered
-signal.invalidate(list); // manually notify subscribers
+signal.trigger(list); // manually notify subscribers
 ```
 
 In general, prefer collection signals (`signal.Array`, `signal.Object`, etc.)
-which handle this automatically. Use `signal.invalidate` only when collection
+which handle this automatically. Use `signal.trigger` only when collection
 signals are not appropriate for your use case.
 
 ## Escape Hatches

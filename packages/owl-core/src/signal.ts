@@ -41,7 +41,7 @@ function buildSignal<T>(value: T, set: (atom: Atom) => T): Signal<T> {
   return readSignal;
 }
 
-function invalidateSignal(signal: Signal<any>): void {
+function triggerSignal(signal: Signal<any>): void {
   if (typeof signal !== "function" || (signal as any)[atomSymbol]?.type !== "signal") {
     throw new OwlError(`Value is not a signal (${signal})`);
   }
@@ -89,7 +89,7 @@ export function signal<T>(value: NoInfer<T>, options: SignalOptions<T>): Signal<
 export function signal<T>(value: T): Signal<T> {
   return buildSignal<T>(value, (atom) => atom.value);
 }
-signal.invalidate = invalidateSignal;
+signal.trigger = triggerSignal;
 signal.Array = signalArray;
 signal.Map = signalMap;
 signal.Object = signalObject;

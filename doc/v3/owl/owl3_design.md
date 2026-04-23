@@ -154,7 +154,7 @@ s1.set(s1() + 31);
 Setting a signal to an identical value is ignored, so it does not trigger any
 component to be updated. However, it is something that we actually need sometimes.
 For example, if we push an element in a list. In that case, we need to explicitly
-invalidate the signal to tell Owl that everything that depends on it is now
+trigger the signal to tell Owl that everything that depends on it is now
 stale.
 
 ```js
@@ -163,13 +163,13 @@ const list = signal([1, 2, 3]);
 // does not change the content of the signal
 list().push(4);
 // so we have to manually tell owl it is no longer up to date
-signal.invalidate(list);
+signal.trigger(list);
 ```
 
 Since manipulating collections of elements is a very common need, we introduce
 four functions that basically wrap the target array, object, set or map in a
 proxy (but not a nested proxy like the `proxy` function). This is useful so
-we can properly invalidate the signal whenever the content has changed.
+we can properly trigger the signal whenever the content has changed.
 
 ```js
 
@@ -181,7 +181,7 @@ mylist().push(4);
 mylist().push({nested: {object: 1}});
 
 // here, we change deeply nested state => no change is detected, a manual
-// invalidate may be necessary, if that is what we want
+// trigger may be necessary, if that is what we want
 mylist().at(-1).nested.object = 2;
 
 // same for other collections
@@ -1390,7 +1390,7 @@ class MyComponent extends Component {
     this.model = signal(
       new VeryBigModel({
         onUpdate: () => {
-          signal.invalidate(this.model);
+          signal.trigger(this.model);
         },
       })
     );

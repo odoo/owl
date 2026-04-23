@@ -1,21 +1,43 @@
 import { mount, createBlock, multi, config, patch } from "../../src/blockdom";
-// import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
 
+// These tests exercise blockdom's low-level event dispatch contract
+// independently of Owl's data-shape conventions, so they install a generic
+// handler that accepts bare functions and [handler, arg] arrays.
+function filterOutModifiers(dataList: any[]): { modifiers: string[]; data: any[] } {
+  dataList = dataList.slice();
+  const modifiers: string[] = [];
+  let elm;
+  while ((elm = dataList[0]) && typeof elm === "string") {
+    modifiers.push(dataList.shift());
+  }
+  return { modifiers, data: dataList };
+}
+const genericHandler = (data: any, ev: Event): boolean => {
+  if (typeof data === "function") {
+    data(ev);
+  } else if (Array.isArray(data)) {
+    data = filterOutModifiers(data).data;
+    data[0](data[1], ev);
+  }
+  return false;
+};
+
 let fixture: HTMLElement;
 let initialHandler = config.mainEventHandler;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  config.mainEventHandler = initialHandler;
+  config.mainEventHandler = genericHandler;
 });
 
 afterEach(() => {
   fixture.remove();
+  config.mainEventHandler = initialHandler;
 });
 
 test("simple event handling, with function", async () => {

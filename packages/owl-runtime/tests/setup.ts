@@ -1,7 +1,4 @@
 // Wire compile + parseXML into TemplateSet for tests that use xml templates.
-// Import from the specific module to avoid triggering runtime/index side
-// effects (which would overwrite config.mainEventHandler and break blockdom
-// tests that rely on the default).
 import { compile, parseXML } from "@odoo/owl-compiler";
 import { TemplateSet } from "../src/template_set";
 import { Scheduler } from "../src/rendering/scheduler";

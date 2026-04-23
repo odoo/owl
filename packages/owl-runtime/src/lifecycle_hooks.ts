@@ -1,6 +1,6 @@
+import { Scope, useScope } from "@odoo/owl-core";
 import { ComponentNode, getComponentScope } from "./component_node";
 import { nodeErrorHandlers } from "./rendering/error_handling";
-import { Scope, useScope } from "./scope";
 
 // -----------------------------------------------------------------------------
 //  hooks

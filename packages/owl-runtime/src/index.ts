@@ -78,7 +78,7 @@ export { config, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "@odoo/owl-core";
 export type { PluginConstructor } from "@odoo/owl-core";
-export { getScope, Scope, useScope } from "./scope";
+export { getScope, Scope, useScope } from "@odoo/owl-core";
 
 export const __info__: Record<string, string> = {
   version: App.version,

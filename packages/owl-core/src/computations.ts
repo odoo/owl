@@ -32,18 +32,27 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   // render effect would crash on intermediate state. Observers with no
   // explicit priority run after all prioritized ones, in insertion order.
   priority?: number;
+  // When true, observers reached through this computation (i.e. effects that
+  // depend on it, possibly through a chain of other derived computations) are
+  // notified on a macrotask rather than the next microtask. Urgent consumers
+  // of the same source run normally; only work downstream of the deferred
+  // computation lags. Used for type-ahead-style patterns where an input
+  // should stay responsive while an expensive derivation catches up.
+  deferred?: boolean;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
+let deferredObservers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
   state: ComputationState = ComputationState.STALE,
-  priority?: number
+  priority?: number,
+  deferred?: boolean
 ): ComputationAtom {
   return {
     state,
@@ -53,6 +62,7 @@ export function createComputation(
     observers: new Set(),
     isDerived,
     priority,
+    deferred,
   };
 }
 
@@ -65,20 +75,28 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
+  const atomIsDeferred = !!(atom as ComputationAtom).deferred;
+  const directQueue = atomIsDeferred ? deferredObservers : observers;
   for (const ctx of atom.observers) {
     if (ctx.state === ComputationState.EXECUTED) {
       if (ctx.isDerived) {
-        markDownstream(ctx);
+        markDownstream(ctx, atomIsDeferred);
       } else {
-        observers.push(ctx);
+        directQueue.push(ctx);
       }
     }
     ctx.state = ComputationState.STALE;
   }
-  batchProcessEffects();
+  if (observers.length) batchProcessEffects();
+  if (deferredObservers.length) batchProcessDeferredEffects();
 }
 
 const batchProcessEffects = batched(processEffects);
+// Deferred effects run on the next macrotask instead of the next microtask.
+// Macrotask boundary means the browser gets to handle input/paint in between,
+// keeping urgent work snappy while heavier derivations catch up.
+const batchProcessDeferredEffects = batched(processDeferredEffects, (cb) => setTimeout(cb, 0));
+
 /**
  * Synchronously run every queued effect (the non-derived computations that
  * have been marked stale since the last drain). The normal flush path is
@@ -96,6 +114,14 @@ export function processEffects() {
     updateComputation(observers[i]);
   }
   observers.length = 0;
+}
+
+function processDeferredEffects() {
+  deferredObservers.sort(compareByPriority);
+  for (let i = 0; i < deferredObservers.length; i++) {
+    updateComputation(deferredObservers[i]);
+  }
+  deferredObservers.length = 0;
 }
 
 function compareByPriority(a: ComputationAtom, b: ComputationAtom): number {
@@ -172,19 +198,28 @@ export function disposeComputation(computation: ComputationAtom) {
   computation.state = ComputationState.STALE;
 }
 
-function markDownstream(computation: ComputationAtom) {
-  const stack: ComputationAtom[] = [computation];
-  let current: ComputationAtom | undefined;
-  while ((current = stack.pop())) {
+function markDownstream(computation: ComputationAtom, viaDeferred: boolean) {
+  // Walk downstream carrying "have we crossed a deferred computation in this
+  // path?" Once true, it stays true for the rest of the path — observers
+  // reached only through a deferred chain land in the deferred queue. If the
+  // same observer is reachable through both a deferred and a non-deferred
+  // path, the earlier visit wins (state check short-circuits).
+  const stack: Array<[ComputationAtom, boolean]> = [
+    [computation, viaDeferred || !!computation.deferred],
+  ];
+  let entry: [ComputationAtom, boolean] | undefined;
+  while ((entry = stack.pop())) {
+    const [current, isDeferred] = entry;
+    const queue = isDeferred ? deferredObservers : observers;
     for (const observer of current.observers) {
       if (observer.state) {
         continue;
       }
       observer.state = ComputationState.PENDING;
       if (observer.isDerived) {
-        stack.push(observer);
+        stack.push([observer, isDeferred || !!observer.deferred]);
       } else {
-        observers.push(observer);
+        queue.push(observer);
       }
     }
   }

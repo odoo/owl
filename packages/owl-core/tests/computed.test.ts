@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, type Mock } from "vitest";
-import { proxy, computed, signal } from "../src";
+import { proxy, computed, effect, signal } from "../src";
 import {
   atomSymbol,
   ComputationAtom,
@@ -506,5 +506,122 @@ describe("writable computed", () => {
     // can also set a number
     binary.set(7);
     expect(value()).toBe(7);
+  });
+});
+
+describe("deferred option", () => {
+  async function nextMacroTick(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  test("observer of a deferred computed runs on macrotask, not microtask", async () => {
+    const source = signal(1);
+    const lazy = computed(() => source() * 10, { deferred: true });
+    let observed: number | null = null;
+    effect(() => {
+      observed = lazy();
+    });
+    expect(observed).toBe(10);
+
+    source.set(2);
+    // Microtask drain should NOT have fired the deferred observer yet.
+    await waitScheduler();
+    expect(observed).toBe(10);
+
+    // After a macrotask, the deferred observer has run.
+    await nextMacroTick();
+    expect(observed).toBe(20);
+  });
+
+  test("observer of normal signal still fires on microtask when deferred sibling exists", async () => {
+    const source = signal("a");
+    const lazy = computed(() => source().toUpperCase(), { deferred: true });
+    let urgent: string | null = null;
+    let slow: string | null = null;
+    effect(() => {
+      urgent = source();
+    });
+    effect(() => {
+      slow = lazy();
+    });
+    expect(urgent).toBe("a");
+    expect(slow).toBe("A");
+
+    source.set("b");
+    await waitScheduler();
+    // The urgent observer (reads source directly) has updated.
+    expect(urgent).toBe("b");
+    // The deferred observer has not.
+    expect(slow).toBe("A");
+
+    await nextMacroTick();
+    expect(slow).toBe("B");
+  });
+
+  test("observer that depends on both urgent and deferred paths takes the urgent lane", async () => {
+    // If an effect reads both the raw source and a deferred derivation of it,
+    // it's queued in the urgent lane as soon as the source writes. That's the
+    // only sensible choice without true concurrent rendering: we can't serve
+    // two versions of the same effect at once.
+    const source = signal(1);
+    const lazy = computed(() => source() * 10, { deferred: true });
+    let runs = 0;
+    effect(() => {
+      source();
+      lazy();
+      runs++;
+    });
+    expect(runs).toBe(1);
+
+    source.set(2);
+    await waitScheduler();
+    expect(runs).toBe(2); // Ran in the urgent batch.
+
+    await nextMacroTick();
+    expect(runs).toBe(2); // No extra deferred run.
+  });
+
+  test("deferred propagates through a chain of derived computations", async () => {
+    const source = signal(5);
+    const lazyA = computed(() => source() + 1, { deferred: true });
+    const lazyB = computed(() => lazyA() + 100); // not deferred itself
+    let observed: number | null = null;
+    effect(() => {
+      observed = lazyB();
+    });
+    expect(observed).toBe(106);
+
+    source.set(10);
+    await waitScheduler();
+    // lazyB's observer is reached through lazyA (deferred), so lands deferred.
+    expect(observed).toBe(106);
+
+    await nextMacroTick();
+    expect(observed).toBe(111);
+  });
+
+  test("a newer urgent write during a deferred flush still lands in the urgent lane", async () => {
+    const urgentSignal = signal("-");
+    const slowSource = signal(1);
+    const lazy = computed(() => slowSource() * 10, { deferred: true });
+    let urgentVal: string | null = null;
+    let slowVal: number | null = null;
+    effect(() => {
+      urgentVal = urgentSignal();
+    });
+    effect(() => {
+      slowVal = lazy();
+    });
+
+    slowSource.set(2);
+    // Slow write is queued for macrotask; before it drains, an urgent write
+    // lands and must be handled on its own microtask, not held up.
+    urgentSignal.set("!");
+    await waitScheduler();
+    expect(urgentVal).toBe("!");
+    expect(slowVal).toBe(10);
+
+    await nextMacroTick();
+    expect(slowVal).toBe(20);
   });
 });

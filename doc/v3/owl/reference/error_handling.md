@@ -71,15 +71,20 @@ error, otherwise we risk going into an infinite loop (also, see the page on
 
 ## OwlError
 
-Errors raised by Owl itself are instances of `OwlError`, a small subclass
-of the built-in `Error` that is exported from the main entry point:
+Errors raised by Owl itself — invalid template, missing registry key, failed
+props validation, lifecycle misuse, and so on — are instances of `OwlError`,
+a small subclass of the built-in `Error` exported from the main entry point:
 
 ```js
 import { OwlError } from "@odoo/owl";
 ```
 
-Use it to distinguish framework errors from errors thrown by application
-code or the JavaScript engine inside an `onError` handler:
+Errors thrown from user code (lifecycle hooks, template expressions, event
+handlers inside an async flow, ...) are **not** converted to `OwlError`.
+They propagate through Owl's internals as-is, preserving their original
+type, message, and stack trace. This means `instanceof OwlError` is a
+reliable way to distinguish framework complaints from application errors
+inside an `onError` handler:
 
 ```js
 onError((error) => {
@@ -92,21 +97,13 @@ onError((error) => {
 });
 ```
 
-When a non-`OwlError` (e.g. a plain `TypeError` from user code) bubbles out
-of the rendering cycle unhandled, Owl wraps it in a new `OwlError` and
-stores the original on the `.cause` field:
-
-```js
-onError((error) => {
-  // error.message: "[Owl] Unhandled error. Destroying the root component"
-  // error.cause:   the original error that triggered the failure
-  console.error(error.cause ?? error);
-});
-```
-
-Errors that are already `OwlError` instances (invalid template, missing
-registry key, failed validation, ...) are propagated as-is without an extra
-wrapper, since their message already identifies the failure.
+When an error (of either kind) escapes every `onError` handler, Owl
+destroys the root component and forwards the same error — unchanged — to
+`app._handleError`, which by default rethrows. The error surfaced at that
+boundary is the exact object that was thrown; it is not wrapped. For
+example, a `TypeError` thrown in `onMounted` arrives at `_handleError` as a
+`TypeError` with its original stack, not as an `OwlError` with a `.cause`
+chain.
 
 `OwlError` is a plain `Error` subclass — `.message`, `.stack`, and all the
 usual tooling work as expected. Owl does not attach numeric error codes;

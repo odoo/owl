@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { compileExpr, processExpr, tokenize } from "../src/inline_expressions";
 
 describe("tokenizer", () => {

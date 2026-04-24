@@ -8,7 +8,6 @@ import {
   updateClass,
   updateStyle,
 } from "./attributes";
-import { config } from "./config";
 import { createEventHandler } from "./events";
 import type { VNode } from "./index";
 import { VMulti } from "./multi";
@@ -68,9 +67,6 @@ export function createBlock(str: string): BlockType {
   // step 0: prepare html base element
   const doc = new DOMParser().parseFromString(`<t>${str}</t>`, "text/xml");
   const node = doc.firstChild!.firstChild!;
-  if (config.shouldNormalizeDom) {
-    normalizeNode(node as any);
-  }
 
   // step 1: prepare intermediate tree
   const tree = buildTree(node);
@@ -83,27 +79,6 @@ export function createBlock(str: string): BlockType {
   const Block = buildBlock(template, context);
   cache[str] = Block;
   return Block;
-}
-
-// -----------------------------------------------------------------------------
-// Helper
-// -----------------------------------------------------------------------------
-
-function normalizeNode(node: HTMLElement | Text) {
-  if (node.nodeType === Node.TEXT_NODE) {
-    if (!/\S/.test((node as Text).textContent!)) {
-      (node as Text).remove();
-      return;
-    }
-  }
-  if (node.nodeType === Node.ELEMENT_NODE) {
-    if ((node as HTMLElement).tagName === "pre") {
-      return;
-    }
-  }
-  for (let i = node.childNodes.length - 1; i >= 0; --i) {
-    normalizeNode(node.childNodes.item(i) as any);
-  }
 }
 
 // -----------------------------------------------------------------------------

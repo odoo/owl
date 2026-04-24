@@ -1,3 +1,4 @@
+import { beforeEach, expect, test } from "vitest";
 import { App, Component, onMounted, onWillStart, xml } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
 

@@ -26,6 +26,12 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  // Lower values run first when processEffects flushes. Used by owl-runtime
+  // to schedule component renders in depth order (ancestors first), so a
+  // parent's render can cancel orphaned children before the children's own
+  // render effect would crash on intermediate state. Observers with no
+  // explicit priority run after all prioritized ones, in insertion order.
+  priority?: number;
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -36,7 +42,8 @@ let currentComputation: ComputationAtom | undefined;
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
+  priority?: number
 ): ComputationAtom {
   return {
     state,
@@ -45,6 +52,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    priority,
   };
 }
 
@@ -72,10 +80,23 @@ export function onWriteAtom(atom: Atom) {
 
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
+  // Sort by priority (undefined → end) so owl-runtime can guarantee that
+  // ancestor component renders run before descendant renders within the
+  // same microtask batch.
+  observers.sort(compareByPriority);
   for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }
   observers.length = 0;
+}
+
+function compareByPriority(a: ComputationAtom, b: ComputationAtom): number {
+  const pa = a.priority;
+  const pb = b.priority;
+  if (pa === pb) return 0;
+  if (pa === undefined) return 1;
+  if (pb === undefined) return -1;
+  return pa - pb;
 }
 
 export function getCurrentComputation() {
@@ -99,15 +120,12 @@ export function updateComputation(computation: ComputationAtom) {
       updateComputation(source as ComputationAtom);
     }
     // If the state is still not stale after processing the sources, it means
-    // none of the dependencies have changed.
-    // todo: test it
+    // none of the dependencies have changed — skip re-running compute.
     if (computation.state !== ComputationState.STALE) {
       computation.state = ComputationState.EXECUTED;
       return;
     }
   }
-  // todo: test performance. We might want to avoid removing the atoms to
-  // directly re-add them at compute. Especially as we are making them stale.
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
@@ -116,13 +134,15 @@ export function updateComputation(computation: ComputationAtom) {
   currentComputation = previousComputation;
 }
 
+// Unhooks `computation` from its sources' observer sets. Called during update
+// cycles (sources are about to be re-established during compute) AND during
+// effect unsubscribe. Final-disposal cascade cleanup for derived sources with
+// no remaining observers lives in `disposeComputation`, not here — doing it
+// during normal updates would disconnect atoms that are about to be re-added.
 export function removeSources(computation: ComputationAtom) {
   const sources = computation.sources;
   for (const source of sources) {
-    const observers = source.observers;
-    observers.delete(computation);
-    // todo: if source has no effect observer anymore, remove its sources too
-    // todo: test it
+    source.observers.delete(computation);
   }
   sources.clear();
 }

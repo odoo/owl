@@ -1,5 +1,4 @@
-import { vi, type Mock } from "vitest";
-
+import { afterEach, beforeEach, expect, vi, type Mock } from "vitest";
 export function getConsoleOutput(): string[] {
   return (globalThis as any).__owl_console_output.splice(0);
 }
@@ -139,13 +138,10 @@ export function snapshotEverything() {
     snapshottedTemplates.clear();
   });
 
-  const originalCompileTemplate = (TemplateSet.prototype as any)._compileTemplate;
-  (TemplateSet.prototype as any)._compileTemplate = function (
-    name: string,
-    template: string | Element
-  ) {
-    const fn = originalCompileTemplate.call(this, "", template);
-    if (!globalTemplateNames.has(name)) {
+  const originalCompile = TemplateSet.compile!;
+  TemplateSet.compile = function (template, options = { hasGlobalValues: false }) {
+    const fn = originalCompile(template, { ...options, name: "" });
+    if (!globalTemplateNames.has(options.name ?? "")) {
       expect(fn.toString()).toMatchSnapshot();
     }
     return fn;
@@ -308,10 +304,10 @@ declare module "vitest" {
   }
 }
 
-export type SpyEffect<T> = (() => () => void) & { spy: Mock };
-export function spyEffect<T>(fn: () => T): SpyEffect<T> {
+export type SpyEffect = (() => () => void) & { spy: Mock };
+export function spyEffect<T>(fn: () => T): SpyEffect {
   const spy = vi.fn(fn);
   const unsubscribeWrapper = () => effect(spy);
-  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
+  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect;
   return wrapped;
 }

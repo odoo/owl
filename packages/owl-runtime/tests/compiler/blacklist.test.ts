@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { renderToString } from "../helpers";
 
 describe("blacklisted tags and attributes", () => {

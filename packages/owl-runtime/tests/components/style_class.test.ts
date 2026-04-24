@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { Component, mount, onMounted, props, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, getConsoleOutput } from "../helpers";
 
@@ -513,7 +514,7 @@ describe("style and class handling", () => {
     }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.cause.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
     expect(getConsoleOutput()).toEqual([]);
   });

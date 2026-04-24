@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { effect, proxy, signal, untrack } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
@@ -357,6 +358,109 @@ describe("effect", () => {
       expect(cleanup1).toHaveBeenCalledTimes(2);
       expect(cleanup2).toHaveBeenCalledTimes(2);
       expect(cleanup3).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("cleanup tracking isolation", () => {
+    test("atom reads inside cleanup do not register as effect dependencies on re-run", async () => {
+      // When an effect re-runs, its cleanup fires first, then fn(). If the
+      // cleanup reads a signal, that read must not be tracked — otherwise the
+      // cleanup-only signal would silently become a dependency, causing
+      // spurious re-runs.
+      const trigger = signal(1);
+      const onlyInCleanup = signal(100);
+      const spy = vi.fn();
+
+      effect(() => {
+        spy(trigger());
+        return () => {
+          // cleanup reads a signal that fn() does not read
+          onlyInCleanup();
+        };
+      });
+      expectSpy(spy, 1, { args: [1] });
+
+      // Change the cleanup-only signal — must NOT trigger a re-run.
+      onlyInCleanup.set(200);
+      await waitScheduler();
+      expectSpy(spy, 1, { args: [1] });
+
+      // Sanity: the effect still responds to its real dependency.
+      trigger.set(2);
+      await waitScheduler();
+      expectSpy(spy, 2, { args: [2] });
+
+      // And still doesn't track onlyInCleanup after the re-run.
+      onlyInCleanup.set(300);
+      await waitScheduler();
+      expectSpy(spy, 2, { args: [2] });
+    });
+
+    test("atom reads inside cleanup do not leak to surrounding effect on manual unsubscribe", async () => {
+      // If effect A calls inner.unsubscribe() from inside its body, and inner's
+      // cleanup reads a signal, that read must not register as a dependency
+      // of A — otherwise A re-runs every time that signal changes.
+      const trigger = signal(1);
+      const readInCleanup = signal(100);
+      const spyA = vi.fn();
+
+      let disposeInner: (() => void) | null = null;
+
+      effect(() => {
+        spyA(trigger());
+        if (!disposeInner) {
+          disposeInner = effect(() => {
+            return () => {
+              readInCleanup();
+            };
+          });
+        }
+      });
+      expectSpy(spyA, 1, { args: [1] });
+
+      // Unsubscribe the inner from INSIDE a fresh run of the outer.
+      trigger.set(2);
+      await waitScheduler();
+      expectSpy(spyA, 2, { args: [2] });
+      disposeInner!(); // inner's cleanup reads readInCleanup
+
+      // Changing readInCleanup must not cause A to re-run.
+      readInCleanup.set(200);
+      await waitScheduler();
+      expectSpy(spyA, 2, { args: [2] });
+    });
+  });
+
+  describe("dispose-while-scheduled", () => {
+    test("disposing a parent prevents a scheduled child from running", async () => {
+      // A child effect's source changes — child is queued to re-run in
+      // processEffects. Before the queue flushes, the parent is disposed,
+      // which cascades into the child. The state=EXECUTED set in
+      // unsubscribeEffect must prevent the child from running when
+      // processEffects reaches it.
+      const src = signal(1);
+      const spyChild = vi.fn();
+      const cleanupChild = vi.fn();
+
+      const disposeParent = effect(() => {
+        effect(() => {
+          spyChild(src());
+          return cleanupChild;
+        });
+      });
+      expectSpy(spyChild, 1, { args: [1] });
+
+      // Schedule the child to re-run, synchronously (no await).
+      src.set(2);
+      // Before the microtask flushes processEffects, dispose the parent.
+      disposeParent();
+      expect(cleanupChild).toHaveBeenCalledTimes(1);
+
+      // Flush. The child was in the queue but was marked EXECUTED during
+      // the cascade, so updateComputation is a no-op.
+      await waitScheduler();
+      expectSpy(spyChild, 1, { args: [1] });
+      expect(cleanupChild).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,6 +1,15 @@
-import { filterOutModifiersFromData } from "./blockdom/config";
-import { STATUS } from "./status";
 import { OwlError } from "@odoo/owl-core";
+import { STATUS } from "../status";
+
+export function filterOutModifiersFromData(dataList: any[]): { modifiers: string[]; data: any[] } {
+  dataList = dataList.slice();
+  const modifiers = [];
+  let elm;
+  while ((elm = dataList[0]) && typeof elm === "string") {
+    modifiers.push(dataList.shift());
+  }
+  return { modifiers, data: dataList };
+}
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   const { data: _data, modifiers } = filterOutModifiersFromData(data);

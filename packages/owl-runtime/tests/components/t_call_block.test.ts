@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { text } from "../../src/blockdom";
 import { Component, mount, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";

@@ -15,6 +15,13 @@
     "./dist/*": "./dist/*",
     "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "./src/index.ts",
+    "./dist/owl.es.js",
+    "./dist/owl.cjs.js",
+    "./dist/owl.iife.js",
+    "./dist/owl.iife.min.js"
+  ],
   "type": "module",
   "files": [
     "dist"

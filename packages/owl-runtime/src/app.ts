@@ -65,10 +65,6 @@ interface Root<T extends ComponentConstructor> {
   destroy(): void;
 }
 
-if (typeof window !== "undefined") {
-  window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
-}
-
 export class App extends TemplateSet {
   static validateTarget = validateTarget;
   static apps = apps;
@@ -84,6 +80,9 @@ export class App extends TemplateSet {
     super(config);
     this.name = config.name || "";
     apps.add(this);
+    if (typeof window !== "undefined") {
+      window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
+    }
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
       startPlugins(this.pluginManager, config.plugins);

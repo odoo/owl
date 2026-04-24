@@ -10,8 +10,8 @@ import { getComponentScope } from "./component_node";
 import { types } from "./types";
 
 function validateObjectWithDefaults(
-  schema: Record<string, any> | string[],
-  defaultValues: Record<string, any>
+  schema: Record<string, unknown> | string[],
+  defaultValues: Record<string, unknown>
 ) {
   const keys: string[] = Array.isArray(schema) ? schema : Object.keys(schema);
   const mandatoryDefaultedKeys = keys.filter((key) => !key.endsWith("?") && key in defaultValues);
@@ -86,12 +86,12 @@ export function props(type?: any, defaults?: any): Props<{}> {
     if (app.dev) {
       const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
       assertType(node.props, validation, `Invalid component props (${componentName})`);
-      node.willUpdateProps.push((np: Record<string, any>) => {
+      node.willUpdateProps.push((np: Record<string, unknown>) => {
         assertType(np, validation, `Invalid component props (${componentName})`);
       });
     }
   } else {
-    const getKeys = (props: Record<string, any>) => {
+    const getKeys = (props: Record<string, unknown>) => {
       const keys: string[] = [];
       for (const k in props) {
         if (k.charCodeAt(0) !== 1) {
@@ -110,7 +110,7 @@ export function props(type?: any, defaults?: any): Props<{}> {
 
     let keys = getKeys(node.props);
     applyPropGetters(keys);
-    node.willUpdateProps.push((np: any) => {
+    node.willUpdateProps.push((np: Record<string, unknown>) => {
       for (const key of keys) {
         Reflect.deleteProperty(result, key);
       }

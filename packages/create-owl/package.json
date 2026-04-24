@@ -1,0 +1,46 @@
+{
+  "name": "create-owl",
+  "version": "0.1.0",
+  "description": "Scaffold a new Owl project",
+  "type": "module",
+  "bin": {
+    "create-owl": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "prepublishOnly": "node build.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odoo/owl.git",
+    "directory": "packages/create-owl"
+  },
+  "keywords": [
+    "owl",
+    "odoo",
+    "scaffold",
+    "starter",
+    "create"
+  ],
+  "author": "Odoo",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/odoo/owl/issues"
+  },
+  "homepage": "https://github.com/odoo/owl#readme",
+  "dependencies": {
+    "picocolors": "^1.1.1",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.4.9"
+  }
+}

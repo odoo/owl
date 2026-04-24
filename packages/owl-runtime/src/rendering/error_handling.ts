@@ -1,13 +1,15 @@
-import { OwlError } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
 
-// Maps fibers to thrown errors
-export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
-export const nodeErrorHandlers: WeakMap<
-  ComponentNode,
-  ((error: any, finalize: Function) => void)[]
-> = new WeakMap();
+// Maps fibers to thrown errors. JS can throw anything, so the value is
+// `unknown` — callers must narrow before use.
+export const fibersInError: WeakMap<Fiber, unknown> = new WeakMap();
+export type ErrorHandler = (error: unknown, finalize: Finalize) => void;
+export const nodeErrorHandlers: WeakMap<ComponentNode, ErrorHandler[]> = new WeakMap();
+
+// Called by error handlers to commit final app teardown and return the error
+// value (possibly after handler-driven rethrows).
+type Finalize = () => unknown;
 
 // Walks up from `node` (inclusive), invoking the latest error handler at each
 // level. Returns whether a handler caught and the final (possibly rethrown)
@@ -17,10 +19,10 @@ export const nodeErrorHandlers: WeakMap<
 // to leave the outer tree's fibers alone.
 function invokeErrorHandlers(
   node: ComponentNode | null,
-  error: any,
-  finalize: Function,
+  error: unknown,
+  finalize: Finalize,
   markFibers: boolean
-): { handled: boolean; error: any } {
+): { handled: boolean; error: unknown } {
   while (node) {
     if (markFibers && node.fiber) {
       fibersInError.set(node.fiber, error);
@@ -45,8 +47,8 @@ function invokeErrorHandlers(
 // parent chain. Used by Suspense/Portal so a descendant failure reaches the
 // consumer's `onError` without the main `handleError` entry point (which
 // would mark the outer tree's fibers as in-error and stall its mount).
-export function forwardErrorToParent(boundary: ComponentNode) {
-  return (error: any, finalize: Function): void => {
+export function forwardErrorToParent(boundary: ComponentNode): ErrorHandler {
+  return (error, finalize) => {
     if (boundary.app.destroyed) {
       throw error;
     }
@@ -57,7 +59,7 @@ export function forwardErrorToParent(boundary: ComponentNode) {
   };
 }
 
-type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
+type ErrorParams = { error: unknown } & ({ node: ComponentNode } | { fiber: Fiber });
 export function handleError(params: ErrorParams) {
   let { error } = params;
   let node: ComponentNode | null = "node" in params ? params.node : params.fiber.node;
@@ -66,8 +68,6 @@ export function handleError(params: ErrorParams) {
 
   // Once the app has been destroyed (e.g. by a prior unhandled error), stop
   // re-running error handling as the stack unwinds through ancestor renders.
-  // Otherwise each catch frame would re-wrap the already-thrown OwlError,
-  // producing nested "Caused by" chains for every component level.
   if (app.destroyed) {
     throw error;
   }
@@ -85,26 +85,17 @@ export function handleError(params: ErrorParams) {
     fibersInError.set(fiber.root!, error);
   }
 
-  const finalize = () => {
+  const finalize: Finalize = () => {
     try {
       app.destroy();
-    } catch (e) {
+    } catch {
       // mute all errors here because we are in a corrupted state anyway
     }
-    // If the error is already an OwlError, it already conveys a clear,
-    // framework-specific message — no need to wrap it in another OwlError.
-    if (error instanceof OwlError) {
-      return error;
-    }
-    return Object.assign(new OwlError(`[Owl] Unhandled error. Destroying the root component`), {
-      cause: error,
-    });
+    return error;
   };
 
   const result = invokeErrorHandlers(node, error, finalize, true);
   if (!result.handled) {
-    // Sync outer `error` with the last rethrown one so finalize()'s OwlError
-    // surfaces that cause, not the original.
     error = result.error;
     app._handleError(finalize());
   }

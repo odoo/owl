@@ -22,7 +22,9 @@ export interface VNode<T = any> {
   el?: undefined | HTMLElement | Text;
   parentEl?: undefined | HTMLElement;
   isOnlyChild?: boolean | undefined;
-  key?: any;
+  // Reconciliation key for list/toggler children. Must be usable as an object
+  // key (PropertyKey), since it's indexed into a mapping during list diffing.
+  key?: PropertyKey;
 }
 
 export type BDom = VNode<any>;

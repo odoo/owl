@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "vitest";
 import { makeTestFixture, snapshotEverything, nextTick, logStep, nextMicroTick } from "../helpers";
 import { mount, Component, proxy, xml, App } from "../../src";
 

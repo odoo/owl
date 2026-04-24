@@ -5,9 +5,9 @@ const runtimePackage = require("../packages/owl-runtime/package.json");
 const packageLock = require("../package-lock.json");
 const readline = require("readline");
 const fs = require("fs");
-const exec = require("child_process").exec;
+const { exec, execSync } = require("child_process");
 const chalk = require("chalk");
-const branchName = require('current-git-branch');
+const branchName = () => execSync("git rev-parse --abbrev-ref HEAD").toString().trim();
 
 const REL_NOTES_FILE = `dist/release-notes.md`;
 const branch = "master";

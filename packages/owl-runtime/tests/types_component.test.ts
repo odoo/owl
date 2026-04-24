@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { Component, types as t, validateType } from "../src";
 
 class A {}

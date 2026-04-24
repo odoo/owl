@@ -1,3 +1,4 @@
+import { beforeEach, expect, test } from "vitest";
 import { App, Component, asyncComputed, computed, effect, signal, xml } from "../../src";
 import { makeDeferred, makeTestFixture } from "../helpers";
 

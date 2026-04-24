@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Component, mount, props, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 

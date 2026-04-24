@@ -1,4 +1,4 @@
-import { vi, type Mock } from "vitest";
+import { expect, vi, type Mock } from "vitest";
 import { effect } from "../src";
 
 export function nextMicroTick(): Promise<void> {

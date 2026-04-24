@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { batched, EventBus, htmlEscape, markup } from "../src/utils";
 import { nextMicroTick } from "./helpers";
 

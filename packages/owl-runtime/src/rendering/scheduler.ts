@@ -16,10 +16,16 @@ export class Scheduler {
   // capture the value of requestAnimationFrame as soon as possible, to avoid
   // interactions with other code, such as test frameworks that override them
   static requestAnimationFrame = requestAnimationFrame;
+  // Per-frame work budget. Once exceeded inside processTasks, the scheduler
+  // yields via RAF and resumes on the next frame. Keeps the main thread
+  // responsive when many independent root fibers commit in the same tick
+  // (e.g. a batch of kanban cards each reacting to their own signal). Not a
+  // true time-slicer: individual fiber.complete() calls are still atomic.
+  // Set to Infinity to disable (drain in one pass, the pre-budgeting behavior).
+  static frameBudgetMs = 5;
   tasks: Set<RootFiber> = new Set();
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
-  delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
 
@@ -44,16 +50,6 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
-    if (this.delayedRenders.length) {
-      let renders = this.delayedRenders;
-      this.delayedRenders = [];
-      for (let f of renders) {
-        if (f.root && f.node.status !== STATUS.DESTROYED && f.node.fiber === f) {
-          f.render();
-        }
-      }
-    }
-
     if (this.frame === 0) {
       this.frame = this.requestAnimationFrame(this.processTasks);
     }
@@ -69,6 +65,8 @@ export class Scheduler {
       node._destroy();
     }
     this.cancelledNodes.clear();
+    const deadline = performance.now() + Scheduler.frameBudgetMs;
+    let yielded = false;
     for (let fiber of this.tasks) {
       if (fiber.root !== fiber) {
         this.tasks.delete(fiber);
@@ -95,6 +93,14 @@ export class Scheduler {
         if (fiber.appliedToDom) {
           this.tasks.delete(fiber);
         }
+        // Yield to the browser once we've exhausted the per-frame budget — but
+        // only *after* completing a fiber, so each tick always makes progress.
+        // Use >= so budget=0 (force-yield mode) works even if a fast fiber
+        // didn't advance performance.now() past the deadline.
+        if (performance.now() >= deadline) {
+          yielded = true;
+          break;
+        }
       }
     }
     for (let task of this.tasks) {
@@ -103,5 +109,11 @@ export class Scheduler {
       }
     }
     this.processing = false;
+    // Ready fibers still in the queue only re-run when someone else calls
+    // flush() (typically an async completer). But budget yields and incomplete
+    // counters need the scheduler itself to resume — schedule a continuation.
+    if (yielded && this.tasks.size > 0 && this.frame === 0) {
+      this.frame = this.requestAnimationFrame(this.processTasks);
+    }
   }
 }

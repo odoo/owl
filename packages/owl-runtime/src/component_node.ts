@@ -44,6 +44,10 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
+  // Depth in the component tree (root = 0). Used as the priority for
+  // signalComputation so that when multiple components schedule re-renders in
+  // the same microtask batch, ancestors run before descendants.
+  depth: number;
 
   pluginManager: PluginManager;
 
@@ -59,10 +63,12 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.componentName = C.name;
+    this.depth = parent ? parent.depth + 1 : 0;
     this.signalComputation = createComputation(
       () => this.render(false),
       false,
-      ComputationState.EXECUTED
+      ComputationState.EXECUTED,
+      this.depth
     );
     this.props = props;
     const previousComputation = getCurrentComputation();
@@ -185,12 +191,21 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       // wait one microtask to coalesce any cluster of state changes, then
       // render in place; the existing root will commit with the fresh bdom
       // at its own tick.
-      await Promise.resolve();
-      if (this.status >= STATUS.CANCELLED) {
-        return;
-      }
-      if (this.fiber === fiber) {
-        fiber.render();
+      //
+      // Hold the scheduler back during the await: addFiber queued processTasks
+      // already, but committing other roots before this fiber.render runs
+      // would skip our pending counter decrements / orphan-cancels.
+      this.app.scheduler.pendingFiberRenders++;
+      try {
+        await Promise.resolve();
+        if (this.status >= STATUS.CANCELLED) {
+          return;
+        }
+        if (this.fiber === fiber) {
+          fiber.render();
+        }
+      } finally {
+        this.app.scheduler.pendingFiberRenders--;
       }
     }
     // For brand-new root fibers, the scheduler picks the work up at the next

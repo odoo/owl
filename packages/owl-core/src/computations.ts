@@ -26,6 +26,12 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  // Lower values run first when processEffects flushes. Used by owl-runtime
+  // to schedule component renders in depth order (ancestors first), so a
+  // parent's render can cancel orphaned children before the children's own
+  // render effect would crash on intermediate state. Observers with no
+  // explicit priority run after all prioritized ones, in insertion order.
+  priority?: number;
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -36,7 +42,8 @@ let currentComputation: ComputationAtom | undefined;
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
+  priority?: number
 ): ComputationAtom {
   return {
     state,
@@ -45,6 +52,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    priority,
   };
 }
 
@@ -77,13 +85,26 @@ const batchProcessEffects = batched(processEffects);
  * the microtask scheduled by `batched`; this export lets a host like the
  * Owl scheduler drain mid-tick — e.g. between the render pass and the
  * commit pass — so that signal writes performed during a render don't push
- * the dependent re-render to the next animation frame.
+ * the dependent re-render to the next scheduler tick.
  */
 export function processEffects() {
+  // Sort by priority (undefined → end) so owl-runtime can guarantee that
+  // ancestor component renders run before descendant renders within the
+  // same microtask batch.
+  observers.sort(compareByPriority);
   for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }
   observers.length = 0;
+}
+
+function compareByPriority(a: ComputationAtom, b: ComputationAtom): number {
+  const pa = a.priority;
+  const pb = b.priority;
+  if (pa === pb) return 0;
+  if (pa === undefined) return 1;
+  if (pb === undefined) return -1;
+  return pa - pb;
 }
 
 export function getCurrentComputation() {

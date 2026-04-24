@@ -22,9 +22,14 @@ export class Scheduler {
   static frameBudgetMs = 5;
   tasks: Set<RootFiber> = new Set();
   scheduled: boolean = false;
-  delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
+  // Number of component_node.render calls that are currently between
+  // addFiber and their `await Promise.resolve()` continuation. Each one
+  // owes the scheduler a fiber.render() that decrements counters and may
+  // orphan-cancel siblings. processTasks defers itself one microtask while
+  // any are pending so it doesn't commit unrelated roots prematurely.
+  pendingFiberRenders = 0;
   // Lazily-initialised MessageChannel used for budget-exhaustion yields.
   // postMessage queues a real macrotask, unlike queueMicrotask, so the
   // browser gets a chance to paint and dispatch input between batches.
@@ -68,28 +73,17 @@ export class Scheduler {
   }
 
   /**
-   * Ensure pending tasks will be processed at the next microtask. Also
-   * drains any renders deferred by the ancestor-walk in Fiber.render. Called
+   * Ensure pending tasks will be processed at the next microtask. Called
    * from setCounter when a root reaches counter 0, and from the async
-   * resumption of initiateRender — both are paths that complete *outside* the
-   * scheduler's own microtask tick. When called from inside processTasks (e.g. a
-   * sub-fiber render brings the root counter to 0), this is a no-op: the
-   * commit pass in the same tick will pick it up.
+   * resumption of initiateRender — both are paths that complete *outside*
+   * the scheduler's own microtask tick. When called from inside processTasks
+   * (e.g. a sub-fiber render brings the root counter to 0), this is a no-op:
+   * the commit pass in the same tick will pick it up.
    */
   flush() {
     if (this.processing) {
       return;
     }
-    if (this.delayedRenders.length) {
-      let renders = this.delayedRenders;
-      this.delayedRenders = [];
-      for (let f of renders) {
-        if (f.root && f.node.status !== STATUS.DESTROYED && f.node.fiber === f) {
-          f.render();
-        }
-      }
-    }
-
     if (!this.scheduled) {
       this.scheduled = true;
       queueMicrotask(this.processTasks);
@@ -100,19 +94,15 @@ export class Scheduler {
     if (this.processing) {
       return;
     }
+    if (this.pendingFiberRenders > 0) {
+      // A component_node.render is mid-await: its fiber.render() hasn't run
+      // yet, so any counter decrements / orphan-cancels that render owes
+      // haven't happened. Re-queue and let those microtasks fire first.
+      queueMicrotask(this.processTasks);
+      return;
+    }
     this.processing = true;
     this.scheduled = false;
-
-    // Drain renders that were deferred by the ancestor-walk in Fiber.render.
-    if (this.delayedRenders.length) {
-      let renders = this.delayedRenders;
-      this.delayedRenders = [];
-      for (let f of renders) {
-        if (f.root && f.node.status !== STATUS.DESTROYED && f.node.fiber === f) {
-          f.render();
-        }
-      }
-    }
 
     // Render pass: produce a fresh bdom for every pending root that hasn't
     // been rendered yet this tick. Sub-fibers (children created during a
@@ -125,8 +115,13 @@ export class Scheduler {
     // effects via the reactive batcher (microtask). Calling processEffects()
     // synchronously drains those observers right here — they invoke
     // node.render which adds new fibers to `tasks`, and we re-iterate to
-    // render them in the same tick. The safety bound prevents a runaway
-    // feedback loop where every render triggers another.
+    // render them in the same tick. processEffects sorts observers by
+    // priority (component depth) so ancestor renders fire before descendant
+    // renders within a single drain — this is the ordering invariant that
+    // lets fibers.ts's orphan-scan correctly invalidate descendants whose
+    // template branch was removed by the parent's re-render. The safety
+    // bound prevents a runaway feedback loop where every render triggers
+    // another.
     let safety = 0;
     while (safety++ < 10) {
       let renderedAny = false;

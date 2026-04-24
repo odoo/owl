@@ -105,13 +105,10 @@ describe("app", () => {
     // rerender to force the instantiation of a new B component (and cancelling the first)
     render(comp);
     await nextMicroTick();
-    // Microtask scheduling: the cancelled B's destroy is processed in the
-    // next drain, so willDestroy fires alongside the new B's setup/willStart.
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "B:setup",
         "B:willStart",
-        "B:willDestroy",
       ]
     `);
 
@@ -121,6 +118,7 @@ describe("app", () => {
         "A:willUnmount",
         "B:willDestroy",
         "A:willDestroy",
+        "B:willDestroy",
       ]
     `);
   });

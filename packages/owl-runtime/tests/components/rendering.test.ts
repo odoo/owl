@@ -411,12 +411,8 @@ test("force render in case of existing render", async () => {
   // and also be blocked in B
   render(parent, true);
   await nextTick();
-  // Microtask scheduling: cancellation of the prior render and the new
-  // render's willUpdateProps both fire within this drain, so both calls
-  // are observable here.
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willUpdateProps",
       "B:willUpdateProps",
     ]
   `);

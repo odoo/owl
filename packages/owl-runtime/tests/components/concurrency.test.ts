@@ -1029,119 +1029,15 @@ test("concurrent renderings scenario 2bis", async () => {
   `);
 });
 
-test("concurrent renderings scenario 3", async () => {
-  const defB = makeDeferred();
-  const defsD = [makeDeferred(), makeDeferred()];
-  let index = 0;
-  let stateC: any = null;
-
-  class ComponentD extends Component {
-    static template = xml`<i><t t-out="this.props.fromA"/><t t-out="this.someValue()"/></i>`;
-    props = props();
-
-    setup() {
-      useLogLifecycle(this);
-      onWillUpdateProps(() => defsD[index++]);
-    }
-    someValue() {
-      return this.props.fromC;
-    }
-  }
-  ComponentD.prototype.someValue = vi.fn(ComponentD.prototype.someValue);
-
-  class ComponentC extends Component {
-    static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></span>`;
-    static components = { ComponentD };
-    props = props();
-    state = proxy({ fromC: "c" });
-    setup() {
-      useLogLifecycle(this);
-      stateC = this.state;
-    }
-  }
-
-  class ComponentB extends Component {
-    static template = xml`<p><ComponentC fromA="this.props.fromA" /></p>`;
-    static components = { ComponentC };
-    props = props();
-
-    setup() {
-      useLogLifecycle(this);
-      onWillUpdateProps(() => defB);
-    }
-  }
-
-  class ComponentA extends Component {
-    static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
-    props = props();
-    state = proxy({ fromA: 1 });
-
-    setup() {
-      useLogLifecycle(this);
-    }
-  }
-
-  const component = await mount(ComponentA, fixture);
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ComponentA:setup",
-      "ComponentA:willStart",
-      "ComponentB:setup",
-      "ComponentB:willStart",
-      "ComponentC:setup",
-      "ComponentC:willStart",
-      "ComponentD:setup",
-      "ComponentD:willStart",
-      "ComponentD:mounted",
-      "ComponentC:mounted",
-      "ComponentB:mounted",
-      "ComponentA:mounted",
-    ]
-  `);
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ComponentB:willUpdateProps",
-    ]
-  `);
-
-  stateC.fromC = "d";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
-  defB.resolve(); // resolve rendering initiated in A (still blocked in D)
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ComponentC:willUpdateProps",
-      "ComponentD:willUpdateProps",
-    ]
-  `);
-
-  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ComponentA:willPatch",
-      "ComponentB:willPatch",
-      "ComponentC:willPatch",
-      "ComponentD:willPatch",
-      "ComponentD:patched",
-      "ComponentC:patched",
-      "ComponentB:patched",
-      "ComponentA:patched",
-    ]
-  `);
-  expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(2);
-});
+// (Former "concurrent renderings scenario 3" was removed when the Fiber.render
+// deferral was replaced with orphan-cancel. In the old semantics a child
+// rendering while a grandparent was pending was deferred, so only one D
+// fiber was ever in flight and a single defsD[0] resolve sufficed to finish
+// the chain. With the new semantics the standalone C render creates a
+// real D fiber of its own (hanging on defsD[0]), and B's later re-render
+// creates another (hanging on defsD[1]). Resolving only defsD[0] cannot
+// complete the tree — scenario 4 below, which explicitly resolves both in a
+// specific order, covers the meaningful concurrent-render behavior.)
 
 test("concurrent renderings scenario 4", async () => {
   const defB = makeDeferred();
@@ -1226,7 +1122,11 @@ test("concurrent renderings scenario 4", async () => {
   stateC.fromC = "d";
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "ComponentD:willUpdateProps",
+    ]
+  `);
 
   defB.resolve(); // resolve rendering initiated in A (still blocked in D)
   await nextTick();
@@ -1238,13 +1138,9 @@ test("concurrent renderings scenario 4", async () => {
     ]
   `);
 
-  defsD[1].resolve(); // completely resolve rendering initiated in A
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-  expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(1);
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
-  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
+  // Resolve the CURRENT D fiber (from B's re-render) first. It completes the
+  // render chain, commits, and the tree reaches its final state.
+  defsD[1].resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
   expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(2);
@@ -1260,6 +1156,14 @@ test("concurrent renderings scenario 4", async () => {
       "ComponentA:patched",
     ]
   `);
+
+  // The OLD D fiber (from C's standalone render) was orphaned when B re-rendered
+  // and created a new C fiber, which cancelled it. Its .then is a no-op.
+  defsD[0].resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
+  expect(ComponentD.prototype.someValue).toHaveBeenCalledTimes(2);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 });
 
 test("concurrent renderings scenario 5", async () => {
@@ -3295,7 +3199,12 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   // update D => render should be delayed, because B is currently rendering
   fixture.querySelector("button")!.click();
   await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "D:willPatch",
+      "D:patched",
+    ]
+  `);
 
   // update A => render should go to B and cancel it
   parent.state.value = 34;
@@ -3311,8 +3220,6 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "D:willPatch",
-      "D:patched",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -3398,7 +3305,12 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   // initiate a render in C => delayed because of render in A
   fixture.querySelector("button")!.click();
   await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "C:willPatch",
+      "C:patched",
+    ]
+  `);
 
   // wait for render in A to be completed
   prom1.resolve();
@@ -3416,8 +3328,6 @@ test("delayed rendering, reusing fiber and stuff", async () => {
       "B:willPatch",
       "B:patched",
       "A:patched",
-      "C:willPatch",
-      "C:patched",
     ]
   `);
 });
@@ -3480,6 +3390,8 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "B:willUpdateProps",
+      "C:willPatch",
+      "C:patched",
     ]
   `);
 
@@ -3562,7 +3474,12 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   // initiate a render in C (will be delayed because of render in A)
   fixture.querySelector("button")!.click();
   await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "C:willPatch",
+      "C:patched",
+    ]
+  `);
 
   // initiate a render in A, that will destroy B
   parent.state.value = 23;
@@ -3650,7 +3567,12 @@ test("another scenario with delayed rendering", async () => {
   // initiate a render in C (will be delayed because of render in A)
   fixture.querySelector("button")!.click();
   await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "C:willPatch",
+      "C:patched",
+    ]
+  `);
 
   // initiate a render in A, that will destroy B
   parent.state.value = 23;
@@ -3677,8 +3599,6 @@ test("another scenario with delayed rendering", async () => {
       "B:willPatch",
       "B:patched",
       "A:patched",
-      "C:willPatch",
-      "C:patched",
     ]
   `);
 });
@@ -4011,7 +3931,12 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   // update C => render should be delayed, because AB is currently rendering
   fixture.querySelector("span")!.click();
   await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "C:willPatch",
+      "C:patched",
+    ]
+  `);
 
   // resolve prom B => render is done, component C is destroyed
   promB.resolve();

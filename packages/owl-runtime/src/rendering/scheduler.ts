@@ -26,7 +26,6 @@ export class Scheduler {
   tasks: Set<RootFiber> = new Set();
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
-  delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
 
@@ -51,16 +50,6 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
-    if (this.delayedRenders.length) {
-      let renders = this.delayedRenders;
-      this.delayedRenders = [];
-      for (let f of renders) {
-        if (f.root && f.node.status !== STATUS.DESTROYED && f.node.fiber === f) {
-          f.render();
-        }
-      }
-    }
-
     if (this.frame === 0) {
       this.frame = this.requestAnimationFrame(this.processTasks);
     }

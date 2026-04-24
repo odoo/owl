@@ -153,16 +153,21 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   }
 
   const isShape = !Array.isArray(schema);
-  let shape: Record<string, any> = schema;
-  if (Array.isArray(schema)) {
+  let shape: Record<string, any>;
+  let keys: string[];
+  if (isShape) {
+    keys = Object.keys(schema);
+    shape = schema;
+  } else {
+    keys = schema;
     shape = {};
-    for (const key of schema) {
+    for (const key of keys) {
       shape[key] = null;
     }
   }
 
   const missingKeys: string[] = [];
-  for (const key in shape) {
+  for (const key of keys) {
     const property = key.endsWith("?") ? key.slice(0, -1) : key;
     if (context.value[property] === undefined) {
       if (!key.endsWith("?")) {
@@ -178,12 +183,13 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
     context.addIssue({
       message: "object value has missing keys",
       missingKeys,
+      expectedKeys: keys,
     });
   }
   if (isStrict) {
     const unknownKeys: string[] = [];
     for (const key in context.value) {
-      if (!(key in shape) && !(`${key}?` in shape)) {
+      if (!keys.includes(key) && !(`${key}?` in shape)) {
         unknownKeys.push(key);
       }
     }
@@ -191,6 +197,7 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
       context.addIssue({
         message: "object value has unknown keys",
         unknownKeys,
+        expectedKeys: keys,
       });
     }
   }

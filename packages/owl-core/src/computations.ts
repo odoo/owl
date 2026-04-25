@@ -71,7 +71,15 @@ export function onWriteAtom(atom: Atom) {
 }
 
 const batchProcessEffects = batched(processEffects);
-function processEffects() {
+/**
+ * Synchronously run every queued effect (the non-derived computations that
+ * have been marked stale since the last drain). The normal flush path is
+ * the microtask scheduled by `batched`; this export lets a host like the
+ * Owl scheduler drain mid-tick — e.g. between the render pass and the
+ * commit pass — so that signal writes performed during a render don't push
+ * the dependent re-render to the next animation frame.
+ */
+export function processEffects() {
   for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }

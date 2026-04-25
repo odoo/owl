@@ -570,7 +570,7 @@ describe("can catch errors", () => {
     app.state.flag = true;
     // First rAF surfaces the render error and runs onError (state.error=true);
     // ErrorBoundary's recovery render+commit happens at the next rAF.
-    await nextTick(2);
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -846,8 +846,8 @@ describe("can catch errors", () => {
     }
     const app = await mount(App, fixture);
     app.state.flag = true;
-    // First rAF surfaces the throw and runs onError; recovery render+commit
-    // lands at the next rAF.
+    // The throw fires during the first rAF's commit (onMounted-equivalent
+    // for an initial render); the recovery render commits at the next one.
     await nextTick(2);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);

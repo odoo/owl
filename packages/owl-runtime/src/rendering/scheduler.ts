@@ -1,3 +1,4 @@
+import { processEffects } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
 import { Fiber, RootFiber } from "./fibers";
@@ -101,16 +102,34 @@ export class Scheduler {
     // as they always have. willStart-having children remain async and
     // resume after this rAF tick — they then call flush() to schedule the
     // next tick for their commit.
-    for (let fiber of this.tasks) {
-      if (fiber.root !== fiber) continue;
-      if (fiber.node.status === STATUS.DESTROYED) continue;
-      if (fibersInError.has(fiber)) continue;
-      // Skip fibers still waiting on willStart — initiateRender will clear
-      // `pending` and call flush() once it resolves; we'll catch them on a
-      // subsequent rAF tick.
-      if ((fiber as any).pending) continue;
-      if (fiber.bdom === null) {
-        fiber.render();
+    //
+    // Render+drain loop: a render that writes a signal queues observer
+    // effects via the reactive batcher (microtask). Without intervention
+    // those effects fire after the rAF callback returns, scheduling fresh
+    // fibers for the *next* frame. Calling processEffects() synchronously
+    // drains those observers right here — they invoke node.render which
+    // adds new fibers to `tasks`, and we re-iterate to render them in the
+    // same tick. The safety bound prevents a runaway feedback loop where
+    // every render triggers another.
+    let safety = 0;
+    while (safety++ < 10) {
+      let renderedAny = false;
+      for (let fiber of this.tasks) {
+        if (fiber.root !== fiber) continue;
+        if (fiber.node.status === STATUS.DESTROYED) continue;
+        if (fibersInError.has(fiber)) continue;
+        // Skip fibers still waiting on willStart — initiateRender will clear
+        // `pending` and call flush() once it resolves; we'll catch them on a
+        // subsequent rAF tick.
+        if ((fiber as any).pending) continue;
+        if (fiber.bdom === null) {
+          fiber.render();
+          renderedAny = true;
+        }
+      }
+      processEffects();
+      if (!renderedAny) {
+        break;
       }
     }
 

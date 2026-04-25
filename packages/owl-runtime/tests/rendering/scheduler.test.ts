@@ -36,22 +36,26 @@ async function mountSiblings(n: number) {
   return { app, signals, scheduler: app.scheduler };
 }
 
-// The frame-budget mechanism was designed around rAF: yielding via rAF gave
-// the browser a chance to paint between fiber commits. Under the current
-// microtask-based scheduler, "yielding" via queueMicrotask doesn't let the
-// browser paint (microtasks all drain before the next frame), so the budget
-// is effectively dead weight in this mode and these tests no longer reflect
-// observable behavior. Kept as `.skip` for historical reference; revisit if
-// budget yielding is reworked to use setTimeout/rAF for paint coordination.
-describe.skip("scheduler frame budgeting", () => {
+// Budget-yield path: the scheduler yields via MessageChannel.postMessage
+// (a real macrotask), so the browser can paint and process input between
+// commit batches. The normal addFiber/flush paths still use queueMicrotask
+// for low-latency sync work; only the post-budget continuation goes through
+// the macrotask. These tests drive processTasks manually, so they exercise
+// the queue-management and `scheduled` flag transitions regardless of which
+// primitive does the actual yielding.
+describe("scheduler frame budgeting", () => {
   test("budget disabled: all fibers drain in one processTasks call", async () => {
     Scheduler.frameBudgetMs = Infinity;
     const { app, signals, scheduler } = await mountSiblings(5);
 
+    // Block auto-processing so we can observe the queued-but-not-yet-rendered
+    // state. addFiber checks `scheduled` and only schedules a microtask when
+    // it's false, so flipping it pre-emptively traps fibers in tasks until we
+    // drive processTasks manually below.
+    scheduler.scheduled = true;
     signals.forEach((s) => s.set(1));
     await Promise.resolve();
     await Promise.resolve();
-    scheduler.flush();
     expect(scheduler.tasks.size).toBe(5);
 
     scheduler.scheduled = false;
@@ -70,19 +74,19 @@ describe.skip("scheduler frame budgeting", () => {
     const { app, signals, scheduler } = await mountSiblings(5);
 
     Scheduler.frameBudgetMs = 0;
+    scheduler.scheduled = true; // see comment in previous test
     signals.forEach((s) => s.set(1));
     await Promise.resolve();
     await Promise.resolve();
-    scheduler.flush();
     expect(scheduler.tasks.size).toBe(5);
 
-    // First pass: one fiber drained, continuation RAF queued (frame != 0).
+    // First pass: one fiber drained, continuation queued via MessageChannel.
     scheduler.scheduled = false;
     scheduler.processTasks();
     expect(scheduler.tasks.size).toBe(4);
     expect(scheduler.scheduled).toBe(true);
 
-    // Force subsequent passes manually by clearing the frame flag each time.
+    // Force subsequent passes manually by clearing the scheduled flag each time.
     for (let i = 0; i < 10 && scheduler.tasks.size > 0; i++) {
       scheduler.scheduled = false;
       scheduler.processTasks();
@@ -103,12 +107,10 @@ describe.skip("scheduler frame budgeting", () => {
     const { app, signals, scheduler } = await mountSiblings(1);
 
     Scheduler.frameBudgetMs = 0;
+    scheduler.scheduled = true; // see comment in first test
     signals[0].set(1);
-    // Flush delayed renders (moves fibers from delayedRenders into tasks with
-    // counter=0) before we invoke processTasks directly.
     await Promise.resolve();
     await Promise.resolve();
-    scheduler.flush();
     expect(scheduler.tasks.size).toBe(1);
 
     scheduler.scheduled = false;

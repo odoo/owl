@@ -9,21 +9,46 @@ import { STATUS } from "../status";
 // -----------------------------------------------------------------------------
 
 export class Scheduler {
-  // Per-tick work budget. Once exceeded inside processTasks, the scheduler
-  // yields and resumes on the next tick. Keeps the main thread responsive
-  // when many independent root fibers commit in the same turn (e.g. a batch
-  // of kanban cards each reacting to their own signal). Not a true
-  // time-slicer: individual fiber.complete() calls are still atomic.
-  // Set to Infinity to disable (drain in one pass, the pre-budgeting behavior).
+  // Per-tick work budget for the commit pass. Once exceeded inside
+  // processTasks, the scheduler yields *to the browser* (paint, input,
+  // scroll handlers, etc.) and resumes on the following macrotask.
+  // 5ms is React's Scheduler default and Chrome Aurora's recommendation:
+  // leaves room in a 16ms frame for the browser's own work, keeps
+  // Interaction-to-Next-Paint in the snappy zone, and the per-yield
+  // MessageChannel overhead stays well under 1% of total time even for
+  // heavy commits. Not a true time-slicer: individual fiber.complete()
+  // calls are still atomic. Set to Infinity to disable (drain in one
+  // pass) or 0 to force-yield after every fiber.
   static frameBudgetMs = 5;
   tasks: Set<RootFiber> = new Set();
   scheduled: boolean = false;
   delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
+  // Lazily-initialised MessageChannel used for budget-exhaustion yields.
+  // postMessage queues a real macrotask, unlike queueMicrotask, so the
+  // browser gets a chance to paint and dispatch input between batches.
+  // Using MessageChannel (not setTimeout) avoids the 4ms minimum-delay
+  // clamp that nested setTimeouts incur — same trick React's Scheduler
+  // uses.
+  private _yieldChannel: MessageChannel | null = null;
 
   constructor() {
     this.processTasks = this.processTasks.bind(this);
+  }
+
+  private _yieldToBrowser() {
+    if (typeof MessageChannel !== "undefined") {
+      if (!this._yieldChannel) {
+        this._yieldChannel = new MessageChannel();
+        this._yieldChannel.port1.onmessage = this.processTasks;
+      }
+      this._yieldChannel.port2.postMessage(null);
+    } else {
+      // Non-browser environment (older Node test runner, SSR). Fall back to
+      // setTimeout — slower (4ms clamp) but ensures the continuation fires.
+      setTimeout(this.processTasks);
+    }
   }
 
   addFiber(fiber: Fiber) {
@@ -180,11 +205,15 @@ export class Scheduler {
     }
     this.processing = false;
     // Ready fibers still in the queue only re-run when someone else calls
-    // flush() (typically an async completer). But budget yields and incomplete
-    // counters need the scheduler itself to resume — schedule a continuation.
+    // flush() (typically an async completer). Budget yields need the
+    // scheduler itself to resume — and they yield via MessageChannel
+    // (macrotask) rather than queueMicrotask, so the browser can paint,
+    // process input, and run scroll/IntersectionObserver callbacks between
+    // commit batches. That's the whole point of the budget mechanism;
+    // microtask-based yields would never let the browser breathe.
     if (yielded && this.tasks.size > 0 && !this.scheduled) {
       this.scheduled = true;
-      queueMicrotask(this.processTasks);
+      this._yieldToBrowser();
     }
   }
 }

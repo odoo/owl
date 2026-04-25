@@ -160,24 +160,25 @@ export class App extends TemplateSet {
         handlers!.shift();
       });
 
-      this.scheduler.addFiber(fiber);
       if (this.pluginManager.status < STATUS.MOUNTED) {
         // Plugins have pending onWillStart callbacks — await them before the
         // root renders, so plugin state is populated during first render.
         node.willStart.unshift(() => this.pluginManager.ready);
       }
+      // Always enqueue the fiber up front so the order in scheduler.tasks
+      // mirrors the order roots were prepared (which determines DOM commit
+      // order). The `pending` flag tells the scheduler's render pass to skip
+      // this fiber until initiateRender clears it after willStart resolves.
       if (node.willStart.length) {
+        fiber.pending = true;
+        this.scheduler.addFiber(fiber);
         node.initiateRender(fiber);
       } else {
         node.fiber = fiber;
         if (node.mounted.length) {
           fiber.root!.mounted.push(fiber);
         }
-        try {
-          fiber.render();
-        } catch (e) {
-          reject(e);
-        }
+        this.scheduler.addFiber(fiber);
       }
       return preparedPromise;
     };

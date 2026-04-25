@@ -2208,17 +2208,18 @@ describe("Reactivity: proxy", () => {
     steps.clear();
 
     delete testContext[2];
-    await nextMicroTick();
-    await nextMicroTick();
-    expect([...steps]).toEqual(["list"]);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
+    // The deletion only invalidates the parent (it reads `Object.keys`); the
+    // surviving Quantity children don't depend on the deleted item, so they
+    // don't re-render — only `list` shows up.
     expect([...steps]).toEqual(["list"]);
+    expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
     steps.clear();
 
     secondQuantity.quantity = 2;
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
+    // Mutating an atom that's no longer observed by anything (the second
+    // quantity component was disposed) should not trigger any render.
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
     expect([...steps]).toEqual([]);
     steps.clear();

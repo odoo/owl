@@ -150,11 +150,7 @@ describe("rendering semantics", () => {
     await nextMicroTick();
     await nextMicroTick();
     await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willUpdateProps",
-      ]
-    `);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
     parent.state.value = "B";
 

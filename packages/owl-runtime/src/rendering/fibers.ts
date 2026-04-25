@@ -97,6 +97,11 @@ export class Fiber {
   appliedToDom = false;
   deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
+  // Set to true while initiateRender is awaiting willStart on a *root* fiber
+  // (mount path). The scheduler enqueues such fibers up front so task order
+  // matches the order roots were prepared, but skips rendering them in the
+  // rAF render pass until willStart resolves and clears this flag.
+  pending: boolean = false;
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;

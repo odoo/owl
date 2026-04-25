@@ -143,15 +143,18 @@ describe("basics", () => {
     const gp = await mount(GrandParent, fixture);
     gp.state.flag = true;
 
-    // Can't use nextAppError here: it monkey-patches _handleError which
-    // breaks the throw-through cascade we're testing. Instead, let the sync
-    // re-render error reject the render promise directly.
+    // Re-renders now run inside the rAF callback rather than synchronously
+    // from node.render(), so the unhandled error never makes it back to the
+    // render() caller. Capture it at the App boundary instead. We don't
+    // re-throw — the test only inspects the wrapped error, and rethrowing
+    // would surface as an unhandled rejection at the rAF callback boundary.
+    const app = (gp as any).__owl__.app;
     let error: any;
-    try {
-      await render(gp);
-    } catch (e) {
+    app._handleError = (e: any) => {
       error = e;
-    }
+    };
+    render(gp);
+    await nextTick();
     expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
     expect(error!.cause.message).toMatch(/Cannot read propert/);
     // As the throw unwinds through Parent and GrandParent renders, their
@@ -1589,28 +1592,28 @@ describe("can catch errors", () => {
     `);
 
     parent.state.hasChild = true;
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
+    // The Child has been created and mounted at the next rAF.
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:setup",
         "Child:willStart",
+        "Parent:willPatch",
+        "Child:mounted",
+        "Parent:patched",
       ]
     `);
     parent.state.hasChild = false;
     await nextTick();
+    // Re-render without the Child commits with value=1; willDestroy throws at
+    // the same rAF, onError increments value to 2, but its re-render lands
+    // in the next frame.
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
+        "Parent:willPatch",
+        "Child:willUnmount",
         "Child:willDestroy",
-      ]
-    `);
-    expect(fixture.innerHTML).toBe("1");
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
+        "Parent:patched",
         "Parent:willPatch",
         "Parent:patched",
       ]

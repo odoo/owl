@@ -37,6 +37,9 @@ export class Scheduler {
 
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
+    if (this.frame === 0) {
+      this.frame = this.requestAnimationFrame(this.processTasks);
+    }
   }
 
   scheduleDestroy(node: ComponentNode) {
@@ -47,10 +50,18 @@ export class Scheduler {
   }
 
   /**
-   * Process all current tasks. This only applies to the fibers that are ready.
-   * Other tasks are left unchanged.
+   * Ensure pending tasks will be processed at the next animation frame. Also
+   * drains any renders deferred by the ancestor-walk in Fiber.render. Called
+   * from setCounter when a root reaches counter 0, and from the async
+   * resumption of initiateRender — both are paths that complete *outside* the
+   * scheduler's own rAF tick. When called from inside processTasks (e.g. a
+   * sub-fiber render brings the root counter to 0), this is a no-op: the
+   * commit pass in the same tick will pick it up.
    */
   flush() {
+    if (this.processing) {
+      return;
+    }
     if (this.delayedRenders.length) {
       let renders = this.delayedRenders;
       this.delayedRenders = [];
@@ -72,10 +83,48 @@ export class Scheduler {
     }
     this.processing = true;
     this.frame = 0;
+
+    // Drain renders that were deferred by the ancestor-walk in Fiber.render.
+    if (this.delayedRenders.length) {
+      let renders = this.delayedRenders;
+      this.delayedRenders = [];
+      for (let f of renders) {
+        if (f.root && f.node.status !== STATUS.DESTROYED && f.node.fiber === f) {
+          f.render();
+        }
+      }
+    }
+
+    // Render pass: produce a fresh bdom for every pending root that hasn't
+    // been rendered yet this frame. Sub-fibers (children created during a
+    // root's render) render synchronously from inside fiber.render itself,
+    // as they always have. willStart-having children remain async and
+    // resume after this rAF tick — they then call flush() to schedule the
+    // next tick for their commit.
+    for (let fiber of this.tasks) {
+      if (fiber.root !== fiber) continue;
+      if (fiber.node.status === STATUS.DESTROYED) continue;
+      if (fibersInError.has(fiber)) continue;
+      // Skip fibers still waiting on willStart — initiateRender will clear
+      // `pending` and call flush() once it resolves; we'll catch them on a
+      // subsequent rAF tick.
+      if ((fiber as any).pending) continue;
+      if (fiber.bdom === null) {
+        fiber.render();
+      }
+    }
+
+    // Destroy cancelled nodes after the render pass. willDestroy hooks may
+    // throw and trigger onError → state change → another render, but that
+    // re-render is scheduled for the *next* rAF; the bdoms produced this
+    // frame still reflect pre-error state, matching the old microtask-render
+    // ordering tests rely on.
     for (let node of this.cancelledNodes) {
       node._destroy();
     }
     this.cancelledNodes.clear();
+
+    // Commit pass: apply ready fibers to the DOM.
     const deadline = performance.now() + Scheduler.frameBudgetMs;
     let yielded = false;
     for (let fiber of this.tasks) {

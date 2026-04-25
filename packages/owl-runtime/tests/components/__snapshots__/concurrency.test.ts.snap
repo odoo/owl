@@ -2044,6 +2044,21 @@ exports[`sibling rendering: child without willStart renders before async sibling
 }"
 `;
 
+exports[`sibling rendering: child without willStart renders before async sibling 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].log());
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`slot content renders after microtick when child has willStart 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -62,10 +62,17 @@ export class Suspense extends Component {
     // parallel with the outer tree's mount, no target needed yet.
     root.prepare().then(() => this.prepared.set(true));
 
-    // Sync fast path: if the sub-root's render phase finished synchronously
-    // (no pending onWillStart in the subtree), flip `prepared` *now* so the
-    // first render skips the fallback entirely — no flash.
+    // Sync fast path: try to render the sub-root immediately. If the subtree
+    // has no async onWillStart anywhere, the render completes synchronously
+    // and counter drops to 0 — we flip `prepared` right now so the first
+    // render of Suspense skips the fallback entirely (no flash). If async
+    // hooks are present, fiber.render starts the cascade and the rest
+    // resolves through microtasks; the scheduler then commits at the next
+    // rAF without re-rendering this fiber (its bdom is already set).
     const fiber = root.node.fiber as MountFiber | null;
+    if (fiber && fiber.bdom === null) {
+      fiber.render();
+    }
     if (fiber && fiber.counter === 0) {
       this.prepared.set(true);
     }

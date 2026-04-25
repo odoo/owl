@@ -668,7 +668,10 @@ test(".signal suffix: child re-reads updated value when parent state changes", a
   expect(fixture.innerHTML).toBe("1");
 
   parent.state.val = 42;
-  await nextTick();
+  // Parent re-renders at rAF1, updating the cached signal's value. Child
+  // observes the signal in its template, so it gets invalidated as part of
+  // parent's render — but its own re-render+commit lands at rAF2.
+  await nextTick(2);
   expect(fixture.innerHTML).toBe("42");
 });
 
@@ -752,7 +755,9 @@ test(".signal suffix works in a t-foreach loop", async () => {
   expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
 
   parent.state.items[0].n = 11;
-  await nextTick();
+  // Same reason as above: signal observation makes the child's re-render
+  // land one frame after the parent's.
+  await nextTick(2);
   expect(fixture.innerHTML).toBe("<span>11</span><span>2</span>");
 });
 

@@ -96,7 +96,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     return f.bind(component, scope);
   }
 
-  async initiateRender(fiber: Fiber | MountFiber) {
+  initiateRender(fiber: Fiber | MountFiber) {
     this.fiber = fiber;
     if (this.mounted.length) {
       fiber.root!.mounted.push(fiber);
@@ -104,18 +104,35 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     const component = this.component;
     let prev = getCurrentComputation();
     setComputation(undefined);
+    let promises: any[];
     try {
-      let promises = this.willStart.map((f) => f.call(component));
-      setComputation(prev);
-      await Promise.all(promises!);
+      promises = this.willStart.map((f) => f.call(component));
     } catch (e) {
       setComputation(prev);
-      if (isAbortError(e) && this.status > STATUS.MOUNTED) {
-        return;
-      }
       handleError({ node: this, error: e });
       return;
     }
+    setComputation(prev);
+    // Fast path: every willStart hook returned synchronously. We can complete
+    // willStart inline, which keeps a child fiber's render inside its parent's
+    // rAF render pass — total render+commit lands in a single frame instead
+    // of leaking into a second one through `await Promise.all`'s microtask.
+    if (promises.every((p) => !p || typeof p.then !== "function")) {
+      this._completeWillStart(fiber);
+      return;
+    }
+    Promise.all(promises).then(
+      () => this._completeWillStart(fiber),
+      (e) => {
+        if (isAbortError(e) && this.status > STATUS.MOUNTED) {
+          return;
+        }
+        handleError({ node: this, error: e });
+      }
+    );
+  }
+
+  private _completeWillStart(fiber: Fiber | MountFiber) {
     if (this.status === STATUS.NEW && this.fiber === fiber) {
       if (fiber.parent) {
         // Child fiber created during a parent render: render synchronously so

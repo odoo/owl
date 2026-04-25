@@ -51,19 +51,18 @@ export function makeTestFixture() {
 beforeEach(() => {
   xml.nextId = 999;
 });
-export async function nextTick(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve));
-  await new Promise((resolve) => requestAnimationFrame(resolve));
-  // The scheduler now does template rendering inside the rAF callback. When a
-  // re-render goes through an async hook (willStart on a fresh child,
-  // willUpdateProps returning a promise), the post-await fiber.render lands
-  // in a microtask *after* the rAF callback returns, so its commit needs the
-  // next rAF. Waiting through a second rAF lets nextTick observe the fully
-  // settled DOM in the common case. Tests that need to observe the
-  // intermediate state explicitly (e.g. between rAF1's commit and a hook-
-  // triggered re-render) can break this into two single-rAF awaits.
-  await new Promise((resolve) => setTimeout(resolve));
-  await new Promise((resolve) => requestAnimationFrame(resolve));
+/**
+ * Wait `count` scheduler ticks (one rAF each). The default is one tick — the
+ * common case. Pass `2` (or more) when a re-render genuinely needs an extra
+ * frame, e.g. when an async willStart / willUpdateProps yields a microtask
+ * that lands the next render+commit on the *following* rAF. Use the smallest
+ * count that lets the test observe the state it cares about.
+ */
+export async function nextTick(count: number = 1): Promise<void> {
+  for (let i = 0; i < count; i++) {
+    await new Promise((resolve) => setTimeout(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }
 }
 
 interface Deferred<T = any> extends Promise<T> {

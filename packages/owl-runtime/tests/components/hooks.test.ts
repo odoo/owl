@@ -205,7 +205,9 @@ describe("hooks", () => {
     expect(steps).toEqual(["on2ndStart", "slow", "onWillStart"]);
 
     app.state.value = 2;
-    await nextTick();
+    // willUpdateProps is async (awaits `slow`); the post-await fiber.render
+    // resolves in a microtask after rAF1 so the commit lands at rAF2.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<span>2</span>");
     expect(steps).toEqual([
       "on2ndStart",

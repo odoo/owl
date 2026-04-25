@@ -568,7 +568,9 @@ describe("can catch errors", () => {
     const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div><div>heyfalse</div></div></div>");
     app.state.flag = true;
-    await nextTick();
+    // First rAF surfaces the render error and runs onError (state.error=true);
+    // ErrorBoundary's recovery render+commit happens at the next rAF.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -844,7 +846,9 @@ describe("can catch errors", () => {
     }
     const app = await mount(App, fixture);
     app.state.flag = true;
-    await nextTick();
+    // First rAF surfaces the throw and runs onError; recovery render+commit
+    // lands at the next rAF.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -1440,7 +1444,8 @@ describe("can catch errors", () => {
     parentState.cps[1] = { id: 1, Comp: Child };
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("");
-    await nextTick();
+    // onError → cleanup state → re-render lands one frame after the throw.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div>Sibling</div>");
   });
 
@@ -1493,7 +1498,9 @@ describe("can catch errors", () => {
 
     parent.elements[1] = ErrorComp;
     render(parent);
-    await nextTick();
+    // Recovery from a render-time throw: rAF1 runs the failing render and
+    // fires onError (which schedules another render); rAF2 commits it.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div>Child 2</div>");
     expect(steps).toEqual(["Error Component"]);
   });
@@ -1604,10 +1611,10 @@ describe("can catch errors", () => {
       ]
     `);
     parent.state.hasChild = false;
-    await nextTick();
-    // Re-render without the Child commits with value=1; willDestroy throws at
-    // the same rAF, onError increments value to 2, but its re-render lands
-    // in the next frame.
+    // Re-render without the Child commits with value=1; willDestroy throws
+    // during that same rAF and onError increments value to 2; the recovery
+    // render commits at the next rAF.
+    await nextTick(2);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:willPatch",

@@ -1147,15 +1147,18 @@ describe("lifecycle hooks", () => {
 
     render(parent);
     await nextTick();
-    // The scheduler now coalesces both the original render and the re-render
-    // queued from inside `onPatched` into a single nextTick window — they run
-    // in two rAF ticks but a single nextTick wait covers both. After the wait
-    // the DOM already reflects `Patched`.
-    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:willPatch",
         "Parent:patched",
+      ]
+    `);
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1190,17 +1193,23 @@ describe("lifecycle hooks", () => {
 
     render(parent);
     await nextTick();
-    // Same coalescing as the `render in patched` case above: both passes run
-    // within a single nextTick wait, so the DOM reflects `Patched` already.
-    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(fixture.innerHTML).toBe("<span></span>");
+
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:willPatch",
         "Parent:patched",
+      ]
+    `);
+
+    await nextTick();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
     `);
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
   });
 
   test("lifecycle callbacks are bound to component", async () => {
@@ -1299,7 +1308,11 @@ describe("lifecycle hooks", () => {
       [
         "Child:setup",
         "Child:willStart",
+        "Parent:willPatch",
+        "Child:mounted",
+        "Parent:patched",
         "Parent:willUnmount",
+        "Child:willUnmount",
         "Child:willDestroy",
         "Parent:willDestroy",
       ]

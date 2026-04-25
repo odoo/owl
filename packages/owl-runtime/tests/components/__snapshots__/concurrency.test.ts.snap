@@ -1965,10 +1965,10 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
-  let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
+  let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(\`D\`);
+    const b2 = text(\`C\`);
     let hdlr1 = [hdlr_fn1, ctx];
     const b4 = safeOutput(ctx['this'].state.val);
     const b3 = block3([hdlr1], [b4]);
@@ -1984,10 +1984,10 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
   let { callHandler, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
   
-  let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
+  let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(\`C\`);
+    const b2 = text(\`D\`);
     let hdlr1 = [hdlr_fn1, ctx];
     const b4 = safeOutput(ctx['this'].state.val);
     const b3 = block3([hdlr1], [b4]);

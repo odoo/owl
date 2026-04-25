@@ -79,6 +79,12 @@ export class App extends TemplateSet {
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
   destroyed = false;
+  // True while startPlugins is running. Roots prepared during plugin setup
+  // defer their initiateRender until the flag clears, so we can decide
+  // whether to add the plugin gate based on the *final* pluginManager state
+  // (after all plugin setups have run).
+  _inPluginSetup = false;
+  _deferredInitiateRenders: Array<() => void> = [];
 
   constructor(config: AppConfig = {}) {
     super(config);
@@ -86,7 +92,21 @@ export class App extends TemplateSet {
     apps.add(this);
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
-      startPlugins(this.pluginManager, config.plugins);
+      this._inPluginSetup = true;
+      try {
+        startPlugins(this.pluginManager, config.plugins);
+      } finally {
+        this._inPluginSetup = false;
+      }
+      // Now that plugin setups have run, pluginManager.status is known:
+      // MOUNTED if no plugin registered async willStart, otherwise still NEW
+      // and waiting on `ready`. Process the roots that were prepared during
+      // setup with the right strategy.
+      const deferred = this._deferredInitiateRenders;
+      this._deferredInitiateRenders = [];
+      for (const fn of deferred) {
+        fn();
+      }
     } else {
       // No plugins provided: nothing to await, mark as MOUNTED so mount()
       // takes the sync fast path.
@@ -160,16 +180,42 @@ export class App extends TemplateSet {
         handlers!.shift();
       });
 
-      if (this.pluginManager.status < STATUS.MOUNTED) {
-        // Plugins have pending onWillStart callbacks — await them before the
-        // root renders, so plugin state is populated during first render.
-        node.willStart.unshift(() => this.pluginManager.ready);
-      }
       // Always enqueue the fiber up front so the order in scheduler.tasks
       // mirrors the order roots were prepared (which determines DOM commit
       // order). The `pending` flag tells the scheduler's render pass to skip
       // this fiber until initiateRender clears it after willStart resolves.
-      if (node.willStart.length) {
+      if (this._inPluginSetup && this.pluginManager.status < STATUS.MOUNTED) {
+        // We're inside a plugin's setup() and don't yet know whether plugins
+        // will be async-ready. Park the fiber in the scheduler with pending
+        // and defer initiateRender until startPlugins finishes — by then we
+        // can choose between the sync fast path and the async gate, instead
+        // of paying a microtask hop on a Promise.resolve().then().
+        const f = fiber;
+        f.pending = true;
+        this.scheduler.addFiber(f);
+        this._deferredInitiateRenders.push(() => {
+          if (this.pluginManager.status < STATUS.MOUNTED) {
+            // Plugins are genuinely async — install the gate now.
+            node.willStart.unshift(() => this.pluginManager.ready);
+          }
+          if (node.willStart.length) {
+            node.initiateRender(f);
+          } else {
+            f.pending = false;
+            node.fiber = f;
+            if (node.mounted.length) {
+              f.root!.mounted.push(f);
+            }
+          }
+        });
+      } else if (this.pluginManager.status < STATUS.MOUNTED) {
+        // Plugins still initializing async (we're after startPlugins but
+        // before ready resolves). Install the gate so this root waits.
+        node.willStart.unshift(() => this.pluginManager.ready);
+        fiber.pending = true;
+        this.scheduler.addFiber(fiber);
+        node.initiateRender(fiber);
+      } else if (node.willStart.length) {
         fiber.pending = true;
         this.scheduler.addFiber(fiber);
         node.initiateRender(fiber);

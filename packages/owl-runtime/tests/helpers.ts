@@ -52,16 +52,17 @@ beforeEach(() => {
   xml.nextId = 999;
 });
 /**
- * Wait `count` scheduler ticks (one rAF each). The default is one tick — the
+ * Wait `count` scheduler ticks (one macrotask boundary each). The scheduler
+ * runs at microtask granularity; a setTimeout drain flushes all pending
+ * microtasks for one render+commit pass. The default is one tick — the
  * common case. Pass `2` (or more) when a re-render genuinely needs an extra
- * frame, e.g. when an async willStart / willUpdateProps yields a microtask
- * that lands the next render+commit on the *following* rAF. Use the smallest
- * count that lets the test observe the state it cares about.
+ * tick, e.g. when an async willStart / willUpdateProps lands the next
+ * render+commit on a subsequent tick. Use the smallest count that lets the
+ * test observe the state it cares about.
  */
 export async function nextTick(count: number = 1): Promise<void> {
   for (let i = 0; i < count; i++) {
     await new Promise((resolve) => setTimeout(resolve));
-    await new Promise((resolve) => requestAnimationFrame(resolve));
   }
 }
 

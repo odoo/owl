@@ -616,8 +616,11 @@ describe("can catch errors", () => {
     `);
     expect(fixture.innerHTML).toBe("Main");
     (app as any).state.ok = true;
+    // Microtask scheduling: the error→recovery cascade (mount ErrorComponent,
+    // throw in mounted, onError swaps in PerfectComponent, re-render) all
+    // collapses into one nextTick.
     await nextTick();
-    expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
+    expect(fixture.innerHTML).toBe("Main<div>perfect</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "ErrorComponent:setup",
@@ -626,11 +629,6 @@ describe("can catch errors", () => {
         "ErrorComponent:mounted",
         "PerfectComponent:setup",
         "PerfectComponent:willStart",
-      ]
-    `);
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Main:willPatch",
         "ErrorComponent:willUnmount",
         "ErrorComponent:willDestroy",
@@ -638,7 +636,6 @@ describe("can catch errors", () => {
         "Main:patched",
       ]
     `);
-    expect(fixture.innerHTML).toBe("Main<div>perfect</div>");
   });
 
   test("calling a hook outside setup should crash", async () => {
@@ -1760,10 +1757,9 @@ describe("can catch errors", () => {
     `);
 
     root.state.gogogo = true;
+    // Microtask scheduling: error→recovery cascade collapses into one drain.
     await nextTick();
-
-    expect(fixture.innerHTML).toBe("Rparentabcboom");
-    // rerender, root creates sub components, it crashes, tries to recover
+    expect(fixture.innerHTML).toBe("Rdef");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -1777,14 +1773,6 @@ describe("can catch errors", () => {
         "error",
         "OtherChild:setup",
         "OtherChild:willStart",
-      ]
-    `);
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("Rdef");
-
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Root:willPatch",
         "Child:willDestroy",
         "Boom:willUnmount",

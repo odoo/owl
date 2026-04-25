@@ -357,7 +357,7 @@ describe("hooks", () => {
       steps.push("before state mutation");
       component.state.value++;
       // Wait for an owl render
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextTick();
       steps.push("after state mutation");
       await component.__owl__.destroy();
 
@@ -437,13 +437,13 @@ describe("hooks", () => {
       steps.push("before state mutation: a");
       component.state.a++;
       // Wait for an owl render
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextTick();
       steps.push("after state mutation: a");
 
       steps.push("before state mutation: b");
       component.state.b++;
       // Wait for an owl render
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextTick();
       steps.push("after state mutation: b");
       await component.__owl__.destroy();
 
@@ -504,7 +504,7 @@ describe("hooks", () => {
       steps.push("before state mutation");
       component.state.value++;
       // Wait for an owl render
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextTick();
       // Value was correctly changed inside the component
       expect(elem(component).textContent).toBe("1");
       steps.push("after state mutation");

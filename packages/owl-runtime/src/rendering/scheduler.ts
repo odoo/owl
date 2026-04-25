@@ -8,54 +8,46 @@ import { STATUS } from "../status";
 //  Scheduler
 // -----------------------------------------------------------------------------
 
-let requestAnimationFrame: Window["requestAnimationFrame"];
-if (typeof window !== "undefined") {
-  requestAnimationFrame = window.requestAnimationFrame.bind(window);
-}
-
 export class Scheduler {
-  // capture the value of requestAnimationFrame as soon as possible, to avoid
-  // interactions with other code, such as test frameworks that override them
-  static requestAnimationFrame = requestAnimationFrame;
-  // Per-frame work budget. Once exceeded inside processTasks, the scheduler
-  // yields via RAF and resumes on the next frame. Keeps the main thread
-  // responsive when many independent root fibers commit in the same tick
-  // (e.g. a batch of kanban cards each reacting to their own signal). Not a
-  // true time-slicer: individual fiber.complete() calls are still atomic.
+  // Per-tick work budget. Once exceeded inside processTasks, the scheduler
+  // yields and resumes on the next tick. Keeps the main thread responsive
+  // when many independent root fibers commit in the same turn (e.g. a batch
+  // of kanban cards each reacting to their own signal). Not a true
+  // time-slicer: individual fiber.complete() calls are still atomic.
   // Set to Infinity to disable (drain in one pass, the pre-budgeting behavior).
   static frameBudgetMs = 5;
   tasks: Set<RootFiber> = new Set();
-  requestAnimationFrame: Window["requestAnimationFrame"];
-  frame: number = 0;
+  scheduled: boolean = false;
   delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
 
   constructor() {
-    this.requestAnimationFrame = Scheduler.requestAnimationFrame;
     this.processTasks = this.processTasks.bind(this);
   }
 
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
-    if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+    if (!this.scheduled) {
+      this.scheduled = true;
+      queueMicrotask(this.processTasks);
     }
   }
 
   scheduleDestroy(node: ComponentNode) {
     this.cancelledNodes.add(node);
-    if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+    if (!this.scheduled) {
+      this.scheduled = true;
+      queueMicrotask(this.processTasks);
     }
   }
 
   /**
-   * Ensure pending tasks will be processed at the next animation frame. Also
+   * Ensure pending tasks will be processed at the next microtask. Also
    * drains any renders deferred by the ancestor-walk in Fiber.render. Called
    * from setCounter when a root reaches counter 0, and from the async
    * resumption of initiateRender — both are paths that complete *outside* the
-   * scheduler's own rAF tick. When called from inside processTasks (e.g. a
+   * scheduler's own microtask tick. When called from inside processTasks (e.g. a
    * sub-fiber render brings the root counter to 0), this is a no-op: the
    * commit pass in the same tick will pick it up.
    */
@@ -73,8 +65,9 @@ export class Scheduler {
       }
     }
 
-    if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+    if (!this.scheduled) {
+      this.scheduled = true;
+      queueMicrotask(this.processTasks);
     }
   }
 
@@ -83,7 +76,7 @@ export class Scheduler {
       return;
     }
     this.processing = true;
-    this.frame = 0;
+    this.scheduled = false;
 
     // Drain renders that were deferred by the ancestor-walk in Fiber.render.
     if (this.delayedRenders.length) {
@@ -97,20 +90,18 @@ export class Scheduler {
     }
 
     // Render pass: produce a fresh bdom for every pending root that hasn't
-    // been rendered yet this frame. Sub-fibers (children created during a
+    // been rendered yet this tick. Sub-fibers (children created during a
     // root's render) render synchronously from inside fiber.render itself,
     // as they always have. willStart-having children remain async and
-    // resume after this rAF tick — they then call flush() to schedule the
-    // next tick for their commit.
+    // resume after this microtask tick — they then call flush() to schedule
+    // the next tick for their commit.
     //
     // Render+drain loop: a render that writes a signal queues observer
-    // effects via the reactive batcher (microtask). Without intervention
-    // those effects fire after the rAF callback returns, scheduling fresh
-    // fibers for the *next* frame. Calling processEffects() synchronously
-    // drains those observers right here — they invoke node.render which
-    // adds new fibers to `tasks`, and we re-iterate to render them in the
-    // same tick. The safety bound prevents a runaway feedback loop where
-    // every render triggers another.
+    // effects via the reactive batcher (microtask). Calling processEffects()
+    // synchronously drains those observers right here — they invoke
+    // node.render which adds new fibers to `tasks`, and we re-iterate to
+    // render them in the same tick. The safety bound prevents a runaway
+    // feedback loop where every render triggers another.
     let safety = 0;
     while (safety++ < 10) {
       let renderedAny = false;
@@ -120,7 +111,7 @@ export class Scheduler {
         if (fibersInError.has(fiber)) continue;
         // Skip fibers still waiting on willStart — initiateRender will clear
         // `pending` and call flush() once it resolves; we'll catch them on a
-        // subsequent rAF tick.
+        // subsequent tick.
         if ((fiber as any).pending) continue;
         if (fiber.bdom === null) {
           fiber.render();
@@ -135,8 +126,8 @@ export class Scheduler {
 
     // Destroy cancelled nodes after the render pass. willDestroy hooks may
     // throw and trigger onError → state change → another render, but that
-    // re-render is scheduled for the *next* rAF; the bdoms produced this
-    // frame still reflect pre-error state, matching the old microtask-render
+    // re-render is scheduled for the *next* tick; the bdoms produced this
+    // tick still reflect pre-error state, matching the old microtask-render
     // ordering tests rely on.
     for (let node of this.cancelledNodes) {
       node._destroy();
@@ -172,10 +163,10 @@ export class Scheduler {
         if (fiber.appliedToDom) {
           this.tasks.delete(fiber);
         }
-        // Yield to the browser once we've exhausted the per-frame budget — but
-        // only *after* completing a fiber, so each tick always makes progress.
-        // Use >= so budget=0 (force-yield mode) works even if a fast fiber
-        // didn't advance performance.now() past the deadline.
+        // Yield once we've exhausted the per-tick budget — but only *after*
+        // completing a fiber, so each tick always makes progress. Use >= so
+        // budget=0 (force-yield mode) works even if a fast fiber didn't
+        // advance performance.now() past the deadline.
         if (performance.now() >= deadline) {
           yielded = true;
           break;
@@ -191,8 +182,9 @@ export class Scheduler {
     // Ready fibers still in the queue only re-run when someone else calls
     // flush() (typically an async completer). But budget yields and incomplete
     // counters need the scheduler itself to resume — schedule a continuation.
-    if (yielded && this.tasks.size > 0 && this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+    if (yielded && this.tasks.size > 0 && !this.scheduled) {
+      this.scheduled = true;
+      queueMicrotask(this.processTasks);
     }
   }
 }

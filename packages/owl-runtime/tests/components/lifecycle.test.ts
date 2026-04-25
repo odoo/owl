@@ -1100,19 +1100,14 @@ describe("lifecycle hooks", () => {
     }
 
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<span></span>");
+    // Under microtask scheduling the mounted-triggered render lands in the
+    // same drain as the mount, before `await mount` resumes.
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
         "Parent:willStart",
         "Parent:mounted",
-      ]
-    `);
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1147,18 +1142,14 @@ describe("lifecycle hooks", () => {
 
     render(parent);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<span></span>");
+    // Microtask scheduling: the patched-triggered re-render lands in the
+    // same drain as the manual render, so we observe two willPatch/patched
+    // pairs (the second one is a no-op because patched short-circuits).
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:willPatch",
         "Parent:patched",
-      ]
-    `);
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1193,23 +1184,18 @@ describe("lifecycle hooks", () => {
 
     render(parent);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<span></span>");
-
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:willPatch",
-        "Parent:patched",
-      ]
-    `);
-
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:willPatch",
-        "Parent:patched",
-      ]
-    `);
+    // Microtask scheduling: the willPatch-triggered re-render lands in the
+    // same drain as the manual render. Two willPatch/patched pairs fire,
+    // and the second commit is the one that updates the DOM.
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      [
+        "Parent:willPatch",
+        "Parent:patched",
+        "Parent:willPatch",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("lifecycle callbacks are bound to component", async () => {

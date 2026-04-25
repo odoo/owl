@@ -114,10 +114,9 @@ test("destroy a subroot while another component is mounted in main app", async (
 
   const app = new App();
   const comp = await app.createRoot(SomeComponent).mount(fixture);
-  // The sub-root's mount is kicked off from onMounted; with rAF rendering it
-  // commits on the next frame rather than synchronously inside the hook.
-  expect(fixture.innerHTML).toBe("a<div></div>");
-  await nextTick();
+  // Microtask scheduling: the sub-root's mount (kicked off from onMounted)
+  // commits in the same drain as the parent mount, so the content is in
+  // place by the time `await mount` resumes.
   expect(fixture.innerHTML).toBe("a<div>c</div>");
   comp.state.flag = true;
   await nextTick();

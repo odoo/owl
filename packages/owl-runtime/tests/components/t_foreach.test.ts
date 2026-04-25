@@ -266,9 +266,7 @@ describe("list of components", () => {
     }
 
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
-
-    await nextTick(); // wait for changes triggered in mounted to be applied
+    // Microtask scheduling: mounted-triggered state changes land in same drain.
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 

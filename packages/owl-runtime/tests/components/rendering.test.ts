@@ -146,12 +146,8 @@ describe("rendering semantics", () => {
     value = 4;
     render(parent, true);
 
-    // wait for child to be rendered, but dom not yet patched
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
+    // Microtask scheduling: the deep render and the subsequent state mutation
+    // both land in the same drain, so we observe a single combined patch.
     parent.state.value = "B";
 
     await nextTick();
@@ -415,8 +411,12 @@ test("force render in case of existing render", async () => {
   // and also be blocked in B
   render(parent, true);
   await nextTick();
+  // Microtask scheduling: cancellation of the prior render and the new
+  // render's willUpdateProps both fire within this drain, so both calls
+  // are observable here.
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "B:willUpdateProps",
       "B:willUpdateProps",
     ]
   `);

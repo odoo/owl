@@ -68,7 +68,7 @@ export class Suspense extends Component {
     // render of Suspense skips the fallback entirely (no flash). If async
     // hooks are present, fiber.render starts the cascade and the rest
     // resolves through microtasks; the scheduler then commits at the next
-    // rAF without re-rendering this fiber (its bdom is already set).
+    // tick without re-rendering this fiber (its bdom is already set).
     const fiber = root.node.fiber as MountFiber | null;
     if (fiber && fiber.bdom === null) {
       fiber.render();

@@ -1840,11 +1840,8 @@ describe("Reactivity: proxy", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
-
+    // Microtask scheduling: a single nextTick is enough — both children's
+    // patches land in the same drain.
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
@@ -1905,11 +1902,7 @@ describe("Reactivity: proxy", () => {
     `);
 
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
+    // Microtask scheduling: a single nextTick covers both updates.
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`

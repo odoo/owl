@@ -115,8 +115,8 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     setComputation(prev);
     // Fast path: every willStart hook returned synchronously. We can complete
     // willStart inline, which keeps a child fiber's render inside its parent's
-    // rAF render pass — total render+commit lands in a single frame instead
-    // of leaking into a second one through `await Promise.all`'s microtask.
+    // render pass — total render+commit lands in a single tick instead of
+    // leaking into a second one through `await Promise.all`'s microtask.
     if (promises.every((p) => !p || typeof p.then !== "function")) {
       this._completeWillStart(fiber);
       return;
@@ -141,7 +141,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       } else {
         // Root fiber (mount path): the fiber was already enqueued by prepare()
         // with `pending = true` to preserve ordering across roots. Clear the
-        // flag and ensure the scheduler will pick us up at the next rAF.
+        // flag and ensure the scheduler will pick us up at the next tick.
         fiber.pending = false;
         this.app.scheduler.flush();
       }
@@ -184,7 +184,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       // only holds roots), so the scheduler can't reach it on its own. We
       // wait one microtask to coalesce any cluster of state changes, then
       // render in place; the existing root will commit with the fresh bdom
-      // at its own rAF tick.
+      // at its own tick.
       await Promise.resolve();
       if (this.status >= STATUS.CANCELLED) {
         return;
@@ -194,8 +194,8 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       }
     }
     // For brand-new root fibers, the scheduler picks the work up at the next
-    // animation frame — that's where signal-driven first-time renders get
-    // batched into a single per-frame pass.
+    // microtask tick — that's where signal-driven first-time renders get
+    // batched into a single per-tick pass.
   }
 
   cancel() {

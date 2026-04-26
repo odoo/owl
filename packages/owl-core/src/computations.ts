@@ -1,4 +1,5 @@
 import { batched } from "./batched";
+import { getId, isDebugEnabled, logEvent } from "./debug_log";
 
 export interface ReactiveValue<TRead, TWrite = TRead> {
   (): TRead;
@@ -68,6 +69,11 @@ export function onWriteAtom(atom: Atom) {
       } else if (ctx.immediate) {
         immediateObservers.push(ctx);
       } else {
+        if (isDebugEnabled()) {
+          logEvent("reactive:queue", {
+            ctxId: getId(ctx),
+          });
+        }
         observers.push(ctx);
       }
     }
@@ -85,6 +91,12 @@ export function onWriteAtom(atom: Atom) {
 
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
+  if (isDebugEnabled() && observers.length > 0) {
+    logEvent("reactive:effects", {
+      count: observers.length,
+      observers: observers.map((o) => ({ id: getId(o) })),
+    });
+  }
   for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }

@@ -1,6 +1,9 @@
 import {
   ComputationState,
   getCurrentComputation,
+  getId,
+  isDebugEnabled,
+  logEvent,
   OwlError,
   removeSources,
   setComputation,
@@ -12,6 +15,14 @@ import { fibersInError, handleError } from "./error_handling";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
+  if (isDebugEnabled()) {
+    logEvent("fiber:make-child", {
+      nodeId: getId(node),
+      name: node.componentName,
+      parentNodeId: getId(parent.node),
+      reusedExisting: !!current,
+    });
+  }
   if (current) {
     cancelFibers(current.children);
     current.root = null;
@@ -21,6 +32,13 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
 
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
+  if (isDebugEnabled()) {
+    logEvent("fiber:make-root", {
+      nodeId: getId(node),
+      name: node.componentName,
+      reusedExisting: !!current,
+    });
+  }
   if (current) {
     let root = current.root!;
     // lock root fiber because canceling children fibers may destroy components,
@@ -67,6 +85,16 @@ function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     let node = fiber.node;
+    if (isDebugEnabled()) {
+      logEvent("fiber:cancel", {
+        fiberId: getId(fiber),
+        nodeId: getId(node),
+        name: node.componentName,
+        nodeStatus: node.status,
+        hadBdom: !!fiber.bdom,
+        willCallNodeCancel: node.status === STATUS.NEW,
+      });
+    }
     fiber.render = throwOnRender;
     if (node.status === STATUS.NEW) {
       node.cancel();
@@ -140,6 +168,15 @@ export class Fiber {
     const node = this.node;
     const root = this.root;
     if (root) {
+      if (isDebugEnabled()) {
+        logEvent("fiber:render-start", {
+          fiberId: getId(this),
+          nodeId: getId(node),
+          name: node.componentName,
+          rootCounter: root.counter,
+          rootId: getId(root),
+        });
+      }
       const c = getCurrentComputation();
       removeSources(node.signalComputation);
       setComputation(node.signalComputation);
@@ -153,6 +190,15 @@ export class Fiber {
       setComputation(c);
       const newCounter = root.counter - 1;
       root.counter = newCounter;
+      if (isDebugEnabled()) {
+        logEvent("fiber:render-end", {
+          fiberId: getId(this),
+          nodeId: getId(node),
+          name: node.componentName,
+          newCounter,
+          rootId: getId(root),
+        });
+      }
       if (newCounter === 0) {
         scheduler.flush();
       }
@@ -172,6 +218,13 @@ export class RootFiber extends Fiber {
   locked: boolean = false;
 
   complete() {
+    if (isDebugEnabled()) {
+      logEvent("fiber:complete", {
+        fiberId: getId(this),
+        nodeId: getId(this.node),
+        name: this.node.componentName,
+      });
+    }
     const node = this.node;
     this.locked = true;
     let current: Fiber | undefined = undefined;
@@ -291,6 +344,13 @@ export class MountFiber extends RootFiber {
   }
 
   private _mount() {
+    if (isDebugEnabled()) {
+      logEvent("fiber:mount", {
+        fiberId: getId(this),
+        nodeId: getId(this.node),
+        name: this.node.componentName,
+      });
+    }
     let current: Fiber | undefined = this;
     try {
       const node = this.node;

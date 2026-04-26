@@ -1,3 +1,4 @@
+import { getId, isDebugEnabled, logEvent } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
 import { Fiber, RootFiber } from "./fibers";
@@ -29,6 +30,14 @@ export class Scheduler {
   }
 
   addFiber(fiber: Fiber) {
+    if (isDebugEnabled()) {
+      logEvent("scheduler:addFiber", {
+        rootFiberId: getId(fiber.root!),
+        nodeId: getId(fiber.root!.node),
+        name: fiber.root!.node.componentName,
+        tasksSize: this.tasks.size,
+      });
+    }
     this.tasks.add(fiber.root!);
   }
 
@@ -61,7 +70,16 @@ export class Scheduler {
 
   processTasks() {
     if (this.processing) {
+      if (isDebugEnabled()) {
+        logEvent("scheduler:tick-skip", { reason: "already-processing" });
+      }
       return;
+    }
+    if (isDebugEnabled()) {
+      logEvent("scheduler:tick-start", {
+        tasksSize: this.tasks.size,
+        cancelledNodes: this.cancelledNodes.size,
+      });
     }
     this.processing = true;
     this.frame = 0;
@@ -69,6 +87,9 @@ export class Scheduler {
       node._destroy();
     }
     this.cancelledNodes.clear();
+    if (isDebugEnabled()) {
+      logEvent("scheduler:commit-start", { tasksSize: this.tasks.size });
+    }
     for (let fiber of this.tasks) {
       if (fiber.root !== fiber) {
         this.tasks.delete(fiber);
@@ -103,5 +124,8 @@ export class Scheduler {
       }
     }
     this.processing = false;
+    if (isDebugEnabled()) {
+      logEvent("scheduler:tick-end", { tasksSize: this.tasks.size });
+    }
   }
 }

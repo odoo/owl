@@ -87,3 +87,14 @@ export {
   startPlugins,
   type PluginConstructor,
 } from "./plugin_manager";
+
+// Debug log (opt-in event tracing for scenario recordings; no-op when off)
+export {
+  debugLog,
+  isDebugEnabled,
+  setDebugEnabled,
+  logEvent,
+  getId,
+  clearDebugLog,
+  dumpDebugLog,
+} from "./debug_log";

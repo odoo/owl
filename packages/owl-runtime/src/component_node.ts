@@ -4,7 +4,10 @@ import {
   createComputation,
   disposeComputation,
   getCurrentComputation,
+  getId,
   isAbortError,
+  isDebugEnabled,
+  logEvent,
   OwlError,
   Scope,
   scopeStack,
@@ -64,6 +67,22 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       false,
       ComputationState.EXECUTED
     );
+    if (isDebugEnabled()) {
+      logEvent("node:create", {
+        id: getId(this),
+        name: this.componentName,
+        depth: this.depth,
+        parentId: parent ? getId(parent) : null,
+        parentKey: parentKey,
+      });
+      // Bind signalComputation id to the node id so reactive:queue/effects
+      // events can be cross-referenced with component identity.
+      logEvent("computation:bind", {
+        ctxId: getId(this.signalComputation),
+        nodeId: getId(this),
+        name: this.componentName,
+      });
+    }
     this.props = props;
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
@@ -122,6 +141,15 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   async render(deep: boolean) {
+    if (isDebugEnabled()) {
+      logEvent("node:render-call", {
+        id: getId(this),
+        name: this.componentName,
+        deep,
+        hasFiber: !!this.fiber,
+        status: this.status,
+      });
+    }
     if (this.status >= STATUS.CANCELLED) {
       return;
     }
@@ -171,6 +199,14 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   cancel() {
+    if (isDebugEnabled()) {
+      logEvent("node:cancel", {
+        id: getId(this),
+        name: this.componentName,
+        parentId: this.parent ? getId(this.parent) : null,
+        parentKey: this.parentKey,
+      });
+    }
     this._cancel();
     delete this.parent!.children[this.parentKey!];
     this.app.scheduler.scheduleDestroy(this);
@@ -193,6 +229,13 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   _destroy() {
+    if (isDebugEnabled()) {
+      logEvent("node:destroy", {
+        id: getId(this),
+        name: this.componentName,
+        status: this.status,
+      });
+    }
     const component = this.component;
     if (this.status === STATUS.MOUNTED) {
       for (let cb of this.willUnmount) {

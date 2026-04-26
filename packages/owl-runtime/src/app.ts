@@ -3,10 +3,15 @@ import { ComponentConstructor } from "./component";
 import { ComponentNode } from "./component_node";
 import { GetProps } from "./props";
 import {
+  clearDebugLog,
+  debugLog,
+  dumpDebugLog,
+  isDebugEnabled,
   PluginConstructor,
   PluginManager,
   proxy,
   Resource,
+  setDebugEnabled,
   startPlugins,
   STATUS,
   toRaw,
@@ -67,6 +72,21 @@ interface Root<T extends ComponentConstructor> {
 
 if (typeof window !== "undefined") {
   window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
+  // Opt-in event tracing for diagnosing render/scheduler/reactive cascades.
+  // Usage from devtools console:
+  //   __owlDebug.enable(); ... reproduce the scenario ...; __owlDebug.disable();
+  //   copy(__owlDebug.dump());   // grabs JSON for analysis
+  //   __owlDebug.clear();        // reset between recordings
+  // No-op overhead when disabled — the per-call-site `isDebugEnabled()` guards
+  // short-circuit before any object allocation.
+  (window as any).__owlDebug = {
+    enable: () => setDebugEnabled(true),
+    disable: () => setDebugEnabled(false),
+    isEnabled: isDebugEnabled,
+    log: debugLog,
+    clear: clearDebugLog,
+    dump: dumpDebugLog,
+  };
 }
 
 export class App extends TemplateSet {

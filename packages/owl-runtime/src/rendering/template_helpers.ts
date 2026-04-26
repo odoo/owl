@@ -1,6 +1,9 @@
 import {
   computed,
   getCurrentComputation,
+  getId,
+  isDebugEnabled,
+  logEvent,
   markRaw,
   OwlError,
   ReactiveValue,
@@ -261,6 +264,19 @@ function createComponent<P extends Record<string, any>>(
     const parentFiber = ctx.fiber!;
     if (node) {
       if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
+        if (isDebugEnabled()) {
+          logEvent("helpers:component-reuse", {
+            nodeId: getId(node),
+            name: node.componentName,
+            parentNodeId: getId(ctx),
+            key,
+            reason: node.forceNextRender
+              ? "forceNextRender"
+              : parentFiber.deep
+                ? "deep"
+                : "props-differ",
+          });
+        }
         node.forceNextRender = false;
         const hooks = node.willUpdateProps;
         const fiber = makeChildFiber(node, parentFiber);
@@ -306,9 +322,25 @@ function createComponent<P extends Record<string, any>>(
           node.props = props;
           fiber.render();
         }
+      } else if (isDebugEnabled()) {
+        logEvent("helpers:component-skip", {
+          nodeId: getId(node),
+          name: node.componentName,
+          parentNodeId: getId(ctx),
+          key,
+          reason: "props-equal",
+        });
       }
     } else {
       // new component
+      if (isDebugEnabled()) {
+        logEvent("helpers:component-create", {
+          name: name || (C && C.name),
+          parentNodeId: getId(ctx),
+          parentName: ctx.componentName,
+          key,
+        });
+      }
       if (isStatic) {
         const components = parent.constructor.components;
         if (!components) {

@@ -10,7 +10,7 @@ export interface TemplateSetConfig {
   dev?: boolean;
   translatableAttributes?: string[];
   translateFn?: (s: string, translationCtx: string) => string;
-  templates?: string | Document | Record<string, string>;
+  templates?: string | Document | Record<string, string | TemplateFunction>;
   getTemplate?: (s: string) => Element | Function | string | void;
   customDirectives?: CustomDirectives;
   globalValues?: object;
@@ -49,21 +49,14 @@ export class TemplateSet {
     this.hasGlobalValues = Boolean(config.globalValues && Object.keys(config.globalValues).length);
   }
 
-  addTemplate(name: string, template: string | Element) {
+  addTemplate(name: string, template: string | Element | TemplateFunction) {
     if (name in this.rawTemplates) {
       // this check can be expensive, just silently ignore double definitions outside dev mode
       if (!this.dev) {
         return;
       }
       const rawTemplate = this.rawTemplates[name];
-      const currentAsString =
-        typeof rawTemplate === "string"
-          ? rawTemplate
-          : rawTemplate instanceof Element
-            ? rawTemplate.outerHTML
-            : rawTemplate.toString();
-      const newAsString = typeof template === "string" ? template : template.outerHTML;
-      if (currentAsString === newAsString) {
+      if (areTemplatesEqual(rawTemplate, template)) {
         return;
       }
       throw new OwlError(`Template ${name} already defined with different content`);
@@ -133,3 +126,15 @@ export function xml(...args: Parameters<typeof String.raw>) {
 }
 
 xml.nextId = 1;
+
+function areTemplatesEqual(t1: any, t2: any): boolean {
+  if (t1 === t2) {
+    return true;
+  }
+  if ((typeof t1 === "function") !== (typeof t2 === "function")) {
+    return false;
+  }
+  const s1 = t1 instanceof Element ? t1.outerHTML : String(t1);
+  const s2 = t2 instanceof Element ? t2.outerHTML : String(t2);
+  return s1 === s2;
+}

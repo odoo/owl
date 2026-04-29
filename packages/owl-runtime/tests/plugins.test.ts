@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import {
   App,
   Component,
@@ -17,7 +18,7 @@ import {
   useListener,
   xml,
 } from "../src";
-import { atomSymbol, Atom, PluginManager } from "@odoo/owl-core";
+import { atomSymbol, Atom, PluginManager, types } from "@odoo/owl-core";
 import { STATUS } from "../src/status";
 import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 
@@ -392,15 +393,16 @@ describe("basic features", () => {
 
     class PluginA extends Plugin {
       input = config("input");
+      defaulted = config("defaulted?", types.string(), "default");
 
       setup(): void {
-        steps.push(`PluginA - ${this.input}`);
+        steps.push(`PluginA - ${this.input} - ${this.defaulted}`);
       }
     }
 
     const plugins = new Resource({ validation: t.constructor(Plugin) }).add(PluginA);
     const app = new App({ plugins, config: { input: "hello" } });
-    expect(steps.splice(0)).toEqual(["PluginA - hello"]);
+    expect(steps.splice(0)).toEqual(["PluginA - hello - default"]);
 
     app.destroy();
   });

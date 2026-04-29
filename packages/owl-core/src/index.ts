@@ -99,3 +99,9 @@ export {
   onWillDestroy,
   onWillStart,
 } from "./lifecycle_hooks";
+
+export {
+  config,
+  plugin,
+  type PluginInstance,
+} from "./plugin_hooks";

@@ -14,7 +14,6 @@ import {
 import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
-import { PluginManager } from "@odoo/owl-core";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
 import { STATUS } from "./status";
@@ -44,8 +43,6 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
-
-  pluginManager: PluginManager;
 
   constructor(
     C: ComponentConstructor,

@@ -87,3 +87,15 @@ export {
   startPlugins,
   type PluginConstructor,
 } from "./plugin_manager";
+
+// Hooks
+export {
+  useApp,
+  useEffect,
+  useListener,
+} from "./hooks";
+
+export {
+  onWillDestroy,
+  onWillStart,
+} from "./lifecycle_hooks";

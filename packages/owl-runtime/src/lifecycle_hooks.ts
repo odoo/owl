@@ -1,4 +1,3 @@
-import { Scope, useScope } from "@odoo/owl-core";
 import { ComponentNode, getComponentScope } from "./component_node";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 
@@ -6,10 +5,7 @@ import { nodeErrorHandlers } from "./rendering/error_handling";
 //  hooks
 // -----------------------------------------------------------------------------
 
-export function onWillStart(fn: (scope: Scope) => Promise<void> | void | any) {
-  const scope = useScope();
-  scope.willStart.push(scope.decorate(fn, "onWillStart") as () => any);
-}
+export { onWillDestroy, onWillStart } from "@odoo/owl-core";
 
 export function onWillUpdateProps(
   fn: (nextProps: any, scope: ComponentNode) => Promise<void> | void | any
@@ -41,11 +37,6 @@ export function onPatched(fn: (scope: ComponentNode) => void | any) {
 export function onWillUnmount(fn: (scope: ComponentNode) => void | any) {
   const scope = getComponentScope();
   scope.willUnmount.unshift(scope.decorate(fn, "onWillUnmount"));
-}
-
-export function onWillDestroy(fn: (scope: Scope) => void | any) {
-  const scope = useScope();
-  scope.onDestroy(scope.decorate(fn, "onWillDestroy") as () => void);
 }
 
 type OnErrorCallback = (error: any) => void | any;

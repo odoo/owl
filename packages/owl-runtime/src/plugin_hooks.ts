@@ -1,45 +1,7 @@
-import {
-  assertType,
-  OwlError,
-  PluginConstructor,
-  PluginManager,
-  Resource,
-  startPlugins,
-  useScope,
-} from "@odoo/owl-core";
-import { ComponentNode, getComponentScope } from "./component_node";
-import { onWillDestroy, onWillStart } from "./lifecycle_hooks";
-import { STATUS } from "./status";
-import { types } from "./types";
+import { onWillDestroy, onWillStart, PluginConstructor, PluginManager, Resource, startPlugins, STATUS } from "@odoo/owl-core";
+import { getComponentScope } from "./component_node";
 
-export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
-
-export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
-  const scope = useScope();
-  const manager = scope instanceof ComponentNode ? scope.pluginManager : (scope as PluginManager);
-
-  let plugin = manager.getPluginById<InstanceType<T>>(pluginType.id);
-  if (!plugin) {
-    if (scope instanceof PluginManager) {
-      plugin = manager.startPlugin(pluginType)!;
-    } else {
-      throw new OwlError(`Unknown plugin "${pluginType.id}"`);
-    }
-  }
-
-  return plugin;
-}
-
-export function config<T = any>(name: string, type?: T): T {
-  const scope = useScope();
-  if (!(scope instanceof PluginManager)) {
-    throw new OwlError("Expected to be in a plugin scope");
-  }
-  if (scope.app.dev && type) {
-    assertType(scope.config, types.object({ [name]: type }), "Config does not match the type");
-  }
-  return scope.config[name.endsWith("?") ? name.slice(0, -1) : name];
-}
+export { config, plugin, type PluginInstance } from "@odoo/owl-core";
 
 export function providePlugins(
   pluginConstructors: PluginConstructor[] | Resource<PluginConstructor>,

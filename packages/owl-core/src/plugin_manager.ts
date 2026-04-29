@@ -46,6 +46,7 @@ export class PluginManager extends Scope {
   constructor(app: any, options: PluginManagerOptions = {}) {
     super(app);
     this.config = options.config ?? {};
+    this.pluginManager = this;
 
     if (options.parent) {
       const parent = options.parent;

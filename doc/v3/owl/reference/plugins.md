@@ -144,7 +144,7 @@ options:
 ```js
 class ApiPlugin extends Plugin {
   baseUrl = config("apiBaseUrl", t.string());
-  timeout = config("apiTimeout?", t.number()) || 5000;
+  timeout = config("apiTimeout?", t.number(), 5000);
 
   setup() {
     // use this.baseUrl and this.timeout
@@ -154,6 +154,7 @@ class ApiPlugin extends Plugin {
 
 Append `?` to the key name to make it optional. In dev mode, the type
 validator (second argument) is used to check the value.
+A default value can be passed as the third argument if the config is optional.
 
 Providing config at app level:
 

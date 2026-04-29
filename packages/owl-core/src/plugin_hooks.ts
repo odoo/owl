@@ -23,13 +23,16 @@ export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstan
 
 export function config(key: string): any;
 export function config<T>(key: string, type: T): T;
-export function config(key: string, type?: any): any {
+export function config<T>(key: string, type: T, defaultValue: T): T;
+export function config(key: string, type?: any, defaultValue?: any): any {
   const scope = useScope();
   if (!(scope instanceof PluginManager)) {
     throw new OwlError("Expected to be in a plugin scope");
   }
   if (scope.app.dev && type) {
+    // default needs validation
     assertType(scope.config, types.object({ [key]: type }), "Config does not match the type");
   }
-  return scope.config[key.endsWith("?") ? key.slice(0, -1) : key];
+  const configValue = scope.config[key.endsWith("?") ? key.slice(0, -1) : key];
+  return configValue === undefined ? defaultValue : configValue;
 }

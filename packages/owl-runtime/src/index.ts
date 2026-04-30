@@ -74,7 +74,7 @@ export {
 export { assertType, validateType } from "@odoo/owl-core";
 export { types } from "./types";
 export { OwlError } from "@odoo/owl-core";
-export { config, plugin, providePlugins } from "./plugin_hooks";
+export { config, plugin, providePlugins, providePluginManager } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "@odoo/owl-core";
 export type { PluginConstructor } from "@odoo/owl-core";

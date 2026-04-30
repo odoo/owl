@@ -9,6 +9,8 @@ import {
   Plugin,
   PluginConstructor,
   PluginInstance,
+  prop,
+  providePluginManager,
   providePlugins,
   Resource,
   signal,
@@ -17,6 +19,7 @@ import {
   useEffect,
   xml,
 } from "../../src";
+import { PluginManager } from "@odoo/owl-core";
 import {
   makeTestFixture,
   nextMicroTick,
@@ -434,4 +437,66 @@ test("components mounted by plugin", async () => {
 
   await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("defabc");
+});
+
+describe("providePluginManager", () => {
+  test("give custom plugin manager to a component", async () => {
+    class TestPlugin extends Plugin {
+      a = 1;
+    }
+
+    class TestComp extends Component {
+      static template = xml`<t t-out="this.p.a"/>`;
+
+      p!: TestPlugin;
+
+      setup() {
+        const app = useApp();
+        const manager = new PluginManager(app);
+        manager.startPlugins([TestPlugin]);
+        providePluginManager(manager);
+        this.p = plugin(TestPlugin);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    await app.createRoot(TestComp).mount(fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1");
+    app.destroy();
+  });
+
+  test("give plugin manager to a component", async () => {
+    class TestPlugin extends Plugin {
+      a = 1;
+    }
+
+    class TestComp extends Component {
+      static template = xml`<t t-out="this.p.a"/>`;
+
+      manager = prop("manager");
+      p!: TestPlugin;
+
+      setup() {
+        providePluginManager(this.manager);
+        this.p = plugin(TestPlugin);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const appWithoutPlugins = new App();
+    const appWithPlugins = new App({
+      plugins: [TestPlugin],
+    });
+
+    await appWithoutPlugins.createRoot(TestComp, {
+      props: { manager: appWithPlugins.pluginManager },
+    }).mount(fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1");
+
+    appWithoutPlugins.destroy();
+    appWithPlugins.destroy();
+  });
 });

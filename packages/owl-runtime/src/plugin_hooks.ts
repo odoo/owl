@@ -21,3 +21,8 @@ export function providePlugins(
     onWillStart(() => manager.ready);
   }
 }
+
+export function providePluginManager(manager: PluginManager): void {
+  const node = getComponentScope();
+  node.pluginManager = manager;
+}

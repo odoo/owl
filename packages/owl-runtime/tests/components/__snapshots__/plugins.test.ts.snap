@@ -262,6 +262,30 @@ exports[`plugins added to resource starts automatically 1`] = `
 }"
 `;
 
+exports[`providePluginManager > give custom plugin manager to a component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].p.a);
+  }
+}"
+`;
+
+exports[`providePluginManager > give plugin manager to a component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].p.a);
+  }
+}"
+`;
+
 exports[`shadow plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

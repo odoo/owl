@@ -28,3 +28,18 @@ Here is a more detailed explanation on how to compile xml files into a js file:
 5. `npm run compile_templates -- path/to/your/templates` will scan your target
    folder, find all xml files, get all templates, compile them, and generate a
    `templates.js` file.
+
+The generated `templates.js` exports a single `templates` object, whose keys
+are template names and whose values are precompiled template functions. It
+can be passed directly to the `App` (or `mount`) `templates` config:
+
+```js
+import { mount } from "@odoo/owl";
+import { templates } from "./templates.js";
+
+mount(Root, document.body, { templates });
+```
+
+The same object shape is accepted by `app.addTemplate(name, fn)` and the
+static `App.registerTemplate(name, fn)` helper, which registers a template
+globally for every subsequently created `App`.

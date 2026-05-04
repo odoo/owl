@@ -101,6 +101,19 @@ exports[`app > can load templates from an object name-string 1`] = `
 }"
 `;
 
+exports[`app > can mix string and precompiled templates in the templates config 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div class="from-string">hi</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`app > can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

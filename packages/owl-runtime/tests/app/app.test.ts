@@ -1,3 +1,4 @@
+import { compile } from "@odoo/owl-compiler";
 import { App, Component, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { useApp } from "../../src/hooks";
 import { STATUS, status } from "../../src/status";
@@ -138,6 +139,45 @@ describe("app", () => {
     // Only the "hello" template is used, so the "world" template is not yet loaded
     expect(Object.keys(app.templates)).toEqual(["hello"]);
     expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+  });
+
+  test("can load precompiled templates from an object name-fn", async () => {
+    // simulates the output of the `compile_templates` script, which produces
+    // a `Record<string, TemplateFunction>` to be passed to the `App` config.
+    const templates = {
+      hello: compile(`<div class="hello">hello</div>`),
+      world: compile(`<div>world</div>`),
+    };
+    class SomeComponent extends Component {
+      static template = "hello";
+    }
+
+    const app = new App({ templates });
+    await app.createRoot(SomeComponent).mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div class="hello">hello</div>`);
+    expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+  });
+
+  test("can mix string and precompiled templates in the templates config", async () => {
+    const templates = {
+      stringTpl: `<div class="from-string">hi</div>`,
+      fnTpl: compile(`<div class="from-fn">hello</div>`),
+    };
+    class FromString extends Component {
+      static template = "stringTpl";
+    }
+    class FromFn extends Component {
+      static template = "fnTpl";
+    }
+    const app = new App({ templates });
+    await app.createRoot(FromString).mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div class="from-string">hi</div>`);
+    app.destroy();
+
+    fixture = makeTestFixture();
+    const app2 = new App({ templates });
+    await app2.createRoot(FromFn).mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div class="from-fn">hello</div>`);
   });
 
   test("can call processTask twice in a row without crashing", async () => {

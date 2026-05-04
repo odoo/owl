@@ -50,8 +50,12 @@ The `config` object is an object with some of the following keys:
   be translated (see [translations](translations.md))
 - **`translateFn (function)`**: a function that will be called by owl to translate
   templates (see [translations](translations.md))
-- **`templates (string | xml document)`**: all the templates that will be used by
-  the components created by the application.
+- **`templates (string | xml document | Record<string, string | TemplateFunction>)`**:
+  all the templates that will be used by the components created by the
+  application. This may be a raw XML string, an `XMLDocument`, or a plain
+  object mapping template names to either a template source string or a
+  precompiled template function (as produced by the `compile_templates`
+  tool — see [Precompiling templates](precompiling_templates.md)).
 - **`getTemplate ((s: string) => Element | Function | string | void)`**: a function that will be called by owl when it
   needs a template. If undefined is returned, owl looks into the app templates.
 - **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning

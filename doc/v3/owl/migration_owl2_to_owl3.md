@@ -47,6 +47,7 @@ Additional info is the result of grepping in odoo code base (community/enterpris
 | 19  | `t-call` not allowed on tags `!== t`                              |                    | [Note](#19-t-call-not-allowed-on-tags-t)                                |
 | 20  | `t-call` body evaluated lazily, variables passed as parameters    |                    | [Note](#20-t-call-body-evaluated-lazily-variables-passed-as-parameters) |
 | 21  | `useComponent` removed                                            | 93 calls           | [Note](#21-usecomponent-removed)                                        |
+| 22  | `onPatched` / `onWillPatch` semantics narrowed                    |                    | [Note](#22-onpatched--onwillpatch-semantics-narrowed)                   |
 
 ## Migration guide for each change
 
@@ -743,6 +744,81 @@ function useMouse() {
   return { mouseX, mouseY };
 }
 ```
+
+### 22. `onPatched` / `onWillPatch` semantics narrowed
+
+The hooks themselves still exist and are still called when their component's
+template is re-rendered and patched. What changed is the **set of situations
+in which a re-render happens**, and that change can make `onPatched` look
+broken if you were relying on Owl 2 behavior.
+
+In Owl 2, reactivity was tracked per-component-instance: when state read by a
+descendant or by slot content was mutated, the parent that owned that state
+re-rendered as a whole, and its `patched` hook fired. In Owl 3, signal reads
+subscribe whichever component is currently rendering — typically the child or
+the slot's owner. The parent that _holds_ the signal is no longer subscribed
+just because something downstream reads it, so it doesn't re-render and its
+`onPatched` doesn't fire.
+
+Concretely:
+
+```js
+class A extends Component {
+  static template = xml`<t t-call-slot="default"/>`;
+  setup() {
+    onPatched(() => console.log("A patched"));
+  }
+}
+
+class Root extends Component {
+  static components = { A };
+  static template = xml`
+    <A>
+      <div t-on-click="() => this.message.set(this.message() + '!')">
+        <t t-out="this.message()"/>
+      </div>
+    </A>
+  `;
+  message = signal("hello owl");
+  setup() {
+    onPatched(() => console.log("Root patched"));
+  }
+}
+```
+
+Click the div: in Owl 2 both `Root patched` and `A patched` log; in Owl 3
+only `A patched` logs, because the `t-out="this.message()"` read happens
+inside `A`'s render (it owns the slot's render function), so `A` is the only
+subscriber to `message`.
+
+**How to migrate**
+
+- If the side effect is genuinely about your own component's DOM being
+  re-rendered (re-measuring layout you produced, focusing an input you just
+  rendered), keep `onPatched` — it still works.
+- If the side effect is "do X when value Y changes," migrate to `effect`
+  (or `useEffect`). `effect` subscribes to whatever signals it reads, so it
+  fires on the same write that triggered the patch, regardless of which
+  component re-rendered.
+
+```js
+// owl 2: relied on parent re-rendering to react to a value change
+setup() {
+  onPatched(() => {
+    this.syncWithMessage(this.message);
+  });
+}
+
+// owl 3: subscribe to the value directly
+setup() {
+  effect(() => {
+    this.syncWithMessage(this.message());
+  });
+}
+```
+
+The same applies to `onWillPatch`: it now fires only when _this_ component
+is about to be patched, not when something nested re-renders independently.
 
 ## Migration Plan for Odoo codebase
 

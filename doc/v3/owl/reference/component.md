@@ -187,6 +187,10 @@ this moment:
 
 The `willPatch` is called in the usual parent->children order.
 
+The same scope rules described under [`patched`](#patched) below also apply to
+`willPatch`: it fires only when the component's own template is about to be
+re-rendered, not when a descendant or slot content is re-rendered on its own.
+
 ### `patched`
 
 This hook is called whenever a component did actually update its DOM (most
@@ -215,6 +219,57 @@ careful at avoiding endless cycles.
 
 Like `mounted`, the `patched` hook is called in the order: children first, then
 parent.
+
+#### Scope: when does `patched` actually fire?
+
+`patched` fires when **this component's own template** is re-rendered and the
+result is patched into the DOM. It does **not** fire just because something
+visible inside the component changed — only because _its bdom_ was rebuilt
+and applied.
+
+Under Owl 3's signal-based reactivity this distinction matters more than it
+did in Owl 2. A component re-renders only when one of the signals it actually
+read during its last render is written to. A signal that is read in a child
+component, or in slot content, subscribes that child — not the parent that
+hosted it. As a result, the parent's `patched` hook will not fire even though
+something on screen changed.
+
+Consider:
+
+```js
+class A extends Component {
+  static template = xml`<t t-call-slot="default"/>`;
+  setup() {
+    onPatched(() => console.log("A patched"));
+  }
+}
+
+class Root extends Component {
+  static components = { A };
+  static template = xml`
+    <A>
+      <div t-on-click="() => this.message.set(this.message() + '!')">
+        <t t-out="this.message()"/>
+      </div>
+    </A>
+  `;
+  message = signal("hello owl");
+  setup() {
+    onPatched(() => console.log("Root patched"));
+  }
+}
+```
+
+Clicking the div writes `message`. The slot content reads `message()`, but
+the read happens when the slot's render function runs, which is owned by `A`'s
+render — so `A` is the only component subscribed to `message`. The console
+shows `A patched` only; `Root patched` never fires.
+
+In Owl 2, `Root` would also have re-rendered in this scenario, because
+reactivity was tracked at the component-instance level (the parent owned the
+state and re-rendered as a whole). The Owl 3 behavior is intentional and
+generally what you want — only the component that actually depends on the
+data does work — but it changes what `patched` is good for.
 
 ### `willUnmount`
 

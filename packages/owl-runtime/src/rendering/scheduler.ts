@@ -22,6 +22,7 @@ export class Scheduler {
   delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
   processing = false;
+  tasksProcessPromise: Promise<void> = Promise.resolve();
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -65,43 +66,46 @@ export class Scheduler {
     }
     this.processing = true;
     this.frame = 0;
-    for (let node of this.cancelledNodes) {
-      node._destroy();
-    }
-    this.cancelledNodes.clear();
-    for (let fiber of this.tasks) {
-      if (fiber.root !== fiber) {
-        this.tasks.delete(fiber);
-        continue;
+    this.tasksProcessPromise = new Promise((resolve) => {
+      for (let node of this.cancelledNodes) {
+        node._destroy();
       }
-      const hasError = fibersInError.has(fiber);
-      if (hasError && fiber.counter !== 0) {
-        this.tasks.delete(fiber);
-        continue;
-      }
-      if (fiber.node.status === STATUS.DESTROYED) {
-        this.tasks.delete(fiber);
-        continue;
-      }
-      if (fiber.counter === 0) {
-        if (!hasError) {
-          fiber.complete();
-        }
-        // at this point, the fiber should have been applied to the DOM, so we can
-        // remove it from the task list. If it is not the case, it means that there
-        // was an error and an error handler triggered a new rendering that recycled
-        // the fiber, so in that case, we actually want to keep the fiber around,
-        // otherwise it will just be ignored.
-        if (fiber.appliedToDom) {
+      this.cancelledNodes.clear();
+      for (let fiber of this.tasks) {
+        if (fiber.root !== fiber) {
           this.tasks.delete(fiber);
+          continue;
+        }
+        const hasError = fibersInError.has(fiber);
+        if (hasError && fiber.counter !== 0) {
+          this.tasks.delete(fiber);
+          continue;
+        }
+        if (fiber.node.status === STATUS.DESTROYED) {
+          this.tasks.delete(fiber);
+          continue;
+        }
+        if (fiber.counter === 0) {
+          if (!hasError) {
+            fiber.complete();
+          }
+          // at this point, the fiber should have been applied to the DOM, so we can
+          // remove it from the task list. If it is not the case, it means that there
+          // was an error and an error handler triggered a new rendering that recycled
+          // the fiber, so in that case, we actually want to keep the fiber around,
+          // otherwise it will just be ignored.
+          if (fiber.appliedToDom) {
+            this.tasks.delete(fiber);
+          }
         }
       }
-    }
-    for (let task of this.tasks) {
-      if (task.node.status === STATUS.DESTROYED) {
-        this.tasks.delete(task);
+      for (let task of this.tasks) {
+        if (task.node.status === STATUS.DESTROYED) {
+          this.tasks.delete(task);
+        }
       }
-    }
-    this.processing = false;
+      this.processing = false;
+      resolve();
+    });
   }
 }

@@ -1,6 +1,7 @@
 import { OwlError } from "./owl_error";
 import { ComputationAtom, disposeComputation } from "./computations";
 import { STATUS, StatusValue } from "./status";
+import type { PluginManager } from "./plugin_manager";
 
 // -----------------------------------------------------------------------------
 // Scope
@@ -40,6 +41,7 @@ export function useScope(): Scope {
 
 export abstract class Scope {
   app: any;
+  pluginManager: PluginManager;
   status: StatusValue = STATUS.NEW;
   computations: ComputationAtom[] = [];
   willStart: Array<() => any> = [];
@@ -48,6 +50,7 @@ export abstract class Scope {
 
   constructor(app: any) {
     this.app = app;
+    this.pluginManager = app.pluginManager;
   }
 
   /**

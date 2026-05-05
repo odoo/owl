@@ -270,12 +270,17 @@ function createComponent<P extends Record<string, any>>(
         if (node.patched.length) parentRoot.patched.push(fiber);
         let promises: Promise<any>[] | undefined;
         if (hooks.length) {
+          // Defaults must reach the hooks but must NOT be stored on node.props:
+          // otherwise the next arePropsDifferent call sees ghost diffs on default
+          // keys and re-renders on every parent render. Consumers (`prop`/`props`)
+          // already resolve defaults lazily from raw node.props.
+          let nextProps = props;
           const defaultProps = node.defaultProps;
           if (defaultProps) {
-            props = Object.assign({}, props) as P;
+            nextProps = Object.assign({}, props) as P;
             for (const k in defaultProps) {
-              if ((props as any)[k] === undefined) {
-                (props as any)[k] = defaultProps[k];
+              if ((nextProps as any)[k] === undefined) {
+                (nextProps as any)[k] = defaultProps[k];
               }
             }
           }
@@ -283,7 +288,7 @@ function createComponent<P extends Record<string, any>>(
           const prev = getCurrentComputation();
           setComputation(undefined);
           for (const f of hooks) {
-            const r = f.call(component, props);
+            const r = f.call(component, nextProps);
             if (r && typeof r.then === "function") {
               (promises ||= []).push(r);
             }

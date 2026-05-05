@@ -636,6 +636,58 @@ test("no props validation and default props", async () => {
   expect(fixture.innerHTML).toBe("1 / 123");
 });
 
+test("default props don't cause spurious updates with t-props", async () => {
+  // Regression test: when a parent re-renders with `t-props`, the child's
+  // arePropsDifferent walks every key in node.props. If defaults were stored
+  // there at the previous update, subsequent renders saw a ghost diff on the
+  // default keys and re-ran the child every time.
+  const updates: number[] = [];
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.b"/>`;
+    props = props({ "a?": t.string(), b: t.number() }, { a: "default value" });
+    setup() {
+      onWillUpdateProps(() => {
+        updates.push(this.props.b);
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <div t-on-click="this.increment">tick: <t t-out="this.v()"/></div>
+      <Child t-props="this.makeProps()"/>
+    `;
+    static components = { Child };
+    v = signal(0);
+    b = signal(1);
+    makeProps() {
+      return { b: this.b() };
+    }
+    increment() {
+      if (this.v() === 0) {
+        this.b.set(2);
+      }
+      this.v.set(this.v() + 1);
+    }
+  }
+
+  await mount(Parent, fixture);
+
+  // First click: b changes 1 -> 2 → child should update once.
+  fixture.querySelector("div")!.click();
+  await nextTick();
+  expect(updates).toEqual([1]);
+
+  // Subsequent clicks: only v changes; b is stable, child must NOT update.
+  fixture.querySelector("div")!.click();
+  await nextTick();
+  expect(updates).toEqual([1]);
+
+  fixture.querySelector("div")!.click();
+  await nextTick();
+  expect(updates).toEqual([1]);
+});
+
 test(".signal suffix promotes a plain value to a signal", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;

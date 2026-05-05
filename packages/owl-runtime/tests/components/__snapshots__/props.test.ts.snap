@@ -773,6 +773,38 @@ exports[`can use .translate suffix 2`] = `
 }"
 `;
 
+exports[`default props don't cause spurious updates with t-props 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { callHandler, safeOutput, createComponent } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
+  
+  let block2 = createBlock(\`<div block-handler-0="click">tick: <block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    const b3 = safeOutput(ctx['this'].v());
+    const b2 = block2([hdlr1], [b3]);
+    const b4 = comp1(Object.assign({}, ctx['this'].makeProps()), key + \`__1\`, node, this, null);
+    return multi([b2, b4]);
+  }
+}"
+`;
+
+exports[`default props don't cause spurious updates with t-props 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.b);
+  }
+}"
+`;
+
 exports[`do not crash when binding anonymous function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

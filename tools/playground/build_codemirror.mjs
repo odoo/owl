@@ -35,6 +35,11 @@ export { markdown } from "@codemirror/lang-markdown";
 export { oneDark } from "@codemirror/theme-one-dark";
 export { basicSetup } from "codemirror";
 export { abbreviationTracker, expandAbbreviation } from "@emmetio/codemirror6-plugin";
+export { parser as xmlParser } from "@lezer/xml";
+export { parser as jsParser } from "@lezer/javascript";
+export { parser as htmlParser } from "@lezer/html"
+export { parseMixed } from "@lezer/common"
+export { LRLanguage, LanguageSupport } from "@codemirror/language"
 `;
 
 const tempEntry = path.resolve(rootDir, "temp_codemirror_entry.mjs");

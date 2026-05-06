@@ -1,9 +1,14 @@
-import { css as cssLang, javascript, markdown, xml as xmlLang } from "@libs/codemirror";
+import { css as cssLang, markdown, } from "@libs/codemirror";
+
+import {
+  createOwlJsLanguage,
+  createOwlXmlLanguage
+} from "./owl_language";
 
 const LANGUAGES = {
-  js: () => javascript(),
+  js: () => createOwlJsLanguage(),
   css: () => cssLang(),
-  xml: () => xmlLang(),
+  xml: () => createOwlXmlLanguage(),
   md: () => markdown(),
 };
 

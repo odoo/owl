@@ -1,12 +1,10 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
+import { Component, mount, props, proxy, xml } from "../../src";
 import {
   makeTestFixture,
   snapshotEverything,
   nextTick,
   useLogLifecycle,
-  makeDeferred,
-  nextMicroTick,
   render,
   steps,
 } from "../helpers";
@@ -156,7 +154,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("parentBchild4");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willUpdateProps",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -288,150 +285,6 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("2");
   });
-
-  test("rendering is atomic (for one subtree)", async () => {
-    const def = makeDeferred();
-
-    class C extends Component {
-      static template = xml`<t t-out="this.props.obj.val"/>`;
-      props = props();
-
-      setup() {
-        useLogLifecycle(this);
-      }
-    }
-
-    class B extends Component {
-      static template = xml`<C obj="this.props.obj"/>`;
-      static components = { C };
-      props = props();
-
-      setup() {
-        useLogLifecycle(this);
-        onWillUpdateProps(() => def);
-      }
-    }
-
-    class A extends Component {
-      static template = xml`<t t-out="this.state.obj.val"/><B obj="this.state.obj"/>`;
-      static components = { B };
-
-      state = proxy({ obj: { val: 1 } });
-
-      setup() {
-        useLogLifecycle(this);
-      }
-    }
-
-    const parent = await mount(A, fixture);
-    expect(fixture.innerHTML).toBe("11");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "A:setup",
-        "A:willStart",
-        "B:setup",
-        "B:willStart",
-        "C:setup",
-        "C:willStart",
-        "C:mounted",
-        "B:mounted",
-        "A:mounted",
-      ]
-    `);
-
-    parent.state.obj.val = 3;
-    await nextTick();
-    expect(fixture.innerHTML).toBe("33");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "A:willPatch",
-        "A:patched",
-        "C:willPatch",
-        "C:patched",
-      ]
-    `);
-
-    def.resolve();
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-  });
-});
-
-test("force render in case of existing render", async () => {
-  const def = makeDeferred();
-
-  class C extends Component {
-    static template = xml`C`;
-    setup() {
-      useLogLifecycle(this);
-    }
-  }
-  class B extends Component {
-    static template = xml`<C/><t t-out="this.props.val"/>`;
-    static components = { C };
-    props = props();
-    setup() {
-      useLogLifecycle(this);
-      onWillUpdateProps(() => def);
-    }
-  }
-  class A extends Component {
-    static template = xml`<B val="this.state.val"/>`;
-    static components = { B };
-    state = proxy({ val: 1 });
-    setup() {
-      useLogLifecycle(this);
-    }
-  }
-  const parent = await mount(A, fixture);
-  expect(fixture.innerHTML).toBe("C1");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "A:setup",
-      "A:willStart",
-      "B:setup",
-      "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "C:mounted",
-      "B:mounted",
-      "A:mounted",
-    ]
-  `);
-
-  // trigger a new rendering, blocked in B
-  parent.state.val = 2;
-  await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "B:willUpdateProps",
-    ]
-  `);
-
-  // initiate a new render with deep=true. it should cancel the current render
-  // and also be blocked in B
-  render(parent, true);
-  await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "B:willUpdateProps",
-    ]
-  `);
-
-  def.resolve();
-  await nextTick();
-  // we check here that the render reaches C (so, that it was properly forced)
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "C:willUpdateProps",
-      "A:willPatch",
-      "B:willPatch",
-      "C:willPatch",
-      "C:patched",
-      "B:patched",
-      "A:patched",
-    ]
-  `);
 });
 
 test("children, default props and renderings", async () => {

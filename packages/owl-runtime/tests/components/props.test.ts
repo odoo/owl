@@ -1,15 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import {
-  Component,
-  effect,
-  mount,
-  onWillUpdateProps,
-  props,
-  proxy,
-  signal,
-  types as t,
-  xml,
-} from "../../src";
+import { Component, effect, mount, props, proxy, signal, types as t, xml } from "../../src";
 import {
   makeTestFixture,
   nextTick,
@@ -278,32 +268,6 @@ test("do not crash when binding anonymous function prop with bind suffix", async
   const parent = await mount(Parent, fixture);
   expect(boundedThing).toBe(parent);
   expect(fixture.innerHTML).toBe("child");
-});
-
-test("bound functions is not referentially equal after update", async () => {
-  let isEqual = false;
-  class Child extends Component {
-    static template = xml`<t t-out="this.props.val"/>`;
-    props = props();
-    setup() {
-      onWillUpdateProps((nextProps: any) => {
-        isEqual = nextProps.fn === this.props.fn;
-      });
-    }
-  }
-
-  class Parent extends Component {
-    static template = xml`<Child val="this.state.val" fn.bind="this.someFunction"/>`;
-    static components = { Child };
-    state = proxy({ val: 1 });
-    someFunction() {}
-  }
-
-  const parent = await mount(Parent, fixture);
-  parent.state.val = 3;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("3");
-  expect(isEqual).toBe(false);
 });
 
 test("bound functions are considered 'alike'", async () => {
@@ -599,7 +563,6 @@ test("arrow function props re-render when captured variable changes", async () =
   // elem changed (replaced object), so the child with that elem re-renders
   expect(steps.splice(0)).toMatchInlineSnapshot(`
    [
-     "Todo:willUpdateProps",
      "Parent:willPatch",
      "Todo:willPatch",
      "Todo:patched",
@@ -674,32 +637,6 @@ test(".signal suffix: child re-reads updated value when parent state changes", a
   // parent's render — but its own re-render+commit lands at rAF2.
   await nextTick();
   expect(fixture.innerHTML).toBe("42");
-});
-
-test(".signal suffix: signal reference is stable across updates", async () => {
-  let sameRef: boolean | null = null;
-  class Child extends Component {
-    static template = xml`<t t-out="this.props.count()"/><t t-out="this.props.tick"/>`;
-    props = props();
-    setup() {
-      onWillUpdateProps((nextProps: any) => {
-        sameRef = nextProps.count === this.props.count;
-      });
-    }
-  }
-
-  class Parent extends Component {
-    static template = xml`<Child count.signal="this.state.val" tick="this.state.tick"/>`;
-    static components = { Child };
-    state = proxy({ val: 1, tick: 0 });
-  }
-
-  const parent = await mount(Parent, fixture);
-  parent.state.val = 2;
-  parent.state.tick = 1;
-  await nextTick();
-  expect(sameRef).toBe(true);
-  expect(fixture.innerHTML).toBe("21");
 });
 
 test(".signal suffix: effects in child react to parent value changes", async () => {

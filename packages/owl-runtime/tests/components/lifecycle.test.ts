@@ -8,7 +8,6 @@ import {
   onWillPatch,
   onWillUnmount,
   onPatched,
-  onWillUpdateProps,
   onWillDestroy,
   onMounted,
   onWillStart,
@@ -489,7 +488,6 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willUpdateProps",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -550,37 +548,6 @@ describe("lifecycle hooks", () => {
     `);
   });
 
-  test("willUpdateProps hook is called", async () => {
-    let def = makeDeferred();
-
-    class Child extends Component {
-      static template = xml`<span><t t-out="this.props.n"/></span>`;
-      props = props();
-
-      setup() {
-        onWillUpdateProps((nextProps) => {
-          expect(nextProps.n).toBe(2);
-          return def;
-        });
-      }
-    }
-
-    class Parent extends Component {
-      static template = xml`<Child n="this.state.n"/>`;
-      static components = { Child };
-      state = proxy({ n: 1 });
-    }
-    const parent = await mount(Parent, fixture);
-
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-    parent.state.n = 2;
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-    def.resolve();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>2</span>");
-  });
-
   test("patched hook is called after updating State", async () => {
     let n = 0;
 
@@ -600,31 +567,6 @@ describe("lifecycle hooks", () => {
     expect(n).toBe(0);
 
     widget.state.a = 3;
-    await nextTick();
-    expect(n).toBe(1);
-  });
-
-  test("patched hook is called after updateProps", async () => {
-    let n = 0;
-
-    class Child extends Component {
-      static template = xml`<div/>`;
-      setup() {
-        onWillUpdateProps(() => {
-          n++;
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<div><Child a="this.state.a"/></div>`;
-      state = proxy({ a: 1 });
-      static components = { Child };
-    }
-
-    const widget = await mount(Parent, fixture);
-    expect(n).toBe(0);
-
-    widget.state.a = 2;
     await nextTick();
     expect(n).toBe(1);
   });
@@ -911,7 +853,6 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willUpdateProps",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -1200,7 +1141,7 @@ describe("lifecycle hooks", () => {
   });
 
   test("lifecycle callbacks are bound to component", async () => {
-    expect.assertions(10);
+    expect.assertions(9);
     let instance: any;
 
     class Test extends Component {
@@ -1210,7 +1151,6 @@ describe("lifecycle hooks", () => {
         instance = this;
         onWillStart(this.logger("onWillStart"));
         onMounted(this.logger("onMounted"));
-        onWillUpdateProps(this.logger("onWillUpdateProps"));
         onWillPatch(this.logger("onWillPatch"));
         onPatched(this.logger("onPatched"));
         onWillUnmount(this.logger("onWillUnmount"));
@@ -1241,7 +1181,6 @@ describe("lifecycle hooks", () => {
       [
         "onWillStart",
         "onMounted",
-        "onWillUpdateProps",
         "onWillPatch",
         "onPatched",
         "onWillUnmount",

@@ -6,9 +6,7 @@ import {
   onMounted,
   onPatched,
   onWillPatch,
-  onWillStart,
   onWillUnmount,
-  onWillUpdateProps,
   OwlError,
   props,
   proxy,
@@ -149,132 +147,6 @@ describe("hooks", () => {
       const input2 = fixture.querySelectorAll("input")[1];
       expect(input2).toBe(document.activeElement);
     });
-  });
-
-  test("can use onWillStart, onWillUpdateProps", async () => {
-    const steps: string[] = [];
-    async function slow(): Promise<string> {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve("slow");
-        }, 0);
-      });
-    }
-    function useMyHook() {
-      onWillStart(async () => {
-        steps.push(await slow());
-        steps.push("onWillStart");
-      });
-      onWillUpdateProps(async (nextProps) => {
-        expect(nextProps).toEqual({ value: 2 });
-        steps.push(await slow());
-        steps.push("onWillUpdateProps");
-      });
-    }
-    function use2ndHook() {
-      onWillStart(() => {
-        steps.push("on2ndStart");
-      });
-      onWillUpdateProps((nextProps) => {
-        expect(nextProps).toEqual({ value: 2 });
-        steps.push("on2ndUpdate");
-      });
-    }
-    class MyComponent extends Component {
-      static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
-      setup() {
-        useMyHook();
-        use2ndHook();
-      }
-    }
-    class App extends Component {
-      static template = xml`<MyComponent value="this.state.value"/>`;
-      static components = { MyComponent };
-      state = proxy({ value: 1 });
-    }
-
-    const app = await mount(App, fixture);
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-
-    // NOTE: 'on2ndStart' appears first in the list even though
-    // the 'use2ndHook' is declared after 'useMyHook'. This is
-    // because Promise.all is used to call the callbacks specified
-    // in the hooks, which runs them simultaneously.
-    // Additionally, 'slow' should be listed before 'onWillStart'
-    // because call to `slow` is awaited.
-    expect(steps).toEqual(["on2ndStart", "slow", "onWillStart"]);
-
-    app.state.value = 2;
-    // willUpdateProps is async (awaits `slow`); the post-await fiber.render
-    // resolves in a microtask after rAF1 so the commit lands at rAF2.
-    await nextTick(2);
-    expect(fixture.innerHTML).toBe("<span>2</span>");
-    expect(steps).toEqual([
-      "on2ndStart",
-      "slow",
-      "onWillStart",
-      "on2ndUpdate",
-      "slow",
-      "onWillUpdateProps",
-    ]);
-  });
-
-  test("onWillUpdateProps receives nextProps", async () => {
-    let received: any = undefined;
-    class Child extends Component {
-      static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
-      setup() {
-        onWillUpdateProps((nextProps) => {
-          received = nextProps;
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child value="this.value()"/>`;
-      static components = { Child };
-      value = signal(1);
-    }
-
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-
-    parent.value.set(2);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>2</span>");
-    expect(received).toBeDefined();
-    expect(received.value).toBe(2);
-  });
-
-  test("onWillUpdateProps receives nextProps (dev mode)", async () => {
-    let received: any = undefined;
-    class Child extends Component {
-      static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
-      setup() {
-        onWillUpdateProps((nextProps) => {
-          received = nextProps;
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child value="this.value()"/>`;
-      static components = { Child };
-      value = signal(1);
-    }
-
-    const app = new App({ dev: true });
-    const parent = await app.createRoot(Parent).mount(fixture);
-    expect(fixture.innerHTML).toBe("<span>1</span>");
-
-    parent.value.set(2);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<span>2</span>");
-    expect(received).toBeDefined();
-    expect(received.value).toBe(2);
-    app.destroy();
-    expect(getConsoleOutput()).toEqual([`info:Owl is running in 'dev' mode.`]);
   });
 
   test("useListener", async () => {

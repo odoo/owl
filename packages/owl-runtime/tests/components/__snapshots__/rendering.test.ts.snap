@@ -26,45 +26,6 @@ exports[`children, default props and renderings 2`] = `
 }"
 `;
 
-exports[`force render in case of existing render 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, ["val"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`force render in case of existing render 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = safeOutput(ctx['this'].props.val);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`force render in case of existing render 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`C\`);
-  }
-}"
-`;
-
 exports[`rendering semantics > can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -197,46 +158,6 @@ exports[`rendering semantics > render with deep=true followed by render with dee
     const b2 = text(\`child\`);
     const b3 = safeOutput(ctx['this'].state.getValue());
     return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`rendering semantics > rendering is atomic (for one subtree) 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, ["obj"]);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.obj.val);
-    const b3 = comp1({obj: ctx['this'].state.obj}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`rendering semantics > rendering is atomic (for one subtree) 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, ["obj"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({obj: ctx['this'].props.obj}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`rendering semantics > rendering is atomic (for one subtree) 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.obj.val);
   }
 }"
 `;

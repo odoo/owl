@@ -11,18 +11,6 @@ export function onWillStart(fn: (scope: Scope) => Promise<void> | void | any) {
   scope.willStart.push(scope.decorate(fn, "onWillStart") as () => any);
 }
 
-export function onWillUpdateProps(
-  fn: (nextProps: any, scope: ComponentNode) => Promise<void> | void | any
-) {
-  const scope = getComponentScope();
-  // decorate prepends scope as the first arg, but onWillUpdateProps's public
-  // signature is (nextProps, scope) — swap back.
-  function swapped(this: any, s: ComponentNode, nextProps: any) {
-    return fn.call(this, nextProps, s);
-  }
-  scope.willUpdateProps.push(scope.decorate(swapped, "onWillUpdateProps"));
-}
-
 export function onMounted(fn: (scope: ComponentNode) => void | any) {
   const scope = getComponentScope();
   scope.mounted.push(scope.decorate(fn, "onMounted"));

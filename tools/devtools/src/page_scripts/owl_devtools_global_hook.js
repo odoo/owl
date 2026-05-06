@@ -1423,7 +1423,6 @@
           "willPatch",
           "willStart",
           "willUnmount",
-          "willUpdateProps",
         ];
         const hooksPath = [...instancePath, { type: "item", value: "__owl__" }];
         Reflect.ownKeys(instance.__owl__)

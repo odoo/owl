@@ -10,7 +10,6 @@ import {
   onWillPatch,
   onWillStart,
   onWillUnmount,
-  onWillUpdateProps,
   props,
   proxy,
   types,
@@ -75,9 +74,7 @@ describe("basics", () => {
       .catch((e: Error) => (error = e));
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -93,9 +90,7 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -1788,93 +1783,5 @@ describe("can catch errors", () => {
         "Root:patched",
       ]
     `);
-  });
-});
-
-describe("errors in onWillUpdateProps", () => {
-  test("sync error in onWillUpdateProps is caught by parent onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onWillUpdateProps(() => {
-          throw new Error("sync boom");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-      setup() {
-        onError((e) => (error = e));
-      }
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1; // triggers child re-render → onWillUpdateProps throws
-    render(parent);
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("sync boom");
-  });
-
-  test("async error in onWillUpdateProps is caught by parent onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onWillUpdateProps(async () => {
-          await Promise.resolve();
-          throw new Error("async boom");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-      setup() {
-        onError((e) => (error = e));
-      }
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1;
-    render(parent);
-    await nextTick();
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("async boom");
-  });
-
-  test("async error in onWillUpdateProps is caught by child's own onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onError((e) => (error = e));
-        onWillUpdateProps(async () => {
-          await Promise.resolve();
-          throw new Error("async boom from child");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1;
-    render(parent);
-    await nextTick();
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("async boom from child");
   });
 });

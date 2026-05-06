@@ -6,6 +6,9 @@
     <title>{{PROJECT_NAME}}</title>
   </head>
   <body>
-    <script type="module" src="/src/main.ts"></script>
+    <!-- Switch between JIT (compiler bundled, runtime compile) and AOT
+         (compiler excluded, templates precompiled) by changing the file below
+         to /src/main.aot.ts. See README. -->
+    <script type="module" src="/src/main.jit.ts"></script>
   </body>
 </html>

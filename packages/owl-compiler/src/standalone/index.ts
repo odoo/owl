@@ -4,7 +4,8 @@
 // section of owl's package.json
 // -----------------------------------------------------------------------------
 
-import { readdir, readFile, stat } from "fs/promises";
+import { watch } from "fs";
+import { readdir, readFile, rename, stat, writeFile } from "fs/promises";
 import path from "path";
 import "./setup_jsdom";
 // Compiler imports must be made after setting up jsdom in the global namespace
@@ -86,4 +87,50 @@ export async function compileTemplates(paths: string[]) {
   console.log(`${templates.length} templates compiled`);
 
   return `export const templates = {\n ${templates.join("\n")} \n}`;
+}
+
+// -----------------------------------------------------------------------------
+// watch mode
+// -----------------------------------------------------------------------------
+
+async function compileAndWrite(paths: string[], outputPath: string) {
+  const result = await compileTemplates(paths);
+  const tmp = `${outputPath}.tmp`;
+  await writeFile(tmp, result);
+  await rename(tmp, outputPath);
+}
+
+export async function watchAndCompile(paths: string[], outputPath: string) {
+  await compileAndWrite(paths, outputPath);
+
+  let timer: NodeJS.Timeout | null = null;
+  let pending = false;
+  const schedule = () => {
+    pending = true;
+    if (timer) return;
+    timer = setTimeout(async () => {
+      timer = null;
+      while (pending) {
+        pending = false;
+        try {
+          await compileAndWrite(paths, outputPath);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }, 50);
+  };
+
+  const resolvedOutput = path.resolve(outputPath);
+  for (const p of paths) {
+    watch(p, { recursive: true }, (_event, filename) => {
+      if (!filename || !filename.endsWith(".xml")) return;
+      const changed = path.resolve(p, filename);
+      if (changed === resolvedOutput) return;
+      schedule();
+    });
+  }
+
+  console.log(`Watching ${paths.join(", ")} for .xml changes...`);
+  await new Promise(() => {});
 }

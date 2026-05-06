@@ -12,7 +12,40 @@ npm run preview   # preview the production bundle locally
 
 ## Where things live
 
-- `src/main.ts` — entry point; mounts the root component.
-- `src/App.ts` — the root component. Edit this to start building.
-- `vite.config.ts` — Vite configuration.
-- `tsconfig.json` — TypeScript configuration.
+- `src/App.ts` / `src/App.xml` — the root component and its template (colocated).
+- `src/main.jit.ts` — JIT entry point: templates compiled in the browser.
+- `src/main.aot.ts` — AOT entry point: templates precompiled at build time.
+- `index.html` — picks which entry point runs (defaults to JIT).
+- `vite.config.ts` / `tsconfig.json` — build configuration.
+
+## Adding components
+
+Each component lives next to its template:
+
+```
+src/some_widget.ts
+src/some_widget.xml
+```
+
+`*.xml` files anywhere under `src/` are discovered automatically (recursive glob in JIT, recursive walk by `compile_owl_templates` in AOT).
+
+## JIT vs AOT
+
+By default the project uses **JIT** (just-in-time) compilation: the template
+compiler is bundled and runs in the browser at startup. Easy to develop with,
+slightly larger bundle.
+
+**AOT** (ahead-of-time) compilation precompiles `*.xml` to JavaScript at build
+time and ships only the runtime — the compiler is excluded, yielding a smaller
+production bundle.
+
+To switch to AOT, change one line in `index.html`:
+
+```html
+<script type="module" src="/src/main.aot.ts"></script>
+```
+
+(Switch back by pointing at `main.jit.ts`.) The `npm run dev` script always
+runs `compile_owl_templates --watch` alongside Vite, so AOT mode picks up
+template edits without restart. In JIT mode the watcher still runs but its
+output (`src/templates.compiled.js`) is unused.

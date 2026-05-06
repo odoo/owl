@@ -7,14 +7,18 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "compile-templates": "compile_owl_templates src -o src/templates.compiled.js",
+    "compile-templates:watch": "compile_owl_templates src -o src/templates.compiled.js --watch",
+    "dev": "concurrently -k -n templates,vite \"npm:compile-templates:watch\" \"vite\"",
+    "build": "npm run compile-templates && tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@odoo/owl": "3.0.0-alpha.29"
+    "@odoo/owl-compiler": "3.0.0-alpha.29",
+    "@odoo/owl-runtime": "3.0.0-alpha.29"
   },
   "devDependencies": {
+    "concurrently": "^9.0.0",
     "typescript": "^5.9.3",
     "vite": "^6.0.0"
   }

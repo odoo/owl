@@ -19,10 +19,15 @@
     "./package.json": "./package.json"
   },
   "sideEffects": [
-    "./dist/compile_templates.mjs"
+    "./dist/compile_templates.mjs",
+    "./src/standalone/setup_jsdom.ts"
   ],
   "type": "module",
+  "bin": {
+    "compile_owl_templates": "./bin/compile_owl_templates.mjs"
+  },
   "files": [
+    "bin",
     "dist"
   ],
   "engines": {

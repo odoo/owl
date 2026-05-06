@@ -75,6 +75,7 @@ function onCancel(): never {
 type CliArgs = {
   projectName: string | undefined;
   template: "ts" | "js" | undefined;
+  aot: boolean | undefined;
   yes: boolean;
   noInstall: boolean;
   noGit: boolean;
@@ -84,6 +85,7 @@ function parseArgs(argv: string[]): CliArgs {
   const args: CliArgs = {
     projectName: undefined,
     template: undefined,
+    aot: undefined,
     yes: false,
     noInstall: false,
     noGit: false,
@@ -93,6 +95,8 @@ function parseArgs(argv: string[]): CliArgs {
     if (a === "--yes" || a === "-y") args.yes = true;
     else if (a === "--no-install") args.noInstall = true;
     else if (a === "--no-git") args.noGit = true;
+    else if (a === "--aot") args.aot = true;
+    else if (a === "--no-aot" || a === "--jit") args.aot = false;
     else if (a === "--template" || a === "-t") {
       const v = argv[++i];
       if (v !== "ts" && v !== "js") {
@@ -126,6 +130,7 @@ async function main() {
         projectName: args.projectName,
         overwrite: false,
         typescript: args.template !== "js",
+        aot: args.aot ?? false,
         git: !args.noGit,
         install: !args.noInstall,
       }
@@ -166,6 +171,12 @@ async function main() {
             initial: true,
           },
           {
+            type: args.aot !== undefined ? null : "confirm",
+            name: "aot",
+            message: "Compile templates ahead of time? (smaller bundle, no compiler at runtime)",
+            initial: false,
+          },
+          {
             type: args.noGit ? null : "confirm",
             name: "git",
             message: "Initialize a git repository?",
@@ -184,6 +195,7 @@ async function main() {
   const projectName = args.projectName ?? response.projectName;
   const typescript: boolean =
     args.template !== undefined ? args.template === "ts" : response.typescript;
+  const aot: boolean = args.aot !== undefined ? args.aot : response.aot;
   const initGit: boolean = args.noGit ? false : response.git;
   const install: boolean = args.noInstall ? false : response.install;
   const target = resolve(cwd, projectName);
@@ -226,6 +238,12 @@ async function main() {
   const indexHtmlPath = join(target, "index.html");
   if (existsSync(indexHtmlPath)) {
     substitute(indexHtmlPath, { PROJECT_NAME: pkgName });
+    if (aot) {
+      const ext = typescript ? "ts" : "js";
+      let html = readFileSync(indexHtmlPath, "utf-8");
+      html = html.replace(`/src/main.jit.${ext}`, `/src/main.aot.${ext}`);
+      writeFileSync(indexHtmlPath, html);
+    }
   }
 
   if (install) {

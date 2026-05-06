@@ -1,14 +1,7 @@
-import { Component, signal, xml } from "@odoo/owl";
+import { Component, signal } from "@odoo/owl-runtime";
 
 export class App extends Component {
-  static template = xml`
-    <main>
-      <h1>Hello, Owl</h1>
-      <button t-on-click="() => this.count.set(this.count() + 1)">
-        Count: <t t-out="this.count()"/>
-      </button>
-    </main>
-  `;
+  static template = "App";
 
   count = signal(0);
 }

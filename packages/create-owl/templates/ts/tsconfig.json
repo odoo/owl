@@ -11,7 +11,10 @@
     "useDefineForClassFields": true,
     "experimentalDecorators": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/templates.compiled.js"]
 }

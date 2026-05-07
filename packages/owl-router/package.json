@@ -1,0 +1,51 @@
+{
+  "name": "@odoo/owl-router",
+  "version": "3.0.0-alpha.29",
+  "description": "Routing primitives for Odoo Web Library (OWL)",
+  "main": "dist/owl-router.cjs.js",
+  "module": "dist/owl-router.es.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/owl-router.es.js",
+      "require": "./dist/owl-router.cjs.js",
+      "default": "./dist/owl-router.es.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "build:types": "node build.mjs types",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odoo/owl.git"
+  },
+  "author": "Odoo",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/odoo/owl/issues"
+  },
+  "homepage": "https://github.com/odoo/owl#readme",
+  "dependencies": {
+    "@odoo/owl-core": "*"
+  },
+  "peerDependencies": {
+    "@odoo/owl-runtime": "*"
+  },
+  "devDependencies": {
+    "@odoo/owl-runtime": "*",
+    "@odoo/owl-compiler": "*"
+  }
+}

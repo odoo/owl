@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@odoo/owl-core": ["../owl-core/src/index.ts"],
+      "@odoo/owl-runtime": ["../owl-runtime/src/index.ts"],
+      "@odoo/owl-compiler": ["../owl-compiler/src/index.ts"]
+    }
+  }
+}

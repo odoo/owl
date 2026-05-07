@@ -1,19 +1,36 @@
 import { defineConfig } from "vitepress";
 import { buildNavbar } from "./navbar.mjs";
 
-// Re-enable this group at the top of each per-route sidebar when a second
-// package lands (owl-router, owl-orm, …). For now it's noise — a single
-// "Owl" entry linking to the same section the user is already in.
-// const packageSwitcher = {
-//   text: "Packages",
-//   items: [
-//     { text: "Owl", link: "/v3/owl/" },
-//     { text: "Router", link: "/v3/owl-router/" },
-//     { text: "ORM", link: "/v3/owl-orm/" },
-//   ],
-// };
+// Prepended to every per-package sidebar so users can jump between packages
+// from any doc page. Add new packages here as they land.
+const packageSwitcher = {
+  text: "Packages",
+  items: [
+    { text: "Owl", link: "/v3/owl/" },
+    { text: "Router", link: "/v3/owl-router/" },
+  ],
+};
+
+const owlRouterSidebar = [
+  packageSwitcher,
+  { text: "Introduction", link: "/v3/owl-router/" },
+  { text: "Installation", link: "/v3/owl-router/installation" },
+  {
+    text: "Reference",
+    items: [
+      { text: "Overview", link: "/v3/owl-router/reference/overview" },
+      { text: "Router", link: "/v3/owl-router/reference/router" },
+      { text: "Codec", link: "/v3/owl-router/reference/codec" },
+      { text: "Matcher", link: "/v3/owl-router/reference/matcher" },
+      { text: "Plugin", link: "/v3/owl-router/reference/plugin" },
+      { text: "Components & hooks", link: "/v3/owl-router/reference/components" },
+      { text: "History adapters", link: "/v3/owl-router/reference/history" },
+    ],
+  },
+];
 
 const owlSidebar = [
+  packageSwitcher,
   { text: "Introduction", link: "/v3/owl/" },
   { text: "Overview", link: "/v3/owl/reference/overview" },
   { text: "Installation", link: "/v3/owl/installation" },
@@ -107,7 +124,7 @@ export default defineConfig({
 
     sidebar: {
       "/v3/owl/": owlSidebar,
-      // Future per-package sidebars go here, each starting with packageSwitcher.
+      "/v3/owl-router/": owlRouterSidebar,
     },
 
     search: {

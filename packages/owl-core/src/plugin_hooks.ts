@@ -21,7 +21,7 @@ export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstan
   return plugin;
 }
 
-export function config(key: string): any;
+export function config<T = any>(key: string): T;
 export function config<T>(key: string, type: T): T;
 export function config<T>(key: string, type: T, defaultValue: T): T;
 export function config(key: string, type?: any, defaultValue?: any): any {

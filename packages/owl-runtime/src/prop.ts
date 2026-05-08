@@ -1,7 +1,7 @@
 import { assertType, OwlError } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 
-export function prop(key: string): any;
+export function prop<T = any>(key: string): T;
 export function prop<T>(key: string, type: T): T;
 export function prop<T>(key: string, type: T, defaultValue: T): T;
 export function prop(key: string, type?: any, ...args: any[]): any {

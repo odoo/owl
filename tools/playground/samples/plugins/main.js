@@ -1,29 +1,38 @@
-import { Component, mount, plugin, xml } from "@odoo/owl";
-import { corePlugins, ThemePlugin } from "./core_plugins";
-import { FormView } from "./form_view";
+// Plugins: shared, scoped state with lifecycle.
+// `ClockPlugin` owns a single `setInterval` and a reactive `now` signal.
+// Two clock widgets read the same plugin — they stay perfectly in sync, and
+// only one interval runs no matter how many widgets are mounted.
+//
+// `onWillDestroy` runs when the plugin is torn down (here: when the app
+// unmounts) — that's where the interval is cleared.
+//
+// Try: add a third widget that displays `clock.now().getFullYear()`.
+import { Component, mount, onWillDestroy, plugin, Plugin, signal, xml } from "@odoo/owl";
 
-/**
- * Plugins are the Owl 3 replacement to the environment. They can be global,
- * or local to a component and its descendants. They can perform some work, or
- * hold some state.
- */
+class ClockPlugin extends Plugin {
+  now = signal(new Date());
 
-class Root extends Component {
-  static components = { FormView };
-  static template = xml`
-        <div>
-            <span>Navbar </span>
-            <button t-on-click="() => this.themePlugin.toggle()">
-                Theme: <t t-out="this.themePlugin.theme()"/>
-            </button>
-        </div>
-        <FormView/>
-    `;
-
-  // we import here the ThemePlugin
-  themePlugin = plugin(ThemePlugin);
+  setup() {
+    const id = setInterval(() => this.now.set(new Date()), 1000);
+    onWillDestroy(() => clearInterval(id));
+  }
 }
 
-// the plugins key here defines all global plugins that will be available to
-// all components in this application
-mount(Root, document.body, { templates: TEMPLATES, plugins: corePlugins, dev: true });
+class DigitalClock extends Component {
+  static template = xml`<div>🕒 <t t-out="this.clock.now().toLocaleTimeString()"/></div>`;
+  clock = plugin(ClockPlugin);
+}
+
+class UTCClock extends Component {
+  static template = xml`<div>🌍 UTC <t t-out="this.clock.now().toUTCString().slice(17, 25)"/></div>`;
+  clock = plugin(ClockPlugin);
+}
+
+class Root extends Component {
+  static components = { DigitalClock, UTCClock };
+  static template = xml`
+    <DigitalClock/>
+    <UTCClock/>`;
+}
+
+mount(Root, document.body, { templates: TEMPLATES, plugins: [ClockPlugin], dev: true });

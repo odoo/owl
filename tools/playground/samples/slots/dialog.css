@@ -34,3 +34,11 @@
 .dialog-body {
   padding: 12px 16px;
 }
+
+.dialog-footer {
+  padding: 8px 16px;
+  border-top: 1px solid #ddd;
+  background-color: #fafafa;
+  font-size: 13px;
+  color: #555;
+}

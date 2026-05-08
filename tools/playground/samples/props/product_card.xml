@@ -1,0 +1,11 @@
+<templates>
+  <t t-name="example.ProductCard">
+    <div class="product-card">
+      <span class="product-image" t-out="this.props.image or '📦'"/>
+      <div class="product-info">
+        <span class="product-name" t-out="this.props.name"/>
+        <span class="product-price">$<t t-out="this.props.price.toFixed(2)"/></span>
+      </div>
+    </div>
+  </t>
+</templates>

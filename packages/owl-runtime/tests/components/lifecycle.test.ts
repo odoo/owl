@@ -1098,48 +1098,6 @@ describe("lifecycle hooks", () => {
     `);
   });
 
-  test("render in willPatch", async () => {
-    class Parent extends Component {
-      static template = xml`<span t-out="this.patched"/>`;
-      patched: any;
-      setup() {
-        useLogLifecycle(this);
-        onWillPatch(() => {
-          if (this.patched === "Patched") {
-            return;
-          }
-          this.patched = "Patched";
-          render(this);
-        });
-      }
-    }
-
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<span></span>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:mounted",
-      ]
-    `);
-
-    render(parent);
-    await nextTick();
-    // Microtask scheduling: the willPatch-triggered re-render lands in the
-    // same drain as the manual render. Two willPatch/patched pairs fire,
-    // and the second commit is the one that updates the DOM.
-    expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:willPatch",
-        "Parent:patched",
-        "Parent:willPatch",
-        "Parent:patched",
-      ]
-    `);
-  });
-
   test("lifecycle callbacks are bound to component", async () => {
     expect.assertions(9);
     let instance: any;

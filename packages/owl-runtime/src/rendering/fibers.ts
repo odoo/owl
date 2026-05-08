@@ -22,13 +22,8 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
-    let root = current.root!;
-    // lock root fiber because canceling children fibers may destroy components,
-    // which means any arbitrary code can be run in onWillDestroy, which may
-    // trigger new renderings
-    root.locked = true;
+    const root = current.root!;
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
-    root.locked = false;
     current.children = [];
     current.childrenMap = {};
     current.bdom = null;
@@ -136,6 +131,13 @@ export class Fiber {
     // via makeChildFiber on each <Child/> it encounters.
     const previousChildren = node.children;
     try {
+      // Sentinel-then-result: cancelFibers treats fibers with a truthy bdom
+      // as "render attempted" (count as rendered, set forceNextRender) and
+      // fibers with bdom=null as "never started" (decrement the root
+      // counter). Setting the marker first means a renderFn that throws
+      // still leaves the fiber as render-attempted, so a follow-up re-render
+      // triggered from an error handler doesn't double-decrement the root
+      // counter and trip a premature commit.
       (this.bdom as any) = true;
       this.bdom = node.renderFn();
     } catch (e) {
@@ -198,13 +200,9 @@ export class RootFiber extends Fiber {
   willPatch: Fiber[] = [];
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
-  // A fiber is typically locked when it is completing and the patch has not, or is being applied.
-  // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
-  locked: boolean = false;
 
   complete() {
     const node = this.node;
-    this.locked = true;
     let current: Fiber | undefined = undefined;
     let mountedFibers = this.mounted;
     try {
@@ -225,7 +223,6 @@ export class RootFiber extends Fiber {
 
       // Step 2: patching the dom
       node._patch();
-      this.locked = false;
 
       // Step 4: calling all mounted lifecycle hooks
       while ((current = mountedFibers.pop())) {
@@ -257,7 +254,6 @@ export class RootFiber extends Fiber {
       for (let fiber of mountedFibers) {
         fiber.node.willUnmount = [];
       }
-      this.locked = false;
       handleError({ fiber: current || this, error: e });
     }
   }

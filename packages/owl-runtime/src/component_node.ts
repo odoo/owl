@@ -158,12 +158,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     if (this.status >= STATUS.CANCELLED) {
       return;
     }
-    let current = this.fiber;
-    if (current && (current.root!.locked || (current as any).bdom === true)) {
-      await Promise.resolve();
-      // situation may have changed after the microtask tick
-      current = this.fiber;
-    }
+    const current = this.fiber;
     if (current) {
       if (!current.bdom && !fibersInError.has(current)) {
         if (deep) {

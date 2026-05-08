@@ -25,7 +25,7 @@ export class Scheduler {
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
-    this.processTasks = this.processTasks.bind(this);
+    // this.processTasks = this.processTasks.bind(this);
   }
 
   addFiber(fiber: Fiber) {
@@ -35,7 +35,7 @@ export class Scheduler {
   scheduleDestroy(node: ComponentNode) {
     this.cancelledNodes.add(node);
     if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+      this.frame = this.requestAnimationFrame(() => this.processTasks());
     }
   }
 
@@ -55,7 +55,7 @@ export class Scheduler {
     }
 
     if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+      this.frame = this.requestAnimationFrame(() => this.processTasks());
     }
   }
 

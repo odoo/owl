@@ -1,4 +1,4 @@
-import { effect, proxy, signal, untrack } from "../src";
+import { computed, effect, proxy, signal, untrack } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -253,6 +253,36 @@ describe("effect", () => {
       b.set(20);
       await waitScheduler();
       expectSpy(spyA, 1, { args: [10] });
+    });
+
+    test("a thrown computed does not leak currentComputation to subsequent child effects", () => {
+      // updateComputation must restore `currentComputation` even when
+      // `compute()` throws. If it doesn't, any effect created after the throw
+      // — at "top level" or inside a parent effect that caught it — attaches
+      // itself as a child of the failed computation (because effect()'s
+      // constructor does `getCurrentComputation()?.observers.add(...)`).
+      //
+      // Concretely: when the outer effect below is disposed, the inner
+      // effect's cleanup must run. Without the try/finally restore, the inner
+      // effect is parented to `willThrow` instead of `outer`, so
+      // unsubscribeEffect(outer) never reaches it and the cleanup is lost.
+      const willThrow = computed(() => {
+        throw new Error("boom");
+      });
+      const cleanupInner = vi.fn();
+
+      const disposeOuter = effect(() => {
+        try {
+          willThrow();
+        } catch {
+          // expected
+        }
+        effect(() => cleanupInner);
+      });
+
+      expect(cleanupInner).toHaveBeenCalledTimes(0);
+      disposeOuter();
+      expect(cleanupInner).toHaveBeenCalledTimes(1);
     });
 
     test("should be able to unsubscribe", async () => {

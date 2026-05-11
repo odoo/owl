@@ -115,12 +115,12 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
-  try {
+  // try {
     computation.value = computation.compute();
     computation.state = ComputationState.EXECUTED;
-  } finally {
+  // } finally {
     currentComputation = previousComputation;
-  }
+  // }
 }
 
 export function removeSources(computation: ComputationAtom) {

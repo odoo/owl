@@ -442,6 +442,51 @@ describe("nested computed", () => {
     expect(log[0]).toBe("trigger effect");
     expect(log.slice(1).sort()).toEqual(["compute lastValue", "compute uppercase"]);
   });
+
+  // TODO: a computed that throws should cache the error, so subsequent reads
+  // re-throw without re-running compute() until a source invalidates. Today,
+  // computation.state stays at STALE after a throw, so each read re-evaluates
+  // (and re-throws). Marked `test.fails` until error caching lands — it will
+  // start failing (signaling success) once the caching is implemented.
+  // Sketch of the fix (~10 lines):
+  //   - add `error: unknown` to ComputationAtom
+  //   - updateComputation: try { compute(); error = undefined } catch (e) {
+  //     error = e; throw } finally { state = EXECUTED; currentComputation = … }
+  //   - readComputed: call onReadAtom BEFORE updateComputation (so the reader
+  //     stays subscribed if compute throws), then `if (error !== undefined)
+  //     throw error` after the update.
+  test.fails(
+    "a computed that throws is evaluated exactly once until a source changes",
+    async () => {
+      const list = signal(["a"]);
+      const lastValueSpy = vi.fn(() => list().at(-1));
+      const lastValue = computed(lastValueSpy);
+      const uppercaseSpy = vi.fn(() => lastValue()!.toUpperCase());
+      const uppercase = computed(uppercaseSpy);
+      effect(() => {
+        try {
+          uppercase();
+        } catch {
+          // swallow so the unhandled rejection doesn't fail the test
+        }
+      });
+      expect(uppercaseSpy).toHaveBeenCalledTimes(1);
+
+      list.set([]);
+      await waitScheduler();
+      // one re-evaluation triggered by the signal change; the computed threw
+      expect(uppercaseSpy).toHaveBeenCalledTimes(2);
+
+      // No further invalidation — reading the broken computed should re-throw
+      // the cached error without running compute() again.
+      try {
+        uppercase();
+      } catch {
+        // expected: re-throws cached error
+      }
+      expect(uppercaseSpy).toHaveBeenCalledTimes(2);
+    }
+  );
 });
 
 describe("writable computed", () => {

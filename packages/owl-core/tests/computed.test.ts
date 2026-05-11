@@ -1,5 +1,5 @@
 import { vi, type Mock } from "vitest";
-import { proxy, computed, signal } from "../src";
+import { proxy, computed, effect, signal } from "../src";
 import {
   atomSymbol,
   ComputationAtom,
@@ -191,7 +191,7 @@ test("computed should not subscribe to change if no effect is using it", async (
   expectSpy(d.spy, 2, { result: 2 });
 });
 
-test("computed should not be recomputed when called from effect if none of its source changed", async () => {
+test("computed re-evaluates when its source changes even if its value is unchanged", async () => {
   const state = proxy({ a: 1 });
   const d = spyComputed(() => state.a * 0);
   expect(d.spy).not.toHaveBeenCalled();
@@ -203,9 +203,10 @@ test("computed should not be recomputed when called from effect if none of its s
   expectSpy(d.spy, 1, { result: 0 });
   state.a = 2;
   await waitScheduler();
-  // effect should not rerun because computed value didn't change (still 0)
-  expectSpy(e.spy, 1);
-  // but computed getter was re-evaluated (source changed)
+  // effect re-runs unconditionally (see "Evaluation order" in reactivity.md);
+  // the computed re-evaluates because its source changed, even though its
+  // value remains 0.
+  expectSpy(e.spy, 2);
   expectSpy(d.spy, 2, { result: 0 });
 });
 
@@ -334,18 +335,22 @@ describe("nested computed", () => {
     expectSpy(d2.spy, 2, { result: 10 });
   });
 
-  test("nested computed should not recompute if none of its sources changed", async () => {
+  test("derived skip stops propagation between computeds, but effects still re-run", async () => {
     /**
      *   s1
      *    ↓
-     *   d1 = s1 * 0
+     *   d1 = s1
      *    ↓
-     *   d2 = d1
+     *   d2 = d1 * 0      // collapses to 0 for any d1
      *    ↓
-     *   e1
+     *   e
      *
-     * change s1
-     * -> d1 should recomputes but d2 should not
+     * change s1:
+     *  - d1 recomputes with a new value
+     *  - d2 recomputes but Object.is(prev, next) is true, so it would not
+     *    propagate to any downstream *computed* depending on it
+     *  - e re-runs unconditionally because effects are pulled, not pushed
+     *    (see doc/v3/owl/reference/reactivity.md → "Evaluation order")
      */
     const state = proxy({ a: 1 });
     const d1 = spyComputed(() => state.a);
@@ -357,10 +362,8 @@ describe("nested computed", () => {
     expectSpy(d2.spy, 1, { result: 0 });
     state.a = 3;
     await waitScheduler();
-    // effect should not rerun because d2's value didn't change (still 0)
-    expectSpy(e.spy, 1);
+    expectSpy(e.spy, 2);
     expectSpy(d1.spy, 2, { result: 3 });
-    // d2 recomputes because its source d1 changed, but its value is still 0
     expectSpy(d2.spy, 2, { result: 0 });
   });
 
@@ -409,6 +412,35 @@ describe("nested computed", () => {
     expectSpy(d2.spy, 2, { result: 3 });
     expectSpy(d3.spy, 2, { result: 4 });
     expectSpy(d4.spy, 2, { result: 7 });
+  });
+
+  test("on update, the effect body runs before any computed in the chain", async () => {
+    const list = signal(["a"]);
+    const log: string[] = [];
+    const lastValue = computed(() => {
+      log.push("compute lastValue");
+      return list().at(-1);
+    });
+    const uppercase = computed(() => {
+      log.push("compute uppercase");
+      return lastValue()!.toUpperCase();
+    });
+    effect(() => {
+      log.push("trigger effect");
+      uppercase();
+    });
+    // mount: getter calls are nested outer→inner
+    expect(log).toEqual(["trigger effect", "compute uppercase", "compute lastValue"]);
+    log.length = 0;
+
+    list.set(["b"]);
+    await waitScheduler();
+    // update: effect body still runs first; the inner chain pulls bottom→top
+    // through updateComputation's eager-source loop. Order of the two compute
+    // lines is an internal detail of the chain — only the effect-first
+    // invariant matters.
+    expect(log[0]).toBe("trigger effect");
+    expect(log.slice(1).sort()).toEqual(["compute lastValue", "compute uppercase"]);
   });
 });
 

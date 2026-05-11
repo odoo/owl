@@ -92,18 +92,22 @@ export function updateComputation(computation: ComputationAtom) {
     return;
   }
   if (state === ComputationState.PENDING) {
-    for (const source of computation.sources) {
-      if (!("compute" in source)) {
-        continue;
+    if (computation.isDerived) {
+      for (const source of computation.sources) {
+        if (!("compute" in source)) {
+          continue;
+        }
+        updateComputation(source as ComputationAtom);
       }
-      updateComputation(source as ComputationAtom);
-    }
-    // If the state is still not stale after processing the sources, it means
-    // none of the dependencies have changed.
-    // todo: test it
-    if (computation.state !== ComputationState.STALE) {
-      computation.state = ComputationState.EXECUTED;
-      return;
+      // If the state is still not stale after processing the sources, it means
+      // none of the dependencies have changed.
+      // todo: test it
+      if (computation.state !== ComputationState.STALE) {
+        computation.state = ComputationState.EXECUTED;
+        return;
+      }
+    } else {
+      computation.state = ComputationState.STALE;
     }
   }
   // todo: test performance. We might want to avoid removing the atoms to
@@ -111,9 +115,12 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
-  computation.value = computation.compute();
-  computation.state = ComputationState.EXECUTED;
-  currentComputation = previousComputation;
+  try {
+    computation.value = computation.compute();
+    computation.state = ComputationState.EXECUTED;
+  } finally {
+    currentComputation = previousComputation;
+  }
 }
 
 export function removeSources(computation: ComputationAtom) {
@@ -152,10 +159,11 @@ function markDownstream(computation: ComputationAtom) {
       if (observer.state) {
         continue;
       }
-      observer.state = ComputationState.PENDING;
       if (observer.isDerived) {
+        observer.state = ComputationState.PENDING;
         stack.push(observer);
       } else {
+        observer.state = ComputationState.STALE;
         observers.push(observer);
       }
     }

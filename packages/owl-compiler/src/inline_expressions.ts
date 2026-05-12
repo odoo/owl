@@ -269,12 +269,24 @@ interface ProcessedExpr {
  * Processes a javascript expression: compiles variable lookups and detects
  * top-level arrow functions with their free variables, all in a single pass.
  */
-export function processExpr(expr: string): ProcessedExpr {
-  const localVars = new Set<string>();
+export function processExpr(expr: string, seededLocals?: Set<string>): ProcessedExpr {
+  // scope entries carry the stack depth at which they were created
+  const scopeStack: { vars: Set<string>; depth: number }[] = [];
+
+  // Seed outer locals
+  // depth: -Infinity so this scope never gets popped
+  if (seededLocals?.size) {
+    scopeStack.push({ vars: seededLocals, depth: -Infinity });
+  }
+
   const tokens = tokenize(expr);
   let i = 0;
   let stack = []; // to track last opening (, [ or {
   let topLevelArrowIndex = -1;
+
+  function isLocal(name: string) {
+    return scopeStack.some((s) => s.vars.has(name));
+  }
 
   while (i < tokens.length) {
     let token = tokens[i];
@@ -292,6 +304,14 @@ export function processExpr(expr: string): ProcessedExpr {
       case "RIGHT_BRACKET":
       case "RIGHT_PAREN":
         stack.pop();
+        // Pop arrow scopes whose body has ended (stack dropped below creation depth)
+        while (
+          scopeStack.length > 0 &&
+          stack.length < scopeStack[scopeStack.length - 1].depth
+        ) {
+          scopeStack.pop();
+        }
+        break;
     }
 
     let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
@@ -316,10 +336,17 @@ export function processExpr(expr: string): ProcessedExpr {
         }
       }
     }
+
     if (token.type === "TEMPLATE_STRING") {
-      token.value = token.replace!((expr: any) => compileExpr(expr));
+      const currentLocals = new Set<string>();
+      for (const scope of scopeStack) {
+        for (const v of scope.vars) currentLocals.add(v);
+      }
+      token.value = token.replace!((expr: any) => compileExpr(expr, currentLocals));
     }
+
     if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
+      const newScope = new Set<string>();
       if (stack.length === 0) {
         topLevelArrowIndex = i + 1;
       }
@@ -327,34 +354,33 @@ export function processExpr(expr: string): ProcessedExpr {
         let j = i - 1;
         while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
           if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
-            tokens[j].value = tokens[j].originalValue!;
-            localVars.add(tokens[j].value);
+            newScope.add(tokens[j].originalValue!);
+            tokens[j].value = `_${tokens[j].originalValue}`;
+            tokens[j].isLocal = true;
           }
           j--;
         }
       } else {
-        localVars.add(token.value);
+        // Single param without parens (e => ...): token.value is still the
+        // raw identifier here, before the isVar block below transforms it.
+        // The isVar block will then see isLocal=true and prefix with _.
+        newScope.add(token.value);
       }
+      // record current stack depth so we know when this scope expires
+      scopeStack.push({ vars: newScope, depth: stack.length });
     }
 
     if (isVar) {
       token.varName = token.value;
-      if (!localVars.has(token.value)) {
+      if (!isLocal(token.value)) {
         token.originalValue = token.value;
         token.value = `ctx['${token.value}']`;
+      } else {
+        token.value = `_${token.value}`;
+        token.isLocal = true;
       }
     }
     i++;
-  }
-
-  // Mark all variables that have been used locally.
-  // This assumes the expression has only one scope (incorrect but "good enough for now")
-  for (const token of tokens) {
-    if (token.type === "SYMBOL" && token.varName && localVars.has(token.value)) {
-      token.originalValue = token.value;
-      token.value = `_${token.value}`;
-      token.isLocal = true;
-    }
   }
 
   // Collect free variables from arrow function body
@@ -375,8 +401,8 @@ export function processExpr(expr: string): ProcessedExpr {
   return { expr: compiled, freeVariables };
 }
 
-export function compileExpr(expr: string): string {
-  return processExpr(expr).expr;
+export function compileExpr(expr: string,  seededLocals?: Set<string>): string {
+  return processExpr(expr, seededLocals).expr;
 }
 
 export const INTERP_REGEXP = /\{\{.*?\}\}|\#\{.*?\}/g;

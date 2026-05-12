@@ -178,6 +178,7 @@ describe("expression evaluation", () => {
     expect(compileExpr("(ev) => { myFunc(v1, v2, ev.target.value); }")).toBe(
       "(_ev)=>{ctx['myFunc'](ctx['v1'],ctx['v2'],_ev.target.value);}"
     );
+    expect(compileExpr("list.map((e) => ({a: e,b:(e),c:d,d:e}))")).toBe("ctx['list'].map((_e)=>({a:_e,b:(_e),c:ctx['d'],d:_e}))")
   });
   test("processExpr: free variables detection", () => {
     const freeVars = (expr: string) => processExpr(expr).freeVariables;
@@ -193,8 +194,7 @@ describe("expression evaluation", () => {
     expect(freeVars("this.doSomething(item)")).toBeNull();
   });
 
-  test.skip("arrow functions: not yet supported", () => {
-    // e is added to localvars in inline_expression but not removed after the arrow func body
+  test("arrow functions: not yet supported", () => {
     expect(compileExpr("(e => e)(e)")).toBe("(_e=>_e)(ctx['e'])");
   });
 
@@ -225,6 +225,9 @@ describe("expression evaluation", () => {
     expect(compileExpr("`hey`")).toBe("`hey`");
     expect(compileExpr("`hey ${you}`")).toBe("`hey ${ctx['you']}`");
     expect(compileExpr("`hey ${1 + 2}`")).toBe("`hey ${1+2}`");
+    expect(compileExpr("`${e.target.name}`")).toBe("`${ctx['e'].target.name}`"),
+    expect(compileExpr("(e) => `${e.target.name}`")).toBe("(_e)=>`${_e.target.name}`")
+    expect(compileExpr("items.map(x => `${x.label}: ${title}`)")).toBe("ctx['items'].map(_x=>`${_x.label}: ${ctx['title']}`)")
   });
 
   test("works with short object description and lists ", () => {

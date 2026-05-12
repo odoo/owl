@@ -1,4 +1,4 @@
-import { effect, proxy, signal, untrack } from "../src";
+import { computed, effect, proxy, signal, untrack } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -63,6 +63,43 @@ describe("effect", () => {
     state.a = 2;
     await waitScheduler();
     expectSpy(spy, 2, { args: [2] });
+  });
+
+  test("an effect that throws during flush is not re-run on a follow-up microtask", async () => {
+    // Reproduces the playground scenario: list.set([]) makes the chain throw.
+    // Before processEffects swapped the queue with a fresh array up-front, the
+    // throw exited the for-loop before `observers.length = 0` could run, so
+    // the queue still held [effect]. A re-entrant batchProcessEffects() from
+    // lastValue's onWriteAtom then scheduled a second microtask that
+    // re-processed the same effect.
+    //
+    // The throw propagates through batched()'s .then() chain as an unhandled
+    // rejection. We use a named error class so vitest.config.ts'
+    // `onUnhandledError` callback can filter just this error rather than
+    // silencing every unhandled error in the suite.
+    class IntentionalTestError extends Error {
+      override name = "IntentionalTestError";
+    }
+    const list = signal(["a"]);
+    const lastValue = computed(() => list().at(-1));
+    const uppercase = computed(() => {
+      const v = lastValue();
+      if (v === undefined) throw new IntentionalTestError("undefined value");
+      return v.toUpperCase();
+    });
+
+    let runs = 0;
+    effect(() => {
+      runs++;
+      uppercase();
+    });
+    expect(runs).toBe(1);
+
+    list.set([]);
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+    // Pre-fix: runs = 3 (initial + signal-driven re-run + bug-driven re-run).
+    // Post-fix: runs = 2.
+    expect(runs).toBe(2);
   });
 
   test("effects, signals, stuff", async () => {

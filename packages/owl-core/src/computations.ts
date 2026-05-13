@@ -93,22 +93,26 @@ export function updateComputation(computation: ComputationAtom) {
     return;
   }
   if (state === ComputationState.PENDING) {
-    if (computation.isDerived) {
-      for (const source of computation.sources) {
-        if (!("compute" in source)) {
-          continue;
-        }
-        updateComputation(source as ComputationAtom);
+    for (const source of computation.sources) {
+      if (!("compute" in source)) {
+        continue;
       }
-      // If the state is still not stale after processing the sources, it means
-      // none of the dependencies have changed.
-      // todo: test it
-      if (computation.state !== ComputationState.STALE) {
-        computation.state = ComputationState.EXECUTED;
-        return;
+      updateComputation(source as ComputationAtom);
+      // As soon as a source's recompute has marked us STALE (via onWriteAtom),
+      // we already know this computation must re-run. Stop probing the rest of
+      // the sources: any work they'd do is redundant, and worse, evaluating
+      // them eagerly can surface errors from values the about-to-run body will
+      // not actually read (e.g. an `if (lastValue()) uppercase()` guard whose
+      // upstream signal just went falsy).
+      if (computation.state === ComputationState.STALE) {
+        break;
       }
-    } else {
-      computation.state = ComputationState.STALE;
+    }
+    // If the state is still not stale after processing the sources, none of
+    // the dependencies have actually changed.
+    if (computation.state !== ComputationState.STALE) {
+      computation.state = ComputationState.EXECUTED;
+      return;
     }
   }
   // todo: test performance. We might want to avoid removing the atoms to
@@ -116,12 +120,9 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
-  try {
-    computation.value = computation.compute();
-    computation.state = ComputationState.EXECUTED;
-  } finally {
-    currentComputation = previousComputation;
-  }
+  computation.value = computation.compute();
+  computation.state = ComputationState.EXECUTED;
+  currentComputation = previousComputation;
 }
 
 export function removeSources(computation: ComputationAtom) {
@@ -160,11 +161,10 @@ function markDownstream(computation: ComputationAtom) {
       if (observer.state) {
         continue;
       }
+      observer.state = ComputationState.PENDING;
       if (observer.isDerived) {
-        observer.state = ComputationState.PENDING;
         stack.push(observer);
       } else {
-        observer.state = ComputationState.STALE;
         observers.push(observer);
       }
     }

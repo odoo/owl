@@ -480,34 +480,3 @@ a.set(10);
 b.set(20);
 // only one re-run after the microtask — logs 30, not 12 then 30
 ```
-
-### Evaluation order
-
-When a signal is written, every dependent effect is queued for the next
-microtask. Each effect runs its body **first**; computed values are pulled
-lazily as the effect reads them — the same path used on the initial run.
-
-```js
-const s = signal(1);
-const d = computed(() => {
-  console.log("compute d");
-  return s() * 2;
-});
-effect(() => {
-  console.log("trigger effect");
-  d();
-});
-// initial logs:  "trigger effect", "compute d"
-
-s.set(2);
-await Promise.resolve();
-// update logs:   "trigger effect", "compute d"
-```
-
-Computed values still memoize. If a computed re-evaluates to a value equal
-(by `Object.is`) to its previous value, downstream **computeds** that depend
-on it skip recomputation. **Effects, however, re-run unconditionally** when
-any of their transitive signal sources are written — even if every
-intermediate computed collapses to an unchanged value. This keeps the order
-above (effect first, computeds pulled on demand) and avoids re-evaluating
-computeds the effect no longer reads (e.g. behind a conditional branch).

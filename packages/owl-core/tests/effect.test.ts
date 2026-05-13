@@ -66,12 +66,10 @@ describe("effect", () => {
   });
 
   test("an effect that throws during flush is not re-run on a follow-up microtask", async () => {
-    // Reproduces the playground scenario: list.set([]) makes the chain throw.
-    // Before processEffects swapped the queue with a fresh array up-front, the
-    // throw exited the for-loop before `observers.length = 0` could run, so
-    // the queue still held [effect]. A re-entrant batchProcessEffects() from
-    // lastValue's onWriteAtom then scheduled a second microtask that
-    // re-processed the same effect.
+    // The effect's body has no guard, so its only source is `uppercase`.
+    // When list goes to [], the eager source walk in updateComputation
+    // recomputes `uppercase` (its single source changed), which throws
+    // before the effect body runs — so `runs` stays at 1.
     //
     // The throw propagates through batched()'s .then() chain as an unhandled
     // rejection. We use a named error class so vitest.config.ts'
@@ -97,9 +95,49 @@ describe("effect", () => {
 
     list.set([]);
     for (let i = 0; i < 5; i++) await Promise.resolve();
-    // Pre-fix: runs = 3 (initial + signal-driven re-run + bug-driven re-run).
-    // Post-fix: runs = 2.
-    expect(runs).toBe(2);
+    // The eager source walk throws inside uppercase.compute(); the effect
+    // body never runs, so the counter stays at the initial 1. The earlier
+    // bug (queue not cleared on throw) would have produced 3.
+    expect(runs).toBe(1);
+  });
+
+  test("eager source walk short-circuits once we know we have to re-run", async () => {
+    // The effect has both lastValue (a guard) and uppercase (only read when
+    // the guard passes) as sources. When list goes to [], lastValue is
+    // recomputed first and propagates STALE to the effect; the walk stops
+    // there instead of forcing uppercase — which would crash on undefined.
+    // The body then re-runs, sees the guard is false, and never touches
+    // uppercase.
+    const list = signal(["a"]);
+    let lastValueRuns = 0;
+    let uppercaseRuns = 0;
+    const lastValue = computed(() => {
+      lastValueRuns++;
+      return list().at(-1);
+    });
+    const uppercase = computed(() => {
+      uppercaseRuns++;
+      return lastValue()!.toUpperCase();
+    });
+
+    let effectRuns = 0;
+    effect(() => {
+      effectRuns++;
+      if (lastValue()) {
+        uppercase();
+      }
+    });
+    expect(effectRuns).toBe(1);
+    expect(lastValueRuns).toBe(1);
+    expect(uppercaseRuns).toBe(1);
+
+    list.set([]);
+    await waitScheduler();
+    expect(effectRuns).toBe(2);
+    expect(lastValueRuns).toBe(2);
+    // uppercase was NOT eagerly probed; the walk short-circuited after
+    // lastValue's change marked the effect STALE.
+    expect(uppercaseRuns).toBe(1);
   });
 
   test("effects, signals, stuff", async () => {

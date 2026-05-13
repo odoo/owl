@@ -209,6 +209,36 @@ test("computed should not be recomputed when called from effect if none of its s
   expectSpy(d.spy, 2, { result: 0 });
 });
 
+describe("throwing compute", () => {
+  test("currentComputation is restored after a thrown compute()", () => {
+    // updateComputation sets currentComputation before invoking compute().
+    // If compute() throws and we don't restore currentComputation in a
+    // finally, the tracking pointer is left dangling at the failed
+    // computation. The next atom read would then silently attach itself as
+    // a source of the broken computation, corrupting the dependency graph.
+    class TestError extends Error {
+      override name = "TestError";
+    }
+    const broken = computed(() => {
+      throw new TestError("compute failed");
+    });
+    const brokenAtom = (broken as any)[atomSymbol] as ComputationAtom;
+
+    expect(() => broken()).toThrow(TestError);
+    expect(brokenAtom.sources.size).toBe(0);
+
+    // Read another signal from a non-tracking context. Without the
+    // try/finally in updateComputation, currentComputation would still
+    // point at `broken` here, and this read would wire `witness` as a
+    // source of `broken`.
+    const witness = signal(42);
+    witness();
+    const witnessAtom = (witness as any)[atomSymbol] as ComputationAtom;
+    expect(witnessAtom.observers.size).toBe(0);
+    expect(brokenAtom.sources.size).toBe(0);
+  });
+});
+
 describe("unsubscription", () => {
   test("computed shoud unsubscribes from dependencies when effect is unsubscribed", async () => {
     function computedWithDerived<T>(fn: () => T): SpyComputed<T> & { atom: ComputationAtom } {

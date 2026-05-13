@@ -120,9 +120,15 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
-  computation.value = computation.compute();
-  computation.state = ComputationState.EXECUTED;
-  currentComputation = previousComputation;
+  try {
+    computation.value = computation.compute();
+    computation.state = ComputationState.EXECUTED;
+  } finally {
+    // Restore the previous tracking pointer even if compute() threw, so a
+    // subsequent atom read does not silently attach itself as a source of
+    // the failed computation.
+    currentComputation = previousComputation;
+  }
 }
 
 export function removeSources(computation: ComputationAtom) {

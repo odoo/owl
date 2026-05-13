@@ -433,5 +433,9 @@ test("components mounted by plugin", async () => {
   }
 
   await mount(R, fixture, { plugins: [P] });
-  expect(fixture.innerHTML).toBe("defabc");
+  // R is mounted synchronously by the outer mount() call; R2's mount, kicked
+  // off inside P.setup() while the plugin manager is still starting up, waits
+  // for `pluginManager.ready` before instantiating its node — so it ends up
+  // appended after R in the shared fixture.
+  expect(fixture.innerHTML).toBe("abcdef");
 });

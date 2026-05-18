@@ -187,6 +187,36 @@ describe("basics", () => {
     expect(getCurrentComputation()).toBeUndefined();
   });
 
+  test("currentComputation does not leak when a willStart promise rejects after await", async () => {
+    // initiateRender captures the parent's signalComputation as `prev` before
+    // running willStart. If the willStart promise rejects post-await, the
+    // catch must NOT restore currentComputation to `prev` — by then we are in
+    // a fresh microtask and `prev` is stale; pinning currentComputation to it
+    // leaks the parent signalComputation forever.
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        onWillStart(async () => {
+          await Promise.resolve();
+          throw new Error("boom");
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(getCurrentComputation()).toBeUndefined();
+  });
+
   test("display a nice error if the root component template fails to compile", async () => {
     // This is a special case: mount throws synchronously and we don't have any
     // node which can handle the error, hence the different structure of this test

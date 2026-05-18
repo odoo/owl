@@ -109,7 +109,10 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       setComputation(prev);
       await Promise.all(promises!);
     } catch (e) {
-      setComputation(prev);
+      // Do NOT setComputation(prev) here: we are in a fresh microtask
+      // post-await, and `prev` is a snapshot from a sync chunk that ended
+      // long ago. Pinning currentComputation to it would leak the captured
+      // (possibly already-dead) parent signalComputation forever.
       if (isAbortError(e) && this.status > STATUS.MOUNTED) {
         return;
       }

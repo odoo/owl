@@ -233,4 +233,56 @@ describe("refs", () => {
     await nextTick();
     expect(ids()).toEqual(["item-0", "item-2", "item-1"]);
   });
+
+  test("ref shared between t-if and t-else, plain", async () => {
+    class Root extends Component {
+      static template = xml`
+        <t t-if="this.cond()">
+          <div class="ifbranch" t-ref="this.ref"/>
+        </t>
+        <t t-else="">
+          <div class="elsebranch" t-ref="this.ref"/>
+        </t>`;
+      ref = signal<HTMLElement | null>(null);
+      cond = signal(false);
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.ref()).toBe(fixture.querySelector(".elsebranch"));
+
+    root.cond.set(true);
+    await nextTick();
+    expect(root.ref()).toBe(fixture.querySelector(".ifbranch"));
+  });
+
+  test("ref shared between t-if and t-else, t-else has a slotted component", async () => {
+    class SlotCp extends Component {
+      static template = xml`<t t-call-slot="default"/>`;
+    }
+    class Root extends Component {
+      static components = { SlotCp };
+      static template = xml`
+        <t t-if="this.cond()">
+          <div class="ifbranch" t-ref="this.ref"/>
+        </t>
+        <t t-else="">
+          <SlotCp>
+            <div class="elsebranch" t-ref="this.ref"/>
+          </SlotCp>
+        </t>`;
+      ref = signal<HTMLElement | null>(null);
+      cond = signal(false);
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.ref()).toBe(fixture.querySelector(".elsebranch"));
+
+    root.cond.set(true);
+    await nextTick();
+    expect(root.ref()).toBe(fixture.querySelector(".ifbranch"));
+
+    root.cond.set(false);
+    await nextTick();
+    expect(root.ref()).toBe(fixture.querySelector(".elsebranch"));
+  });
 });

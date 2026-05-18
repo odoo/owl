@@ -149,8 +149,9 @@ export class Fiber {
         this.bdom = node.renderFn();
       } catch (e) {
         handleError({ node, error: e });
+      } finally {
+        setComputation(c);
       }
-      setComputation(c);
       const newCounter = root.counter - 1;
       root.counter = newCounter;
       if (newCounter === 0) {

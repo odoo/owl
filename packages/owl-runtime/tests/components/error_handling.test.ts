@@ -10,7 +10,7 @@ import {
   proxy,
   xml,
 } from "../../src";
-import { useScope } from "@odoo/owl-core";
+import { getCurrentComputation, useScope } from "@odoo/owl-core";
 import {
   logStep,
   makeTestFixture,
@@ -156,6 +156,35 @@ describe("basics", () => {
     // As the throw unwinds through Parent and GrandParent renders, their
     // handleError frames must not wrap the error that is already propagating.
     expect(error!.cause).toBeUndefined();
+  });
+
+  test("currentComputation does not leak when an uncaught render error propagates", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
+      props = props();
+    }
+    class Parent extends Component {
+      static template = xml`<Child flag="this.state.flag"/>`;
+      static components = { Child };
+      state = { flag: false };
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(getCurrentComputation()).toBeUndefined();
+
+    parent.state.flag = true;
+    // The re-render of Child throws and, with no error boundary installed,
+    // handleError → app._handleError re-throws. Fiber.render() must still
+    // restore currentComputation; otherwise it stays pinned to Child's dead
+    // signalComputation and every subsequent atom read attaches to it.
+    let error: any;
+    try {
+      await render(parent);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(getCurrentComputation()).toBeUndefined();
   });
 
   test("display a nice error if the root component template fails to compile", async () => {

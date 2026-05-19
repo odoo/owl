@@ -86,6 +86,9 @@ export function props(type?: any, defaults?: any): Props<{}> {
     if (app.dev) {
       const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
       assertType(node.props, validation, `Invalid component props (${componentName})`);
+      if(defaults){
+        assertType(defaults, validation, `Invalid default props (${componentName})`);
+      }
       node.willUpdateProps.push((np: Record<string, any>) => {
         assertType(np, validation, `Invalid component props (${componentName})`);
       });

@@ -711,6 +711,21 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
+  test("default values should pass through prop validation", async () => {
+    let error: any;
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
+      props = props({ "p?": t.number() }, { p: "4" as any });
+    }
+    try {
+      await mount(SubComp, fixture, { dev: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toMatch("Invalid default props (SubComp)");
+  });
+
   test("mix of optional and mandatory", async () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;

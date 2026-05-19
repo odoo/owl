@@ -63,69 +63,6 @@ exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] 
 }"
 `;
 
-exports[`refs > ref shared between t-if and t-else, plain 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
-  
-  let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
-  let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].cond()) {
-      let ref1 = createRef(ctx['this'].ref);
-      b2 = block2([ref1]);
-    } else {
-      let ref2 = createRef(ctx['this'].ref);
-      b3 = block3([ref2]);
-    }
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`refs > ref shared between t-if and t-else, t-else has a slotted component 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`SlotCp\`, true, true, false, []);
-  
-  let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
-  let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
-  
-  function slot1(ctx, node, key = "") {
-    let ref2 = createRef(ctx['this'].ref);
-    return block3([ref2]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b2, b4;
-    if (ctx['this'].cond()) {
-      let ref1 = createRef(ctx['this'].ref);
-      b2 = block2([ref1]);
-    } else {
-      b4 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b4]);
-  }
-}"
-`;
-
-exports[`refs > ref shared between t-if and t-else, t-else has a slotted component 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'default', false, {});
-  }
-}"
-`;
-
 exports[`refs > refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -1,5 +1,4 @@
 import {
-  atomSymbol,
   computed,
   getCurrentComputation,
   markRaw,
@@ -159,16 +158,7 @@ function createRef(ref: any) {
     remove = ref.delete.bind(ref);
   } else if (ref.set) {
     add = ref.set.bind(ref);
-    // A sibling slot in the same patch may have already taken ownership of the
-    // signal (e.g. t-if/t-else swap with a shared ref). In that case the new
-    // element is mounted before this branch's remove runs, so only clear the
-    // ref if it still points to the element we're unbinding.
-    const atom = (ref as any)[atomSymbol];
-    remove = atom
-      ? (prevEl: HTMLElement) => {
-          if (atom.value === prevEl) ref.set(null);
-        }
-      : () => ref.set(null);
+    remove = () => ref.set(null);
   } else {
     throw new OwlError(
       `Ref should implement either a 'set' function or 'add' and 'delete' functions`

@@ -1225,6 +1225,39 @@ describe("qweb parser", () => {
     });
   });
 
+  test("component with event handler should not bind component event on default slot", async () => {
+    const ast = parse(`<MyComponent t-on-click="someMethod"><div/></MyComponent>`);
+    expect(ast).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      dynamicProps: null,
+      props: null,
+      propsTranslationCtx: null,
+      isDynamic: false,
+      on: {click: "someMethod"},
+      slots: {
+        default: {
+          content: {
+            type: ASTType.DomNode,
+            tag: "div",
+            dynamicTag: null,
+            attrs: null,
+            attrsTranslationCtx: null,
+            content: [],
+            ref: null,
+            model: null,
+            on: null,
+            ns: null,
+          },
+          attrs: null,
+          attrsTranslationCtx: null,
+          on: null,
+          scope: null,
+        },
+      }
+    })
+  })
+
   test("component with event handler", async () => {
     expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrow(
       "unsupported directive on Component: t-onclick"

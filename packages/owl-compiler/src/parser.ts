@@ -805,7 +805,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     if (defaultContent && !slots.default) {
       slots.default = {
         content: defaultContent,
-        on,
+        on: null,
         attrs: null,
         attrsTranslationCtx: null,
         scope: defaultSlotScope,

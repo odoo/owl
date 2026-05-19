@@ -183,3 +183,44 @@ exports[`event handling > t-on with handler bound to dynamic argument on a t-for
   }
 }"
 `;
+
+exports[`event handling > unnamed slot should call the event only once 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { markRaw, createComponent, createCatcher, callHandler } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
+  const catcher1 = createCatcher({"click":0});
+  
+  let block1 = createBlock(\`<div class="named"/>\`);
+  let block2 = createBlock(\`<div class="default unnamed"/>\`);
+  
+  function slot1(ctx, node, key = "") {
+    return block1();
+  }
+  
+  function slot2(ctx, node, key = "") {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = "") {
+    const hdlr1 = [hdlr_fn1, ctx];
+    return catcher1(comp1({slots: markRaw({'named': {__render: slot1.bind(this), __ctx: ctx}, 'default': {__render: slot2.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null), [hdlr1]);
+  }
+}"
+`;
+
+exports[`event handling > unnamed slot should call the event only once 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = callSlot(ctx, node, key, 'named', false, {});
+    const b3 = callSlot(ctx, node, key, 'default', false, {});
+    return multi([b2, b3]);
+  }
+}"
+`;

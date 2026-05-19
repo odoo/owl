@@ -191,4 +191,32 @@ describe("event handling", () => {
     iframeDoc.querySelector("span")!.click();
     expect(clickCount).toBe(1);
   });
+
+  test("unnamed slot should call the event only once", async () => {
+    let clickCount = 0;
+    class Child extends Component {
+      static template = xml`<t t-call-slot="named"/><t t-call-slot="default" />`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <Child t-on-click="this.inc">
+          <t t-set-slot="named">
+            <div class="named" />
+          </t>
+          <div class="default unnamed" />
+        </Child>
+      `;
+      inc(){
+        clickCount++;
+      }
+    }
+
+    await mount(Parent, fixture);
+    expect(clickCount).toBe(0);
+    (fixture.querySelector('.named') as HTMLDivElement).click();
+    expect(clickCount).toBe(1);
+    (fixture.querySelector('.unnamed') as HTMLDivElement).click();
+    expect(clickCount).toBe(2);
+  })
 });

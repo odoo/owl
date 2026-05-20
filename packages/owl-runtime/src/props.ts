@@ -4,26 +4,26 @@ import {
   KeyedObject,
   PrettifyShape,
   ResolveObjectType,
-  ValidationContext,
 } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 import { types } from "./types";
 
-function validateObjectWithDefaults(
-  schema: Record<string, any> | string[],
-  defaultValues: Record<string, any>
-) {
-  const keys: string[] = Array.isArray(schema) ? schema : Object.keys(schema);
-  const mandatoryDefaultedKeys = keys.filter((key) => !key.endsWith("?") && key in defaultValues);
-  return (context: ValidationContext) => {
-    if (mandatoryDefaultedKeys.length) {
-      context.addIssue({
-        message: "props have default values on mandatory keys",
-        keys: mandatoryDefaultedKeys,
-      });
+function validateDefaults(schema: Record<string, any> | string[]) {
+  const validation: Record<string, any> = {};
+  if (Array.isArray(schema)) {
+    for (const key of schema) {
+      if (key.endsWith("?")) {
+        validation[key] = types.any();
+      }
     }
-    context.validate(types.object(schema));
-  };
+  } else {
+    for (const key in schema) {
+      if (key.endsWith("?")) {
+        validation[key] = schema[key];
+      }
+    }
+  }
+  return types.strictObject(validation);
 }
 
 declare const isProps: unique symbol;
@@ -84,11 +84,12 @@ export function props(type?: any, defaults?: any): Props<{}> {
     applyPropGetters(keys);
 
     if (app.dev) {
-      const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
-      assertType(node.props, validation, `Invalid component props (${componentName})`);
-      if(defaults){
-        assertType(defaults, validation, `Invalid default props (${componentName})`);
+      if (defaults) {
+        assertType(defaults, validateDefaults(type), `Invalid component default props (${componentName})`);
       }
+
+      const validation = types.object(type);
+      assertType(node.props, validation, `Invalid component props (${componentName})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
         assertType(np, validation, `Invalid component props (${componentName})`);
       });

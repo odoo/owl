@@ -19,6 +19,25 @@ export interface ValidationContext {
   withKey(key: PropertyKey): ValidationContext;
 }
 
+function safeReplacer(knownObjects: any[], _key: string, value: any): any {
+  if (typeof value === "function") {
+    return value.name || "[Function]";
+  }
+  if (value && typeof value === "object") {
+    const ctor = value.constructor;
+    if (ctor && ctor !== Object && ctor !== Array) {
+      return `[Instance of ${ctor.name || "anonymous"}]`;
+    }
+
+    if (knownObjects.includes(value)) {
+      return `[Known object]`;
+    }
+    knownObjects.push(value);
+  }
+  return value;
+}
+
+
 export function assertType(
   value: any,
   validation: any,
@@ -26,16 +45,8 @@ export function assertType(
 ): void {
   const issues = validateType(value, validation);
   if (issues.length) {
-    const issueStrings = JSON.stringify(
-      issues,
-      (key, value) => {
-        if (typeof value === "function") {
-          return value.name;
-        }
-        return value;
-      },
-      2
-    );
+    const knownObjects: any[] = [];
+    const issueStrings = JSON.stringify(issues, safeReplacer.bind(null, knownObjects), 2);
     throw new OwlError(`${errorMessage}\n${issueStrings}`);
   }
 }

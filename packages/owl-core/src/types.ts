@@ -49,7 +49,7 @@ function numberType(): number {
 
 function stringType(): string {
   return function validateString(context: ValidationContext) {
-    if (typeof context.value !== "string") {
+    if (typeof context.value !== "string" && !(context.value instanceof String)) {
       context.addIssue({ message: "value is not a string" });
     }
   } as any;

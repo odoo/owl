@@ -749,3 +749,56 @@ test("complex type", () => {
     )
   ).toEqual([]);
 });
+
+test("assert wrong object and circular reference", () => {
+  const type = t.object({
+    str: t.string(),
+    circular: t.any(),
+  });
+
+  const circular = {
+    a: {} as any,
+  };
+  circular.a.circle = circular;
+  expect(() => {
+    assertType({ circular }, type);
+  }).toThrow(`Value does not match the type
+[
+  {
+    "received": {
+      "circular": {
+        "a": {
+          "circle": "[Known object]"
+        }
+      }
+    },
+    "path": [],
+    "message": "object value has missing keys",
+    "missingKeys": [
+      "str"
+    ],
+    "expectedKeys": [
+      "str",
+      "circular"
+    ]
+  }
+]`
+  );
+});
+
+test("assert class instance", () => {
+  class A {}
+  expect(() => {
+    assertType({ a: new A() }, t.object({ a: t.number() }));
+  }).toThrow(`Value does not match the type
+[
+  {
+    "received": "[Instance of A]",
+    "path": [
+      "a"
+    ],
+    "message": "value is not a number"
+  }
+]`
+  );
+});

@@ -82,6 +82,15 @@ function cancelFibers(fibers: Fiber[]): number {
       node.forceNextRender = true;
     } else {
       result++;
+      // The fiber has no bdom yet, but a mounted node still needs to be
+      // re-rendered: this fiber represents an in-progress update that was
+      // cancelled, which may have come from the node's own render() (whose
+      // makeRootFiber recycled the existing child fiber and reset its bdom
+      // to null). If the parent then skips the child because props are
+      // unchanged, the child's reactive update would be lost.
+      if (node.bdom) {
+        node.forceNextRender = true;
+      }
     }
     result += cancelFibers(fiber.children);
   }

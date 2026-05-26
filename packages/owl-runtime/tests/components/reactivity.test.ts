@@ -11,7 +11,14 @@ import {
   xml,
 } from "../../src";
 import { atomSymbol, Atom } from "@odoo/owl-core";
-import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import {
+  makeDeferred,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -267,6 +274,60 @@ describe("reactivity in lifecycle", () => {
     // Only child should be rendered: the parent never read the b key in proxyObj
     expect([parentRenderCount, childRenderCount]).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("34");
+  });
+
+  test("child re-renders when shared atom changes while parent has an in-flight fiber", async () => {
+    // Repro of a race condition: parent and child both observe atom `a`. After a
+    // parent-only update (via `b`) leaves a pending root fiber on the parent (and
+    // a corresponding child fiber from a prop update), a write to `a` queues both
+    // computations. When the child's computation runs first in processEffects,
+    // its render() recycles the existing child fiber and clears its bdom. Then
+    // the parent's render() cancels its children (including the child fiber),
+    // but with bdom now null, cancelFibers used to skip forceNextRender — so the
+    // parent then skipped the child as well (props unchanged), leaving the child
+    // visually stale and signalComputation.sources empty.
+    const a = signal(0);
+    const b = signal(0);
+    let childRenderCount = 0;
+    const secondRender = makeDeferred();
+
+    class Child extends Component {
+      static template = xml`<t t-set="_" t-value="this.notify()"/>child:bv=<t t-out="this.props.bv"/>:a=<t t-out="this.a()"/>`;
+      props = props();
+      a = a;
+      notify() {
+        childRenderCount++;
+        if (childRenderCount === 2) {
+          secondRender.resolve();
+        }
+      }
+    }
+
+    class Root extends Component {
+      static components = { Child };
+      // Child is rendered before parent reads `a`, so child.sc ends up first in
+      // a.observers — which is required for the bug to trigger.
+      static template = xml`<Child bv="this.b()"/>parent:a=<t t-out="this.a()"/>:b=<t t-out="this.b()"/>`;
+      a = a;
+      b = b;
+    }
+
+    await mount(Root, fixture);
+    expect(fixture.innerHTML).toBe("child:bv=0:a=0parent:a=0:b=0");
+    expect(childRenderCount).toBe(1);
+
+    // Trigger a parent-only re-render that updates the child's prop. Wait
+    // until the child's renderFn has actually run (notify() resolves the
+    // deferred on its second invocation) — but stop before requestAnimationFrame
+    // fires, so processTasks doesn't run and node.fiber stays set on both.
+    b.set(1);
+    await secondRender;
+    expect(childRenderCount).toBe(2);
+
+    a.set(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("child:bv=1:a=1parent:a=1:b=1");
+    expect(childRenderCount).toBe(3);
   });
 });
 

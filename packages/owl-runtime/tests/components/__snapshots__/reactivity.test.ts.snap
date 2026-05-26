@@ -310,6 +310,42 @@ exports[`reactivity in lifecycle > change state while mounting component 1`] = `
 }"
 `;
 
+exports[`reactivity in lifecycle > child re-renders when shared atom changes while parent has an in-flight fiber 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent, safeOutput } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["bv"]);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({bv: ctx['this'].b()}, key + \`__1\`, node, this, null);
+    const b3 = text(\`parent:a=\`);
+    const b4 = safeOutput(ctx['this'].a());
+    const b5 = text(\`:b=\`);
+    const b6 = safeOutput(ctx['this'].b());
+    return multi([b2, b3, b4, b5, b6]);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle > child re-renders when shared atom changes while parent has an in-flight fiber 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["_"] = ctx['this'].notify();
+    const b2 = text(\`child:bv=\`);
+    const b3 = safeOutput(ctx['this'].props.bv);
+    const b4 = text(\`:a=\`);
+    const b5 = safeOutput(ctx['this'].a());
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle > state changes in willUnmount do not trigger rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

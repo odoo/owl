@@ -441,6 +441,9 @@ test("string", () => {
   const issue = { message: "value is not a string" };
   expect(validateType("", t.string())).toEqual([]);
   expect(validateType("abc", t.string())).toEqual([]);
+  expect(validateType(new String("abc"), t.string())).toEqual([]);
+  class M extends String {}
+  expect(validateType(new M("abc"), t.string())).toEqual([]);
   expect(validateType(123, t.string())).toMatchObject([issue]);
   expect(validateType(987, t.string())).toMatchObject([issue]);
   expect(validateType(true, t.string())).toMatchObject([issue]);

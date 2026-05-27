@@ -508,7 +508,7 @@ templates), using the `t-call` directive:
 
 ```xml
 <div t-name="other-template">
-    <p><t t-value="var"/></p>
+    <p><t t-out="var"/></p>
 </div>
 
 <div t-name="main-template">
@@ -529,7 +529,7 @@ magic variable `0`:
 ```xml
 <t t-name="other-template">
     This template was called with content:
-    <t t-raw="0"/>
+    <t t-out="0"/>
 </t>
 
 <div t-name="main-template">

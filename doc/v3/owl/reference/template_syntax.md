@@ -506,19 +506,17 @@ templates), using the `t-call` directive:
 
 ```xml
 <div t-name="other-template">
-    <p><t t-value="var"/></p>
+    <p><t t-out="var"/></p>
 </div>
 
 <div t-name="main-template">
-    <t t-set="var" t-value="owl"/>
-    <t t-call="other-template"/>
+    <t t-call="other-template" var="'owl'"/>
 </div>
 ```
 
-will be rendered as `<div><p>owl</p></div>`. This example shows that the sub
-template is rendered with the execution context of the parent. The sub template
-is actually inlined in the main template, but in a sub scope: variables defined
-in the sub template do not escape.
+will be rendered as `<div><p>owl</p></div>`. Variables are passed as props
+directly on the `t-call` tag. They are scoped to the sub template and do not
+leak back into the parent context.
 
 Sometimes, one might want to pass information to the sub template. In that case,
 the content of the body of the `t-call` directive is available as a special
@@ -526,33 +524,26 @@ magic variable `0`:
 
 ```xml
 <t t-name="other-template">
-    This template was called with content:
+    This <t t-out="var"/> template was called with content:
     <t t-out="0"/>
 </t>
 
 <div t-name="main-template">
-    <t t-call="other-template">
+    <t t-call="other-template" var="'awesome'">
         <em>content</em>
+        <t t-out="var"/>
     </t>
 </div>
 ```
 
-will result in :
+will result in:
 
 ```xml
 <div>
-    This template was called with content:
+    This awesome template was called with content:
     <em>content</em>
+    <!-- 'awesome' will not appear here, it is not in the call body scope -->
 </div>
-```
-
-This can be used to define variables scoped to a sub template:
-
-```xml
-<t t-call="other-template">
-    <t t-set="var" t-value="1"/>
-</t>
-<!-- "var" does not exist here -->
 ```
 
 Note: by default, the rendering context for a sub template is simply the current

@@ -34,8 +34,11 @@ export function effect<T>(fn: () => T) {
     // Mark as executed so a queued re-run (scheduled by an earlier signal
     // write in the same microtick) is skipped by updateComputation.
     computation.state = ComputationState.EXECUTED;
-    // In case the cleanup read an atom.
-    // todo: test it
+    // Clear currentComputation across unsubscribeEffect so the user cleanup
+    // function's atom reads do not attach as sources of whatever computation
+    // happens to be active when dispose() is called. See test
+    // "dispose called inside another effect: cleanup's atom reads do not
+    // leak to outer".
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
     unsubscribeEffect(computation);

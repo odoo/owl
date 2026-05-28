@@ -143,18 +143,19 @@ export function removeSources(computation: ComputationAtom) {
 }
 
 export function disposeComputation(computation: ComputationAtom) {
-  for (const source of computation.sources) {
+  const sources = computation.sources;
+  for (const source of sources) {
     source.observers.delete(computation);
-    // Recursively dispose derived computations that lost all observers
-    if (
-      "compute" in source &&
-      (source as ComputationAtom).isDerived &&
-      source.observers.size === 0
-    ) {
-      disposeComputation(source as ComputationAtom);
+    // Recursively dispose derived computations that lost all observers.
+    // `isDerived` is only set on ComputationAtoms produced by `computed`, so
+    // this check also acts as the "is this a ComputationAtom?" discriminator
+    // that the previous `"compute" in source` test served.
+    const derived = source as ComputationAtom;
+    if (derived.isDerived && derived.observers.size === 0) {
+      disposeComputation(derived);
     }
   }
-  computation.sources.clear();
+  sources.clear();
   // Mark as stale so it recomputes correctly if ever re-used (shared computed case)
   computation.state = ComputationState.STALE;
 }

@@ -460,5 +460,44 @@ describe("effect", () => {
       expect(cleanup2).toHaveBeenCalledTimes(2);
       expect(cleanup3).toHaveBeenCalledTimes(2);
     });
+
+    test("dispose called inside another effect: cleanup's atom reads do not leak to outer", async () => {
+      // The dispose function returned by effect() clears currentComputation
+      // around unsubscribeEffect. If a user cleanup function reads a signal
+      // while dispose is invoked from inside another effect, that read must
+      // NOT attach as a source of the surrounding effect — otherwise the
+      // outer effect would re-run whenever the disposed effect's cleanup
+      // happened to touch unrelated state.
+      const cleanupSignal = signal(0);
+      let cleanupRuns = 0;
+
+      // Inner effect with a cleanup function that reads cleanupSignal.
+      const dispose = effect(() => {
+        return () => {
+          cleanupSignal();
+          cleanupRuns++;
+        };
+      });
+      expect(cleanupRuns).toBe(0);
+
+      // Outer effect disposes the inner once on its first run.
+      let outerRuns = 0;
+      let outerDisposed = false;
+      effect(() => {
+        outerRuns++;
+        if (!outerDisposed) {
+          outerDisposed = true;
+          dispose();
+        }
+      });
+      expect(outerRuns).toBe(1);
+      expect(cleanupRuns).toBe(1);
+
+      // If the cleanup's read had leaked, this signal change would re-run
+      // the outer effect. With the save/restore in place, it must not.
+      cleanupSignal.set(1);
+      await waitScheduler();
+      expect(outerRuns).toBe(1);
+    });
   });
 });

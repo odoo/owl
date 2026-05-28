@@ -105,3 +105,10 @@ export {
   plugin,
   type PluginInstance,
 } from "./plugin_hooks";
+
+export {
+  EventBus,
+  htmlEscape,
+  Markup,
+  markup,
+} from "./utils";

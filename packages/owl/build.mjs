@@ -38,6 +38,13 @@ async function buildVariant(entry, suffix) {
     bundle: true,
     define,
     target: "es2022",
+    // Force owl-core to resolve to its built dist file. Without this, esbuild
+    // picks up the `paths` mapping in owl-runtime/tsconfig.json and pulls
+    // owl-core's source in addition to its dist via owl-compiler — bundling
+    // owl-core twice.
+    alias: {
+      "@odoo/owl-core": "../owl-core/dist/owl-core.es.js",
+    },
   };
 
   await Promise.all([

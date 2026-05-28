@@ -65,37 +65,72 @@ See [Types Validation](types_validation.md) for the complete list of validators.
 
 ## Collection Signals
 
-Manipulating collections (arrays, objects, maps, sets) is a very common need.
-Plain signals hold a reference, so mutating the contents (e.g. `push`) does not
-change the reference and won't trigger updates. To solve this, Owl provides
-four collection signal variants that wrap the value in a shallow proxy, so
-mutations are automatically detected:
+A plain signal holds a reference, so mutating the contents in place (e.g.
+`push`, `add`, a property assignment) does not change the reference and won't
+trigger updates. To solve this, Owl provides four collection signal variants —
+`signal.Array`, `signal.Object`, `signal.Set`, `signal.Map` — that wrap the
+underlying value in a reactive proxy and expose the usual signal API on top:
 
 ```js
 const list = signal.Array([1, 2, 3]);
-list().push(4); // detected — subscribers are notified
-
 const obj = signal.Object({ a: 1 });
-obj().a = 2; // detected
-
 const set = signal.Set(new Set());
-set().add("hello"); // detected
-
 const map = signal.Map(new Map());
-map().set("key", "value"); // detected
 ```
 
-**Caveat:** the proxy is shallow. Deeply nested mutations are **not** detected:
+Reading the signal (`list()`) returns the proxy. Mutations on the proxy are
+detected automatically; replacing the entire value with `.set(...)` also
+notifies every subscriber:
+
+```js
+list().push(4); // in-place mutation, detected
+obj().a = 2; // property write, detected
+set().add("hello"); // detected
+map().set("key", "value"); // detected
+
+list.set([10, 20]); // whole-value replacement, detected
+```
+
+### Tracking granularity
+
+`signal.Array` and `signal.Object` invalidate the **whole signal** on any
+mutation. Reading the proxy — whether `obj()` itself or a single property like
+`obj().a` — subscribes the caller to the entire collection, and _any_ write
+re-runs every observer. This is the right model when the collection is small
+or consumers usually look at all of it.
+
+`signal.Set` and `signal.Map` track **per-key**, just like `proxy`.
+Subscribing to `set().has(1)` only re-runs when key `1` is added or removed;
+`set().add(2)` leaves observers of `has(1)` (or `map.get(otherKey)`) alone.
+Iteration (`[...set()]`, `forEach`, `keys`, `values`, `entries`, `size`)
+subscribes to every key, so an effect that iterates still re-runs on any
+add/delete.
+
+```js
+const set = signal.Set(new Set());
+
+effect(() => console.log("has(1) =", set().has(1)));
+set().add(2); // logged once at setup, NOT re-run (key 2 is unrelated)
+set().add(1); // re-run: has(1) flipped to true
+set.set(new Set()); // re-run: whole signal was replaced
+```
+
+### Shallow wrapping
+
+The proxy is shallow: only mutations on the collection itself are tracked.
+Nested objects stored inside are returned raw, so deep mutations are **not**
+detected:
 
 ```js
 const list = signal.Array([{ nested: { value: 1 } }]);
 
-// This is detected (direct mutation on the proxied array element):
-list().push({ nested: { value: 2 } });
-
-// This is NOT detected (deep nested mutation):
-list()[0].nested.value = 42;
+list().push({ nested: { value: 2 } }); // detected (mutation on the array)
+list()[0].nested.value = 42; // NOT detected (deep mutation)
 ```
+
+If you need deep reactivity, use [`proxy`](proxies.md) instead — it wraps nested
+objects recursively. Reach for a collection signal when shallow wrapping is
+enough and you want the explicit `.set(newValue)` replacement API.
 
 ## Ref Signals
 

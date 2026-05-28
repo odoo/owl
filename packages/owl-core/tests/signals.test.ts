@@ -64,6 +64,17 @@ describe("signal.ref", () => {
 });
 
 describe("signal.Array", () => {
+  test("can be created without an initial value", async () => {
+    const reactiveArray = signal.Array<number>();
+    expect(reactiveArray()).toEqual([]);
+
+    const e = spyEffect(() => [...reactiveArray()]);
+    e();
+    reactiveArray().push(1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: [1] });
+  });
+
   test("simple use", async () => {
     const reactiveArray = signal.Array<number>([]);
 
@@ -140,6 +151,17 @@ describe("signal.Array", () => {
 });
 
 describe("signal.Object", () => {
+  test("can be created without an initial value", async () => {
+    const reactiveObject = signal.Object<Record<string, number>>();
+    expect(reactiveObject()).toEqual({});
+
+    const e = spyEffect(() => reactiveObject());
+    e();
+    reactiveObject().a = 1;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: { a: 1 } });
+  });
+
   test("simple use", async () => {
     const reactiveObject = signal.Object<Record<string, any>>({});
 
@@ -222,6 +244,17 @@ describe("signal.Object", () => {
 });
 
 describe("signal.Map", () => {
+  test("can be created without an initial value", async () => {
+    const reactiveMap = signal.Map<string, number>();
+    expect(reactiveMap()).toEqual(new Map());
+
+    const e = spyEffect(() => reactiveMap().get("a"));
+    e();
+    reactiveMap().set("a", 1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
+  });
+
   test("simple use", async () => {
     const reactiveMap = signal.Map(new Map<string, number>());
 
@@ -333,6 +366,17 @@ describe("signal.Map", () => {
 });
 
 describe("signal.Set", () => {
+  test("can be created without an initial value", async () => {
+    const reactiveSet = signal.Set<number>();
+    expect(reactiveSet()).toEqual(new Set());
+
+    const e = spyEffect(() => reactiveSet().has(1));
+    e();
+    reactiveSet().add(1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: true });
+  });
+
   test("simple use", async () => {
     const reactiveSet = signal.Set(new Set<number>());
 

@@ -74,8 +74,18 @@ underlying value in a reactive proxy and expose the usual signal API on top:
 ```js
 const list = signal.Array([1, 2, 3]);
 const obj = signal.Object({ a: 1 });
-const set = signal.Set(new Set());
-const map = signal.Map(new Map());
+const set = signal.Set(new Set([1, 2]));
+const map = signal.Map(new Map([["a", 1]]));
+```
+
+The initial value is optional — omit it to start with an empty collection.
+A type parameter is usually helpful in that case:
+
+```js
+const list = signal.Array<number>();
+const obj = signal.Object<{ count: number }>();
+const set = signal.Set<string>();
+const map = signal.Map<string, number>();
 ```
 
 Reading the signal (`list()`) returns the proxy. Mutations on the proxy are

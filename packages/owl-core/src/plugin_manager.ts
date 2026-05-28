@@ -39,8 +39,8 @@ export class PluginManager extends Scope {
 
   // Resolves once all pending plugin willStart callbacks have settled. The
   // scope transitions to MOUNTED as the last step of this chain. Consumers
-  // (App.mount, providePlugins) await this before treating the manager as
-  // ready. `willStart` itself is inherited from Scope.
+  // (the root's mount(), providePlugins) await this before treating the
+  // manager as ready. `willStart` itself is inherited from Scope.
   ready: Promise<void> = Promise.resolve();
 
   constructor(app: any, options: PluginManagerOptions = {}) {

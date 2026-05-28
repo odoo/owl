@@ -12,12 +12,14 @@ Here is a list of everything exported by the Owl library.
 - [`mount`](app.md#mount-helper): mount a component to a DOM target
 - [`xml`](template_syntax.md#inline-templates): define an inline template
 - [`props`](props.md): declare and validate component props
+- [`prop`](props.md#the-prop-function): declare a single static prop on a component
 - [`status`](component.md#status-helper): get the status of a component (new, mounted, destroyed)
 
 ## Reactivity
 
 - [`signal`](reactivity.md#signals): create a reactive value
 - [`computed`](reactivity.md#computed-values): create a lazily-evaluated derived value
+- [`asyncComputed`](reactivity.md#async-computed-values): like `computed`, but the deriver returns a `Promise`
 - [`proxy`](reactivity.md#proxy): create a reactive proxy for an object
 - [`effect`](reactivity.md#effects): create a side effect that re-runs when dependencies change
 - [`markRaw`](reactivity.md#markraw): mark an object so it is ignored by the reactivity system
@@ -44,12 +46,14 @@ Here is a list of everything exported by the Owl library.
 ## Scope and Lifetime
 
 - [`Scope`](scope.md): lifetime handle for components and plugins
+- [`getScope`](scope.md#getscope-scope--null): return the current scope, or `null` if none is active
 
 ## Plugins
 
 - [`Plugin`](plugins.md): base class for plugins
 - [`plugin`](plugins.md): import a plugin dependency
 - [`providePlugins`](plugins.md): make plugins available to a component subtree
+- [`config`](plugins.md#configuration): read a value from the plugin manager's config
 
 ## Type Validation
 
@@ -60,7 +64,8 @@ Here is a list of everything exported by the Owl library.
 ## Utilities
 
 - [`EventBus`](utils.md#eventbus): a simple event bus
-- [`markup`](template_syntax.md#outputting-data): mark a string as safe HTML (not escaped by `t-out`)
+- [`markup`](utils.md#markup): mark a string as safe HTML (not escaped by `t-out`)
+- [`htmlEscape`](utils.md#htmlescape): escape a value into a safe HTML string
 - [`batched`](utils.md#batched): batch function calls into a single microtask execution
 - [`whenReady`](utils.md#whenready): execute code when the DOM is ready
 - [`Registry`](registries.md): ordered key-value collection with reactivity

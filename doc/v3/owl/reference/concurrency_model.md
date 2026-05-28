@@ -60,7 +60,7 @@ sequentially, bullet lists describe actions that are executed in parallel.
 ```
 
 Here is what happen whenever we mount the root
-component (with some code like `app.mount(document.body)`).
+component (with some code like `mount(A, document.body)`).
 
 1. `willStart` is called on `A`
 

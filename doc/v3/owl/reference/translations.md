@@ -24,7 +24,7 @@ const translations = {
 };
 const translateFn = (str, ctx) => translations[ctx]?.[str] || str;
 
-const app = new App(Root, { templates, tranaslateFn });
+await mount(Root, document.body, { templates, translateFn });
 // ...
 ```
 
@@ -86,16 +86,20 @@ For example, one may want to also translate `data-title` attributes. To do that,
 we can define additional attributes with the `translatableAttributes` option:
 
 ```js
-const app = new App(Root, { templates, tranaslateFn, translatableAttributes: ["data-title"] });
+await mount(Root, document.body, {
+  templates,
+  translateFn,
+  translatableAttributes: ["data-title"],
+});
 // ...
 ```
 
 It is also possible to remove an attribute from the default list by prefixing it with `-`:
 
 ```js
-const app = new App(Root, {
+await mount(Root, document.body, {
   templates,
-  tranaslateFn,
+  translateFn,
   translatableAttributes: ["data-title", "-title"],
 });
 // data-title attribute will be translated, but not title attribute...

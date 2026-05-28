@@ -105,10 +105,10 @@ propagation: they walk up the parent chain to the nearest `onError` handler.
   Suspense detects that the sub-root finished its render phase during
   `setup()` and skips the fallback on the very first render. Wrapping a
   sync subtree in `<Suspense>` is therefore harmless, just unnecessary.
-- An already-committed subtree whose props change and trigger an async
-  `onWillUpdateProps` does **not** revert to the fallback. Owl keeps the
-  previous DOM mounted until the new render completes — the same "transitions
-  off by default" behavior as React.
+- An already-committed subtree whose async data is re-fetched after a
+  prop change does **not** revert to the fallback. Owl keeps the previous
+  DOM mounted until the new render completes — the same "transitions off
+  by default" behavior as React.
 - Descendants of `<Suspense>` live under the internal sub-root rather
   than directly under the component that used `<Suspense>`. Scope, plugin
   lookups, and error propagation are wired to behave the same as if they

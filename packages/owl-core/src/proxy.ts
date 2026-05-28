@@ -158,31 +158,24 @@ export function proxifyTarget<T extends Target>(target: T, atom: Atom | null): T
 }
 
 /**
- * Creates a reactive proxy for an object. Reading data on the proxy object
- * subscribes to changes to the data. Writing data on the object will cause the
- * notify callback to be called if there are suscriptions to that data. Nested
- * objects and arrays are automatically made reactive as well.
+ * Wraps an object so it behaves like a signal, but with the familiar
+ * property-access API: instead of `count()` / `count.set(n)`, you write
+ * `state.count` and `state.count = n`. Reading and writing the proxy
+ * transparently looks and feels like reading and writing the original object.
  *
- * Whenever you are notified of a change, all subscriptions are cleared, and if
- * you would like to be notified of any further changes, you should go read
- * the underlying data again. We assume that if you don't go read it again after
- * being notified, it means that you are no longer interested in that data.
+ * Reactivity is nested: reading a property that holds another object/array
+ * returns a proxy for that value too, recursively. Arrays, Maps, Sets, and
+ * WeakMaps are also wrapped, so `state.items.push(x)` or `state.map.set(k, v)`
+ * notify subscribers the same way property writes do.
  *
- * Subscriptions:
- * + Reading a property on an object will subscribe you to changes in the value
- *    of that property.
- * + Accessing an object's keys (eg with Object.keys or with `for..in`) will
- *    subscribe you to the creation/deletion of keys. Checking the presence of a
- *    key on the object with 'in' has the same effect.
- * - getOwnPropertyDescriptor does not currently subscribe you to the property.
- *    This is a choice that was made because changing a key's value will trigger
- *    this trap and we do not want to subscribe by writes. This also means that
- *    Object.hasOwnProperty doesn't subscribe as it goes through this trap.
+ * Subscriptions are only created when a read happens *while a computation is
+ * active* — i.e. inside a component's render, or inside an `effect`,
+ * `computed`, or `asyncComputed`. Reading the proxy from a plain function
+ * with no surrounding computation just returns the value without subscribing
+ * anything.
  *
- * @param target the object for which to create a proxy proxy
- * @param callback the function to call when an observed property of the
- *  proxy has changed
- * @returns a proxy that tracks changes to it
+ * @param target the object to make reactive
+ * @returns a proxy that tracks reads/writes against `target`
  */
 export function proxy<T extends Target>(target: T): T {
   return proxifyTarget(target, null);

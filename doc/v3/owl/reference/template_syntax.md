@@ -602,13 +602,13 @@ will print 42 to the console.
 Owl supports the declaration of custom directives. To use them, an Object of functions needs to be configured on the owl App:
 
 ```js
- new App(..., {
-    customDirectives: {
-     test_directive: function (el, value) {
-            el.setAttribute("t-on-click", value);
-       }
-   }
-  });
+new App({
+  customDirectives: {
+    test_directive: function (el, value) {
+      el.setAttribute("t-on-click", value);
+    },
+  },
+});
 ```
 
 The functions will be called when a custom directive with the name of the

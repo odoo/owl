@@ -232,7 +232,7 @@ removed from the resource.
 ## Async Initialization
 
 A plugin can load data asynchronously during startup with `onWillStart()`. The
-owning `App.mount()` (or `providePlugins()` owner component) waits for all
+owning `mount()` call (or `providePlugins()` owner component) waits for all
 plugin `onWillStart` callbacks to settle before rendering:
 
 ```js

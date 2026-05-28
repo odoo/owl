@@ -91,12 +91,12 @@ The most practical use of a scope is to cancel async work when a component or
 plugin is destroyed. Every scope exposes an `AbortSignal` via
 `scope.abortSignal` that is tied to the scope's lifetime.
 
-### The scope argument in `onWillStart` and `onWillUpdateProps`
+### The scope argument in `onWillStart`
 
-`onWillStart` and `onWillUpdateProps` receive the current scope as their last
-argument. In most cases you only want the scope's `abortSignal`, and you can
-destructure it directly off the scope — forwarding it to any async API that
-accepts an `AbortSignal`, most notably `fetch`:
+`onWillStart` receives the current scope as its argument. In most cases you
+only want the scope's `abortSignal`, and you can destructure it directly off
+the scope — forwarding it to any async API that accepts an `AbortSignal`,
+most notably `fetch`:
 
 ```js
 class UserProfile extends Component {
@@ -116,16 +116,10 @@ fires, the `fetch` is cancelled by the browser, and the `await` throws an
 `AbortError`. The hook runner catches it silently — there's no need to handle
 it yourself.
 
-For `onWillUpdateProps`, the scope is the second argument:
-
-```js
-onWillUpdateProps(async (nextProps, { abortSignal }) => {
-  this.data = await fetchData(nextProps.id, { signal: abortSignal });
-});
-```
-
 You can also name the parameter to access the full scope — e.g. to call
-`scope.until(p)`, covered below.
+`scope.until(p)`, covered below. The same pattern applies to any async work
+attached to a scope, including the fetcher passed to
+[`asyncComputed`](reactivity.md#async-computed-values).
 
 ### Cancelling between awaits
 
@@ -176,9 +170,9 @@ means:
 - the promise chain settles and is garbage-collected normally;
 - you see `AbortError` in DevTools rather than a silently-stopped coroutine.
 
-The `onWillStart` / `onWillUpdateProps` hook runners catch `AbortError`
-silently when the scope is dead — nothing reaches `onError`. If you want to
-handle the abort explicitly, wrap the body in `try/catch` and check
+The `onWillStart` hook runner catches `AbortError` silently when the scope
+is dead — nothing reaches `onError`. If you want to handle the abort
+explicitly, wrap the body in `try/catch` and check
 `err.name === "AbortError"`.
 
 ## Running Code in a Captured Scope

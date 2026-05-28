@@ -35,13 +35,14 @@ instance properties by default — it is up to each component to declare what
 it needs.
 
 To access props given by the parent, a component must explicitly import them
-using the `props` function. The result can be stored on any property name:
+using the `props` function. The result can be stored on any property name —
+`props` is the conventional choice:
 
 ```js
 class MyComponent extends Component {
-  static template = xml`<span t-out="this.myProps.name"/>`;
+  static template = xml`<span t-out="this.props.name"/>`;
 
-  myProps = props({ name: t.string() });
+  props = props({ name: t.string() });
 }
 ```
 

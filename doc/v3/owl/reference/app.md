@@ -2,108 +2,112 @@
 
 ## Overview
 
-Every Owl application has a root element, a set of templates, an environment and
-possibly a few other settings. The `App` class is a simple class that represents
-all of these elements. Here is an example:
+Every Owl application is anchored by an `App` instance — the registry of
+templates, the host for any [plugins](plugins.md), and the owner of one or
+more component _roots_ attached to the DOM.
+
+The common path is the `mount` helper:
 
 ```js
-const {Component, App } = owl;
+import { Component, mount, xml } from "@odoo/owl";
 
-class MyComponent extends Component { ... }
+class MyComponent extends Component {
+  static template = xml`<div>Hello</div>`;
+}
 
-const app = new App(MyComponent, { props: {...}, templates: "..."});
-app.mount(document.body);
+await mount(MyComponent, document.body);
 ```
 
-The basic workflow is: create an `App` instance configured with the root
-component, the templates, and possibly other settings. Then, we mount that
-instance somewhere in the DOM.
+For finer control (multiple roots, deferred mounting, sharing one set of
+templates across several roots), construct an `App` directly and call
+`createRoot`:
+
+```js
+import { App } from "@odoo/owl";
+
+const app = new App({ templates });
+const root = app.createRoot(MyComponent, { props: { user } });
+await root.mount(document.body);
+```
 
 ## API
 
-- **`constructor(Root[, config])`**: first argument should be a component class (not
-  an instance), and the optional second argument is a configuration object (see below).
+- **`new App(config?)`**: creates an application. The argument is an optional
+  configuration object (see below); no root component is registered at
+  construction time.
 
-- **`mount(target, options)`**: first argument is an html element, and the optional
-  second argument is an object with mounting options (see below). Mount the app
-  to a target in the DOM. Note that this is an asynchronous operation: the `mount`
-  method returns a promise that resolves to the component instance whenever it
-  is complete.
+- **`app.createRoot(Component, options?)`**: registers a root component and
+  returns a `Root` object exposing `prepare`, `mount`, `destroy`, plus
+  `promise` (resolves to the component instance once mounted) and the
+  underlying `node`. `options` accepts `{ props }`.
 
-  The `option` object is an object with the following keys:
-  - **`position (string)`**: either `first-child` or `last-child`. This option determines
-    the position of the application in the target: either first or last child.
+- **`app.destroy()`**: destroys every root, the plugin manager, and the
+  application itself.
 
-- **`destroy()`**: destroys the application
+### `mount` helper
+
+`mount(Component, target, config?)` creates an `App`, calls `createRoot`,
+then mounts the root in a single call. It accepts the union of the `App`
+config, the root's `props`, and `MountOptions`:
+
+```js
+await mount(MyComponent, document.body, { props: { user }, position: "first-child" });
+```
+
+- **`Component`**: the root component class.
+- **`target`**: an `HTMLElement` or `ShadowRoot` attached to a document.
+- **`config`**: optional — merges `AppConfig` fields, `props`, and
+  `MountOptions`.
+
+### `MountOptions`
+
+The mount call (`root.mount(target, options)` or the `mount` helper) accepts:
+
+- **`position`**: `"first-child"` or `"last-child"` (default). Determines
+  whether the root is inserted as the first or last child of `target`.
 
 ## Configuration
 
-The `config` object is an object with some of the following keys:
+The `App` config accepts the following fields:
 
-- **`env (object)`**: if given, this will be the shared `env` given to each component
-- **`props (object)`**: the props given to the root component
-- **`dev (boolean, default=false)`**: if `true`, the application is rendered in
-  [`dev` mode](#dev-mode);
-- **`test (boolean, default=false)`**: `test` mode is the same as `dev` mode, except
-  that Owl will not log a message to warn that Owl is in `dev` mode.
-- **`translatableAttributes (string[])`**: a list of additional attributes that should
-  be translated (see [translations](translations.md))
-- **`translateFn (function)`**: a function that will be called by owl to translate
-  templates (see [translations](translations.md))
-- **`templates (string | xml document | Record<string, string | TemplateFunction>)`**:
-  all the templates that will be used by the components created by the
-  application. This may be a raw XML string, an `XMLDocument`, or a plain
-  object mapping template names to either a template source string or a
-  precompiled template function (as produced by the `compile_templates`
-  tool — see [Precompiling templates](precompiling_templates.md)).
-- **`getTemplate ((s: string) => Element | Function | string | void)`**: a function that will be called by owl when it
-  needs a template. If undefined is returned, owl looks into the app templates.
-- **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning
-  whenever it encounters a component that does not provide a [static props description](props.md#props-validation).
-- **`customDirectives (object)`**: if given, the corresponding function on the object will be called
-  on the template custom directives: `t-custom-*` (see [Custom Directives](template_syntax.md#custom-directives)).
-- **`globalValues (object)`**: Global object of elements available at compilations.
+- **`templates (string | Document | Record<string, string | TemplateFunction>)`**:
+  templates available to the application. Accepts a raw XML string, an
+  `XMLDocument`, or an object mapping template names to either a template
+  source string or a precompiled template function (see
+  [Precompiling templates](precompiling_templates.md)).
+- **`getTemplate ((s: string) => Element | Function | string | void)`**:
+  resolver called on demand; if it returns `undefined`, the application falls
+  back to the `templates` map.
+- **`dev (boolean, default=false)`**: enables [`dev` mode](#dev-mode).
+- **`test (boolean, default=false)`**: same as `dev` mode but suppresses the
+  "Owl is running in 'dev' mode" log.
+- **`translateFn (function)`**: translation function — see
+  [translations](translations.md).
+- **`translatableAttributes (string[])`**: extra attributes to translate —
+  see [translations](translations.md).
+- **`customDirectives (object)`**: handlers for `t-custom-*` directives —
+  see [Custom Directives](template_syntax.md#custom-directives).
+- **`globalValues (object)`**: values exposed to every compiled template
+  under the `__globals__` namespace.
+- **`plugins (PluginConstructor[] | Resource<PluginConstructor>)`**: plugins
+  to start when the app boots — see [plugins](plugins.md). Plugins'
+  `onWillStart` callbacks defer the first root render until they resolve.
+- **`config (Record<string, any>)`**: values readable from plugin code via
+  the `config()` helper — see
+  [Plugins — Configuration](plugins.md#configuration).
+- **`name (string)`**: optional debug label (visible in the devtools panel).
 
-## `mount` helper
-
-Note that there is a `mount` helper to do that in just a line:
-
-```js
-const { mount, Component } = owl;
-
-class MyComponent extends Component {
-    ...
-}
-
-mount(MyComponent, document.body, { props: {...}, templates: "..."});
-```
-
-Here is the `mount` function signature:
-
-**`mount(Component, target, config)`** with the following arguments:
-
-- **`Component`**: a component class (Root component of the app)
-- **`target`**: an html element, where the component will be mounted as last child
-- **`config (optional)`**: a config object (the same as the App config object)
-
-Most of the time, the `mount` helper is more convenient, but whenever one needs
-a reference to the actual Owl App, then using the `App` class directly is
-possible.
+> Owl 2's `env` config has been removed. Cross-component state and services
+> are now provided through the [plugin system](plugins.md).
 
 ## Roots
 
-An application can have multiple roots. It is sometimes useful to instantiate
-sub components in places that are not managed by Owl, such as an html editor
-with dynamic content (the Knowledge application in Odoo).
+An application can host multiple roots. This is occasionally useful when
+sub-components need to be mounted into areas not managed by Owl, such as
+content rendered by a third-party editor.
 
-To create a root, one can use the `createRoot` method, which takes two arguments:
-
-- **`Component`**: a component class (Root component of the app)
-- **`config (optional)`**: a config object that may contain a `props` object or a
-  `env` object.
-
-The `createRoot` method returns an object with `prepare`, `mount`, and
-`destroy` methods.
+`createRoot` takes the component class and a config object containing the
+root's props:
 
 ```js
 const root = app.createRoot(MyComponent, { props: { someProps: true } });
@@ -113,9 +117,9 @@ await root.mount(targetElement);
 root.destroy();
 ```
 
-Note that, like with owl `App`, it is the responsibility of the code that created
-the root to properly destroy it (before it has been removed from the DOM!). Owl
-has no way of doing it itself.
+Roots created via `createRoot` are owned by your code: it is your
+responsibility to call `root.destroy()` (before the target is removed from
+the DOM); Owl will not clean them up for you.
 
 ### Two-phase mounting: `prepare` and `mount`
 
@@ -160,25 +164,19 @@ target surfaces synchronously when you actually try to mount.
 
 ## Loading templates
 
-Most applications will need to load templates whenever they start. Here is
-what it could look like in practice:
+Most applications load their templates from the server at startup:
 
 ```js
-// in the main js file:
-const { mount } = owl;
+import { mount } from "@odoo/owl";
 
-// async, so we can use async/await
 (async function setup() {
-  const templates = await loadFile(`/some/endpoint/that/return/templates`);
-  const env = {
-    _t: someTranslateFn,
-    templates,
-    // possibly other stuff
-  };
-
-  mount(Root, document.body, { env });
+  const templates = await fetch("/some/endpoint/that/returns/templates").then((r) => r.text());
+  await mount(Root, document.body, { templates });
 })();
 ```
+
+`templates` accepts a raw XML string, an `XMLDocument`, or a precompiled
+template map.
 
 ## Dev mode
 

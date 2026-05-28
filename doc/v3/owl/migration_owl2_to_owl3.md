@@ -47,7 +47,7 @@ Additional info is the result of grepping in odoo code base (community/enterpris
 | 19  | `t-call` not allowed on tags `!== t`                              |                    | [Note](#19-t-call-not-allowed-on-tags-t)                                |
 | 20  | `t-call` body evaluated lazily, variables passed as parameters    |                    | [Note](#20-t-call-body-evaluated-lazily-variables-passed-as-parameters) |
 | 21  | `useComponent` removed                                            | 93 calls           | [Note](#21-usecomponent-removed)                                        |
-| 22  | `onPatched` / `onWillPatch` semantics narrowed                    |                    | [Note](#22-onpatched--onwillpatch-semantics-narrowed)                   |
+| 22  | `onPatched` / `onWillPatch` semantics narrowed                    |                    | [Note](#22-onpatched-onwillpatch-semantics-narrowed)                    |
 
 ## Migration guide for each change
 

@@ -22,6 +22,9 @@ export function effect<T>(fn: () => T) {
 
   // Remove sources and unsubscribe
   return function cleanupEffect() {
+    // Mark as executed so a queued re-run (scheduled by an earlier signal
+    // write in the same microtick) is skipped by updateComputation.
+    computation.state = ComputationState.EXECUTED;
     // In case the cleanup read an atom.
     // todo: test it
     const previousComputation = getCurrentComputation();

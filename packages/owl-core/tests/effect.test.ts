@@ -346,6 +346,33 @@ describe("effect", () => {
       expectSpy(spy, 2, { args: [2] });
     });
 
+    test("disposing an effect after a queued signal write skips the re-run", async () => {
+      const s = signal(1);
+      const spy = vi.fn();
+      const dispose = effect(() => {
+        spy(s());
+      });
+      expectSpy(spy, 1, { args: [1] });
+      s.set(2);
+      dispose();
+      await waitScheduler();
+      expectSpy(spy, 1, { args: [1] });
+    });
+
+    test("disposing an effect skips queued re-run from a derived dependency", async () => {
+      const s = signal(1);
+      const c = computed(() => s() * 2);
+      const spy = vi.fn();
+      const dispose = effect(() => {
+        spy(c());
+      });
+      expectSpy(spy, 1, { args: [2] });
+      s.set(2);
+      dispose();
+      await waitScheduler();
+      expectSpy(spy, 1, { args: [2] });
+    });
+
     test("effect should call cleanup function", async () => {
       const state = proxy({ a: 1 });
       const spy = vi.fn();

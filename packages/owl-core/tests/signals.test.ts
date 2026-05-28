@@ -254,6 +254,47 @@ describe("signal.Map", () => {
     expect(reactiveMap().get("a")).toBe(obj);
   });
 
+  test("get(key) only subscribes to that key", async () => {
+    const reactiveMap = signal.Map(new Map<string, number>());
+
+    const e = spyEffect(() => reactiveMap().get("a"));
+    e();
+    expectSpy(e.spy, 1, { result: undefined });
+
+    // mutating an unobserved key must not trigger the effect
+    reactiveMap().set("b", 42);
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: undefined });
+
+    reactiveMap().set("a", 1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
+
+    reactiveMap().delete("b");
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
+
+    reactiveMap().delete("a");
+    await waitScheduler();
+    expectSpy(e.spy, 3, { result: undefined });
+  });
+
+  test("has(key) only subscribes to that key", async () => {
+    const reactiveMap = signal.Map(new Map<string, number>());
+
+    const e = spyEffect(() => reactiveMap().has("a"));
+    e();
+    expectSpy(e.spy, 1, { result: false });
+
+    reactiveMap().set("b", 42);
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: false });
+
+    reactiveMap().set("a", 1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: true });
+  });
+
   test("set or delete element on map", async () => {
     const reactiveMap = signal.Map(new Map<string, number>());
 
@@ -322,6 +363,43 @@ describe("signal.Set", () => {
     await waitScheduler();
     expectSpy(e.spy, 1, { result: [{ value: 1 }] });
     expect(reactiveSet().values().next().value).toBe(obj);
+  });
+
+  test("has(key) only subscribes to that key", async () => {
+    const reactiveSet = signal.Set(new Set<number>());
+
+    const e = spyEffect(() => reactiveSet().has(1));
+    e();
+    expectSpy(e.spy, 1, { result: false });
+
+    // adding a different key must not trigger the effect
+    reactiveSet().add(2);
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: false });
+
+    reactiveSet().add(1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: true });
+
+    reactiveSet().delete(2);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: true });
+
+    reactiveSet().delete(1);
+    await waitScheduler();
+    expectSpy(e.spy, 3, { result: false });
+  });
+
+  test("replacing the whole signal still invalidates per-key observers", async () => {
+    const reactiveSet = signal.Set(new Set<number>([1]));
+
+    const e = spyEffect(() => reactiveSet().has(1));
+    e();
+    expectSpy(e.spy, 1, { result: true });
+
+    reactiveSet.set(new Set<number>([2]));
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: false });
   });
 
   test("add or delete item on Set", async () => {

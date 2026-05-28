@@ -255,7 +255,7 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
 function makeKeyObserver(methodName: "has" | "get", target: any, atom: Atom | null) {
   return (key: any) => {
     key = toRaw(key);
-    onReadTargetKey(target, key, atom);
+    onReadTargetKey(target, key, null);
     return possiblyReactive(target[methodName](key), atom);
   };
 }
@@ -273,11 +273,11 @@ function makeIteratorObserver(
   atom: Atom | null
 ) {
   return function* () {
-    onReadTargetKey(target, KEYCHANGES, atom);
+    onReadTargetKey(target, KEYCHANGES, null);
     const keys = target.keys();
     for (const item of target[methodName]()) {
       const key = keys.next().value;
-      onReadTargetKey(target, key, atom);
+      onReadTargetKey(target, key, null);
       yield possiblyReactive(item, atom);
     }
   };
@@ -292,9 +292,9 @@ function makeIteratorObserver(
  */
 function makeForEachObserver(target: any, atom: Atom | null) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
-    onReadTargetKey(target, KEYCHANGES, atom);
+    onReadTargetKey(target, KEYCHANGES, null);
     target.forEach(function (val: any, key: any, targetObj: any) {
-      onReadTargetKey(target, key, atom);
+      onReadTargetKey(target, key, null);
       forEachCb.call(
         thisArg,
         possiblyReactive(val, atom),
@@ -317,8 +317,7 @@ function makeForEachObserver(target: any, atom: Atom | null) {
 function delegateAndNotify(
   setterName: "set" | "add" | "delete",
   getterName: "has" | "get",
-  target: any,
-  atom: Atom | null
+  target: any
 ) {
   return (key: any, value: any) => {
     key = toRaw(key);
@@ -327,10 +326,10 @@ function delegateAndNotify(
     const ret = target[setterName](key, value);
     const hasKey = target.has(key);
     if (hadKey !== hasKey) {
-      onWriteTargetKey(target, KEYCHANGES, atom);
+      onWriteTargetKey(target, KEYCHANGES, null);
     }
     if (originalValue !== target[getterName](key)) {
-      onWriteTargetKey(target, key, atom);
+      onWriteTargetKey(target, key, null);
     }
     return ret;
   };
@@ -341,13 +340,13 @@ function delegateAndNotify(
  *
  * @param target @see proxy
  */
-function makeClearNotifier(target: Map<any, any> | Set<any>, atom: Atom | null) {
+function makeClearNotifier(target: Map<any, any> | Set<any>) {
   return () => {
     const allKeys = [...target.keys()];
     target.clear();
-    onWriteTargetKey(target, KEYCHANGES, atom);
+    onWriteTargetKey(target, KEYCHANGES, null);
     for (const key of allKeys) {
-      onWriteTargetKey(target, key, atom);
+      onWriteTargetKey(target, key, null);
     }
   };
 }
@@ -361,40 +360,40 @@ function makeClearNotifier(target: Map<any, any> | Set<any>, atom: Atom | null) 
 const rawTypeToFuncHandlers = {
   Set: (target: any, atom: Atom | null) => ({
     has: makeKeyObserver("has", target, atom),
-    add: delegateAndNotify("add", "has", target, atom),
-    delete: delegateAndNotify("delete", "has", target, atom),
+    add: delegateAndNotify("add", "has", target),
+    delete: delegateAndNotify("delete", "has", target),
     keys: makeIteratorObserver("keys", target, atom),
     values: makeIteratorObserver("values", target, atom),
     entries: makeIteratorObserver("entries", target, atom),
     [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, atom),
     forEach: makeForEachObserver(target, atom),
-    clear: makeClearNotifier(target, atom),
+    clear: makeClearNotifier(target),
     get size() {
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES, null);
       return target.size;
     },
   }),
   Map: (target: any, atom: Atom | null) => ({
     has: makeKeyObserver("has", target, atom),
     get: makeKeyObserver("get", target, atom),
-    set: delegateAndNotify("set", "get", target, atom),
-    delete: delegateAndNotify("delete", "has", target, atom),
+    set: delegateAndNotify("set", "get", target),
+    delete: delegateAndNotify("delete", "has", target),
     keys: makeIteratorObserver("keys", target, atom),
     values: makeIteratorObserver("values", target, atom),
     entries: makeIteratorObserver("entries", target, atom),
     [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, atom),
     forEach: makeForEachObserver(target, atom),
-    clear: makeClearNotifier(target, atom),
+    clear: makeClearNotifier(target),
     get size() {
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES, null);
       return target.size;
     },
   }),
   WeakMap: (target: any, atom: Atom | null) => ({
     has: makeKeyObserver("has", target, atom),
     get: makeKeyObserver("get", target, atom),
-    set: delegateAndNotify("set", "get", target, atom),
-    delete: delegateAndNotify("delete", "has", target, atom),
+    set: delegateAndNotify("set", "get", target),
+    delete: delegateAndNotify("delete", "has", target),
   }),
 };
 /**

@@ -25,7 +25,8 @@
     "build": "node build.mjs",
     "build:types": "node build.mjs types",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "bench": "vitest bench --run"
   },
   "repository": {
     "type": "git",

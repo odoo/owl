@@ -12,7 +12,11 @@ export function batched(callback: Callback): Callback {
   return function batchedCall(...args) {
     if (!scheduled) {
       scheduled = true;
-      // todo: maybe make it a queueMicrotask call instead
+      // Intentionally Promise-based: errors thrown by `callback` surface as
+      // unhandled promise rejections, which vitest's `onUnhandledError` hook
+      // intercepts (see tests/effect.test.ts using `IntentionalTestError`).
+      // Switching to `queueMicrotask` routes errors through a different
+      // uncaught-exception channel and complicates the debugging workflow.
       Promise.resolve().then(() => {
         scheduled = false;
         callback(...args);

@@ -156,6 +156,32 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       return;
     }
     const current = this.fiber;
+    const scheduler = this.app.scheduler;
+    // Re-entrancy guard. A render requested while the scheduler is mid-commit
+    // (`committing`), or while this node's own fiber is still executing its
+    // render function (the `bdom === true` sentinel set at the top of
+    // Fiber.render), must not build a new fiber now: makeRootFiber would clear
+    // children and null the bdom on a fiber the in-flight render/commit is still
+    // walking — orphaning subtrees or crashing the patch on a null bdom. Defer
+    // it to the next tick, where it is built and committed cleanly. This
+    // restores the deferral the rAF scheduler did via RootFiber.locked +
+    // `current.bdom === true`.
+    //
+    // Exception: an error-recovery re-render. handleError flags the throwing
+    // fiber, all its ancestors and the root in fibersInError *before* invoking
+    // onError, so a catchError boundary that renders from its handler has its
+    // fiber flagged. Those must NOT be deferred — they go through the normal
+    // pendingFiberRenders path that rebuilds the failed subtree in place.
+    const inError =
+      current !== null &&
+      (fibersInError.has(current) || (current.root !== null && fibersInError.has(current.root)));
+    if (
+      !inError &&
+      (scheduler.committing || (current !== null && (current.bdom as any) === true))
+    ) {
+      scheduler.deferRender(this, deep);
+      return;
+    }
     if (current) {
       if (!current.bdom && !fibersInError.has(current)) {
         if (deep) {

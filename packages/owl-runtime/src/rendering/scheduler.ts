@@ -1,7 +1,7 @@
 import { processEffects } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
-import { Fiber, RootFiber } from "./fibers";
+import { Fiber, makeRootFiber, RootFiber } from "./fibers";
 import { STATUS } from "../status";
 
 // -----------------------------------------------------------------------------
@@ -30,6 +30,20 @@ export class Scheduler {
   // orphan-cancel siblings. processTasks defers itself one microtask while
   // any are pending so it doesn't commit unrelated roots prematurely.
   pendingFiberRenders = 0;
+  // True only while processTasks is in its destroy + commit phase, i.e. while it
+  // is mutating the live fiber tree and the DOM. component_node.render checks
+  // this to defer any render requested from a lifecycle hook firing in that
+  // window (onWillDestroy / onWillPatch / onMounted / onWillUnmount / onPatched)
+  // out of the critical section — running makeRootFiber there would corrupt the
+  // tree the in-flight patch is still walking. This is the macrotask-scheduler
+  // equivalent of the old RootFiber.locked flag.
+  committing = false;
+  // Renders deferred out of the commit phase (see `committing`). Drained at the
+  // start of the next tick, before the render pass, so a hook-triggered update
+  // is built and committed in the very next pass — collapsing into the next
+  // paint instead of a later frame as the rAF scheduler forced. The value is the
+  // `deep` flag, OR-ed together if the same node is deferred more than once.
+  deferredRenders: Map<ComponentNode, boolean> = new Map();
   // Lazily-initialised MessageChannel that drives the scheduler. postMessage
   // queues a real *macrotask*, so a tick runs only after the microtask queue
   // has fully drained: instantly-resolved promises (e.g. cache-warm awaits in
@@ -97,6 +111,20 @@ export class Scheduler {
     }
   }
 
+  /**
+   * Queue a render requested from inside the commit phase (a lifecycle hook
+   * calling render() while `committing` is true). Coalesces repeated requests
+   * for the same node — the deep flag is OR-ed — and ensures a tick is
+   * scheduled. The queue is drained at the top of the next processTasks.
+   */
+  deferRender(node: ComponentNode, deep: boolean) {
+    this.deferredRenders.set(node, deep || this.deferredRenders.get(node) || false);
+    if (!this.scheduled) {
+      this.scheduled = true;
+      this._schedule();
+    }
+  }
+
   processTasks() {
     if (this.processing) {
       return;
@@ -110,6 +138,30 @@ export class Scheduler {
     }
     this.processing = true;
     this.scheduled = false;
+
+    // Drain renders that were deferred out of a previous tick's commit phase
+    // (a lifecycle hook called render() while we were mid-patch). We are now
+    // safely between commits, so build their root fibers here; the render pass
+    // below produces their bdom and the commit pass applies them — so the
+    // hook-triggered update lands in this same tick (and can share the next
+    // paint with whatever else commits), instead of a frame later.
+    if (this.deferredRenders.size) {
+      const deferred = this.deferredRenders;
+      this.deferredRenders = new Map();
+      for (const [node, deep] of deferred) {
+        if (node.status >= STATUS.CANCELLED) {
+          continue;
+        }
+        // Nothing on screen and no in-flight fiber → nothing to re-render.
+        if (!node.fiber && !node.bdom) {
+          continue;
+        }
+        const fiber = makeRootFiber(node);
+        fiber.deep = deep;
+        node.fiber = fiber;
+        this.tasks.add(fiber.root!);
+      }
+    }
 
     // Render pass: produce a fresh bdom for every pending root that hasn't
     // been rendered yet this tick. Sub-fibers (children created during a
@@ -150,6 +202,12 @@ export class Scheduler {
         break;
       }
     }
+
+    // From here on we mutate the live fiber tree and the DOM. A render() called
+    // from a lifecycle hook in this window is routed through deferRender (see
+    // `committing`) instead of running makeRootFiber inline and corrupting the
+    // in-flight patch.
+    this.committing = true;
 
     // Destroy cancelled nodes after the render pass. willDestroy hooks may
     // throw and trigger onError → state change → another render, but that
@@ -200,6 +258,7 @@ export class Scheduler {
         }
       }
     }
+    this.committing = false;
     for (let task of this.tasks) {
       if (task.node.status === STATUS.DESTROYED) {
         this.tasks.delete(task);

@@ -13,10 +13,10 @@ test("simple assertion", () => {
 test("validateType", () => {
   expect(validateType("abc", t.string())).toEqual([]);
   expect(validateType("abc", t.number())).toEqual([
-    { message: "value is not a number", path: [], received: "abc" },
+    { message: "value is not a number", path: "", received: "abc" },
   ]);
   expect(validateType(undefined, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: undefined },
+    { message: "value is not a number", path: "", received: undefined },
   ]);
   expect(validateType(1, t.number())).toEqual([]);
 });
@@ -25,22 +25,22 @@ test("and", () => {
   const a = t.object({ a: t.string() });
   const b = t.object({ b: t.number() });
   expect(validateType({}, t.and([a, b]))).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a"], received: {} },
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["b"], received: {} },
+    { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: {} },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["b"], received: {} },
   ]);
   expect(validateType({ a: "abc" }, t.and([a, b]))).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["b"], received: { a: "abc" } },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["b"], received: { a: "abc" } },
   ]);
   expect(validateType({ a: 123 }, t.and([a, b]))).toEqual([
-    { message: "value is not a string", path: ["a"], received: 123 },
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["b"], received: { a: 123 } },
+    { message: "value is not a string", path: "a", received: 123 },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["b"], received: { a: 123 } },
   ]);
   expect(validateType({ a: "abc", b: 123 }, t.and([a, b]))).toEqual([]);
   expect(validateType({ b: 123 }, t.and([a, b]))).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a"], received: { b: 123 } },
+    { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: { b: 123 } },
   ]);
   expect(validateType({ a: "abc", b: "abc" }, t.and([a, b]))).toEqual([
-    { message: "value is not a number", path: ["b"], received: "abc" },
+    { message: "value is not a number", path: "b", received: "abc" },
   ]);
 });
 
@@ -62,13 +62,13 @@ test("any", () => {
 });
 
 test("array", () => {
-  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: [], received: {} }]);
-  expect(validateType("", t.array())).toEqual([{ message: "value is not an array", path: [], received: "" }]);
-  expect(validateType("abc", t.array())).toEqual([{ message: "value is not an array", path: [], received: "abc" }]);
-  expect(validateType(123, t.array())).toEqual([{ message: "value is not an array", path: [], received: 123 }]);
-  expect(validateType(987, t.array())).toEqual([{ message: "value is not an array", path: [], received: 987 }]);
-  expect(validateType(true, t.array())).toEqual([{ message: "value is not an array", path: [], received: true }]);
-  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: [], received: {} }]);
+  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: "", received: {} }]);
+  expect(validateType("", t.array())).toEqual([{ message: "value is not an array", path: "", received: "" }]);
+  expect(validateType("abc", t.array())).toEqual([{ message: "value is not an array", path: "", received: "abc" }]);
+  expect(validateType(123, t.array())).toEqual([{ message: "value is not an array", path: "", received: 123 }]);
+  expect(validateType(987, t.array())).toEqual([{ message: "value is not an array", path: "", received: 987 }]);
+  expect(validateType(true, t.array())).toEqual([{ message: "value is not an array", path: "", received: true }]);
+  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: "", received: {} }]);
   expect(validateType([], t.array())).toEqual([]);
   expect(validateType([123], t.array())).toEqual([]);
   expect(validateType(["abc"], t.array())).toEqual([]);
@@ -76,11 +76,11 @@ test("array", () => {
   expect(validateType(["abc", 123, false], t.array())).toEqual([]);
   expect(validateType(["abc"], t.array(t.string()))).toEqual([]);
   expect(validateType([123, "abc"], t.array(t.string()))).toEqual([
-    { message: "value is not a string", path: [0], received: 123 },
+    { message: "value is not a string", path: "0", received: 123 },
   ]);
   expect(validateType(["abc", "def"], t.array(t.string()))).toEqual([]);
   expect(validateType(["abc", 321], t.array(t.string()))).toEqual([
-    { message: "value is not a string", path: [1], received: 321 },
+    { message: "value is not a string", path: "1", received: 321 },
   ]);
 });
 
@@ -88,34 +88,34 @@ test("boolean", () => {
   expect(validateType(true, t.boolean())).toEqual([]);
   expect(validateType(false, t.boolean())).toEqual([]);
   expect(validateType("", t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: "" },
+    { message: "value is not a boolean", path: "", received: "" },
   ]);
   expect(validateType("abc", t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: "abc" },
+    { message: "value is not a boolean", path: "", received: "abc" },
   ]);
   expect(validateType(123, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: 123 },
+    { message: "value is not a boolean", path: "", received: 123 },
   ]);
   expect(validateType(987, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: 987 },
+    { message: "value is not a boolean", path: "", received: 987 },
   ]);
   expect(validateType(undefined, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: undefined },
+    { message: "value is not a boolean", path: "", received: undefined },
   ]);
   expect(validateType(null, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: null },
+    { message: "value is not a boolean", path: "", received: null },
   ]);
   expect(validateType({}, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: {} },
+    { message: "value is not a boolean", path: "", received: {} },
   ]);
   expect(validateType([], t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: [] },
+    { message: "value is not a boolean", path: "", received: [] },
   ]);
   expect(validateType(A, t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: A },
+    { message: "value is not a boolean", path: "", received: A },
   ]);
   expect(validateType(new A(), t.boolean())).toEqual([
-    { message: "value is not a boolean", path: [], received: new A() },
+    { message: "value is not a boolean", path: "", received: new A() },
   ]);
 });
 
@@ -123,79 +123,79 @@ test("constructor", () => {
   class B extends A {}
   class C {}
   expect(validateType(true, t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: true },
+    { message: "value is not 'A' or an extension", path: "", received: true },
   ]);
   expect(validateType("abc", t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: "abc" },
+    { message: "value is not 'A' or an extension", path: "", received: "abc" },
   ]);
   expect(validateType(123, t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: 123 },
+    { message: "value is not 'A' or an extension", path: "", received: 123 },
   ]);
   expect(validateType(A, t.constructor(A))).toEqual([]);
   expect(validateType(B, t.constructor(A))).toEqual([]);
   expect(validateType(C, t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: C },
+    { message: "value is not 'A' or an extension", path: "", received: C },
   ]);
   expect(validateType(A, t.constructor(B))).toEqual([
-    { message: "value is not 'B' or an extension", path: [], received: A },
+    { message: "value is not 'B' or an extension", path: "", received: A },
   ]);
   expect(validateType(B, t.constructor(B))).toEqual([]);
   expect(validateType(C, t.constructor(B))).toEqual([
-    { message: "value is not 'B' or an extension", path: [], received: C },
+    { message: "value is not 'B' or an extension", path: "", received: C },
   ]);
   expect(validateType(A, t.constructor(C))).toEqual([
-    { message: "value is not 'C' or an extension", path: [], received: A },
+    { message: "value is not 'C' or an extension", path: "", received: A },
   ]);
   expect(validateType(B, t.constructor(C))).toEqual([
-    { message: "value is not 'C' or an extension", path: [], received: B },
+    { message: "value is not 'C' or an extension", path: "", received: B },
   ]);
   expect(validateType(C, t.constructor(C))).toEqual([]);
   expect(validateType({}, t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: {} },
+    { message: "value is not 'A' or an extension", path: "", received: {} },
   ]);
   expect(validateType(new A(), t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: new A() },
+    { message: "value is not 'A' or an extension", path: "", received: new A() },
   ]);
   expect(validateType(new B(), t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: new B() },
+    { message: "value is not 'A' or an extension", path: "", received: new B() },
   ]);
   expect(validateType(new C(), t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: new C() },
+    { message: "value is not 'A' or an extension", path: "", received: new C() },
   ]);
   expect(validateType([], t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: [] },
+    { message: "value is not 'A' or an extension", path: "", received: [] },
   ]);
   const arrowFn = () => {};
   expect(validateType(arrowFn, t.constructor(A))).toEqual([
-    { message: "value is not 'A' or an extension", path: [], received: arrowFn },
+    { message: "value is not 'A' or an extension", path: "", received: arrowFn },
   ]);
 });
 
 test("customValidator", () => {
   const validator = t.customValidator(t.string(), (size) => ["sm", "md", "lg"].includes(size));
-  expect(validateType(123, validator)).toEqual([{ message: "value is not a string", path: [], received: 123 }]);
+  expect(validateType(123, validator)).toEqual([{ message: "value is not a string", path: "", received: 123 }]);
   expect(validateType("sm", validator)).toEqual([]);
   expect(validateType("md", validator)).toEqual([]);
   expect(validateType("lg", validator)).toEqual([]);
   expect(validateType("small", validator)).toEqual([
-    { message: "value does not match custom validation", path: [], received: "small" },
+    { message: "value does not match custom validation", path: "", received: "small" },
   ]);
   expect(
     validateType(
       "small",
       t.customValidator(t.string(), (size) => ["sm", "md", "lg"].includes(size), "Invalid")
     )
-  ).toEqual([{ message: "Invalid", path: [], received: "small" }]);
+  ).toEqual([{ message: "Invalid", path: "", received: "small" }]);
 });
 
 describe("function", () => {
   test("function", () => {
-    expect(validateType(123, t.function())).toEqual([{ message: "value is not a function", path: [], received: 123 }]);
+    expect(validateType(123, t.function())).toEqual([{ message: "value is not a function", path: "", received: 123 }]);
     expect(validateType("abc", t.function())).toEqual([
-      { message: "value is not a function", path: [], received: "abc" },
+      { message: "value is not a function", path: "", received: "abc" },
     ]);
     expect(validateType(true, t.function())).toEqual([
-      { message: "value is not a function", path: [], received: true },
+      { message: "value is not a function", path: "", received: true },
     ]);
     expect(validateType(() => {}, t.function())).toEqual([]);
     expect(validateType(function () {}, t.function())).toEqual([]);
@@ -212,65 +212,65 @@ test("instanceOf", () => {
   class B extends A {}
   class C {}
   expect(validateType(123, t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: 123 },
+    { message: "value is not an instance of 'A'", path: "", received: 123 },
   ]);
   expect(validateType("abc", t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: "abc" },
+    { message: "value is not an instance of 'A'", path: "", received: "abc" },
   ]);
   expect(validateType(true, t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: true },
+    { message: "value is not an instance of 'A'", path: "", received: true },
   ]);
   expect(validateType({}, t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: {} },
+    { message: "value is not an instance of 'A'", path: "", received: {} },
   ]);
   expect(validateType([], t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: [] },
+    { message: "value is not an instance of 'A'", path: "", received: [] },
   ]);
   expect(validateType(new A(), t.instanceOf(A))).toEqual([]);
   expect(validateType(new B(), t.instanceOf(A))).toEqual([]);
   expect(validateType(new C(), t.instanceOf(A))).toEqual([
-    { message: "value is not an instance of 'A'", path: [], received: new C() },
+    { message: "value is not an instance of 'A'", path: "", received: new C() },
   ]);
 });
 
 test("literal", () => {
   expect(validateType(123, t.literal(123))).toEqual([]);
   expect(validateType(321, t.literal(123))).toEqual([
-    { message: "value is not equal to 123", path: [], received: 321 },
+    { message: "value is not equal to 123", path: "", received: 321 },
   ]);
   expect(validateType("abc", t.literal("abc"))).toEqual([]);
   expect(validateType("", t.literal("abc"))).toEqual([
-    { message: "value is not equal to 'abc'", path: [], received: "" },
+    { message: "value is not equal to 'abc'", path: "", received: "" },
   ]);
   expect(validateType("abc", t.literal(""))).toEqual([
-    { message: "value is not equal to ''", path: [], received: "abc" },
+    { message: "value is not equal to ''", path: "", received: "abc" },
   ]);
   expect(validateType(123, t.literal(""))).toEqual([
-    { message: "value is not equal to ''", path: [], received: 123 },
+    { message: "value is not equal to ''", path: "", received: 123 },
   ]);
   expect(validateType("", t.literal(123))).toEqual([
-    { message: "value is not equal to 123", path: [], received: "" },
+    { message: "value is not equal to 123", path: "", received: "" },
   ]);
   expect(validateType(true, t.literal(true))).toEqual([]);
   expect(validateType(false, t.literal(true))).toEqual([
-    { message: "value is not equal to true", path: [], received: false },
+    { message: "value is not equal to true", path: "", received: false },
   ]);
   expect(validateType(null, t.literal(null))).toEqual([]);
   expect(validateType(true, t.literal(null))).toEqual([
-    { message: "value is not equal to null", path: [], received: true },
+    { message: "value is not equal to null", path: "", received: true },
   ]);
   expect(validateType(null, t.literal(false))).toEqual([
-    { message: "value is not equal to false", path: [], received: null },
+    { message: "value is not equal to false", path: "", received: null },
   ]);
   expect(validateType(undefined, t.literal(undefined))).toEqual([]);
   expect(validateType(123, t.literal(undefined))).toEqual([
-    { message: "value is not equal to undefined", path: [], received: 123 },
+    { message: "value is not equal to undefined", path: "", received: 123 },
   ]);
   expect(validateType("abc", t.literal(undefined))).toEqual([
-    { message: "value is not equal to undefined", path: [], received: "abc" },
+    { message: "value is not equal to undefined", path: "", received: "abc" },
   ]);
   expect(validateType(null, t.literal(undefined))).toEqual([
-    { message: "value is not equal to undefined", path: [], received: null },
+    { message: "value is not equal to undefined", path: "", received: null },
   ]);
 });
 
@@ -278,80 +278,80 @@ test("number", () => {
   expect(validateType(123, t.number())).toEqual([]);
   expect(validateType(987, t.number())).toEqual([]);
   expect(validateType(true, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: true },
+    { message: "value is not a number", path: "", received: true },
   ]);
   expect(validateType(false, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: false },
+    { message: "value is not a number", path: "", received: false },
   ]);
   expect(validateType("", t.number())).toEqual([
-    { message: "value is not a number", path: [], received: "" },
+    { message: "value is not a number", path: "", received: "" },
   ]);
   expect(validateType("abc", t.number())).toEqual([
-    { message: "value is not a number", path: [], received: "abc" },
+    { message: "value is not a number", path: "", received: "abc" },
   ]);
   expect(validateType(undefined, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: undefined },
+    { message: "value is not a number", path: "", received: undefined },
   ]);
   expect(validateType(null, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: null },
+    { message: "value is not a number", path: "", received: null },
   ]);
   expect(validateType({}, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: {} },
+    { message: "value is not a number", path: "", received: {} },
   ]);
   expect(validateType([], t.number())).toEqual([
-    { message: "value is not a number", path: [], received: [] },
+    { message: "value is not a number", path: "", received: [] },
   ]);
   expect(validateType(A, t.number())).toEqual([
-    { message: "value is not a number", path: [], received: A },
+    { message: "value is not a number", path: "", received: A },
   ]);
   expect(validateType(new A(), t.number())).toEqual([
-    { message: "value is not a number", path: [], received: new A() },
+    { message: "value is not a number", path: "", received: new A() },
   ]);
 });
 
 describe("object", () => {
   test("shaped object", () => {
     expect(validateType(123, t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: 123 },
+      { message: "value is not an object", path: "", received: 123 },
     ]);
     expect(validateType("abc", t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: "abc" },
+      { message: "value is not an object", path: "", received: "abc" },
     ]);
     expect(validateType(true, t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: true },
+      { message: "value is not an object", path: "", received: true },
     ]);
     expect(validateType(null, t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: null },
+      { message: "value is not an object", path: "", received: null },
     ]);
     expect(validateType(undefined, t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: undefined },
+      { message: "value is not an object", path: "", received: undefined },
     ]);
     expect(validateType([], t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: [] },
+      { message: "value is not an object", path: "", received: [] },
     ]);
     const arrowFn = () => {};
     expect(validateType(arrowFn, t.object({}))).toEqual([
-      { message: "value is not an object", path: [], received: arrowFn },
+      { message: "value is not an object", path: "", received: arrowFn },
     ]);
     expect(validateType({}, t.object({}))).toEqual([]);
     expect(validateType({ a: 1 }, t.object({}))).toEqual([]);
     expect(validateType({ a: 1 }, t.object({ a: t.number() }))).toEqual([]);
     expect(validateType({ a: 1 }, t.object({ a: t.string() }))).toEqual([
-      { message: "value is not a string", path: ["a"], received: 1 },
+      { message: "value is not a string", path: "a", received: 1 },
     ]);
     expect(validateType({ b: 1 }, t.object({ a: t.string() }))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a"], received: { b: 1 } },
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: { b: 1 } },
     ]);
     expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string() }))).toEqual([]);
   });
 
   test("shaped object with optional key", () => {
     expect(validateType({}, t.object({ a: t.number() }))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a"], received: {} },
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: {} },
     ]);
     expect(validateType({}, t.object({ "a?": t.number() }))).toEqual([]);
     expect(validateType({}, t.object({ a: t.number(), "b?": t.number() }))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
     ]);
     expect(validateType({ a: 1 }, t.object({ a: t.number(), "b?": t.number() }))).toEqual([]);
     expect(
@@ -359,7 +359,7 @@ describe("object", () => {
     ).toEqual([]);
     expect(
       validateType({ a: 1, b: "abc" }, t.object({ a: t.number(), "b?": t.number() }))
-    ).toEqual([{ message: "value is not a number", path: ["b"], received: "abc" }]);
+    ).toEqual([{ message: "value is not a number", path: "b", received: "abc" }]);
   });
 
   test("shaped object with nested object", () => {
@@ -371,45 +371,45 @@ describe("object", () => {
     });
 
     expect(validateType({}, type)).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a", "b"], expectedKeys: ["a", "b"], received: {} },
+      { message: "object value has missing keys", path: "", missingKeys: ["a", "b"], expectedKeys: ["a", "b"], received: {} },
     ]);
     expect(validateType({ a: 1 }, type)).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 1 } },
+      { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 1 } },
     ]);
     expect(validateType({ a: 1, b: 1 }, type)).toEqual([
-      { message: "value is not an object", path: ["b"], received: 1 },
+      { message: "value is not an object", path: "b", received: 1 },
     ]);
     expect(validateType({ a: 1, b: {} }, type)).toEqual([
-      { message: "object value has missing keys", path: ["b"], missingKeys: ["c"], expectedKeys: ["c"], received: {} },
+      { message: "object value has missing keys", path: "b", missingKeys: ["c"], expectedKeys: ["c"], received: {} },
     ]);
     expect(validateType({ a: 1, b: { c: "" } }, type)).toEqual([]);
     expect(validateType({ a: "", b: { c: "" } }, type)).toEqual([
-      { message: "value is not a number", path: ["a"], received: "" },
+      { message: "value is not a number", path: "a", received: "" },
     ]);
     expect(validateType({ a: 1, b: { c: 123 } }, type)).toEqual([
-      { message: "value is not a string", path: ["b", "c"], received: 123 },
+      { message: "value is not a string", path: "b > c", received: 123 },
     ]);
   });
 
   test("keyed object", () => {
     expect(validateType("abc", t.object(["a", "b"]))).toEqual([
-      { message: "value is not an object", path: [], received: "abc" },
+      { message: "value is not an object", path: "", received: "abc" },
     ]);
     expect(validateType(123, t.object(["a", "b"]))).toEqual([
-      { message: "value is not an object", path: [], received: 123 },
+      { message: "value is not an object", path: "", received: 123 },
     ]);
     expect(validateType(true, t.object(["a", "b"]))).toEqual([
-      { message: "value is not an object", path: [], received: true },
+      { message: "value is not an object", path: "", received: true },
     ]);
     expect(validateType({}, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a", "b"], expectedKeys: ["a", "b"], received: {} },
+      { message: "object value has missing keys", path: "", missingKeys: ["a", "b"], expectedKeys: ["a", "b"], received: {} },
     ]);
     expect(validateType({ a: "abc" }, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: "abc" } },
+      { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: "abc" } },
     ]);
     expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123 }, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 123 } },
+      { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 123 } },
     ]);
     expect(validateType({ a: 123, b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123, b: 123 }, t.object(["a", "b"]))).toEqual([]);
@@ -417,7 +417,7 @@ describe("object", () => {
 
   test("keyed object with optional keys", () => {
     expect(validateType({}, t.object(["a", "b?"]))).toEqual([
-      { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
     ]);
     expect(validateType({ a: "abc" }, t.object(["a", "b?"]))).toEqual([]);
     expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b?"]))).toEqual([]);
@@ -437,13 +437,13 @@ describe("object", () => {
 describe("promise", () => {
   test("promise", () => {
     expect(validateType(123, t.promise())).toEqual([
-      { message: "value is not a promise", path: [], received: 123 },
+      { message: "value is not a promise", path: "", received: 123 },
     ]);
     expect(validateType("abc", t.promise())).toEqual([
-      { message: "value is not a promise", path: [], received: "abc" },
+      { message: "value is not a promise", path: "", received: "abc" },
     ]);
     expect(validateType(true, t.promise())).toEqual([
-      { message: "value is not a promise", path: [], received: true },
+      { message: "value is not a promise", path: "", received: true },
     ]);
     expect(validateType(Promise.resolve(), t.promise())).toEqual([]);
   });
@@ -457,30 +457,30 @@ describe("promise", () => {
 
 test("signal", () => {
   expect(validateType(123, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: 123 },
+    { message: "value is not a reactive value", path: "", received: 123 },
   ]);
   expect(validateType("abc", t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: "abc" },
+    { message: "value is not a reactive value", path: "", received: "abc" },
   ]);
   expect(validateType(true, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: true },
+    { message: "value is not a reactive value", path: "", received: true },
   ]);
   const arrowFn = () => {};
   expect(validateType(arrowFn, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: arrowFn },
+    { message: "value is not a reactive value", path: "", received: arrowFn },
   ]);
   const fn = function () {};
   expect(validateType(fn, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: fn },
+    { message: "value is not a reactive value", path: "", received: fn },
   ]);
   expect(validateType(A, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: A },
+    { message: "value is not a reactive value", path: "", received: A },
   ]);
   class B {
     set() {}
   }
   expect(validateType(B, t.signal(t.string()))).toEqual([
-    { message: "value is not a reactive value", path: [], received: B },
+    { message: "value is not a reactive value", path: "", received: B },
   ]);
   expect(validateType(signal(1), t.signal(t.number()))).toEqual([]);
   expect(
@@ -493,43 +493,43 @@ test("signal", () => {
 
 test("record", () => {
   expect(validateType("abc", t.record(t.string()))).toEqual([
-    { message: "value is not an object", path: [], received: "abc" },
+    { message: "value is not an object", path: "", received: "abc" },
   ]);
   expect(validateType(123, t.record(t.string()))).toEqual([
-    { message: "value is not an object", path: [], received: 123 },
+    { message: "value is not an object", path: "", received: 123 },
   ]);
   expect(validateType(true, t.record(t.string()))).toEqual([
-    { message: "value is not an object", path: [], received: true },
+    { message: "value is not an object", path: "", received: true },
   ]);
   expect(validateType({}, t.record(t.string()))).toEqual([]);
   expect(validateType({ a: "abc" }, t.record(t.string()))).toEqual([]);
   expect(validateType({ a: "abc", b: "def" }, t.record(t.string()))).toEqual([]);
   expect(validateType({ a: 123 }, t.record(t.string()))).toEqual([
-    { message: "value is not a string", path: ["a"], received: 123 },
+    { message: "value is not a string", path: "a", received: 123 },
   ]);
   expect(validateType({ a: 123, b: "def" }, t.record(t.string()))).toEqual([
-    { message: "value is not a string", path: ["a"], received: 123 },
+    { message: "value is not a string", path: "a", received: 123 },
   ]);
   expect(validateType({ a: 123, b: 123 }, t.record(t.string()))).toEqual([
-    { message: "value is not a string", path: ["a"], received: 123 },
-    { message: "value is not a string", path: ["b"], received: 123 },
+    { message: "value is not a string", path: "a", received: 123 },
+    { message: "value is not a string", path: "b", received: 123 },
   ]);
   expect(validateType({ a: 123, b: 123 }, t.record(t.number()))).toEqual([]);
 });
 
 test("strictObject", () => {
   expect(validateType("", t.strictObject({}))).toEqual([
-    { message: "value is not an object", path: [], received: "" },
+    { message: "value is not an object", path: "", received: "" },
   ]);
   expect(validateType(1, t.strictObject({}))).toEqual([
-    { message: "value is not an object", path: [], received: 1 },
+    { message: "value is not an object", path: "", received: 1 },
   ]);
   expect(validateType({}, t.strictObject({}))).toEqual([]);
   expect(validateType({ a: 1 }, t.strictObject({}))).toEqual([
-    { message: "object value has unknown keys", path: [], unknownKeys: ["a"], expectedKeys: [], received: { a: 1 } },
+    { message: "object value has unknown keys", path: "", unknownKeys: ["a"], expectedKeys: [], received: { a: 1 } },
   ]);
   expect(validateType({}, t.strictObject({ a: t.number() }))).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["a"], expectedKeys: ["a"], received: {} },
+    { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: {} },
   ]);
   expect(validateType({ a: 1 }, t.strictObject({ a: t.number() }))).toEqual([]);
 });
@@ -541,92 +541,92 @@ test("string", () => {
   class M extends String {}
   expect(validateType(new M("abc"), t.string())).toEqual([]);
   expect(validateType(123, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: 123 },
+    { message: "value is not a string", path: "", received: 123 },
   ]);
   expect(validateType(987, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: 987 },
+    { message: "value is not a string", path: "", received: 987 },
   ]);
   expect(validateType(true, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: true },
+    { message: "value is not a string", path: "", received: true },
   ]);
   expect(validateType(false, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: false },
+    { message: "value is not a string", path: "", received: false },
   ]);
   expect(validateType(undefined, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: undefined },
+    { message: "value is not a string", path: "", received: undefined },
   ]);
   expect(validateType(null, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: null },
+    { message: "value is not a string", path: "", received: null },
   ]);
   expect(validateType({}, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: {} },
+    { message: "value is not a string", path: "", received: {} },
   ]);
   expect(validateType([], t.string())).toEqual([
-    { message: "value is not a string", path: [], received: [] },
+    { message: "value is not a string", path: "", received: [] },
   ]);
   expect(validateType(A, t.string())).toEqual([
-    { message: "value is not a string", path: [], received: A },
+    { message: "value is not a string", path: "", received: A },
   ]);
   expect(validateType(new A(), t.string())).toEqual([
-    { message: "value is not a string", path: [], received: new A() },
+    { message: "value is not a string", path: "", received: new A() },
   ]);
 });
 
 test("tuple", () => {
   expect(validateType(["abc"], t.tuple([t.string()]))).toEqual([]);
   expect(validateType([], t.tuple([t.string()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: [], received: [] },
+    { message: "tuple value does not have the correct length", path: "", received: [] },
   ]);
   expect(validateType([123], t.tuple([t.string()]))).toEqual([
-    { message: "value is not a string", path: [0], received: 123 },
+    { message: "value is not a string", path: "0", received: 123 },
   ]);
   expect(validateType(["abc", 123], t.tuple([t.string()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: [], received: ["abc", 123] },
+    { message: "tuple value does not have the correct length", path: "", received: ["abc", 123] },
   ]);
   expect(validateType("", t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: "" },
+    { message: "value is not an array", path: "", received: "" },
   ]);
   expect(validateType("abc", t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: "abc" },
+    { message: "value is not an array", path: "", received: "abc" },
   ]);
   expect(validateType(123, t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: 123 },
+    { message: "value is not an array", path: "", received: 123 },
   ]);
   expect(validateType(987, t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: 987 },
+    { message: "value is not an array", path: "", received: 987 },
   ]);
   expect(validateType(true, t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: true },
+    { message: "value is not an array", path: "", received: true },
   ]);
   expect(validateType({}, t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not an array", path: [], received: {} },
+    { message: "value is not an array", path: "", received: {} },
   ]);
   expect(validateType(["abc", 123], t.tuple([t.string(), t.number()]))).toEqual([]);
   expect(validateType([123, "abc"], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not a string", path: [0], received: 123 },
-    { message: "value is not a number", path: [1], received: "abc" },
+    { message: "value is not a string", path: "0", received: 123 },
+    { message: "value is not a number", path: "1", received: "abc" },
   ]);
   expect(validateType(["abc"], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: [], received: ["abc"] },
+    { message: "tuple value does not have the correct length", path: "", received: ["abc"] },
   ]);
   expect(validateType([123], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: [], received: [123] },
+    { message: "tuple value does not have the correct length", path: "", received: [123] },
   ]);
   expect(validateType(["abc", true], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not a number", path: [1], received: true },
+    { message: "value is not a number", path: "1", received: true },
   ]);
   expect(validateType([true, 123], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "value is not a string", path: [0], received: true },
+    { message: "value is not a string", path: "0", received: true },
   ]);
   expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: [], received: ["abc", 123, true] },
+    { message: "tuple value does not have the correct length", path: "", received: ["abc", 123, true] },
   ]);
   expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number(), t.boolean()]))).toEqual(
     []
   );
   expect(
     validateType(["abc", 123, 123], t.tuple([t.string(), t.number(), t.boolean()]))
-  ).toEqual([{ message: "value is not a boolean", path: [2], received: 123 }]);
+  ).toEqual([{ message: "value is not a boolean", path: "2", received: 123 }]);
 });
 
 test("or", () => {
@@ -637,39 +637,39 @@ test("or", () => {
   expect(validateType(true, t.or([t.string(), t.number()]))).toEqual([
     {
       message: "value does not match union type",
-      path: [],
+      path: "",
       received: true,
       subIssues: [
-        { message: "value is not a string", path: [], received: true },
-        { message: "value is not a number", path: [], received: true },
+        { message: "value is not a string", path: "", received: true },
+        { message: "value is not a number", path: "", received: true },
       ],
     },
   ]);
   expect(validateType({}, t.or([t.string(), t.number()]))).toEqual([
     {
       message: "value does not match union type",
-      path: [],
+      path: "",
       received: {},
       subIssues: [
-        { message: "value is not a string", path: [], received: {} },
-        { message: "value is not a number", path: [], received: {} },
+        { message: "value is not a string", path: "", received: {} },
+        { message: "value is not a number", path: "", received: {} },
       ],
     },
   ]);
   expect(validateType([], t.or([t.string(), t.number()]))).toEqual([
     {
       message: "value does not match union type",
-      path: [],
+      path: "",
       received: [],
       subIssues: [
-        { message: "value is not a string", path: [], received: [] },
-        { message: "value is not a number", path: [], received: [] },
+        { message: "value is not a string", path: "", received: [] },
+        { message: "value is not a number", path: "", received: [] },
       ],
     },
   ]);
   expect(validateType([], t.or([t.string(), t.array(t.number())]))).toEqual([]);
   expect(validateType([""], t.or([t.string(), t.array(t.number())]))).toEqual([
-    { message: "value is not a number", path: [0], received: "" },
+    { message: "value is not a number", path: "0", received: "" },
   ]);
 });
 
@@ -685,22 +685,22 @@ test("complex type", () => {
     ),
   });
 
-  expect(validateType(1, complexType)).toEqual([{ message: "value is not an object", path: [], received: 1 }]);
-  expect(validateType("", complexType)).toEqual([{ message: "value is not an object", path: [], received: "" }]);
-  expect(validateType([], complexType)).toEqual([{ message: "value is not an object", path: [], received: [] }]);
-  expect(validateType(null, complexType)).toEqual([{ message: "value is not an object", path: [], received: null }]);
+  expect(validateType(1, complexType)).toEqual([{ message: "value is not an object", path: "", received: 1 }]);
+  expect(validateType("", complexType)).toEqual([{ message: "value is not an object", path: "", received: "" }]);
+  expect(validateType([], complexType)).toEqual([{ message: "value is not an object", path: "", received: [] }]);
+  expect(validateType(null, complexType)).toEqual([{ message: "value is not an object", path: "", received: null }]);
   expect(validateType({}, complexType)).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a?", "b"], received: {} },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: {} },
   ]);
   expect(validateType({ a: "" }, complexType)).toEqual([
-    { message: "value is not a number", path: ["a"], received: "" },
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: "" } },
+    { message: "value is not a number", path: "a", received: "" },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: "" } },
   ]);
   expect(validateType({ a: 1 }, complexType)).toEqual([
-    { message: "object value has missing keys", path: [], missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: 1 } },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: 1 } },
   ]);
   expect(validateType({ b: {} }, complexType)).toEqual([
-    { message: "value is not an array", path: ["b"], received: {} },
+    { message: "value is not an array", path: "b", received: {} },
   ]);
   expect(
     validateType(
@@ -710,8 +710,8 @@ test("complex type", () => {
       complexType
     )
   ).toEqual([
-    { message: "value is not an instance of 'A'", path: ["b", 0, "a"], received: 1 },
-    { message: "tuple value does not have the correct length", path: ["b", 0, "c"], received: ["a", "b", "c"] },
+    { message: "value is not an instance of 'A'", path: "b > 0 > a", received: 1 },
+    { message: "tuple value does not have the correct length", path: "b > 0 > c", received: ["a", "b", "c"] },
   ]);
   expect(
     validateType(
@@ -772,7 +772,7 @@ test("assert wrong object and circular reference", () => {
         }
       }
     },
-    "path": [],
+    "path": "",
     "message": "object value has missing keys",
     "missingKeys": [
       "str"
@@ -794,10 +794,35 @@ test("assert class instance", () => {
 [
   {
     "received": "[Instance of A]",
-    "path": [
-      "a"
-    ],
+    "path": "a",
     "message": "value is not a number"
+  }
+]`
+  );
+});
+
+test("assertType path is not hidden", () => {
+  const obj = {};
+  expect(() => {
+    assertType({ v: obj }, t.object({ v: t.or([t.string(), t.number()]) }));
+  }).toThrow(`Value does not match the type
+[
+  {
+    "received": {},
+    "path": "v",
+    "message": "value does not match union type",
+    "subIssues": [
+      {
+        "received": "[Known object]",
+        "path": "v",
+        "message": "value is not a string"
+      },
+      {
+        "received": "[Known object]",
+        "path": "v",
+        "message": "value is not a number"
+      }
+    ]
   }
 ]`
   );

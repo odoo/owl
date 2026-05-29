@@ -2,7 +2,7 @@ import { OwlError } from "./owl_error";
 
 export interface ValidationIssue {
   message: string;
-  path?: PropertyKey[];
+  path?: string;
   received?: any;
   [K: string]: any;
 }
@@ -67,7 +67,7 @@ function createContext(
     addIssue(issue) {
       issues.push({
         received: this.value,
-        path: this.path,
+        path: this.path.join(" > "),
         ...issue,
       });
     },

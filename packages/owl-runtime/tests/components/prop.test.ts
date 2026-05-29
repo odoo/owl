@@ -209,7 +209,7 @@ describe("dev mode", () => {
 
     const parent = await mount(Parent, fixture, { dev: true });
     todoSig.set(new Todo()); // inner value changes, signal reference stays the same
-    render(parent, true); // deep re-render → triggers willUpdateProps
+    render(parent, true); // deep re-render
     await nextTick();
     // no error: same signal reference, so the static-prop check passes
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -275,7 +275,7 @@ describe("dev mode", () => {
     const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div>fallback</div>");
     parent.state.tick = 1;
-    render(parent, true); // deep re-render → triggers willUpdateProps on Child
+    render(parent, true); // deep re-render
     await nextTick();
     // no error: the raw prop stayed undefined, so the static-prop check passes
     expect(fixture.innerHTML).toBe("<div>fallback</div>");

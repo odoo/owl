@@ -1,4 +1,4 @@
-import { App, Component, mount, props, proxy, status, types as t, toRaw, xml } from "../../src";
+import { App, Component, mount, onWillStart, props, proxy, status, types as t, toRaw, xml } from "../../src";
 import { markup } from "../../src/utils";
 import {
   elem,
@@ -217,8 +217,15 @@ describe("basics", () => {
   });
 
   test("a component cannot be mounted in a detached node (even if node is detached later)", async () => {
+    // Microtask scheduling: a sync component's mount completes inside the
+    // first microtask drain, before any other code can detach the target —
+    // so we use an async willStart to genuinely create a gap during which
+    // the fixture can be detached.
     class Test extends Component {
       static template = xml`<div/>`;
+      setup() {
+        onWillStart(() => new Promise((r) => setTimeout(r)));
+      }
     }
     let error: any;
     const app = new App();

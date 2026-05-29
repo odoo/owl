@@ -4,6 +4,7 @@
 // tests that rely on the default).
 import { compile, parseXML } from "@odoo/owl-compiler";
 import { TemplateSet } from "../src/template_set";
+import { Scheduler } from "../src/rendering/scheduler";
 
 (TemplateSet.prototype as any)._compileTemplate = function _compileTemplate(
   name: string,
@@ -21,6 +22,11 @@ import { TemplateSet } from "../src/template_set";
 (TemplateSet.prototype as any)._parseXML = function _parseXML(xml: string) {
   return parseXML(xml);
 };
+
+// Disable frame budgeting in tests: nextTick() awaits one RAF and expects the
+// scheduler fully drained by then. Individual tests that exercise budgeting
+// set Scheduler.frameBudgetMs back to a finite value and restore it after.
+Scheduler.frameBudgetMs = Infinity;
 
 const consoleOutput: string[] = [];
 (globalThis as any).__owl_console_output = consoleOutput;

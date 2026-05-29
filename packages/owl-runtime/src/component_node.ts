@@ -43,6 +43,10 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
+  // Depth in the component tree (root = 0). Used as the priority for
+  // signalComputation so that when multiple components schedule re-renders in
+  // the same microtask batch, ancestors run before descendants.
+  depth: number;
 
   constructor(
     C: ComponentConstructor,
@@ -56,10 +60,12 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.componentName = C.name;
+    this.depth = parent ? parent.depth + 1 : 0;
     this.signalComputation = createComputation(
       () => this.render(false),
       false,
-      ComputationState.EXECUTED
+      ComputationState.EXECUTED,
+      this.depth
     );
     this.props = props;
     const previousComputation = getCurrentComputation();
@@ -93,7 +99,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     return f.bind(component, scope);
   }
 
-  async initiateRender(fiber: Fiber | MountFiber) {
+  initiateRender(fiber: Fiber | MountFiber) {
     this.fiber = fiber;
     if (this.mounted.length) {
       fiber.root!.mounted.push(fiber);
@@ -101,23 +107,47 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     const component = this.component;
     let prev = getCurrentComputation();
     setComputation(undefined);
+    let promises: any[];
     try {
-      let promises = this.willStart.map((f) => f.call(component));
-      setComputation(prev);
-      await Promise.all(promises!);
+      promises = this.willStart.map((f) => f.call(component));
     } catch (e) {
-      // Do NOT setComputation(prev) here: we are in a fresh microtask
-      // post-await, and `prev` is a snapshot from a sync chunk that ended
-      // long ago. Pinning currentComputation to it would leak the captured
-      // (possibly already-dead) parent signalComputation forever.
-      if (isAbortError(e) && this.status > STATUS.MOUNTED) {
-        return;
-      }
+      setComputation(prev);
       handleError({ node: this, error: e });
       return;
     }
+    setComputation(prev);
+    // Fast path: every willStart hook returned synchronously. We can complete
+    // willStart inline, which keeps a child fiber's render inside its parent's
+    // render pass — total render+commit lands in a single tick instead of
+    // leaking into a second one through `await Promise.all`'s microtask.
+    if (promises.every((p) => !p || typeof p.then !== "function")) {
+      this._completeWillStart(fiber);
+      return;
+    }
+    Promise.all(promises).then(
+      () => this._completeWillStart(fiber),
+      (e) => {
+        if (isAbortError(e) && this.status > STATUS.MOUNTED) {
+          return;
+        }
+        handleError({ node: this, error: e });
+      }
+    );
+  }
+
+  private _completeWillStart(fiber: Fiber | MountFiber) {
     if (this.status === STATUS.NEW && this.fiber === fiber) {
-      fiber.render();
+      if (fiber.parent) {
+        // Child fiber created during a parent render: render synchronously so
+        // the parent's commit waits on us via the root counter.
+        fiber.render();
+      } else {
+        // Root fiber (mount path): the fiber was already enqueued by prepare()
+        // with `pending = true` to preserve ordering across roots. Clear the
+        // flag and ensure the scheduler will pick us up at the next tick.
+        fiber.pending = false;
+        this.app.scheduler.flush();
+      }
     }
   }
 
@@ -125,12 +155,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     if (this.status >= STATUS.CANCELLED) {
       return;
     }
-    let current = this.fiber;
-    if (current && (current.root!.locked || (current as any).bdom === true)) {
-      await Promise.resolve();
-      // situation may have changed after the microtask tick
-      current = this.fiber;
-    }
+    const current = this.fiber;
     if (current) {
       if (!current.bdom && !fibersInError.has(current)) {
         if (deep) {
@@ -150,24 +175,34 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.fiber = fiber;
 
     this.app.scheduler.addFiber(fiber);
-    await Promise.resolve();
-    if (this.status >= STATUS.CANCELLED) {
-      return;
+    if (current) {
+      // Re-render of an existing fiber — typically a child fiber invalidated
+      // by its own signalComputation, or recovery after an error handler set
+      // state. The fiber lives inside an in-flight root tree (scheduler.tasks
+      // only holds roots), so the scheduler can't reach it on its own. We
+      // wait one microtask to coalesce any cluster of state changes, then
+      // render in place; the existing root will commit with the fresh bdom
+      // at its own tick.
+      //
+      // Hold the scheduler back during the await: addFiber queued processTasks
+      // already, but committing other roots before this fiber.render runs
+      // would skip our pending counter decrements / orphan-cancels.
+      this.app.scheduler.pendingFiberRenders++;
+      try {
+        await Promise.resolve();
+        if (this.status >= STATUS.CANCELLED) {
+          return;
+        }
+        if (this.fiber === fiber) {
+          fiber.render();
+        }
+      } finally {
+        this.app.scheduler.pendingFiberRenders--;
+      }
     }
-    // We only want to actually render the component if the following two
-    // conditions are true:
-    // * this.fiber: it could be null, in which case the render has been cancelled
-    // * (current || !fiber.parent): if current is not null, this means that the
-    //   render function was called when a render was already occurring. In this
-    //   case, the pending rendering was cancelled, and the fiber needs to be
-    //   rendered to complete the work.  If current is null, we check that the
-    //   fiber has no parent.  If that is the case, the fiber was downgraded from
-    //   a root fiber to a child fiber in the previous microtick, because it was
-    //   embedded in a rendering coming from above, so the fiber will be rendered
-    //   in the next microtick anyway, so we should not render it again.
-    if (this.fiber === fiber && (current || !fiber.parent)) {
-      fiber.render();
-    }
+    // For brand-new root fibers, the scheduler picks the work up at the next
+    // microtask tick — that's where signal-driven first-time renders get
+    // batched into a single per-tick pass.
   }
 
   cancel() {

@@ -13,7 +13,6 @@ import {
   onWillPatch,
   onWillStart,
   onWillUnmount,
-  onWillUpdateProps,
   status,
   xml,
   effect,
@@ -51,9 +50,19 @@ export function makeTestFixture() {
 beforeEach(() => {
   xml.nextId = 999;
 });
-export async function nextTick(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve));
-  await new Promise((resolve) => requestAnimationFrame(resolve));
+/**
+ * Wait `count` scheduler ticks (one macrotask boundary each). The scheduler
+ * runs at microtask granularity; a setTimeout drain flushes all pending
+ * microtasks for one render+commit pass. The default is one tick — the
+ * common case. Pass `2` (or more) when a re-render genuinely needs an extra
+ * tick, e.g. when an async willStart lands the next render+commit on a
+ * subsequent tick. Use the smallest count that lets the test observe the
+ * state it cares about.
+ */
+export async function nextTick(count: number = 1): Promise<void> {
+  for (let i = 0; i < count; i++) {
+    await new Promise((resolve) => setTimeout(resolve));
+  }
 }
 
 interface Deferred<T = any> extends Promise<T> {
@@ -180,13 +189,6 @@ export function useLogLifecycle(
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:mounted`);
   });
-
-  if (!skipAsyncHooks) {
-    onWillUpdateProps(() => {
-      expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-      logStep(`${name}:willUpdateProps`);
-    });
-  }
 
   onWillPatch(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");

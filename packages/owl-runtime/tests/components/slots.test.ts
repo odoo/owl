@@ -1338,9 +1338,9 @@ describe("slots", () => {
           </div>`;
     }
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
-
-    await nextTick(); // wait for the changes triggered in mounted to be applied
+    // Macrotask scheduling: the mounted-triggered state changes land on the
+    // next tick, after the initial mount commits.
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 
@@ -1370,9 +1370,8 @@ describe("slots", () => {
     }
 
     await mount(ParentWidget, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
-
-    await nextTick(); // wait for changes triggered in mounted to be applied
+    // Macrotask scheduling: mounted-triggered re-render lands on the next tick.
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 

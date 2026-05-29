@@ -22,13 +22,8 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
-    let root = current.root!;
-    // lock root fiber because canceling children fibers may destroy components,
-    // which means any arbitrary code can be run in onWillDestroy, which may
-    // trigger new renderings
-    root.locked = true;
+    const root = current.root!;
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
-    root.locked = false;
     current.children = [];
     current.childrenMap = {};
     current.bdom = null;
@@ -106,6 +101,11 @@ export class Fiber {
   appliedToDom = false;
   deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
+  // Set to true while initiateRender is awaiting willStart on a *root* fiber
+  // (mount path). The scheduler enqueues such fibers up front so task order
+  // matches the order roots were prepared, but skips rendering them in the
+  // rAF render pass until willStart resolves and clears this flag.
+  pending: boolean = false;
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
@@ -122,50 +122,82 @@ export class Fiber {
   }
 
   render() {
-    const scheduler = this.root!.node.app.scheduler;
-    // If more than one root fiber is in flight, an ancestor may be rendering —
-    // walk up to detect it and delay if needed. Otherwise no ancestor can have
-    // a fiber (every in-progress root lives in scheduler.tasks), so skip the
-    // walk.
-    if (scheduler.tasks.size > 1) {
-      let prev = this.root!.node;
-      let current = prev.parent;
-      while (current) {
-        if (current.fiber) {
-          let root = current.fiber.root!;
-          if (root.counter === 0 && prev.parentKey! in current.fiber.childrenMap) {
-            current = root.node;
-          } else {
-            scheduler.delayedRenders.push(this);
-            return;
-          }
-        }
-        prev = current;
-        current = current.parent;
-      }
-    }
-
-    // there are no current rendering from above => we can render
     const node = this.node;
     const root = this.root;
-    if (root) {
-      const c = getCurrentComputation();
-      removeSources(node.signalComputation);
-      setComputation(node.signalComputation);
-      node.signalComputation.state = ComputationState.EXECUTED;
-      try {
-        (this.bdom as any) = true;
-        this.bdom = node.renderFn();
-      } catch (e) {
-        handleError({ node, error: e });
-      } finally {
+    // An ancestor's render may have orphaned us — its template excluded this
+    // node and nulled our root (via the orphan scan below). Bail before
+    // running the user's template, which could read state no longer valid in
+    // the detached subtree.
+    if (!root) {
+      return;
+    }
+    const c = getCurrentComputation();
+    removeSources(node.signalComputation);
+    setComputation(node.signalComputation);
+    node.signalComputation.state = ComputationState.EXECUTED;
+    // Snapshot the existing children so we can orphan any that are missing
+    // from the template output. The template repopulates this.childrenMap
+    // via makeChildFiber on each <Child/> it encounters.
+    const previousChildren = node.children;
+    try {
+      // Sentinel-then-result: cancelFibers treats fibers with a truthy bdom
+      // as "render attempted" (count as rendered, set forceNextRender) and
+      // fibers with bdom=null as "never started" (decrement the root
+      // counter). Setting the marker first means a renderFn that throws
+      // still leaves the fiber as render-attempted, so a follow-up re-render
+      // triggered from an error handler doesn't double-decrement the root
+      // counter and trip a premature commit.
+      (this.bdom as any) = true;
+      this.bdom = node.renderFn();
+    } catch (e) {
+      // Fast path for the cascade: an ancestor `fiber.render` already ran
+      // `handleError` for this error and `app._handleError` rethrew. Every
+      // subsequent catch up the render stack would call `handleError` again
+      // only to short-circuit on `app.destroyed`. Skip straight to the
+      // rethrow instead.
+      if (e && (e as any).__owlHandled) {
         setComputation(c);
+        throw e;
       }
-      const newCounter = root.counter - 1;
-      root.counter = newCounter;
-      if (newCounter === 0) {
-        scheduler.flush();
+      try {
+        handleError({ node, error: e });
+      } catch (rethrown) {
+        if (rethrown && typeof rethrown === "object") {
+          (rethrown as any).__owlHandled = true;
+        }
+        setComputation(c);
+        throw rethrown;
       }
+    }
+    setComputation(c);
+    // Anything in the old children map but not the new one is an orphan. An
+    // independent render effect still pending on it would evaluate the user
+    // template against state this parent is about to discard. Null out the
+    // orphan's pending fiber so:
+    //   - component_node.render's continuation skips fiber.render()
+    //     (`this.fiber === fiber` becomes false)
+    //   - processTasks skips the stale entry in this.tasks
+    //     (`fiber.root !== fiber` branch, since we null fiber.root too)
+    //   - a later fiber.render() call on the orphan hits the `if (!root)`
+    //     guard above and no-ops
+    // Real destruction and DOM teardown still happens at commit via
+    // bdom.patch → beforeRemove → _destroy, so willUnmount fires correctly
+    // (status is still MOUNTED until commit).
+    const newChildren = this.childrenMap;
+    for (const key in previousChildren) {
+      if (!(key in newChildren)) {
+        const orphan = previousChildren[key];
+        const orphanFiber = orphan.fiber;
+        if (orphanFiber) {
+          orphanFiber.root = null;
+          orphan.fiber = null;
+        }
+      }
+    }
+    const newCounter = root.counter - 1;
+    root.counter = newCounter;
+    if (newCounter === 0) {
+      node.app.scheduler.flush();
     }
   }
 }
@@ -177,13 +209,9 @@ export class RootFiber extends Fiber {
   willPatch: Fiber[] = [];
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
-  // A fiber is typically locked when it is completing and the patch has not, or is being applied.
-  // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
-  locked: boolean = false;
 
   complete() {
     const node = this.node;
-    this.locked = true;
     let current: Fiber | undefined = undefined;
     let mountedFibers = this.mounted;
     try {
@@ -204,7 +232,6 @@ export class RootFiber extends Fiber {
 
       // Step 2: patching the dom
       node._patch();
-      this.locked = false;
 
       // Step 4: calling all mounted lifecycle hooks
       while ((current = mountedFibers.pop())) {
@@ -236,7 +263,6 @@ export class RootFiber extends Fiber {
       for (let fiber of mountedFibers) {
         fiber.node.willUnmount = [];
       }
-      this.locked = false;
       handleError({ fiber: current || this, error: e });
     }
   }

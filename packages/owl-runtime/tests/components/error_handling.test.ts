@@ -6,7 +6,6 @@ import {
   onWillPatch,
   onWillStart,
   onWillUnmount,
-  onWillUpdateProps,
   proxy,
   xml,
 } from "../../src";
@@ -69,9 +68,7 @@ describe("basics", () => {
       .catch((e: Error) => (error = e));
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -87,9 +84,7 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -143,18 +138,22 @@ describe("basics", () => {
     const gp = await mount(GrandParent, fixture);
     gp.state.flag = true;
 
-    // Can't use nextAppError here: it monkey-patches _handleError which
-    // breaks the throw-through cascade we're testing. Instead, let the sync
-    // re-render error reject the render promise directly.
+    // Re-renders now run inside the scheduler tick rather than synchronously
+    // from node.render(), so the unhandled error never makes it back to the
+    // render() caller. Capture it at the App boundary instead. We don't
+    // re-throw — the test only inspects the error, and rethrowing would
+    // surface as an unhandled rejection at the scheduler callback boundary.
+    const app = (gp as any).__owl__.app;
     let error: any;
-    try {
-      await render(gp);
-    } catch (e) {
+    app._handleError = (e: any) => {
       error = e;
-    }
+    };
+    render(gp);
+    await nextTick();
     expect(error!.message).toMatch(/Cannot read propert/);
     // As the throw unwinds through Parent and GrandParent renders, their
-    // handleError frames must not wrap the error that is already propagating.
+    // handleError frames must not re-process (and wrap) the error: once the
+    // app is destroyed it is rethrown as-is, so it carries no nested cause.
     expect(error!.cause).toBeUndefined();
   });
 
@@ -172,17 +171,20 @@ describe("basics", () => {
     const parent = await mount(Parent, fixture);
     expect(getCurrentComputation()).toBeUndefined();
 
-    parent.state.flag = true;
-    // The re-render of Child throws and, with no error boundary installed,
-    // handleError → app._handleError re-throws. Fiber.render() must still
-    // restore currentComputation; otherwise it stays pinned to Child's dead
-    // signalComputation and every subsequent atom read attaches to it.
+    // The re-render of Child throws. Re-renders now run inside the scheduler
+    // tick rather than synchronously from render(), so the unhandled error
+    // surfaces at the App boundary rather than rejecting the render() caller;
+    // capture it there. Fiber.render() must still restore currentComputation;
+    // otherwise it stays pinned to Child's dead signalComputation and every
+    // subsequent atom read attaches to it.
+    const app = (parent as any).__owl__.app;
     let error: any;
-    try {
-      await render(parent);
-    } catch (e) {
+    app._handleError = (e: any) => {
       error = e;
-    }
+    };
+    parent.state.flag = true;
+    render(parent);
+    await nextTick();
     expect(error).toBeDefined();
     expect(getCurrentComputation()).toBeUndefined();
   });
@@ -613,6 +615,8 @@ describe("can catch errors", () => {
     const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div><div>heyfalse</div></div></div>");
     app.state.flag = true;
+    // First rAF surfaces the render error and runs onError (state.error=true);
+    // ErrorBoundary's recovery render+commit happens at the next rAF.
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);
@@ -659,8 +663,11 @@ describe("can catch errors", () => {
     `);
     expect(fixture.innerHTML).toBe("Main");
     (app as any).state.ok = true;
+    // Microtask scheduling: the error→recovery cascade (mount ErrorComponent,
+    // throw in mounted, onError swaps in PerfectComponent, re-render) all
+    // collapses into one nextTick.
     await nextTick();
-    expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
+    expect(fixture.innerHTML).toBe("Main<div>perfect</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "ErrorComponent:setup",
@@ -669,11 +676,6 @@ describe("can catch errors", () => {
         "ErrorComponent:mounted",
         "PerfectComponent:setup",
         "PerfectComponent:willStart",
-      ]
-    `);
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Main:willPatch",
         "ErrorComponent:willUnmount",
         "ErrorComponent:willDestroy",
@@ -681,7 +683,6 @@ describe("can catch errors", () => {
         "Main:patched",
       ]
     `);
-    expect(fixture.innerHTML).toBe("Main<div>perfect</div>");
   });
 
   test("calling a hook outside setup should crash", async () => {
@@ -888,7 +889,9 @@ describe("can catch errors", () => {
     }
     const app = await mount(App, fixture);
     app.state.flag = true;
-    await nextTick();
+    // The throw fires during the first rAF's commit (onMounted-equivalent
+    // for an initial render); the recovery render commits at the next one.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(getConsoleOutput()).toEqual([]);
   });
@@ -1484,7 +1487,8 @@ describe("can catch errors", () => {
     parentState.cps[1] = { id: 1, Comp: Child };
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("");
-    await nextTick();
+    // onError → cleanup state → re-render lands one frame after the throw.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div>Sibling</div>");
   });
 
@@ -1537,7 +1541,9 @@ describe("can catch errors", () => {
 
     parent.elements[1] = ErrorComp;
     render(parent);
-    await nextTick();
+    // Recovery from a render-time throw: rAF1 runs the failing render and
+    // fires onError (which schedules another render); rAF2 commits it.
+    await nextTick(2);
     expect(fixture.innerHTML).toBe("<div>Child 2</div>");
     expect(steps).toEqual(["Error Component"]);
   });
@@ -1636,28 +1642,28 @@ describe("can catch errors", () => {
     `);
 
     parent.state.hasChild = true;
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
+    // The Child has been created and mounted at the next rAF.
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:setup",
         "Child:willStart",
+        "Parent:willPatch",
+        "Child:mounted",
+        "Parent:patched",
       ]
     `);
     parent.state.hasChild = false;
-    await nextTick();
+    // Re-render without the Child commits with value=1; willDestroy throws
+    // during that same rAF and onError increments value to 2; the recovery
+    // render commits at the next rAF.
+    await nextTick(2);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
+        "Parent:willPatch",
+        "Child:willUnmount",
         "Child:willDestroy",
-      ]
-    `);
-    expect(fixture.innerHTML).toBe("1");
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
+        "Parent:patched",
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1797,10 +1803,9 @@ describe("can catch errors", () => {
     `);
 
     root.state.gogogo = true;
+    // Microtask scheduling: error→recovery cascade collapses into one drain.
     await nextTick();
-
-    expect(fixture.innerHTML).toBe("Rparentabcboom");
-    // rerender, root creates sub components, it crashes, tries to recover
+    expect(fixture.innerHTML).toBe("Rdef");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -1814,14 +1819,6 @@ describe("can catch errors", () => {
         "error",
         "OtherChild:setup",
         "OtherChild:willStart",
-      ]
-    `);
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("Rdef");
-
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Root:willPatch",
         "Child:willDestroy",
         "Boom:willUnmount",
@@ -1831,93 +1828,5 @@ describe("can catch errors", () => {
         "Root:patched",
       ]
     `);
-  });
-});
-
-describe("errors in onWillUpdateProps", () => {
-  test("sync error in onWillUpdateProps is caught by parent onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onWillUpdateProps(() => {
-          throw new Error("sync boom");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-      setup() {
-        onError((e) => (error = e));
-      }
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1; // triggers child re-render → onWillUpdateProps throws
-    render(parent);
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("sync boom");
-  });
-
-  test("async error in onWillUpdateProps is caught by parent onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onWillUpdateProps(async () => {
-          await Promise.resolve();
-          throw new Error("async boom");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-      setup() {
-        onError((e) => (error = e));
-      }
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1;
-    render(parent);
-    await nextTick();
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("async boom");
-  });
-
-  test("async error in onWillUpdateProps is caught by child's own onError", async () => {
-    let error: any;
-    class Child extends Component {
-      static template = xml`<div/>`;
-      props = props();
-      setup() {
-        onError((e) => (error = e));
-        onWillUpdateProps(async () => {
-          await Promise.resolve();
-          throw new Error("async boom from child");
-        });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<Child val="this.state.val"/>`;
-      static components = { Child };
-      state = proxy({ val: 0 });
-    }
-
-    const parent = await mount(Parent, fixture, { test: true });
-    parent.state.val = 1;
-    render(parent);
-    await nextTick();
-    await nextTick();
-    expect(error).toBeDefined();
-    expect(error.message).toBe("async boom from child");
   });
 });

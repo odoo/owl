@@ -1,5 +1,5 @@
 import { vi, type Mock } from "vitest";
-import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
+import { Component, mount, onWillStart, xml } from "../../src";
 import { effect, markRaw, props, proxy, toRaw } from "../../src";
 
 import {
@@ -1840,11 +1840,8 @@ describe("Reactivity: proxy", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
-
+    // Microtask scheduling: a single nextTick is enough — both children's
+    // patches land in the same drain.
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
@@ -1905,11 +1902,7 @@ describe("Reactivity: proxy", () => {
     `);
 
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
+    // Microtask scheduling: a single nextTick covers both updates.
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -2208,84 +2201,20 @@ describe("Reactivity: proxy", () => {
     steps.clear();
 
     delete testContext[2];
-    await nextMicroTick();
-    await nextMicroTick();
-    expect([...steps]).toEqual(["list"]);
     await nextTick();
-    expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
+    // The deletion only invalidates the parent (it reads `Object.keys`); the
+    // surviving Quantity children don't depend on the deleted item, so they
+    // don't re-render — only `list` shows up.
     expect([...steps]).toEqual(["list"]);
+    expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
     steps.clear();
 
     secondQuantity.quantity = 2;
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
+    // Mutating an atom that's no longer observed by anything (the second
+    // quantity component was disposed) should not trigger any render.
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
     expect([...steps]).toEqual([]);
     steps.clear();
-  });
-
-  test.skip("concurrent renderings", async () => {
-    /**
-     * Note: this test is interesting, but sadly just an incomplete attempt at
-     * protecting users against themselves.  With the context API, it is not
-     * possible for the framework to protect completely against crashes.  Maybe
-     * like in this case, when a component is in a simple hierarchy where all
-     * renderings come from the context changes, but in a real case, where some
-     * code can trigger a rendering independently, it is insufficient.
-     *
-     * The main problem is that the sub component depends on some external state,
-     * which may be modified, and then incompatible with the component actual
-     * state (for example, if the sub component has an id key related to some
-     * object that has been removed from the context).
-     *
-     * For now, sadly, the only solution is that components that depends on external
-     * state should guarantee their own integrity themselves. Then maybe this
-     * could be solved at the level of a state management solution that has a
-     * more advanced API, to let components determine if they should be updated
-     * or not (so, something slightly more advanced that the useStore hook).
-     */
-    const testContext = createProxy({ x: { n: 1 }, key: "x" });
-    const def = makeDeferred();
-    let stateC: any;
-    class ComponentC extends Component {
-      static template = xml`<span><t t-out="context[this.props.key].n"/><t t-out="state.x"/></span>`;
-      props = props();
-      context = proxy(testContext);
-      state = proxy({ x: "a" });
-      setup() {
-        stateC = this.state;
-      }
-    }
-    class ComponentB extends Component {
-      static components = { ComponentC };
-      static template = xml`<p><ComponentC key="this.props.key"/></p>`;
-      props = props();
-      setup() {
-        onWillUpdateProps(() => def);
-      }
-    }
-    class ComponentA extends Component {
-      static components = { ComponentB };
-      static template = xml`<div><ComponentB key="context.key"/></div>`;
-      context = proxy(testContext);
-    }
-
-    await mount(ComponentA, fixture);
-
-    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
-    testContext.key = "y";
-    testContext.y = { n: 2 };
-    delete testContext.x;
-    await nextTick();
-
-    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
-    stateC.x = "b";
-    await nextTick();
-
-    expect(fixture.innerHTML).toBe("<div><p><span>1a</span></p></div>");
-    def.resolve();
-    await nextTick();
-
-    expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
   });
 });

@@ -232,33 +232,6 @@ exports[`.signal suffix: effects in child react to parent value changes 2`] = `
 }"
 `;
 
-exports[`.signal suffix: signal reference is stable across updates 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["tick"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val),tick: ctx['this'].state.tick}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`.signal suffix: signal reference is stable across updates 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.count());
-    const b3 = safeOutput(ctx['this'].props.tick);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
 exports[`.translate props are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -349,6 +322,31 @@ exports[`arrow function props re-render when captured variable changes 2`] = `
       b3 = text(\`V\`);
     }
     return block1([hdlr1], [b2, b3]);
+  }
+}"
+`;
+
+exports[`async onWillUpdateProps defers the child update until it resolves 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["v"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({v: ctx['this'].v()}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`async onWillUpdateProps defers the child update until it resolves 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.v);
   }
 }"
 `;
@@ -699,31 +697,6 @@ exports[`bound functions are considered 'alike' 2`] = `
 }"
 `;
 
-exports[`bound functions is not referentially equal after update 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({val: ctx['this'].state.val,fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`bound functions is not referentially equal after update 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.val);
-  }
-}"
-`;
-
 exports[`can bind function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -853,6 +826,31 @@ exports[`no props validation and default props 2`] = `
     const b3 = text(\` / \`);
     const b4 = safeOutput(ctx['this'].props.height);
     return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`onWillUpdateProps is called with the incoming props on each update 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["v"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({v: ctx['this'].v()}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`onWillUpdateProps is called with the incoming props on each update 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.v);
   }
 }"
 `;

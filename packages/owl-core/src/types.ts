@@ -1,5 +1,5 @@
 import { atomSymbol, type ReactiveValue } from "./computations";
-import { ValidationContext, ValidationIssue } from "./validation";
+import { ValidationContext, ValidationIssue, Validator } from "./validation";
 
 export type Constructor<T = any> = { new (...args: any[]): T };
 
@@ -27,116 +27,124 @@ export type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) ext
   ? I
   : never;
 
+/**
+ * Wraps a validator function so it can stand in for the TS type it accepts.
+ * The body is fully type-checked against {@link ValidationContext}; the return
+ * type is erased to `any` so each factory can advertise its phantom type (e.g.
+ * `numberType(): number`) without a cast at every call site.
+ */
+function validator(validate: Validator): any {
+  return validate;
+}
+
 function anyType(): any {
-  return function validateAny() {} as any;
+  return validator(() => {});
 }
 
 function booleanType(): boolean {
-  return function validateBoolean(context: ValidationContext) {
+  return validator((context) => {
     if (typeof context.value !== "boolean") {
       context.addIssue({ message: "value is not a boolean" });
     }
-  } as any;
+  });
 }
 
 function numberType(): number {
-  return function validateNumber(context: ValidationContext) {
+  return validator((context) => {
     if (typeof context.value !== "number") {
       context.addIssue({ message: "value is not a number" });
     }
-  } as any;
+  });
 }
 
 function stringType(): string {
-  return function validateString(context: ValidationContext) {
+  return validator((context) => {
     if (typeof context.value !== "string" && !(context.value instanceof String)) {
       context.addIssue({ message: "value is not a string" });
     }
-  } as any;
+  });
 }
 
 function arrayType(): any[];
 function arrayType<T>(elementType: T): T[];
 function arrayType(elementType?: any): any {
-  return function validateArray(context: ValidationContext) {
+  return validator((context) => {
     if (!Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an array" });
       return;
     }
-    if (!elementType) {
-      return;
+    if (elementType) {
+      for (let index = 0; index < context.value.length; index++) {
+        context.validateKey(index, elementType);
+      }
     }
-
-    for (let index = 0; index < context.value.length; index++) {
-      context.withKey(index).validate(elementType);
-    }
-  } as any;
+  });
 }
 
 export function constructorType<T extends Constructor>(constructor: T): T {
-  return function validateConstructor(context: ValidationContext) {
+  return validator((context) => {
     if (
-      !(typeof context.value === "function") ||
+      typeof context.value !== "function" ||
       !(context.value === constructor || context.value.prototype instanceof constructor)
     ) {
       context.addIssue({ message: `value is not '${constructor.name}' or an extension` });
     }
-  } as any;
+  });
 }
 
 function customValidator<T>(
   type: T,
-  validator: (value: T) => boolean,
+  predicate: (value: T) => boolean,
   errorMessage: string = "value does not match custom validation"
 ): T {
-  return function validateCustom(context: ValidationContext) {
-    context.validate(type);
-    if (!context.isValid) {
+  return validator((context) => {
+    const issueCount = context.issues.length;
+    context.validate(type as Validator);
+    if (context.issues.length > issueCount) {
       return;
     }
-
-    if (!validator(context.value)) {
+    if (!predicate(context.value)) {
       context.addIssue({ message: errorMessage });
     }
-  } as any;
+  });
 }
 
 function functionType(): (...parameters: any[]) => any;
 function functionType<const P extends any[]>(parameters: P): (...parameters: P) => void;
 function functionType<const P extends any[], R>(parameters: P, result: R): (...parameters: P) => R;
 function functionType(parameters = [], result = undefined): (...parameters: any[]) => any {
-  return function validateFunction(context: ValidationContext) {
+  return validator((context) => {
     if (typeof context.value !== "function") {
       context.addIssue({ message: "value is not a function" });
     }
-  } as any;
+  });
 }
 
 function instanceType<T extends Constructor>(constructor: T): InstanceType<T> {
-  return function validateInstanceType(context: ValidationContext) {
+  return validator((context) => {
     if (!(context.value instanceof constructor)) {
       context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
     }
-  } as any;
+  });
 }
 
 function intersection<T extends any[]>(types: T): UnionToIntersection<T[number]> {
-  return function validateIntersection(context: ValidationContext) {
+  return validator((context) => {
     for (const type of types) {
       context.validate(type);
     }
-  } as any;
+  });
 }
 
 export type LiteralTypes = number | string | boolean | null | undefined;
 function literalType<const T extends LiteralTypes>(literal: T): T {
-  return function validateLiteral(context: ValidationContext) {
+  return validator((context) => {
     if (context.value !== literal) {
       context.addIssue({
         message: `value is not equal to ${typeof literal === "string" ? `'${literal}'` : literal}`,
       });
     }
-  } as any;
+  });
 }
 
 function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
@@ -144,7 +152,8 @@ function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
 }
 
 function validateObject(context: ValidationContext, schema: any, isStrict: boolean) {
-  if (typeof context.value !== "object" || Array.isArray(context.value) || context.value === null) {
+  const value = context.value;
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
     context.addIssue({ message: "value is not an object" });
     return;
   }
@@ -152,53 +161,36 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
     return;
   }
 
+  // A schema is either a shape (a record of validators keyed by property name)
+  // or a plain list of property names. Either way, an optional property is
+  // marked with a trailing "?" in its key.
   const isShape = !Array.isArray(schema);
-  let shape: Record<string, any>;
-  let keys: string[];
-  if (isShape) {
-    keys = Object.keys(schema);
-    shape = schema;
-  } else {
-    keys = schema;
-    shape = {};
-    for (const key of keys) {
-      shape[key] = null;
-    }
-  }
+  const keys: string[] = isShape ? Object.keys(schema) : schema;
 
   const missingKeys: string[] = [];
   for (const key of keys) {
-    const property = key.endsWith("?") ? key.slice(0, -1) : key;
-    if (context.value[property] === undefined) {
-      if (!key.endsWith("?")) {
+    const isOptional = key.endsWith("?");
+    const property = isOptional ? key.slice(0, -1) : key;
+    if (value[property] === undefined) {
+      if (!isOptional) {
         missingKeys.push(property);
       }
-      continue;
-    }
-    if (isShape) {
-      context.withKey(property).validate(shape[key]);
+    } else if (isShape) {
+      context.validateKey(property, schema[key]);
     }
   }
   if (missingKeys.length) {
-    context.addIssue({
-      message: "object value has missing keys",
-      missingKeys,
-      expectedKeys: keys,
-    });
+    context.addIssue({ message: "object value has missing keys", missingKeys, expectedKeys: keys });
   }
   if (isStrict) {
     const unknownKeys: string[] = [];
-    for (const key in context.value) {
-      if (!keys.includes(key) && !(`${key}?` in shape)) {
+    for (const key in value) {
+      if (!keys.includes(key) && !keys.includes(`${key}?`)) {
         unknownKeys.push(key);
       }
     }
     if (unknownKeys.length) {
-      context.addIssue({
-        message: "object value has unknown keys",
-        unknownKeys,
-        expectedKeys: keys,
-      });
+      context.addIssue({ message: "object value has unknown keys", unknownKeys, expectedKeys: keys });
     }
   }
 }
@@ -209,9 +201,7 @@ function objectType<const Keys extends string[]>(
 ): ResolveOptionalEntries<KeyedObject<Keys>>;
 function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
 function objectType(schema = {}): Record<string, any> {
-  return function validateLooseObject(context: ValidationContext) {
-    validateObject(context, schema, false);
-  } as any;
+  return validator((context) => validateObject(context, schema, false));
 }
 
 function strictObjectType<const Keys extends string[]>(
@@ -219,44 +209,37 @@ function strictObjectType<const Keys extends string[]>(
 ): ResolveOptionalEntries<KeyedObject<Keys>>;
 function strictObjectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
 function strictObjectType(schema: any): Record<string, any> {
-  return function validateStrictObject(context: ValidationContext) {
-    validateObject(context, schema, true);
-  } as any;
+  return validator((context) => validateObject(context, schema, true));
 }
 
 function promiseType(): Promise<void>;
 function promiseType<T>(type: T): Promise<T>;
 function promiseType(type?: any): any {
-  return function validatePromise(context: ValidationContext) {
+  return validator((context) => {
     if (!(context.value instanceof Promise)) {
       context.addIssue({ message: "value is not a promise" });
     }
-  } as any;
+  });
 }
 
 function recordType(): Record<PropertyKey, any>;
 function recordType<V>(valueType: V): Record<PropertyKey, V>;
 function recordType(valueType?: any): any {
-  return function validateRecord(context: ValidationContext) {
-    if (
-      typeof context.value !== "object" ||
-      Array.isArray(context.value) ||
-      context.value === null
-    ) {
+  return validator((context) => {
+    if (typeof context.value !== "object" || context.value === null || Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an object" });
       return;
     }
-    if (!valueType) {
-      return;
+    if (valueType) {
+      for (const key in context.value) {
+        context.validateKey(key, valueType);
+      }
     }
-    for (const key in context.value) {
-      context.withKey(key).validate(valueType);
-    }
-  } as any;
+  });
 }
 
 function tuple<const T extends any[]>(types: T): T {
-  return function validateTuple(context: ValidationContext) {
+  return validator((context) => {
     if (!Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an array" });
       return;
@@ -266,39 +249,42 @@ function tuple<const T extends any[]>(types: T): T {
       return;
     }
     for (let index = 0; index < types.length; index++) {
-      context.withKey(index).validate(types[index]);
+      context.validateKey(index, types[index]);
     }
-  } as any;
+  });
 }
 
 function union<T extends any[]>(types: T): T[number] {
-  return function validateUnion(context: ValidationContext) {
-    let firstIssueIndex = 0;
+  return validator((context) => {
+    const basePath = context.path.join(" > ");
     const subIssues: ValidationIssue[] = [];
     for (const type of types) {
-      const subContext = context.withIssues(subIssues);
-      subContext.validate(type);
-      if (subIssues.length === firstIssueIndex || subContext.issueDepth > 0) {
-        context.mergeIssues(subIssues.slice(firstIssueIndex));
+      const branchIssues = context.runIsolated(type);
+      if (branchIssues.length === 0) {
+        // The value matches this branch: the union is satisfied.
         return;
       }
-      firstIssueIndex = subIssues.length;
+      // A branch that fails below the union's own level (e.g. it matched the
+      // outer shape but a nested property was wrong) is the branch the user
+      // most likely intended, so report its issues rather than a generic one.
+      if (branchIssues.some((issue) => issue.path !== basePath)) {
+        context.issues.push(...branchIssues);
+        return;
+      }
+      subIssues.push(...branchIssues);
     }
-    context.addIssue({
-      message: "value does not match union type",
-      subIssues,
-    });
-  } as any;
+    context.addIssue({ message: "value does not match union type", subIssues });
+  });
 }
 
 function reactiveValueType(): ReactiveValue<any>;
 function reactiveValueType<T>(type: T): ReactiveValue<T>;
 function reactiveValueType(type?: any): ReactiveValue<any> {
-  return function validateReactiveValue(context: ValidationContext) {
+  return validator((context) => {
     if (typeof context.value !== "function" || !context.value[atomSymbol]) {
       context.addIssue({ message: "value is not a reactive value" });
     }
-  } as any;
+  });
 }
 
 function ref(): HTMLElement | null;

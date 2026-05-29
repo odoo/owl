@@ -26,15 +26,15 @@ import {
   useLogLifecycle,
 } from "../helpers";
 
-// NOTE: many tests in this file are .skip'd. They were written to assert the
-// rAF deferral semantics of the previous scheduler — e.g. "after N microtasks
-// the render still hasn't landed, because we're waiting for the next animation
-// frame." Under the current macrotask-based scheduler, render+commit happens
-// at the next scheduler tick (a MessageChannel macrotask), so those
-// assertions about intermediate state and microtick-vs-rAF interleavings
-// don't apply. The framework still defers correctly across hooks; it just
-// isn't externally observable in the same way. Re-enable individually if a
-// test can be rewritten meaningfully against the current semantics.
+// NOTE: these tests were originally written against the rAF deferral semantics
+// of the previous scheduler — e.g. "after N microtasks the render still hasn't
+// landed, because we're waiting for the next animation frame." They have been
+// migrated to the macrotask scheduler: render+commit now happens at the next
+// scheduler tick (a MessageChannel macrotask), so updates that the rAF era
+// observed across two frames now coalesce into one tick. A single test
+// ("concurrent renderings scenario 16") remains .skip'd — see the comment on
+// it — because it counts ticks against rAF coalescing and is timing-fragile
+// in-suite; the behaviour it covered is exercised by scenarios 14 and 15.
 
 let fixture: HTMLElement;
 
@@ -118,7 +118,7 @@ describe("async rendering", () => {
   });
 });
 
-test.skip("destroying/recreating a subwidget with different props (if start is not over)", async () => {
+test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
   let def = makeDeferred();
   let n = 0;
   class Child extends Component {
@@ -193,11 +193,12 @@ test.skip("destroying/recreating a subwidget with different props (if start is n
   `);
 });
 
-// Re-entrant render call from inside a Child constructor while the parent is
-// still rendering. The OLD-model microtask scheduling let that re-entry queue
-// cleanly; with the rAF fast path the parent's pending fiber gets reset
-// mid-render, and the resulting interleaving needs a rewrite. Skip for now.
-test.skip("destroying/recreating a subcomponent, other scenario", async () => {
+// Re-entrant render(parent, true) from inside a Child's setup() while the
+// parent is still executing its render function. The scheduler's re-entrancy
+// guard (committing / bdom-sentinel) defers it via deferRender, so the parent
+// mounts the child first and the explicitly-requested re-render lands as a
+// clean follow-up cycle in the same tick — no mid-render fiber corruption.
+test("destroying/recreating a subcomponent, other scenario", async () => {
   let flag = false;
 
   class Child extends Component {
@@ -241,13 +242,17 @@ test.skip("destroying/recreating a subcomponent, other scenario", async () => {
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
+      "Parent:willPatch",
+      "Child:willPatch",
+      "Child:patched",
+      "Parent:patched",
     ]
   `);
 
   expect(fixture.innerHTML).toBe("parentchild");
 });
 
-test.skip("creating two async components, scenario 1", async () => {
+test("creating two async components, scenario 1", async () => {
   let defA = makeDeferred();
   let defB = makeDeferred();
   let nbRenderings: number = 0;
@@ -339,7 +344,7 @@ test.skip("creating two async components, scenario 1", async () => {
   `);
 });
 
-test.skip("update a sub-component twice in the same frame, 2", async () => {
+test("update a sub-component twice in the same frame, 2", async () => {
   class ChildA extends Component {
     static template = xml`<span><t t-out="this.val()"/></span>`;
     props = props();
@@ -409,7 +414,7 @@ test.skip("update a sub-component twice in the same frame, 2", async () => {
   `);
 });
 
-test.skip("rendering component again in next microtick", async () => {
+test("rendering component again in next microtick", async () => {
   class Child extends Component {
     static template = xml`<div>Child</div>`;
     setup() {
@@ -472,7 +477,7 @@ test.skip("rendering component again in next microtick", async () => {
 // complete the tree — scenario 4 below, which explicitly resolves both in a
 // specific order, covers the meaningful concurrent-render behavior.)
 
-test.skip("concurrent renderings scenario 13", async () => {
+test("concurrent renderings scenario 13", async () => {
   let lastChild: any = null;
 
   class Child extends Component {
@@ -534,22 +539,19 @@ test.skip("concurrent renderings scenario 13", async () => {
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
+      "Child:willPatch",
+      "Child:patched",
+      "Child:willPatch",
+      "Child:patched",
     ]
   `);
 
   await nextTick(); // wait for changes triggered in mounted to be applied
   expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "Child:willPatch",
-      "Child:patched",
-      "Child:willPatch",
-      "Child:patched",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 });
 
-test.skip("concurrent renderings scenario 14", async () => {
+test("concurrent renderings scenario 14", async () => {
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class C extends Component {
@@ -637,7 +639,7 @@ test.skip("concurrent renderings scenario 14", async () => {
   `);
 });
 
-test.skip("concurrent renderings scenario 15", async () => {
+test("concurrent renderings scenario 15", async () => {
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class C extends Component {
@@ -734,10 +736,17 @@ test.skip("concurrent renderings scenario 15", async () => {
   `);
 });
 
-// Microtask-level interleaving of two render() calls (one for C followed by
-// nextMicroTick before render(b!)). The OLD model resolved this through fiber
-// remapping during microtask-level renders; rAF coalescing changes the
-// semantics. Needs a rewrite for the new scheduler.
+// STILL SKIPPED — the one scenario that does not survive the rAF→macrotask
+// port. It probes a precise microtask-level interleaving of two manual render()
+// calls (render(c) → nextMicroTick → render(b)) with an async-willStart D in the
+// middle, and counts ticks against the old rAF coalescing. Under the macrotask
+// scheduler that interleaving collapses; the test passes in isolation but is
+// timing-fragile in-suite (leftover scheduler tasks → the memory-leak guard
+// fires), because its hand-counted nextTicks no longer line up with when work
+// actually commits. The underlying behaviour it cared about — a tree-wide
+// re-render driven from B and C completing correctly — is covered by scenarios
+// 14 and 15. Rewrite against the macrotask model (wait for the DOM to settle
+// rather than counting ticks) before re-enabling.
 test.skip("concurrent renderings scenario 16", async () => {
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
@@ -1042,7 +1051,7 @@ test("changing state before first render does not trigger a render (with parent)
   `);
 });
 
-test.skip("two renderings initiated between willPatch and patched", async () => {
+test("two renderings initiated between willPatch and patched", async () => {
   let parent: any = null;
 
   class Panel extends Component {
@@ -1097,9 +1106,14 @@ test.skip("two renderings initiated between willPatch and patched", async () => 
   `);
   expect(fixture.innerHTML).toBe("<div><abc>Panel1Mounted</abc></div>");
 
+  // Swap the panel. Panel1 unmounts (its onWillUnmount re-renders the parent)
+  // and Panel2 mounts (its onMounted sets `mounted` and re-renders the parent).
+  // Under the macrotask scheduler the swap and both hook-triggered re-renders
+  // settle within one tick, so the DOM goes straight to "Panel2Mounted" — the
+  // rAF scheduler showed an intermediate "Panel2" frame first.
   parent.state.panel = "Panel2";
   await nextTick();
-  expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
+  expect(fixture.innerHTML).toBe("<div><abc>Panel2Mounted</abc></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "Panel:setup",
@@ -1109,13 +1123,6 @@ test.skip("two renderings initiated between willPatch and patched", async () => 
       "Panel:willDestroy",
       "Panel:mounted",
       "Parent:patched",
-    ]
-  `);
-
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><abc>Panel2Mounted</abc></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
       "Parent:willPatch",
       "Panel:willPatch",
       "Panel:patched",
@@ -1132,13 +1139,6 @@ test.skip("two renderings initiated between willPatch and patched", async () => 
       "Panel:willUnmount",
       "Panel:willDestroy",
       "Parent:patched",
-    ]
-  `);
-
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
       "Parent:willPatch",
       "Parent:patched",
     ]
@@ -1194,7 +1194,7 @@ test("parent and child rendered at exact same time", async () => {
   `);
 });
 
-test.skip("two sequential renderings before an animation frame", async () => {
+test("two sequential renderings before an animation frame", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.value"/>`;
     props = props();
@@ -1433,7 +1433,7 @@ test("t-foreach with dynamic async component", async () => {
   `);
 });
 
-test.skip("Cascading renders after microtaskTick", async () => {
+test("Cascading renders after microtaskTick", async () => {
   const state = [{ id: 0 }, { id: 1 }];
   let child: any;
   let parent: any;
@@ -1481,7 +1481,7 @@ test.skip("Cascading renders after microtaskTick", async () => {
   expect(fixture.innerHTML).toBe("0123 _ 0123");
 });
 
-test.skip("rendering parent twice, with different props on child and stuff", async () => {
+test("rendering parent twice, with different props on child and stuff", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.value"/>`;
     props = props();
@@ -1535,7 +1535,7 @@ test.skip("rendering parent twice, with different props on child and stuff", asy
   `);
 });
 
-test.skip("delayed fiber does not get rendered if it was cancelled", async () => {
+test("delayed fiber does not get rendered if it was cancelled", async () => {
   class D extends Component {
     static template = xml`D`;
     setup() {
@@ -1745,8 +1745,7 @@ test("delayed render does not go through when t-component value changed", async 
   `);
 });
 
-test.skip("delayed render is not cancelled by upcoming render", async () => {
-  // TODO: unskip
+test("delayed render is not cancelled by upcoming render", async () => {
   let b: any;
 
   class B extends Component {
@@ -1777,12 +1776,8 @@ test.skip("delayed render is not cancelled by upcoming render", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
       "B:mounted",
       "A:mounted",
     ]
@@ -1800,23 +1795,12 @@ test.skip("delayed render is not cancelled by upcoming render", async () => {
   await Promise.resolve();
   b.props.state.config.test = "black";
   b.props.state.groups.push(1);
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "A:willRender",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
   await nextTick();
 
   expect(fixture.innerHTML).toBe("2black");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "B:patched",
@@ -1825,7 +1809,7 @@ test.skip("delayed render is not cancelled by upcoming render", async () => {
   `);
 });
 
-test.skip("components are not destroyed between animation frame", async () => {
+test("components are not destroyed between animation frame", async () => {
   const def = makeDeferred();
   class C extends Component {
     static template = xml`C`;
@@ -1899,7 +1883,7 @@ test.skip("components are not destroyed between animation frame", async () => {
   `);
 });
 
-test.skip("component destroyed just after render", async () => {
+test("component destroyed just after render", async () => {
   let stateB: any;
 
   class B extends Component {

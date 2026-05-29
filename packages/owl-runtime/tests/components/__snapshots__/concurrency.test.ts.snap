@@ -917,6 +917,33 @@ exports[`delayed render does not go through when t-component value changed 4`] =
 }"
 `;
 
+exports[`delayed render is not cancelled by upcoming render 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, ["state","isEmpty"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({state: ctx['this'].state,isEmpty: ctx['this'].state.groups.length===0}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`delayed render is not cancelled by upcoming render 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.state.groups.length);
+    const b3 = safeOutput(ctx['this'].props.state.config.test);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

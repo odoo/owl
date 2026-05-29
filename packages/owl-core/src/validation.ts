@@ -7,16 +7,55 @@ export interface ValidationIssue {
   [K: string]: any;
 }
 
-export interface ValidationContext {
-  addIssue(issue: ValidationIssue): void;
-  isValid: boolean;
-  issueDepth: number;
-  mergeIssues(issues: ValidationIssue[]): void;
-  path: PropertyKey[];
-  validate(type: any): void;
+/**
+ * A validator inspects `context.value` and records any problems it finds with
+ * `context.addIssue`. Validators are produced by the factories in `types.ts`,
+ * where each one is also typed as the value it accepts (see the `validator`
+ * helper there).
+ */
+export type Validator = (context: ValidationContext) => void;
+
+/**
+ * Threaded through a whole validation run. It holds the value currently under
+ * inspection, the path to it from the root, and the issues collected so far.
+ *
+ * Composite validators don't allocate child contexts: `validateKey` descends
+ * into a property and restores afterwards, and `runIsolated` runs a validator
+ * against a throwaway issue list (used by unions to try alternatives).
+ */
+export class ValidationContext {
   value: any;
-  withIssues(issues: ValidationIssue[]): ValidationContext;
-  withKey(key: PropertyKey): ValidationContext;
+  path: PropertyKey[] = [];
+  issues: ValidationIssue[] = [];
+
+  constructor(value: any) {
+    this.value = value;
+  }
+
+  addIssue(issue: ValidationIssue): void {
+    this.issues.push({ received: this.value, path: this.path.join(" > "), ...issue });
+  }
+
+  validate(type: Validator): void {
+    type(this);
+  }
+
+  validateKey(key: PropertyKey, type: Validator): void {
+    const value = this.value;
+    this.path.push(key);
+    this.value = value[key];
+    type(this);
+    this.value = value;
+    this.path.pop();
+  }
+
+  runIsolated(type: Validator): ValidationIssue[] {
+    const issues = this.issues;
+    const collected: ValidationIssue[] = (this.issues = []);
+    type(this);
+    this.issues = issues;
+    return collected;
+  }
 }
 
 function safeReplacer(knownObjects: any[], _key: string, value: any): any {
@@ -37,7 +76,6 @@ function safeReplacer(knownObjects: any[], _key: string, value: any): any {
   return value;
 }
 
-
 export function assertType(
   value: any,
   validation: any,
@@ -51,46 +89,8 @@ export function assertType(
   }
 }
 
-function createContext(
-  issues: ValidationIssue[],
-  value: any,
-  path: PropertyKey[],
-  parent?: ValidationContext
-): ValidationContext {
-  return {
-    issueDepth: 0,
-    path,
-    value,
-    get isValid() {
-      return !issues.length;
-    },
-    addIssue(issue) {
-      issues.push({
-        received: this.value,
-        path: this.path.join(" > "),
-        ...issue,
-      });
-    },
-    mergeIssues(newIssues) {
-      issues.push(...newIssues);
-    },
-    validate(type: any) {
-      type(this);
-      if (!this.isValid && parent) {
-        parent.issueDepth = this.issueDepth + 1;
-      }
-    },
-    withIssues(issues) {
-      return createContext(issues, this.value, this.path, this);
-    },
-    withKey(key) {
-      return createContext(issues, this.value[key], this.path.concat(key), this);
-    },
-  };
-}
-
 export function validateType(value: any, validation: any): ValidationIssue[] {
-  const issues: ValidationIssue[] = [];
-  validation(createContext(issues, value, []));
-  return issues;
+  const context = new ValidationContext(value);
+  validation(context);
+  return context.issues;
 }

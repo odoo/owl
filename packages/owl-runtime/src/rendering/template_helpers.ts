@@ -311,6 +311,7 @@ function createComponent<P extends Record<string, any>>(
             () => {
               if (fiber !== node.fiber) return;
               node.props = props;
+              for (const f of node.propsUpdated) f();
               fiber.render();
             },
             (error) => {
@@ -319,6 +320,7 @@ function createComponent<P extends Record<string, any>>(
           );
         } else {
           node.props = props;
+          for (const f of node.propsUpdated) f();
           fiber.render();
         }
       }

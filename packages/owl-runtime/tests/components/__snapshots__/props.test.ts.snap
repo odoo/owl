@@ -856,3 +856,150 @@ exports[`no props validation and default props 2`] = `
   }
 }"
 `;
+
+exports[`reactive props (issue #1908) > a prop read only in an effect (not the template) still reacts to a value swap 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > a prop read only in an effect (not the template) still reacts to a value swap 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<span>hi</span>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > effect observing a prop reacts to both in-place mutation and value swap 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > effect observing a prop reacts to both in-place mutation and value swap 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.o.val);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > making props reactive does not introduce extra renders 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > making props reactive does not introduce extra renders 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].tick());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > props() tracks new and deleted keys from t-props 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1(Object.assign({}, ctx['this'].childProps()), key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > props() tracks new and deleted keys from t-props 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].label());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > this.props still reflects the old value inside onWillUpdateProps 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`reactive props (issue #1908) > this.props still reflects the old value inside onWillUpdateProps 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
+  }
+}"
+`;

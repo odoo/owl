@@ -25,6 +25,9 @@ context of the parent. So, `this.props.message` is equal to `'hello'`.
 
 The `props` function must be called at the top level of the component class body
 (or inside `setup`). It returns an object with getters for each declared prop.
+Reading one of these getters is reactive: templates, computed values, and
+effects that read `this.props.someProp` subscribe to that prop and are notified
+when the parent applies a new value.
 
 ## Definition
 
@@ -93,6 +96,32 @@ props(["color?"], { color: "red" });
 props({ "color?": t.string() }, { color: "red" });
 ```
 
+### Reactive reads
+
+The object returned by `props()` exposes signal-backed getters. This means that
+any reactive context that reads a prop will update when that prop changes:
+
+```js
+import { Component, computed, props, types as t, xml } from "@odoo/owl";
+
+class Total extends Component {
+  static template = xml`<span t-out="this.double()"/>`;
+
+  props = props({ value: t.number() });
+  double = computed(() => this.props.value * 2);
+}
+```
+
+When the parent re-renders with a different `value`, `this.props.value` is
+updated and the `double` computed value is invalidated. The same applies to
+[`effect`](reactivity.md#effects) and [`useEffect`](reactivity.md#useeffect):
+reading `this.props.value` inside the effect subscribes the effect to future
+updates of that prop.
+
+This only applies to props accessed through `props()`. The singular
+[`prop()`](#the-prop-function) helper keeps its static, reference-stable
+semantics.
+
 ## The `prop` function
 
 `prop` (singular) is an alternative for components that only need to read a
@@ -145,8 +174,9 @@ entirely.
 ### When to use `prop()` vs `props()`
 
 Use `props()` when the child needs to observe prop changes (the parent
-re-renders with a new value and the child must reflect it), or when the child
-declares several props at once.
+re-renders with a new value and the child must reflect it), when computed values
+or effects should react to prop changes, or when the child declares several
+props at once.
 
 Use `prop()` when:
 

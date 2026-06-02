@@ -38,6 +38,10 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   children: { [key: string]: ComponentNode } = Object.create(null);
 
   willUpdateProps: LifecycleHook[] = [];
+  // Fired right after `props` is applied to `node.props` on a parent re-render,
+  // so reactive prop notifications happen once the new values are observable
+  // (after user `onWillUpdateProps` hooks, including async ones, have run).
+  propsUpdated: LifecycleHook[] = [];
   willUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];

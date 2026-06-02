@@ -4,6 +4,8 @@ import {
   KeyedObject,
   PrettifyShape,
   ResolveObjectType,
+  signal,
+  Signal,
 } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 import { types } from "./types";
@@ -60,20 +62,33 @@ export function props(type?: any, defaults?: any): Props<{}> {
     node.defaultProps = Object.assign(node.defaultProps || {}, defaults);
   }
 
-  function getProp(key: string) {
-    if (node.props[key] === undefined && defaults) {
+  function resolveValue(props: Record<string, any>, key: string) {
+    if (props[key] === undefined && defaults) {
       return (defaults as any)[key];
     }
-    return node.props[key];
+    return props[key];
   }
 
+  const signals: Record<string, Signal<any>> = Object.create(null);
   const result = Object.create(null);
-  function applyPropGetters(keys: string[]) {
+  function defineProp(key: string) {
+    signals[key] = signal(resolveValue(node.props, key));
+    Reflect.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: signals[key],
+    });
+  }
+
+  function defineProps(keys: string[]) {
     for (const key of keys) {
-      Reflect.defineProperty(result, key, {
-        enumerable: true,
-        get: getProp.bind(null, key),
-      });
+      defineProp(key);
+    }
+  }
+
+  function updateSignals(keys: string[]) {
+    for (const key of keys) {
+      signals[key].set(resolveValue(node.props, key));
     }
   }
 
@@ -81,7 +96,8 @@ export function props(type?: any, defaults?: any): Props<{}> {
     const keys: string[] = (Array.isArray(type) ? type : Object.keys(type)).map((key: string) =>
       key.endsWith("?") ? key.slice(0, -1) : key
     );
-    applyPropGetters(keys);
+    defineProps(keys);
+    node.propsUpdated.push(() => updateSignals(keys));
 
     if (app.dev) {
       if (defaults) {
@@ -113,13 +129,23 @@ export function props(type?: any, defaults?: any): Props<{}> {
     };
 
     let keys = getKeys(node.props);
-    applyPropGetters(keys);
-    node.willUpdateProps.push((np: any) => {
+    defineProps(keys);
+    node.propsUpdated.push(() => {
+      const nextKeys = getKeys(node.props);
+      const nextKeySet = new Set(nextKeys);
       for (const key of keys) {
-        Reflect.deleteProperty(result, key);
+        if (!nextKeySet.has(key)) {
+          Reflect.deleteProperty(result, key);
+          delete signals[key];
+        }
       }
-      keys = getKeys(np);
-      applyPropGetters(keys);
+      for (const key of nextKeys) {
+        if (!(key in signals)) {
+          defineProp(key);
+        }
+      }
+      updateSignals(nextKeys);
+      keys = nextKeys;
     });
   }
 

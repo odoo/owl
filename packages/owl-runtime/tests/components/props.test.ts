@@ -855,3 +855,144 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   expect(childError.message).toMatch(/read-only/);
   expect(fixture.innerHTML).toBe("3");
 });
+
+describe("reactive props (issue #1908)", () => {
+  test("effect observing a prop reacts to both in-place mutation and value swap", async () => {
+    const observed: number[] = [];
+    class Test extends Component {
+      static template = xml`<span t-out="this.props.o.val"/>`;
+      props = props(["o"]);
+      setup() {
+        effect(() => observed.push(this.props.o.val));
+      }
+    }
+    class Root extends Component {
+      static template = xml`<div><Test o="this.obj()"/></div>`;
+      static components = { Test };
+      obj = signal(proxy({ val: 1 }));
+    }
+
+    const root = await mount(Root, fixture);
+    expect(observed).toEqual([1]);
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+    // mutate the captured proxy in place
+    root.obj().val = 2;
+    await nextTick();
+    expect(observed).toEqual([1, 2]);
+    expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
+
+    // swap the whole value (the case that used to update the template but not the effect)
+    root.obj.set(proxy({ val: 3 }));
+    await nextTick();
+    expect(observed).toEqual([1, 2, 3]);
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+  });
+
+  test("a prop read only in an effect (not the template) still reacts to a value swap", async () => {
+    const observed: number[] = [];
+    class Test extends Component {
+      static template = xml`<span>hi</span>`;
+      props = props(["o"]);
+      setup() {
+        effect(() => observed.push(this.props.o.val));
+      }
+    }
+    class Root extends Component {
+      static template = xml`<div><Test o="this.obj()"/></div>`;
+      static components = { Test };
+      obj = signal(proxy({ val: 1 }));
+    }
+
+    const root = await mount(Root, fixture);
+    expect(observed).toEqual([1]);
+
+    root.obj().val = 2;
+    await nextTick();
+    expect(observed).toEqual([1, 2]);
+
+    root.obj.set(proxy({ val: 3 }));
+    await nextTick();
+    expect(observed).toEqual([1, 2, 3]);
+  });
+
+  test("making props reactive does not introduce extra renders", async () => {
+    let renderCount = 0;
+    const observed: number[] = [];
+    class Test extends Component {
+      static template = xml`<span t-out="this.tick()"/>`;
+      props = props(["o"]);
+      setup() {
+        effect(() => observed.push(this.props.o.val));
+      }
+      tick() {
+        renderCount++;
+        return this.props.o.val;
+      }
+    }
+    class Root extends Component {
+      static template = xml`<div><Test o="this.obj()"/></div>`;
+      static components = { Test };
+      obj = signal(proxy({ val: 1 }));
+    }
+
+    const root = await mount(Root, fixture);
+    expect(renderCount).toBe(1);
+
+    root.obj.set(proxy({ val: 2 }));
+    await nextTick();
+    expect(observed).toEqual([1, 2]);
+    expect(renderCount).toBe(2);
+
+    root.obj.set(proxy({ val: 3 }));
+    await nextTick();
+    expect(observed).toEqual([1, 2, 3]);
+    expect(renderCount).toBe(3);
+  });
+
+  test("props() tracks new and deleted keys from t-props", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-out="this.label()"/></span>`;
+      props = props();
+      label() {
+        return `${Object.keys(this.props).join(",")}:${this.props.a || ""}${this.props.b || ""}`;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-props="this.childProps()"/>`;
+      static components = { Child };
+      childProps = signal<Record<string, string>>({ a: "a" });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>a:a</span>");
+
+    parent.childProps.set({ b: "b" });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>b:b</span>");
+  });
+
+  test("this.props still reflects the old value inside onWillUpdateProps", async () => {
+    const seen: { next: number; current: number }[] = [];
+    class Child extends Component {
+      static template = xml`<span t-out="this.props.value"/>`;
+      props = props(["value"]);
+      setup() {
+        onWillUpdateProps((nextProps) => {
+          seen.push({ next: nextProps.value, current: this.props.value });
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child value="this.state.value"/>`;
+      static components = { Child };
+      state = proxy({ value: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    parent.state.value = 2;
+    await nextTick();
+    expect(seen).toEqual([{ next: 2, current: 1 }]);
+    expect(fixture.innerHTML).toBe("<span>2</span>");
+  });
+});

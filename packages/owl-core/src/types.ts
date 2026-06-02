@@ -39,7 +39,7 @@ function booleanType(): boolean {
   } as any;
 }
 
-function numberType(): number {
+function numberType<T extends number = number>(): T {
   return function validateNumber(context: ValidationContext) {
     if (typeof context.value !== "number") {
       context.addIssue({ message: "value is not a number" });
@@ -47,7 +47,7 @@ function numberType(): number {
   } as any;
 }
 
-function stringType(): string {
+function stringType<T extends string = string>(): T {
   return function validateString(context: ValidationContext) {
     if (typeof context.value !== "string" && !(context.value instanceof String)) {
       context.addIssue({ message: "value is not a string" });
@@ -56,6 +56,7 @@ function stringType(): string {
 }
 
 function arrayType(): any[];
+function arrayType<T>(): T[];
 function arrayType<T>(elementType: T): T[];
 function arrayType(elementType?: any): any {
   return function validateArray(context: ValidationContext) {
@@ -103,6 +104,7 @@ function customValidator<T>(
 
 function functionType(): (...parameters: any[]) => any;
 function functionType<const P extends any[]>(parameters: P): (...parameters: P) => void;
+function functionType<const P extends any[], R>(): (...parameters: P) => R;
 function functionType<const P extends any[], R>(parameters: P, result: R): (...parameters: P) => R;
 function functionType(parameters = [], result = undefined): (...parameters: any[]) => any {
   return function validateFunction(context: ValidationContext) {
@@ -207,6 +209,7 @@ function objectType(): Record<string, any>;
 function objectType<const Keys extends string[]>(
   keys: Keys
 ): ResolveOptionalEntries<KeyedObject<Keys>>;
+function objectType<Shape extends {}>(): ResolveOptionalEntries<Shape>;
 function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
 function objectType(schema = {}): Record<string, any> {
   return function validateLooseObject(context: ValidationContext) {
@@ -292,6 +295,7 @@ function union<T extends any[]>(types: T): T[number] {
 }
 
 function reactiveValueType(): ReactiveValue<any>;
+function reactiveValueType<T>(): ReactiveValue<T>;
 function reactiveValueType<T>(type: T): ReactiveValue<T>;
 function reactiveValueType(type?: any): ReactiveValue<any> {
   return function validateReactiveValue(context: ValidationContext) {

@@ -1,17 +1,17 @@
 import { templates } from "../../assets/templates.js";
 import { getOwlStatus } from "../utils";
-const { Component, useState, onWillStart, mount, App } = owl;
+const { Component, signal, onWillStart, mount, App } = owl;
 
 class PopUpApp extends Component {
   static template = "popup.PopUpApp";
 
   setup() {
-    this.state = useState({ status: 0 });
+    this.status = signal(0);
     onWillStart(async () => {
       try {
-        this.state.status = await getOwlStatus();
+        this.status.set(await getOwlStatus());
       } catch (e) {
-        this.state.status = -1;
+        this.status.set(-1);
       }
     });
   }

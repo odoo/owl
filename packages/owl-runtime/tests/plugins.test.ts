@@ -803,6 +803,297 @@ describe("onWillStart in plugins", () => {
   });
 });
 
+describe("plugin sequence", () => {
+  test("default sequence is 50 and can be overridden", () => {
+    class P extends Plugin {}
+    class Q extends Plugin {
+      static sequence = 10;
+    }
+    expect(P.sequence).toBe(50);
+    expect(Q.sequence).toBe(10);
+  });
+
+  test("plugins start in ascending sequence order, array order within a batch", () => {
+    const steps: string[] = [];
+
+    class A extends Plugin {
+      static sequence = 10;
+      setup() {
+        steps.push("A");
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        steps.push("B");
+      }
+    }
+    class C extends Plugin {
+      setup() {
+        steps.push("C");
+      }
+    }
+    class D extends Plugin {
+      static sequence = 100;
+      setup() {
+        steps.push("D");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([D, C, B, A]);
+    expect(steps).toEqual(["A", "C", "B", "D"]);
+  });
+
+  test("all-synchronous batches start synchronously and mount immediately", () => {
+    const steps: string[] = [];
+
+    class A extends Plugin {
+      static sequence = 10;
+      setup() {
+        steps.push("A");
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        steps.push("B");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([B, A]);
+    // no async init: both batches start synchronously, fast path preserved
+    expect(steps).toEqual(["A", "B"]);
+    expect(manager.status).toBe(STATUS.MOUNTED);
+  });
+
+  test("lower-sequence batch fully resolves before next batch starts", async () => {
+    const rpc = makeDeferred<string>();
+    const steps: string[] = [];
+
+    class Foundation extends Plugin {
+      static id = "foundation";
+      static sequence = 10;
+      data: string | null = null;
+      setup() {
+        steps.push("foundation:setup");
+        onWillStart(async () => {
+          steps.push("foundation:willStart");
+          this.data = await rpc;
+        });
+      }
+    }
+
+    class Feature extends Plugin {
+      foundation = plugin(Foundation);
+      setup() {
+        steps.push(`feature:setup (data=${this.foundation.data})`);
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([Feature, Foundation]);
+    expect(steps.splice(0)).toEqual(["foundation:setup", "foundation:willStart"]);
+    expect(manager.getPlugin(Feature)).toBe(null);
+
+    rpc.resolve("hello");
+    await manager.ready;
+    // Feature's setup only ran once Foundation was fully loaded
+    expect(steps.splice(0)).toEqual(["feature:setup (data=hello)"]);
+    expect(manager.status).toBe(STATUS.MOUNTED);
+    manager.destroy();
+  });
+
+  test("same-sequence plugins run their willStarts in parallel", async () => {
+    const rpc1 = makeDeferred<number>();
+    const rpc2 = makeDeferred<number>();
+    const started: string[] = [];
+
+    class A extends Plugin {
+      setup() {
+        onWillStart(async () => {
+          started.push("a:start");
+          await rpc1;
+        });
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        onWillStart(async () => {
+          started.push("b:start");
+          await rpc2;
+        });
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A, B]);
+    expect(started).toEqual(["a:start", "b:start"]);
+
+    rpc1.resolve(1);
+    rpc2.resolve(2);
+    await manager.ready;
+    expect(manager.status).toBe(STATUS.MOUNTED);
+    manager.destroy();
+  });
+
+  test("explicit plugin() dependency starts immediately regardless of sequence", () => {
+    const steps: string[] = [];
+
+    class Z extends Plugin {
+      static sequence = 99;
+      setup() {
+        steps.push("Z");
+      }
+    }
+    class A extends Plugin {
+      static sequence = 10;
+      z = plugin(Z);
+      setup() {
+        steps.push("A");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A, Z]);
+    expect(steps).toEqual(["Z", "A"]);
+    expect(manager.status).toBe(STATUS.MOUNTED);
+  });
+
+  test("rejection in an early batch skips later batches", async () => {
+    const steps: string[] = [];
+
+    class Broken extends Plugin {
+      static sequence = 10;
+      setup() {
+        onWillStart(async () => {
+          throw new Error("boom");
+        });
+      }
+    }
+    class Feature extends Plugin {
+      setup() {
+        steps.push("feature:setup");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([Broken, Feature]);
+    await expect(manager.ready).rejects.toMatchObject({ message: "boom" });
+    expect(steps).toEqual([]);
+    expect(manager.getPlugin(Feature)).toBe(null);
+    expect(manager.status).not.toBe(STATUS.MOUNTED);
+    manager.destroy();
+  });
+
+  test("status flips to MOUNTED only after the last batch", async () => {
+    const rpc = makeDeferred<number>();
+
+    class A extends Plugin {
+      static sequence = 10;
+      setup() {
+        onWillStart(() => rpc);
+      }
+    }
+    class B extends Plugin {}
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A, B]);
+    expect(manager.status).toBe(STATUS.NEW);
+
+    rpc.resolve(1);
+    await manager.ready;
+    expect(manager.status).toBe(STATUS.MOUNTED);
+    manager.destroy();
+  });
+
+  test("destroy order is reverse of sequence order", () => {
+    const steps: string[] = [];
+
+    class A extends Plugin {
+      static sequence = 10;
+      setup() {
+        onWillDestroy(() => steps.push("destroy A"));
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        onWillDestroy(() => steps.push("destroy B"));
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([B, A]);
+    manager.destroy();
+    expect(steps).toEqual(["destroy B", "destroy A"]);
+  });
+
+  test("plugin added to resource while startup is pending waits for previous batches", async () => {
+    const rpc = makeDeferred<string>();
+    const steps: string[] = [];
+
+    class A extends Plugin {
+      setup() {
+        steps.push("A:setup");
+        onWillStart(() => rpc);
+      }
+    }
+    class B extends Plugin {
+      setup() {
+        steps.push("B:setup");
+      }
+    }
+
+    const plugins = new Resource({ validation: t.constructor(Plugin) }).add(A);
+    const app = new App({ plugins });
+    expect(steps.splice(0)).toEqual(["A:setup"]);
+
+    plugins.add(B);
+    await nextMicroTick();
+    // A's willStart is still pending: B must wait for it
+    expect(steps.splice(0)).toEqual([]);
+
+    rpc.resolve("done");
+    await app.pluginManager.ready;
+    expect(steps.splice(0)).toEqual(["B:setup"]);
+    expect(app.pluginManager.status).toBe(STATUS.MOUNTED);
+    app.destroy();
+  });
+
+  test("sequence works with plugins given to the App", async () => {
+    const rpc = makeDeferred<string>();
+    const steps: string[] = [];
+
+    class Foundation extends Plugin {
+      static sequence = 10;
+      setup() {
+        onWillStart(() => rpc);
+      }
+    }
+    class Feature extends Plugin {
+      setup() {
+        steps.push("feature:setup");
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<span>ok</span>`;
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [Feature, Foundation] });
+    const mounted = app.createRoot(Root).mount(fixture);
+    await nextTick();
+    expect(steps.splice(0)).toEqual([]);
+    expect(fixture.innerHTML).toBe("");
+
+    rpc.resolve("ok");
+    await mounted;
+    expect(steps.splice(0)).toEqual(["feature:setup"]);
+    expect(fixture.innerHTML).toBe("<span>ok</span>");
+    app.destroy();
+  });
+});
+
 test("can use useListener in a plugin", () => {
   let n: number = 0;
   const bus = new EventTarget();

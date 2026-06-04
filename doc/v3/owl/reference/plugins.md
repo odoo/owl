@@ -260,6 +260,38 @@ destroyed before initialization completes. Pass it to `fetch` or check
 `abortSignal.throwIfAborted()` between awaits to short-circuit abandoned work.
 See [Scope](./scope.md) for the full cancellation model.
 
+## Startup Order
+
+Sometimes a few foundational plugins must be fully loaded before other plugins
+even run their `setup()` — for example, a session plugin whose data every other
+plugin reads. The `static sequence` number (default: `50`, lower starts first,
+like resources and registries) controls this:
+
+```js
+class SessionPlugin extends Plugin {
+  static sequence = 10; // foundational: starts before the others
+
+  setup() {
+    onWillStart(async () => {
+      this.user = await loadSession();
+    });
+  }
+}
+```
+
+Plugins are started in batches of equal sequence, in ascending order. All
+`onWillStart` callbacks of a batch settle before the next batch is even
+instantiated, so a plugin with the default sequence can read `SessionPlugin`'s
+data synchronously in its own `setup()`. Within a batch, `onWillStart`
+callbacks still run in parallel.
+
+Two things to keep in mind:
+
+- An explicit dependency wins over sequence: calling `plugin(X)` starts `X`
+  immediately, even if `X` has a higher sequence number.
+- If an `onWillStart` callback in a batch rejects, the remaining batches are
+  not started and the mount is rejected.
+
 ## Lifecycle and Cleanup
 
 Plugins follow a simple lifecycle:

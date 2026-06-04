@@ -8,6 +8,7 @@ import { untrack } from "./computations";
 export interface PluginConstructor {
   new (...args: any[]): Plugin;
   id: string;
+  sequence: number;
 }
 
 export class Plugin {
@@ -18,6 +19,14 @@ export class Plugin {
   static set id(shadowId: string) {
     this._shadowId = shadowId;
   }
+
+  // Plugins passed to `startPlugins` are started in batches of equal sequence,
+  // ascending (lower first), like Resource/Registry. Each batch's onWillStart
+  // callbacks fully settle before the next batch is instantiated, so
+  // foundational plugins (low sequence) are ready before later plugins even
+  // run their setup. Explicit `plugin(X)` dependencies bypass batching and
+  // start immediately.
+  static sequence = 50;
 
   __owl__: PluginManager;
 
@@ -37,11 +46,13 @@ export class PluginManager extends Scope {
   config: Record<string, any>;
   plugins: Record<string, Plugin>;
 
-  // Resolves once all pending plugin willStart callbacks have settled. The
-  // scope transitions to MOUNTED as the last step of this chain. Consumers
-  // (the root's mount(), providePlugins) await this before treating the
-  // manager as ready. `willStart` itself is inherited from Scope.
+  // Resolves once all batches of plugins have started and their willStart
+  // callbacks have settled. The scope transitions to MOUNTED as the last step
+  // of this chain. Consumers (the root's mount(), providePlugins) await this
+  // before treating the manager as ready. `willStart` itself is inherited
+  // from Scope.
   ready: Promise<void> = Promise.resolve();
+  private hasPendingReady = false;
 
   constructor(app: any, options: PluginManagerOptions = {}) {
     super(app);
@@ -91,26 +102,83 @@ export class PluginManager extends Scope {
   }
 
   startPlugins(pluginConstructors: PluginConstructor[]): void {
-    scopeStack.push(this);
-    try {
-      for (const pluginConstructor of pluginConstructors) {
-        this.startPlugin(pluginConstructor);
+    const fresh = pluginConstructors.filter((ctor) => {
+      if (!ctor.id || this.plugins.hasOwnProperty(ctor.id)) {
+        // already started (or invalid): startPlugin throws on missing ids and
+        // id conflicts, and is a no-op otherwise
+        this.startPlugin(ctor);
+        return false;
       }
-    } finally {
-      scopeStack.pop();
+      return true;
+    });
+    if (!fresh.length) {
+      return;
     }
-    const pending = this.willStart.splice(0);
-    if (pending.length) {
-      this.ready = Promise.all(pending.map((fn) => fn())).then(() => {
-        if (this.status < STATUS.MOUNTED) {
-          this.status = STATUS.MOUNTED;
+    // Sort ascending by sequence and group plugins of equal sequence into
+    // batches. A batch's willStart callbacks all settle before the next batch
+    // is even instantiated, so foundational (low sequence) plugins are fully
+    // ready before later plugins run their setup.
+    fresh.sort((p1, p2) => p1.sequence - p2.sequence);
+    const batches: PluginConstructor[][] = [];
+    for (const ctor of fresh) {
+      const batch = batches[batches.length - 1];
+      if (batch && batch[0].sequence === ctor.sequence) {
+        batch.push(ctor);
+      } else {
+        batches.push([ctor]);
+      }
+    }
+
+    // Instantiate one batch synchronously (its own scopeStack push/pop, never
+    // spanning an await) and return its pending willStart promise, if any.
+    const startBatch = (batch: PluginConstructor[]): Promise<unknown> | null => {
+      scopeStack.push(this);
+      try {
+        for (const ctor of batch) {
+          this.startPlugin(ctor);
         }
-      });
-    } else if (this.status < STATUS.MOUNTED) {
-      // Fast path: no async init, transition synchronously so consumers that
-      // read `status` right after `startPlugins` see MOUNTED immediately.
-      this.status = STATUS.MOUNTED;
+      } finally {
+        scopeStack.pop();
+      }
+      const pending = this.willStart.splice(0);
+      return pending.length ? Promise.all(pending.map((fn) => fn())) : null;
+    };
+
+    // Chain onto a still-pending `ready` (re-entrant call, e.g. a plugin added
+    // to a Resource while startup is in flight) so new plugins wait for the
+    // previous batches.
+    let chain: Promise<unknown> | null = this.hasPendingReady ? this.ready : null;
+    for (const batch of batches) {
+      if (chain) {
+        // Later batches are instantiated inside the previous batch's `then` so
+        // that a rejection skips them entirely.
+        chain = chain.then(() => startBatch(batch));
+      } else {
+        // No async work pending so far: start the batch synchronously.
+        chain = startBatch(batch);
+      }
     }
+    if (!chain) {
+      if (this.status < STATUS.MOUNTED) {
+        // Fast path: no async init, transition synchronously so consumers that
+        // read `status` right after `startPlugins` see MOUNTED immediately.
+        this.status = STATUS.MOUNTED;
+      }
+      return;
+    }
+    this.hasPendingReady = true;
+    const ready = (this.ready = chain.then(() => {
+      if (this.status < STATUS.MOUNTED) {
+        this.status = STATUS.MOUNTED;
+      }
+      if (this.ready === ready) {
+        this.hasPendingReady = false;
+      }
+      // Note: no rejection handler here. On failure, `ready` stays rejected
+      // and `hasPendingReady` stays true, so later startPlugins calls chain
+      // onto the rejected promise and are skipped, and the error surfaces as
+      // an unhandled rejection when no consumer awaits `ready`.
+    }));
   }
 }
 

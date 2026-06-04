@@ -5,6 +5,7 @@ import {
   config,
   mount,
   onWillDestroy,
+  onWillStart,
   plugin,
   Plugin,
   PluginConstructor,
@@ -18,6 +19,7 @@ import {
   xml,
 } from "../../src";
 import {
+  makeDeferred,
   makeTestFixture,
   nextMicroTick,
   snapshotEverything,
@@ -434,4 +436,51 @@ test("components mounted by plugin", async () => {
 
   await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("defabc");
+});
+
+test("providePlugins respects plugin sequence", async () => {
+  const rpc = makeDeferred<string>();
+  const steps: string[] = [];
+
+  class Foundation extends Plugin {
+    static sequence = 10;
+    data: string | null = null;
+    setup() {
+      onWillStart(async () => {
+        this.data = await rpc;
+      });
+    }
+  }
+
+  class Feature extends Plugin {
+    foundation = plugin(Foundation);
+    setup() {
+      steps.push(`feature:setup (data=${this.foundation.data})`);
+    }
+  }
+
+  class Child extends Component {
+    static template = xml`<span>child</span>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child/>`;
+    static components = { Child };
+    setup() {
+      providePlugins([Feature, Foundation]);
+    }
+  }
+
+  const app = new App();
+  const mounted = app.createRoot(Parent).mount(fixture);
+  await nextTick();
+  // Feature's setup waits for Foundation, which delays the component render
+  expect(steps.splice(0)).toEqual([]);
+  expect(fixture.innerHTML).toBe("");
+
+  rpc.resolve("hello");
+  await mounted;
+  expect(steps.splice(0)).toEqual(["feature:setup (data=hello)"]);
+  expect(fixture.innerHTML).toBe("<span>child</span>");
+  app.destroy();
 });

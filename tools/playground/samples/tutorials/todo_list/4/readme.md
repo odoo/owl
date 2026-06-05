@@ -8,7 +8,7 @@ hooks.
 Here is what you need to do:
 
 - Create a `signal` in the `TodoList` component to hold a reference to the
-  input element: `input = signal(null)`
+  input element: `input = signal.ref()`
 - Bind it to the input element in the template using `t-ref="this.input"`
 - Use the `onMounted` hook to read the signal and call `.focus()` on the
   element
@@ -26,7 +26,7 @@ mounted, the signal contains the actual DOM element:
 ```js
 import { signal, onMounted } from "@odoo/owl";
 
-input = signal(null);
+input = signal.ref();
 
 setup() {
     onMounted(() => {

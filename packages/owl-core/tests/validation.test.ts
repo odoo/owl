@@ -517,6 +517,51 @@ test("record", () => {
   expect(validateType({ a: 123, b: 123 }, t.record(t.number()))).toEqual([]);
 });
 
+test("ref", () => {
+  // requires a DOM: throws when HTMLElement is not defined
+  expect(() => t.ref()).toThrow("Cannot use ref in a non-DOM environment");
+
+  class FakeHTMLElement {}
+  (globalThis as any).HTMLElement = FakeHTMLElement;
+  try {
+    class FakeHTMLDivElement extends FakeHTMLElement {}
+    const el = new FakeHTMLElement();
+
+    // no argument: accepts null or any HTMLElement (or subclass)
+    expect(validateType(null, t.ref())).toEqual([]);
+    expect(validateType(el, t.ref())).toEqual([]);
+    expect(validateType(new FakeHTMLDivElement(), t.ref())).toEqual([]);
+    expect(validateType(123, t.ref())).toEqual([
+      {
+        message: "value does not match union type",
+        path: "",
+        received: 123,
+        subIssues: [
+          { message: "value is not equal to null", path: "", received: 123 },
+          { message: "value is not an instance of 'FakeHTMLElement'", path: "", received: 123 },
+        ],
+      },
+    ]);
+
+    // with a constructor: narrows to that element type
+    expect(validateType(null, t.ref(FakeHTMLDivElement as any))).toEqual([]);
+    expect(validateType(new FakeHTMLDivElement(), t.ref(FakeHTMLDivElement as any))).toEqual([]);
+    expect(validateType(el, t.ref(FakeHTMLDivElement as any))).toEqual([
+      {
+        message: "value does not match union type",
+        path: "",
+        received: el,
+        subIssues: [
+          { message: "value is not equal to null", path: "", received: el },
+          { message: "value is not an instance of 'FakeHTMLDivElement'", path: "", received: el },
+        ],
+      },
+    ]);
+  } finally {
+    delete (globalThis as any).HTMLElement;
+  }
+});
+
 test("strictObject", () => {
   expect(validateType("", t.strictObject({}))).toEqual([
     { message: "value is not an object", path: "", received: "" },

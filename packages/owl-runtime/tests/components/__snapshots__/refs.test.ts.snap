@@ -15,6 +15,21 @@ exports[`refs > basic use 1`] = `
 }"
 `;
 
+exports[`refs > basic use with signal.ref 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createRef } = helpers;
+  
+  let block1 = createBlock(\`<input block-ref="0"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let ref1 = createRef(ctx['this'].input);
+    return block1([ref1]);
+  }
+}"
+`;
+
 exports[`refs > ref is set by child component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

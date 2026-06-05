@@ -511,7 +511,7 @@ class C extends Component {
   static template = xml`<div t-ref="this.div">...</div>`;
 
   setup() {
-    this.div = signal(null);
+    this.div = signal.ref();
     onMounted(() => {
       console.log(this.div());
     });

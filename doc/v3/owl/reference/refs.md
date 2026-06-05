@@ -1,9 +1,9 @@
 # References
 
 References provide a way to interact with DOM elements rendered by a component.
-In Owl 3, references are signal-based: you create a `signal(null)` and bind it
-to a DOM node using the `t-ref` directive. The signal's value is the HTMLElement
-when mounted, or `null` otherwise.
+In Owl 3, references are signal-based: you create a signal with `signal.ref()`
+and bind it to a DOM node using the `t-ref` directive. The signal's value is the
+HTMLElement when mounted, or `null` otherwise.
 
 As a short example, here is how we could set the focus on a given input:
 
@@ -16,7 +16,7 @@ As a short example, here is how we could set the focus on a given input:
 
 ```js
 class SomeComponent extends Component {
-  inputRef = signal(null);
+  inputRef = signal.ref();
 
   focusInput() {
     this.inputRef()?.focus();
@@ -30,6 +30,18 @@ directive is mounted in the DOM. Otherwise, it will be `null`.
 Note that this example uses the suffix `Ref` to name the reference. This
 is not mandatory, but it is a useful convention, so we do not forget that it is
 a reference signal.
+
+`signal.ref()` is simply a signal starting at `null`, properly typed as
+`Signal<HTMLElement | null>`. It optionally takes a constructor to narrow the
+element type:
+
+```ts
+inputRef = signal.ref(HTMLInputElement); // Signal<HTMLInputElement | null>
+```
+
+Any signal works as a `t-ref` target, so `signal(null)` is equivalent at
+runtime — but TypeScript would infer it as `Signal<null>`, so prefer
+`signal.ref()`.
 
 ## Multiple References with Resources
 

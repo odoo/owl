@@ -24,7 +24,7 @@ class Page extends Component {
     <div t-ref="this.modalRoot"/>
   `;
 
-  modalRoot = signal(null);
+  modalRoot = signal.ref();
 }
 ```
 

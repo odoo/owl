@@ -1,6 +1,7 @@
 import { OwlError } from "./owl_error";
 import { Atom, atomSymbol, onReadAtom, onWriteAtom, ReactiveValue } from "./computations";
 import { proxifyTarget } from "./proxy";
+import type { Constructor } from "./types";
 
 export interface Signal<T> extends ReactiveValue<T> {
   /**
@@ -48,6 +49,17 @@ function triggerSignal(signal: Signal<any>): void {
   onWriteAtom((signal as any)[atomSymbol]);
 }
 
+/**
+ * Create a signal meant to receive an element through t-ref. It starts at null
+ * and is typed as `Signal<HTMLElement | null>` (or narrower if a constructor
+ * is given): `myRef = signal.ref()` or `inputRef = signal.ref(HTMLInputElement)`.
+ */
+function signalRef(): Signal<HTMLElement | null>;
+function signalRef<T extends Constructor<HTMLElement>>(type: T): Signal<InstanceType<T> | null>;
+function signalRef(): Signal<any> {
+  return buildSignal<any>(null, (atom) => atom.value);
+}
+
 function signalArray<T>(initialValue: T[]): Signal<T[]>;
 function signalArray<T>(initialValue: NoInfer<T>[], options: SignalOptions<T>): Signal<T[]>;
 function signalArray<T>(initialValue: T[]): Signal<T[]> {
@@ -90,6 +102,7 @@ export function signal<T>(value: T): Signal<T> {
   return buildSignal<T>(value, (atom) => atom.value);
 }
 signal.trigger = triggerSignal;
+signal.ref = signalRef;
 signal.Array = signalArray;
 signal.Map = signalMap;
 signal.Object = signalObject;

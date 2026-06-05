@@ -308,7 +308,10 @@ function reactiveValueType(type?: any): ReactiveValue<any> {
 function ref(): HTMLElement | null;
 function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;
 function ref(type?: any): any {
-  return union([literalType(null), instanceType(type)]);
+  if (typeof HTMLElement === "undefined") {
+    throw new Error("Cannot use ref in a non-DOM environment");
+  }
+  return union([literalType(null), instanceType(type || HTMLElement)]);
 }
 
 export const types = {

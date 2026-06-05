@@ -31,8 +31,8 @@ handle:
 import { signal, useEffect, useListener } from "@odoo/owl";
 
 export function useDragAndDrop(x, y) {
-    const root = signal(null);
-    const handle = signal(null);
+    const root = signal.ref();
+    const handle = signal.ref();
 
     useEffect(() => {
         const el = root();

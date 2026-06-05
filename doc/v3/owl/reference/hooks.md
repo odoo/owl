@@ -91,7 +91,7 @@ Here is an example of a `useAutofocus` hook built with `useEffect`:
 
 ```js
 function useAutofocus() {
-  const ref = signal(null);
+  const ref = signal.ref();
   useEffect(() => {
     const el = ref();
     if (el) {
@@ -126,7 +126,7 @@ reference:
 useListener(window, "click", this.closeMenu, { capture: true });
 
 // Listen on a ref signal — effect-based, re-attaches when element changes
-const ref = signal(null);
+const ref = signal.ref();
 useListener(ref, "scroll", this.onScroll);
 ```
 

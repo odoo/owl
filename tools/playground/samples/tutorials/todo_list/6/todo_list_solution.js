@@ -7,7 +7,7 @@ export class TodoList extends Component {
     static components = { TodoItem };
 
     nextId = 4;
-    input = signal(null);
+    input = signal.ref();
 
     todos = signal.Array([
         { id: 1, text: "Buy milk", completed: signal(false) },

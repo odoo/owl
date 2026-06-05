@@ -7,7 +7,7 @@ export class HtmlEditor extends Component {
   });
 
   setup() {
-    this.editorRef = signal(null);
+    this.editorRef = signal.ref();
 
     onMounted(() => {
       const el = this.editorRef();

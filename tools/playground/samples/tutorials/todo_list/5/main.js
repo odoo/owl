@@ -13,7 +13,7 @@ class TodoList extends Component {
   filter = signal("all");
   editingId = signal(null);
   editText = signal("");
-  editInput = signal(null);
+  editInput = signal.ref();
 
   setup() {
     useEffect(

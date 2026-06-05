@@ -7,7 +7,7 @@ export class TodoList extends Component {
     static template = "tutorial.TodoList";
     static components = { TodoItem };
 
-    input = signal(null);
+    input = signal.ref();
 
     setup() {
         providePlugins([TodoListPlugin]);

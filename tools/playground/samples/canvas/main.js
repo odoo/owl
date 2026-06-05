@@ -15,7 +15,7 @@ class CanvasPaint extends Component {
             t-on-click="this.handleClick"/>`;
 
   points = signal.Array([]);
-  canvas = signal(); // empty for now
+  canvas = signal.ref(); // empty for now
 
   setup() {
     // the draw method will read the canvas signal, so the effect

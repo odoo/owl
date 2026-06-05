@@ -124,7 +124,7 @@ class Todo extends Component {
   props = { todo: TodoItem };
   todo = this.props.todo;
   isEditing = signal(false);
-  input = signal(null);
+  input = signal.ref();
   editText = signal(this.todo.text());
 
   setup() {

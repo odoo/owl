@@ -1258,7 +1258,7 @@ class C extends Component {
   static template = xml`<div t-ref="this.ref">...</div>`;
 
   setup() {
-    this.ref = signal(null);
+    this.ref = signal.ref();
     onMounted(() => {
       console.log(this.ref());
     });
@@ -1854,7 +1854,7 @@ class Editor extends Component {
       </div>
     </div>`;
 
-  editable = signal(null);
+  editable = signal.ref();
 
   setup() {
     providePlugins([ContentPlugin, SelectionPlugin, TextToolsPlugin, GEDPlugin], {

@@ -89,6 +89,22 @@ list().push({ nested: { value: 2 } });
 list()[0].nested.value = 42;
 ```
 
+### Ref Signals
+
+`signal.ref()` creates a signal meant to receive a DOM element through the
+`t-ref` directive. It starts at `null` and is typed as
+`Signal<HTMLElement | null>` (or narrower if a constructor is given):
+
+```js
+class SomeComponent extends Component {
+  static template = xml`<input t-ref="this.inputRef"/>`;
+
+  inputRef = signal.ref(HTMLInputElement);
+}
+```
+
+See [References](refs.md) for more details.
+
 ## Computed Values
 
 A computed value is a lazily-evaluated derived value. It tracks its dependencies

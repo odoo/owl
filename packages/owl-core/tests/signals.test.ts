@@ -43,6 +43,26 @@ test("trigger a signal", async () => {
   expect(() => signal.trigger(fakeSignal)).toThrow(/Value is not a signal/);
 });
 
+describe("signal.ref", () => {
+  test("starts at null and behaves like a plain signal", async () => {
+    const ref = signal.ref();
+    expect(ref()).toBe(null);
+
+    const e = spyEffect(() => ref());
+    e();
+    expectSpy(e.spy, 1, { result: null });
+
+    const el = {} as HTMLElement;
+    ref.set(el);
+    expect(ref()).toBe(el);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: el });
+
+    ref.set(null);
+    expect(ref()).toBe(null);
+  });
+});
+
 describe("signal.Array", () => {
   test("simple use", async () => {
     const reactiveArray = signal.Array<number>([]);

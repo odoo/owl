@@ -300,6 +300,9 @@ t.ref(); // null | HTMLElement
 t.ref(HTMLInputElement); // null | HTMLInputElement
 ```
 
+Since it relies on `HTMLElement`, `t.ref()` throws when called in a non-DOM
+environment (e.g. server-side rendering).
+
 ### `t.or(types)`
 
 Validates that the value matches **at least one** of the given types (union).

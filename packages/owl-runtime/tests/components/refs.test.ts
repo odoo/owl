@@ -30,6 +30,17 @@ describe("refs", () => {
     expect(test.button()).toBe(fixture.firstChild);
   });
 
+  test("basic use with signal.ref", async () => {
+    class Test extends Component {
+      static template = xml`<input t-ref="this.input"/>`;
+      input = signal.ref(HTMLInputElement);
+    }
+    const test = await mount(Test, fixture);
+    expect(test.input()).toBe(fixture.firstChild);
+    test.input()!.value = "test"; // typed as HTMLInputElement | null
+    expect((fixture.firstChild as HTMLInputElement).value).toBe("test");
+  });
+
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-call-slot="footer"/></span>`;

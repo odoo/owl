@@ -282,7 +282,7 @@ function createComponent<P extends Record<string, any>>(
         if (hooks.length) {
           // Defaults must reach the hooks but must NOT be stored on node.props:
           // otherwise the next arePropsDifferent call sees ghost diffs on default
-          // keys and re-renders on every parent render. Consumers (`prop`/`props`)
+          // keys and re-renders on every parent render. Consumers (`props.static`/`props`)
           // already resolve defaults lazily from raw node.props.
           let nextProps = props;
           const defaultProps = node.defaultProps;

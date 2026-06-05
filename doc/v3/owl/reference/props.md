@@ -119,12 +119,12 @@ reading `this.props.value` inside the effect subscribes the effect to future
 updates of that prop.
 
 This only applies to props accessed through `props()`. The singular
-[`prop()`](#the-prop-function) helper keeps its static, reference-stable
+[`props.static()`](#the-propsstatic-method) helper keeps its static, reference-stable
 semantics.
 
-## The `prop` function
+## The `props.static` method
 
-`prop` (singular) is an alternative for components that only need to read a
+`props.static` is an alternative for components that only need to read a
 single prop and expect that prop to stay **static** — meaning the reference
 passed by the parent does not change across renders. It takes the prop name
 explicitly, an optional [type validator](types_validation.md#validators),
@@ -132,59 +132,59 @@ and an optional default value. If the type is omitted, the prop is accepted
 as-is without validation.
 
 ```js
-import { Component, prop, types as t, xml } from "@odoo/owl";
+import { Component, props, types as t, xml } from "@odoo/owl";
 
 class TodoView extends Component {
   static template = xml`<div t-out="this.todo.title"/>`;
-  todo = prop("todo", t.instanceOf(Todo));
+  todo = props.static("todo", t.instanceOf(Todo));
 }
 
 class Header extends Component {
   static template = xml`<h1 t-out="this.label"/>`;
-  label = prop("label", t.string(), "untitled");
+  label = props.static("label", t.string(), "untitled");
 }
 
 class Passthrough extends Component {
   static template = xml`<div t-out="this.payload"/>`;
-  payload = prop("payload"); // no type: any value accepted
+  payload = props.static("payload"); // no type: any value accepted
 }
 ```
 
-Each `prop()` call declares one prop. The value is read once, at component
+Each `props.static()` call declares one prop. The value is read once, at component
 construction time, and assigned directly to the class field — so `this.todo`
 is the `Todo` instance, not a getter or accessor.
 
 ### Static semantics
 
-In [dev mode](app.md#configuration), `prop()` does two things:
+In [dev mode](app.md#configuration), `props.static()` does two things:
 
 - validates the initial value against the declared type,
 - registers a check that throws if the prop's reference changes on a
   subsequent parent render.
 
-This makes `prop()` a good fit for values the child treats as identity-stable
+This makes `props.static()` a good fit for values the child treats as identity-stable
 (`instanceOf` models, event buses, or [signals](reactivity.md#signals)). If a
 [signal](reactivity.md#signals) is passed, the signal object itself stays the
 same across renders even as its inner value updates — which is exactly what
-`prop()` requires.
+`props.static()` requires.
 
 In production mode, the type check and the immutability check are skipped
 entirely.
 
-### When to use `prop()` vs `props()`
+### When to use `props.static()` vs `props()`
 
 Use `props()` when the child needs to observe prop changes (the parent
 re-renders with a new value and the child must reflect it), when computed values
 or effects should react to prop changes, or when the child declares several
 props at once.
 
-Use `prop()` when:
+Use `props.static()` when:
 
 - the child only needs one (or a few) specific props,
 - the prop is conceptually static — a model instance, a signal, an event bus,
 - you want dev mode to flag unexpected reference changes.
 
-`prop()` and `props()` can be mixed freely in the same component.
+`props.static()` and `props()` can be mixed freely in the same component.
 
 ## Translatable props
 

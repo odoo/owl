@@ -8,6 +8,7 @@ import {
   Signal,
 } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
+import { staticProp } from "./prop";
 import { types } from "./types";
 
 function validateDefaults(schema: Record<string, any> | string[]) {
@@ -44,18 +45,22 @@ export type GetProps<T> = {
   ? { [K in keyof I]: I[K] }
   : never;
 
-export function props(): Props<Record<string, any>>;
-export function props<const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
-export function props<const Keys extends string[], Defaults>(
-  keys: Keys,
-  defaults: Defaults & GetPropsDefaults<KeyedObject<Keys>>
-): Props<WithDefaults<ResolveObjectType<Keys>, Defaults>>;
-export function props<Shape extends {}>(shape: Shape): Props<ResolveObjectType<Shape>>;
-export function props<Shape extends {}, Defaults>(
-  shape: Shape,
-  defaults: Defaults & GetPropsDefaults<Shape>
-): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
-export function props(type?: any, defaults?: any): Props<{}> {
+export interface PropsFunction {
+  (): Props<Record<string, any>>;
+  <const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
+  <const Keys extends string[], Defaults>(
+    keys: Keys,
+    defaults: Defaults & GetPropsDefaults<KeyedObject<Keys>>
+  ): Props<WithDefaults<ResolveObjectType<Keys>, Defaults>>;
+  <Shape extends {}>(shape: Shape): Props<ResolveObjectType<Shape>>;
+  <Shape extends {}, Defaults>(
+    shape: Shape,
+    defaults: Defaults & GetPropsDefaults<Shape>
+  ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
+  static: typeof staticProp;
+}
+
+function makeProps(type?: any, defaults?: any): Props<{}> {
   const node = getComponentScope();
   const { app, componentName } = node;
   if (defaults) {
@@ -101,7 +106,11 @@ export function props(type?: any, defaults?: any): Props<{}> {
 
     if (app.dev) {
       if (defaults) {
-        assertType(defaults, validateDefaults(type), `Invalid component default props (${componentName})`);
+        assertType(
+          defaults,
+          validateDefaults(type),
+          `Invalid component default props (${componentName})`
+        );
       }
 
       const validation = types.object(type);
@@ -151,3 +160,5 @@ export function props(type?: any, defaults?: any): Props<{}> {
 
   return result;
 }
+
+export const props = Object.assign(makeProps, { static: staticProp }) as PropsFunction;

@@ -1,10 +1,10 @@
 import { assertType, OwlError } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 
-export function prop<T = any>(key: string): T;
-export function prop<T>(key: string, type: T): T;
-export function prop<T>(key: string, type: T, defaultValue: T): T;
-export function prop(key: string, type?: any, ...args: any[]): any {
+export function staticProp<T = any>(key: string): T;
+export function staticProp<T>(key: string, type: T): T;
+export function staticProp<T>(key: string, type: T, defaultValue: T): T;
+export function staticProp(key: string, type?: any, ...args: any[]): any {
   const node = getComponentScope();
   const hasDefault = args.length > 0;
   const propValue = node.props[key];
@@ -17,7 +17,7 @@ export function prop(key: string, type?: any, ...args: any[]): any {
       if (nextProps[key] !== node.props[key]) {
         throw new OwlError(
           `Prop '${key}' changed in component '${node.componentName}'. ` +
-            `Props declared with \`prop()\` are static and should not change. ` +
+            `Props declared with \`props.static()\` are static and should not change. ` +
             `If the prop is a signal, pass the same signal reference (its inner value may change).`
         );
       }

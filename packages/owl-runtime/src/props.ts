@@ -1,8 +1,7 @@
 import {
   assertType,
-  GetOptionalEntries,
-  KeyedObject,
-  PrettifyShape,
+  getDefault,
+  GetDefaultedEntries,
   ResolveObjectType,
   signal,
   Signal,
@@ -11,29 +10,10 @@ import { getComponentScope } from "./component_node";
 import { staticProp } from "./prop";
 import { types } from "./types";
 
-function validateDefaults(schema: Record<string, any> | string[]) {
-  const validation: Record<string, any> = {};
-  if (Array.isArray(schema)) {
-    for (const key of schema) {
-      if (key.endsWith("?")) {
-        validation[key] = types.any();
-      }
-    }
-  } else {
-    for (const key in schema) {
-      if (key.endsWith("?")) {
-        validation[key] = schema[key];
-      }
-    }
-  }
-  return types.strictObject(validation);
-}
-
 declare const isProps: unique symbol;
 
 export type WithDefaults<T, D> = T & Required<D>;
 export type Props<T extends {}> = T & { [isProps]: true };
-type GetPropsDefaults<T extends object> = PrettifyShape<GetOptionalEntries<T>>;
 
 type GetPropsWithOptionals<T> =
   T extends Props<infer P> ? (P extends WithDefaults<infer R, any> ? R : P) : never;
@@ -48,28 +28,35 @@ export type GetProps<T> = {
 export interface PropsFunction {
   (): Props<Record<string, any>>;
   <const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
-  <const Keys extends string[], Defaults>(
-    keys: Keys,
-    defaults: Defaults & GetPropsDefaults<KeyedObject<Keys>>
-  ): Props<WithDefaults<ResolveObjectType<Keys>, Defaults>>;
-  <Shape extends {}>(shape: Shape): Props<ResolveObjectType<Shape>>;
-  <Shape extends {}, Defaults>(
-    shape: Shape,
-    defaults: Defaults & GetPropsDefaults<Shape>
-  ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
+  <Shape extends {}>(shape: Shape): Props<
+    WithDefaults<ResolveObjectType<Shape>, GetDefaultedEntries<Shape>>
+  >;
   static: typeof staticProp;
 }
 
-function makeProps(type?: any, defaults?: any): Props<{}> {
+function makeProps(type?: any): Props<{}> {
   const node = getComponentScope();
   const { app, componentName } = node;
+
+  // defaults declared in the schema (.default()). Factories are resolved once
+  // per component instance, so the value identity is stable across prop
+  // updates of that instance.
+  let defaults: Record<string, any> | null = null;
+  if (type && !Array.isArray(type)) {
+    for (const key in type) {
+      const factory = getDefault(type[key]);
+      if (factory) {
+        (defaults ||= {})[key] = factory();
+      }
+    }
+  }
   if (defaults) {
     node.defaultProps = Object.assign(node.defaultProps || {}, defaults);
   }
 
   function resolveValue(props: Record<string, any>, key: string) {
-    if (props[key] === undefined && defaults) {
-      return (defaults as any)[key];
+    if (props[key] === undefined && defaults && key in defaults) {
+      return defaults[key];
     }
     return props[key];
   }
@@ -98,17 +85,21 @@ function makeProps(type?: any, defaults?: any): Props<{}> {
   }
 
   if (type) {
-    const keys: string[] = (Array.isArray(type) ? type : Object.keys(type)).map((key: string) =>
-      key.endsWith("?") ? key.slice(0, -1) : key
-    );
+    const keys: string[] = Array.isArray(type) ? type : Object.keys(type);
     defineProps(keys);
     node.propsUpdated.push(() => updateSignals(keys));
 
     if (app.dev) {
       if (defaults) {
+        const defaultedShape: Record<string, any> = {};
+        for (const key in type) {
+          if (key in defaults) {
+            defaultedShape[key] = type[key];
+          }
+        }
         assertType(
           defaults,
-          validateDefaults(type),
+          types.object(defaultedShape),
           `Invalid component default props (${componentName})`
         );
       }
@@ -125,13 +116,6 @@ function makeProps(type?: any, defaults?: any): Props<{}> {
       for (const k in props) {
         if (k.charCodeAt(0) !== 1) {
           keys.push(k);
-        }
-      }
-      if (defaults) {
-        for (const k in defaults) {
-          if (!(k in props)) {
-            keys.push(k);
-          }
         }
       }
       return keys;

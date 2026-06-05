@@ -38,7 +38,7 @@ describe("basics", () => {
   test("default value when prop is absent", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label"/></span>`;
-      label = props.static("label", t.string(), "untitled");
+      label = props.static("label", t.string().default("untitled"));
     }
     class Parent extends Component {
       static template = xml`<div><Child/></div>`;
@@ -52,7 +52,7 @@ describe("basics", () => {
   test("provided value takes precedence over default", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label"/></span>`;
-      label = props.static("label", t.string(), "untitled");
+      label = props.static("label", t.string().default("untitled"));
     }
     class Parent extends Component {
       static template = xml`<div><Child label="'hello'"/></div>`;
@@ -81,7 +81,7 @@ describe("basics", () => {
   test("can be mixed with props()", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.all.extra"/>/<t t-out="this.main"/></span>`;
-      all = props({ "extra?": t.string() });
+      all = props({ extra: t.string().optional() });
       main = props.static("main", t.number());
     }
     class Parent extends Component {
@@ -252,7 +252,7 @@ describe("dev mode", () => {
   test("default value skips validation when prop is absent", async () => {
     class Root extends Component {
       static template = xml`<div t-out="this.label"/>`;
-      label = props.static("label", t.string(), "fallback");
+      label = props.static("label", t.string().default("fallback"));
     }
 
     // No error even though prop is missing: default covers it
@@ -263,7 +263,7 @@ describe("dev mode", () => {
   test("omitted prop with default does not trigger static-prop error on re-render", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.label"/>`;
-      label = props.static("label", t.string(), "fallback");
+      label = props.static("label", t.string().default("fallback"));
     }
     class Parent extends Component {
       static template = xml`<Child/>`;

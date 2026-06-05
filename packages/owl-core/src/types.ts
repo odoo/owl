@@ -3,11 +3,85 @@ import { ValidationContext, ValidationIssue } from "./validation";
 
 export type Constructor<T = any> = { new (...args: any[]): T };
 
+// Runtime metadata attached to validators by `.default()`. The default is
+// normalized to a factory: an explicit factory produces a fresh value per
+// consumer, a plain value is wrapped in a constant factory (so it is shared).
+const defaultSymbol = Symbol("default");
+// The wrapped type, so that `applyDefaults` can recurse through a default.
+const innerTypeSymbol = Symbol("innerType");
+// Attached to object/tuple validators, so that `applyDefaults` can walk them.
+const shapeSymbol = Symbol("shape");
+// Attached to array validators, so that `applyDefaults` can visit elements.
+const elementTypeSymbol = Symbol("elementType");
+// Attached to validators created by `.optional()`: an object key with an
+// optional type may be omitted.
+const optionalSymbol = Symbol("optional");
+
+// Type-level brand carried by `.default()`. It is phantom (declare): nothing
+// exists at runtime under this key. The brand stores the wrapped type so it
+// can be recovered with `infer`. Exported so that dependent declarations
+// (e.g. a `Resource<T>` field) can be emitted across modules.
+export declare const hasDefault: unique symbol;
+export type WithDefault<T> = T & { [hasDefault]: T };
+
+// Type-level brand carried by `.optional()`, phantom like `hasDefault`.
+export declare const isOptional: unique symbol;
+export type Optional<T> = T & { [isOptional]: T };
+
+// Type-level brand carried by every type built by the `types` factories. It
+// is phantom: at runtime, only the `default` and `optional` methods exist on
+// the validator.
+export declare const typeBrand: unique symbol;
+export type Type<T> = T & {
+  [typeBrand]: T;
+  /**
+   * Attaches a default value to the type. A defaulted value is implicitly
+   * optional: `undefined` passes validation (the default is meant to fill
+   * it). The default can be given as a factory (`() => value`), which is
+   * called once per consumer, so mutable defaults ([], {}) are not shared. A
+   * default for a function type must use the factory form.
+   */
+  default(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
+  /**
+   * Marks the type as optional: `undefined` passes validation, and an object
+   * key with an optional type may be omitted. A type with a default is
+   * already implicitly optional, so `.optional()` and `.default()` do not
+   * need to be combined (and cannot be chained).
+   */
+  optional(): Optional<T>;
+};
+
+type IsAny<T> = 0 extends 1 & T ? true : false;
+type HasDefault<T> = IsAny<T> extends true ? false : T extends { [hasDefault]: any } ? true : false;
+type IsOptional<T> = IsAny<T> extends true ? false : T extends { [isOptional]: any } ? true : false;
+type StripDefault<T> = T extends { [hasDefault]: infer U } ? U : T;
+type StripOptional<T> = T extends { [isOptional]: infer U } ? U | undefined : T;
+type StripType<T> = T extends { [typeBrand]: infer U } ? U : T;
+// Recovers the value type carried by a validator: brands are removed, and an
+// optional type resolves to `T | undefined`.
+export type StripBrands<T> = StripType<StripDefault<StripOptional<T>>>;
+type StripBrandsAll<T extends any[]> = { [K in keyof T]: StripBrands<T[K]> };
+
+// Entries whose type carries a default (brand stripped). Used by `props()`
+// to make defaulted keys required for the component reading them, while they
+// stay optional for the parent providing them.
+export type GetDefaultedEntries<T> = {
+  [K in keyof T as HasDefault<T[K]> extends true ? K : never]: StripBrands<T[K]>;
+};
+
 export type GetOptionalEntries<T> = {
-  [K in keyof T as K extends `${infer P}?` ? P : never]?: T[K];
+  [K in keyof T as IsOptional<T[K]> extends true
+    ? K
+    : HasDefault<T[K]> extends true
+      ? K
+      : never]?: StripBrands<T[K]>;
 };
 type GetRequiredEntries<T> = {
-  [K in keyof T as K extends `${string}?` ? never : K]: T[K];
+  [K in keyof T as IsOptional<T[K]> extends true
+    ? never
+    : HasDefault<T[K]> extends true
+      ? never
+      : K]: StripBrands<T[K]>;
 };
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
@@ -27,39 +101,151 @@ export type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) ext
   ? I
   : never;
 
-function anyType(): any {
-  return function validateAny() {} as any;
+/**
+ * Returns the default value factory attached to a type by `.default()`, if
+ * any. This is how consumers (props, config, ...) resolve defaults at
+ * runtime: validation only runs in dev mode, so defaults are metadata on the
+ * schema, not a validation side-effect.
+ */
+export function getDefault(type: any): (() => any) | undefined {
+  return typeof type === "function" ? type[defaultSymbol] : undefined;
 }
 
-function booleanType(): boolean {
-  return function validateBoolean(context: ValidationContext) {
+function hasDefaultValue(type: any): boolean {
+  return typeof type === "function" && defaultSymbol in type;
+}
+
+// Runtime implementation of the `default` method declared on `Type`.
+function withDefault(type: any, value: any): any {
+  const validate = function validateWithDefault(context: ValidationContext) {
+    if (context.value === undefined) {
+      return;
+    }
+    context.validate(type);
+  } as any;
+  validate[defaultSymbol] = typeof value === "function" ? value : () => value;
+  validate[innerTypeSymbol] = type;
+  return validate;
+}
+
+// Runtime implementation of the `optional` method declared on `Type`.
+function makeOptional(type: any): any {
+  const validate = function validateOptional(context: ValidationContext) {
+    if (context.value === undefined) {
+      return;
+    }
+    context.validate(type);
+  } as any;
+  validate[optionalSymbol] = true;
+  validate[innerTypeSymbol] = type;
+  return validate;
+}
+
+function isOptionalType(type: any): boolean {
+  return typeof type === "function" && optionalSymbol in type;
+}
+
+// Attaches the `default` and `optional` methods to a validator: every `types`
+// factory funnels its validator through this.
+function makeType(validate: (context: ValidationContext) => void): any {
+  (validate as any).default = (value: any) => withDefault(validate, value);
+  (validate as any).optional = () => makeOptional(validate);
+  return validate;
+}
+
+/**
+ * Returns `value` with defaults from the schema filled in, at any depth: a
+ * default fires when the value at its schema position is `undefined`. The
+ * input is never mutated; objects are copied along the changed paths only, so
+ * if nothing is filled in, `value` is returned as is.
+ *
+ * Note that this only recurses through object shapes, tuples and arrays
+ * (unions are ambiguous, records have no fixed keys).
+ */
+export function applyDefaults<T>(value: unknown, type: T): StripBrands<T> {
+  return applyDefaultsRec(value, type);
+}
+
+function applyDefaultsRec(value: any, type: any): any {
+  if (typeof type !== "function") {
+    return value;
+  }
+  if (value === undefined) {
+    const factory = type[defaultSymbol];
+    if (!factory) {
+      return value;
+    }
+    value = factory();
+  }
+  const inner = type[innerTypeSymbol] || type;
+  if (typeof inner !== "function" || !value || typeof value !== "object") {
+    return value;
+  }
+  const elementType = inner[elementTypeSymbol];
+  if (elementType && Array.isArray(value)) {
+    let result = value;
+    for (let index = 0; index < value.length; index++) {
+      const newValue = applyDefaultsRec(value[index], elementType);
+      if (newValue !== value[index]) {
+        if (result === value) {
+          result = [...value];
+        }
+        result[index] = newValue;
+      }
+    }
+    return result;
+  }
+  const shape = inner[shapeSymbol];
+  if (!shape) {
+    return value;
+  }
+  let result = value;
+  for (const key in shape) {
+    const subValue = result[key];
+    const newValue = applyDefaultsRec(subValue, shape[key]);
+    if (newValue !== subValue) {
+      if (result === value) {
+        result = Array.isArray(value) ? [...value] : { ...value };
+      }
+      result[key] = newValue;
+    }
+  }
+  return result;
+}
+
+function anyType(): Type<any> {
+  return makeType(function validateAny() {});
+}
+
+function booleanType(): Type<boolean> {
+  return makeType(function validateBoolean(context: ValidationContext) {
     if (typeof context.value !== "boolean") {
       context.addIssue({ message: "value is not a boolean" });
     }
-  } as any;
+  });
 }
 
-function numberType<T extends number = number>(): T {
-  return function validateNumber(context: ValidationContext) {
+function numberType<T extends number = number>(): Type<T> {
+  return makeType(function validateNumber(context: ValidationContext) {
     if (typeof context.value !== "number") {
       context.addIssue({ message: "value is not a number" });
     }
-  } as any;
+  });
 }
 
-function stringType<T extends string = string>(): T {
-  return function validateString(context: ValidationContext) {
+function stringType<T extends string = string>(): Type<T> {
+  return makeType(function validateString(context: ValidationContext) {
     if (typeof context.value !== "string" && !(context.value instanceof String)) {
       context.addIssue({ message: "value is not a string" });
     }
-  } as any;
+  });
 }
 
-function arrayType(): any[];
-function arrayType<T>(): T[];
-function arrayType<T>(elementType: T): T[];
+function arrayType(): Type<any[]>;
+function arrayType<T>(): Type<T[]>;
+function arrayType<T>(elementType: T): Type<StripBrands<T>[]>;
 function arrayType(elementType?: any): any {
-  return function validateArray(context: ValidationContext) {
+  const validate = makeType(function validateArray(context: ValidationContext) {
     if (!Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an array" });
       return;
@@ -71,26 +257,30 @@ function arrayType(elementType?: any): any {
     for (let index = 0; index < context.value.length; index++) {
       context.withKey(index).validate(elementType);
     }
-  } as any;
+  });
+  if (elementType) {
+    validate[elementTypeSymbol] = elementType;
+  }
+  return validate;
 }
 
-export function constructorType<T extends Constructor>(constructor: T): T {
-  return function validateConstructor(context: ValidationContext) {
+export function constructorType<T extends Constructor>(constructor: T): Type<T> {
+  return makeType(function validateConstructor(context: ValidationContext) {
     if (
       !(typeof context.value === "function") ||
       !(context.value === constructor || context.value.prototype instanceof constructor)
     ) {
       context.addIssue({ message: `value is not '${constructor.name}' or an extension` });
     }
-  } as any;
+  });
 }
 
 function customValidator<T>(
   type: T,
-  validator: (value: T) => boolean,
+  validator: (value: StripBrands<T>) => boolean,
   errorMessage: string = "value does not match custom validation"
-): T {
-  return function validateCustom(context: ValidationContext) {
+): Type<StripBrands<T>> {
+  return makeType(function validateCustom(context: ValidationContext) {
     context.validate(type);
     if (!context.isValid) {
       return;
@@ -99,49 +289,54 @@ function customValidator<T>(
     if (!validator(context.value)) {
       context.addIssue({ message: errorMessage });
     }
-  } as any;
+  });
 }
 
-function functionType(): (...parameters: any[]) => any;
-function functionType<const P extends any[]>(parameters: P): (...parameters: P) => void;
-function functionType<const P extends any[], R>(): (...parameters: P) => R;
-function functionType<const P extends any[], R>(parameters: P, result: R): (...parameters: P) => R;
-function functionType(parameters = [], result = undefined): (...parameters: any[]) => any {
-  return function validateFunction(context: ValidationContext) {
+function functionType(): Type<(...parameters: any[]) => any>;
+function functionType<const P extends any[]>(
+  parameters: P
+): Type<(...parameters: StripBrandsAll<P>) => void>;
+function functionType<const P extends any[], R>(): Type<(...parameters: P) => R>;
+function functionType<const P extends any[], R>(
+  parameters: P,
+  result: R
+): Type<(...parameters: StripBrandsAll<P>) => StripBrands<R>>;
+function functionType(parameters = [], result = undefined): any {
+  return makeType(function validateFunction(context: ValidationContext) {
     if (typeof context.value !== "function") {
       context.addIssue({ message: "value is not a function" });
     }
-  } as any;
+  });
 }
 
-function instanceType<T extends Constructor>(constructor: T): InstanceType<T> {
-  return function validateInstanceType(context: ValidationContext) {
+function instanceType<T extends Constructor>(constructor: T): Type<InstanceType<T>> {
+  return makeType(function validateInstanceType(context: ValidationContext) {
     if (!(context.value instanceof constructor)) {
       context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
     }
-  } as any;
+  });
 }
 
-function intersection<T extends any[]>(types: T): UnionToIntersection<T[number]> {
-  return function validateIntersection(context: ValidationContext) {
+function intersection<T extends any[]>(types: T): Type<UnionToIntersection<StripBrands<T[number]>>> {
+  return makeType(function validateIntersection(context: ValidationContext) {
     for (const type of types) {
       context.validate(type);
     }
-  } as any;
+  });
 }
 
 export type LiteralTypes = number | string | boolean | null | undefined;
-function literalType<const T extends LiteralTypes>(literal: T): T {
-  return function validateLiteral(context: ValidationContext) {
+function literalType<const T extends LiteralTypes>(literal: T): Type<T> {
+  return makeType(function validateLiteral(context: ValidationContext) {
     if (context.value !== literal) {
       context.addIssue({
         message: `value is not equal to ${typeof literal === "string" ? `'${literal}'` : literal}`,
       });
     }
-  } as any;
+  });
 }
 
-function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
+function literalSelection<const T extends LiteralTypes>(literals: T[]): Type<T> {
   return union(literals.map(literalType)) as any;
 }
 
@@ -170,15 +365,15 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
 
   const missingKeys: string[] = [];
   for (const key of keys) {
-    const property = key.endsWith("?") ? key.slice(0, -1) : key;
-    if (context.value[property] === undefined) {
-      if (!key.endsWith("?")) {
-        missingKeys.push(property);
+    if (context.value[key] === undefined) {
+      // optional and defaulted keys may be omitted (the default fills it)
+      if (!isOptionalType(shape[key]) && !hasDefaultValue(shape[key])) {
+        missingKeys.push(key);
       }
       continue;
     }
     if (isShape) {
-      context.withKey(property).validate(shape[key]);
+      context.withKey(key).validate(shape[key]);
     }
   }
   if (missingKeys.length) {
@@ -191,7 +386,7 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   if (isStrict) {
     const unknownKeys: string[] = [];
     for (const key in context.value) {
-      if (!keys.includes(key) && !(`${key}?` in shape)) {
+      if (!keys.includes(key)) {
         unknownKeys.push(key);
       }
     }
@@ -205,42 +400,50 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   }
 }
 
-function objectType(): Record<string, any>;
+function objectType(): Type<Record<string, any>>;
 function objectType<const Keys extends string[]>(
   keys: Keys
-): ResolveOptionalEntries<KeyedObject<Keys>>;
-function objectType<Shape extends {}>(): ResolveOptionalEntries<Shape>;
-function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
-function objectType(schema = {}): Record<string, any> {
-  return function validateLooseObject(context: ValidationContext) {
+): Type<ResolveOptionalEntries<KeyedObject<Keys>>>;
+function objectType<Shape extends {}>(): Type<ResolveOptionalEntries<Shape>>;
+function objectType<Shape extends {}>(shape: Shape): Type<ResolveOptionalEntries<Shape>>;
+function objectType(schema = {}): any {
+  const validate = makeType(function validateLooseObject(context: ValidationContext) {
     validateObject(context, schema, false);
-  } as any;
+  });
+  if (!Array.isArray(schema)) {
+    validate[shapeSymbol] = schema;
+  }
+  return validate;
 }
 
 function strictObjectType<const Keys extends string[]>(
   keys: Keys
-): ResolveOptionalEntries<KeyedObject<Keys>>;
-function strictObjectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
-function strictObjectType(schema: any): Record<string, any> {
-  return function validateStrictObject(context: ValidationContext) {
+): Type<ResolveOptionalEntries<KeyedObject<Keys>>>;
+function strictObjectType<Shape extends {}>(shape: Shape): Type<ResolveOptionalEntries<Shape>>;
+function strictObjectType(schema: any): any {
+  const validate = makeType(function validateStrictObject(context: ValidationContext) {
     validateObject(context, schema, true);
-  } as any;
+  });
+  if (!Array.isArray(schema)) {
+    validate[shapeSymbol] = schema;
+  }
+  return validate;
 }
 
-function promiseType(): Promise<void>;
-function promiseType<T>(type: T): Promise<T>;
+function promiseType(): Type<Promise<void>>;
+function promiseType<T>(type: T): Type<Promise<StripBrands<T>>>;
 function promiseType(type?: any): any {
-  return function validatePromise(context: ValidationContext) {
+  return makeType(function validatePromise(context: ValidationContext) {
     if (!(context.value instanceof Promise)) {
       context.addIssue({ message: "value is not a promise" });
     }
-  } as any;
+  });
 }
 
-function recordType(): Record<PropertyKey, any>;
-function recordType<V>(valueType: V): Record<PropertyKey, V>;
+function recordType(): Type<Record<PropertyKey, any>>;
+function recordType<V>(valueType: V): Type<Record<PropertyKey, StripBrands<V>>>;
 function recordType(valueType?: any): any {
-  return function validateRecord(context: ValidationContext) {
+  return makeType(function validateRecord(context: ValidationContext) {
     if (
       typeof context.value !== "object" ||
       Array.isArray(context.value) ||
@@ -255,11 +458,11 @@ function recordType(valueType?: any): any {
     for (const key in context.value) {
       context.withKey(key).validate(valueType);
     }
-  } as any;
+  });
 }
 
-function tuple<const T extends any[]>(types: T): T {
-  return function validateTuple(context: ValidationContext) {
+function tuple<const T extends any[]>(types: T): Type<StripBrandsAll<T>> {
+  const validate = makeType(function validateTuple(context: ValidationContext) {
     if (!Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an array" });
       return;
@@ -271,11 +474,13 @@ function tuple<const T extends any[]>(types: T): T {
     for (let index = 0; index < types.length; index++) {
       context.withKey(index).validate(types[index]);
     }
-  } as any;
+  });
+  validate[shapeSymbol] = types;
+  return validate;
 }
 
-function union<T extends any[]>(types: T): T[number] {
-  return function validateUnion(context: ValidationContext) {
+function union<T extends any[]>(types: T): Type<StripBrands<T[number]>> {
+  return makeType(function validateUnion(context: ValidationContext) {
     let firstIssueIndex = 0;
     const subIssues: ValidationIssue[] = [];
     for (const type of types) {
@@ -291,22 +496,22 @@ function union<T extends any[]>(types: T): T[number] {
       message: "value does not match union type",
       subIssues,
     });
-  } as any;
+  });
 }
 
-function reactiveValueType(): ReactiveValue<any>;
-function reactiveValueType<T>(): ReactiveValue<T>;
-function reactiveValueType<T>(type: T): ReactiveValue<T>;
-function reactiveValueType(type?: any): ReactiveValue<any> {
-  return function validateReactiveValue(context: ValidationContext) {
+function reactiveValueType(): Type<ReactiveValue<any>>;
+function reactiveValueType<T>(): Type<ReactiveValue<T>>;
+function reactiveValueType<T>(type: T): Type<ReactiveValue<StripBrands<T>>>;
+function reactiveValueType(type?: any): any {
+  return makeType(function validateReactiveValue(context: ValidationContext) {
     if (typeof context.value !== "function" || !context.value[atomSymbol]) {
       context.addIssue({ message: "value is not a reactive value" });
     }
-  } as any;
+  });
 }
 
-function ref(): HTMLElement | null;
-function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;
+function ref(): Type<HTMLElement | null>;
+function ref<T extends Constructor<HTMLElement>>(type: T): Type<InstanceType<T> | null>;
 function ref(type?: any): any {
   if (typeof HTMLElement === "undefined") {
     throw new Error("Cannot use ref in a non-DOM environment");

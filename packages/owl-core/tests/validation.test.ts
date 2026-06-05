@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { assertType, computed, signal, types as t, validateType } from "../src";
+import {
+  applyDefaults,
+  assertType,
+  computed,
+  getDefault,
+  signal,
+  types as t,
+  validateType,
+} from "../src";
 
 class A {}
 
@@ -349,16 +357,16 @@ describe("object", () => {
     expect(validateType({}, t.object({ a: t.number() }))).toEqual([
       { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a"], received: {} },
     ]);
-    expect(validateType({}, t.object({ "a?": t.number() }))).toEqual([]);
-    expect(validateType({}, t.object({ a: t.number(), "b?": t.number() }))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
+    expect(validateType({}, t.object({ a: t.number().optional() }))).toEqual([]);
+    expect(validateType({}, t.object({ a: t.number(), b: t.number().optional() }))).toEqual([
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b"], received: {} },
     ]);
-    expect(validateType({ a: 1 }, t.object({ a: t.number(), "b?": t.number() }))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({ a: t.number(), b: t.number().optional() }))).toEqual([]);
     expect(
-      validateType({ a: 1, b: 1 }, t.object({ a: t.number(), "b?": t.number() }))
+      validateType({ a: 1, b: 1 }, t.object({ a: t.number(), b: t.number().optional() }))
     ).toEqual([]);
     expect(
-      validateType({ a: 1, b: "abc" }, t.object({ a: t.number(), "b?": t.number() }))
+      validateType({ a: 1, b: "abc" }, t.object({ a: t.number(), b: t.number().optional() }))
     ).toEqual([{ message: "value is not a number", path: "b", received: "abc" }]);
   });
 
@@ -415,22 +423,23 @@ describe("object", () => {
     expect(validateType({ a: 123, b: 123 }, t.object(["a", "b"]))).toEqual([]);
   });
 
-  test("keyed object with optional keys", () => {
-    expect(validateType({}, t.object(["a", "b?"]))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b?"], received: {} },
+  test("optional keys use the shape form (the keyed form is all-required)", () => {
+    const type = t.object({ a: t.any(), b: t.any().optional() });
+    expect(validateType({}, type)).toEqual([
+      { message: "object value has missing keys", path: "", missingKeys: ["a"], expectedKeys: ["a", "b"], received: {} },
     ]);
-    expect(validateType({ a: "abc" }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: 123 }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: 123, b: "def" }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: 123, b: 123 }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: 123, b: 123 }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: "abc" }, type)).toEqual([]);
+    expect(validateType({ a: "abc", b: "def" }, type)).toEqual([]);
+    expect(validateType({ a: 123 }, type)).toEqual([]);
+    expect(validateType({ a: 123, b: 123 }, type)).toEqual([]);
+    expect(validateType({ a: 123 }, t.object(["a", "b"]))).toEqual([
+      { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 123 } },
+    ]);
   });
 
   test("keyed object with additional keys", () => {
-    expect(validateType({ a: "abc", b: "def", c: "ghi" }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: "abc", c: "ghi" }, t.object(["a", "b?"]))).toEqual([]);
-    expect(validateType({ a: "abc", d: "jkl" }, t.object(["a", "b?"]))).toEqual([]);
+    expect(validateType({ a: "abc", b: "def", c: "ghi" }, t.object(["a", "b"]))).toEqual([]);
+    expect(validateType({ a: "abc", b: "def", d: "jkl" }, t.object(["a", "b"]))).toEqual([]);
   });
 });
 
@@ -720,11 +729,11 @@ test("or", () => {
 
 test("complex type", () => {
   const complexType = t.object({
-    "a?": t.number(),
+    a: t.number().optional(),
     b: t.array(
       t.object({
         a: t.instanceOf(A),
-        "b?": t.or([t.number(), t.literal(false)]),
+        b: t.or([t.number(), t.literal(false)]).optional(),
         c: t.tuple([t.string(), t.string()]),
       })
     ),
@@ -735,14 +744,14 @@ test("complex type", () => {
   expect(validateType([], complexType)).toEqual([{ message: "value is not an object", path: "", received: [] }]);
   expect(validateType(null, complexType)).toEqual([{ message: "value is not an object", path: "", received: null }]);
   expect(validateType({}, complexType)).toEqual([
-    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: {} },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: {} },
   ]);
   expect(validateType({ a: "" }, complexType)).toEqual([
     { message: "value is not a number", path: "a", received: "" },
-    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: "" } },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: "" } },
   ]);
   expect(validateType({ a: 1 }, complexType)).toEqual([
-    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a?", "b"], received: { a: 1 } },
+    { message: "object value has missing keys", path: "", missingKeys: ["b"], expectedKeys: ["a", "b"], received: { a: 1 } },
   ]);
   expect(validateType({ b: {} }, complexType)).toEqual([
     { message: "value is not an array", path: "b", received: {} },
@@ -871,4 +880,162 @@ test("assertType path is not hidden", () => {
   }
 ]`
   );
+});
+
+describe(".default()", () => {
+  test("validates the wrapped type, accepts undefined", () => {
+    const type = t.number().default(3);
+    expect(validateType(undefined, type)).toEqual([]);
+    expect(validateType(5, type)).toEqual([]);
+    expect(validateType("abc", type)).toEqual([
+      { message: "value is not a number", path: "", received: "abc" },
+    ]);
+  });
+
+  test("a key with a default is implicitly optional", () => {
+    const type = t.object({ delay: t.number().default(500) });
+    expect(validateType({}, type)).toEqual([]);
+    expect(validateType({ delay: 100 }, type)).toEqual([]);
+    expect(validateType({ delay: "abc" }, type)).toEqual([
+      { message: "value is not a number", path: "delay", received: "abc" },
+    ]);
+  });
+
+  test("validates the present value of an optional key", () => {
+    const type = t.object({ delay: t.number().optional() });
+    expect(validateType({}, type)).toEqual([]);
+    expect(validateType({ delay: 100 }, type)).toEqual([]);
+    expect(validateType({ delay: "abc" }, type)).toEqual([
+      { message: "value is not a number", path: "delay", received: "abc" },
+    ]);
+  });
+
+  test("optional keys are known to strict objects", () => {
+    const type = t.strictObject({ delay: t.number().optional() });
+    expect(validateType({}, type)).toEqual([]);
+    expect(validateType({ delay: 100 }, type)).toEqual([]);
+    expect(validateType({ other: 1 }, type)).toEqual([
+      {
+        message: "object value has unknown keys",
+        path: "",
+        received: { other: 1 },
+        unknownKeys: ["other"],
+        expectedKeys: ["delay"],
+      },
+    ]);
+  });
+
+  test("a top level optional type accepts undefined", () => {
+    const type = t.number().optional();
+    expect(validateType(undefined, type)).toEqual([]);
+    expect(validateType(5, type)).toEqual([]);
+    expect(validateType("abc", type)).toEqual([
+      { message: "value is not a number", path: "", received: "abc" },
+    ]);
+  });
+
+  test("defaulted keys are known to strict objects", () => {
+    const type = t.strictObject({ delay: t.number().default(500) });
+    expect(validateType({}, type)).toEqual([]);
+    expect(validateType({ delay: 100 }, type)).toEqual([]);
+    expect(validateType({ other: 1 }, type)).toEqual([
+      {
+        message: "object value has unknown keys",
+        path: "",
+        received: { other: 1 },
+        unknownKeys: ["other"],
+        expectedKeys: ["delay"],
+      },
+    ]);
+  });
+
+  test("getDefault returns the default factory", () => {
+    expect(getDefault(t.number().default(3))!()).toBe(3);
+    expect(getDefault(t.array(t.number()).default(() => [1]))!()).toEqual([1]);
+    expect(getDefault(t.number())).toBeUndefined();
+    expect(getDefault(null)).toBeUndefined();
+  });
+});
+
+describe("applyDefaults", () => {
+  test("fills in a top level default", () => {
+    expect(applyDefaults(undefined, t.number().default(3))).toBe(3);
+    expect(applyDefaults(5, t.number().default(3))).toBe(5);
+    expect(applyDefaults(undefined, t.number())).toBe(undefined);
+  });
+
+  test("fills in nested defaults without mutating the input", () => {
+    const type = t.object({
+      config: t.object({
+        depth: t.number().default(3),
+        name: t.string(),
+      }),
+    });
+    const value = { config: { name: "abc" } };
+    const result = applyDefaults(value, type);
+    expect(result).toEqual({ config: { depth: 3, name: "abc" } });
+    expect(value).toEqual({ config: { name: "abc" } });
+    expect(result).not.toBe(value);
+  });
+
+  test("returns the input as is when there is nothing to fill in", () => {
+    const type = t.object({ depth: t.number().default(3) });
+    const value = { depth: 5 };
+    expect(applyDefaults(value, type)).toBe(value);
+  });
+
+  test("a default object is itself filled in recursively, without being mutated", () => {
+    const defaultValue = {};
+    const type = t
+      .object({ depth: t.number().default(3), name: t.string().optional() })
+      .default(defaultValue);
+    expect(applyDefaults(undefined, type)).toEqual({ depth: 3 });
+    expect(defaultValue).toEqual({});
+  });
+
+  test("factories are called for each application", () => {
+    const type = t.array(t.number()).default(() => []);
+    const a = applyDefaults(undefined, type);
+    const b = applyDefaults(undefined, type);
+    expect(a).toEqual([]);
+    expect(a).not.toBe(b);
+  });
+
+  test("a plain default value is used as is", () => {
+    const defaultValue: number[] = [];
+    const type = t.array(t.number()).default(defaultValue);
+    expect(applyDefaults(undefined, type)).toBe(defaultValue);
+  });
+
+  test("fills in tuple positions", () => {
+    const type = t.tuple([t.string(), t.number().default(3)]);
+    const value: any[] = ["abc", undefined];
+    expect(applyDefaults(value, type)).toEqual(["abc", 3]);
+    expect(value).toEqual(["abc", undefined]);
+  });
+
+  test("fills in array elements without mutating the input", () => {
+    const type = t.object({
+      a: t.array(t.object({ n: t.number().default(1) })),
+    });
+    const value = { a: [{}, { n: 2 }, { b: true }] };
+    const result = applyDefaults(value, type);
+    expect(result).toEqual({ a: [{ n: 1 }, { n: 2 }, { b: true, n: 1 }] });
+    expect(value).toEqual({ a: [{}, { n: 2 }, { b: true }] });
+    expect(result.a[1]).toBe(value.a[1]);
+  });
+
+  test("returns an array as is when there is nothing to fill in", () => {
+    const type = t.array(t.object({ n: t.number().default(1) }));
+    const value = [{ n: 2 }, { n: 3 }];
+    expect(applyDefaults(value, type)).toBe(value);
+  });
+
+  test("fills in defaults through an optional wrapper", () => {
+    const type = t.object({
+      config: t.object({ depth: t.number().default(3) }).optional(),
+    });
+    expect(applyDefaults({ config: {} }, type)).toEqual({ config: { depth: 3 } });
+    expect(applyDefaults({}, type)).toEqual({});
+  });
 });

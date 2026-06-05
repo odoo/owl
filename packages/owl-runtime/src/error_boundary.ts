@@ -15,7 +15,7 @@ export class ErrorBoundary extends Component {
     </t>
   `;
 
-  props = props({ "error?": t.signal() }, { error: signal<any>(null) });
+  props = props({ error: t.signal().default(() => signal<any>(null)) });
 
   setup() {
     onError((e) => this.props.error.set(e));

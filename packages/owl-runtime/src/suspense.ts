@@ -34,7 +34,7 @@ export class Suspense extends Component {
     </t>
   `;
 
-  props = props({ slots: t.object(["default", "fallback?"]) });
+  props = props({ slots: t.object({ default: t.any(), fallback: t.any().optional() }) });
 
   private prepared = signal(false);
   private mounted = signal(false);

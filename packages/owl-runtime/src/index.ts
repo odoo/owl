@@ -70,8 +70,9 @@ export {
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";
-export { assertType, validateType } from "@odoo/owl-core";
+export { applyDefaults, assertType, getDefault, validateType } from "@odoo/owl-core";
 export { types } from "./types";
+export type { Optional, StripBrands, Type, WithDefault } from "@odoo/owl-core";
 export { OwlError } from "@odoo/owl-core";
 export { config, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";

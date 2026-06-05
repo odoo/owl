@@ -158,13 +158,10 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      props = props(
-        {
-          a: t.any(),
-          "b?": t.number(),
-        },
-        { b: 1 }
-      );
+      props = props({
+        a: t.any(),
+        b: t.number().default(1),
+      });
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
         expect(Object.prototype.hasOwnProperty.call(this.props, "b")).toBe(true);

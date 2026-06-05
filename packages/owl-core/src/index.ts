@@ -66,14 +66,21 @@ export {
 export {
   types,
   constructorType,
+  applyDefaults,
+  getDefault,
   type Constructor,
+  type GetDefaultedEntries,
   type GetOptionalEntries,
   type KeyedObject,
   type LiteralTypes,
+  type Optional,
   type PrettifyShape,
   type ResolveObjectType,
   type ResolveOptionalEntries,
+  type StripBrands,
+  type Type,
   type UnionToIntersection,
+  type WithDefault,
 } from "./types";
 
 // Registry / Resource

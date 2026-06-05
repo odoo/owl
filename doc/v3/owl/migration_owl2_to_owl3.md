@@ -248,19 +248,14 @@ class SomeComponent extends Component {
 class SomeComponent extends Component {
   static template = "...";
 
-  props = props(
-    {
-      name: t.string(),
-      "visible?": t.boolean(),
-      "immediate?": t.boolean(),
-      "leaveDuration?": t.number(),
-      "onLeave?": t.function(),
-      // no need to grab the slot prop here
-    },
-    {
-      leaveDuration: 100,
-    }
-  );
+  props = props({
+    name: t.string(),
+    visible: t.boolean().optional(),
+    immediate: t.boolean().optional(),
+    leaveDuration: t.number().default(100),
+    onLeave: t.function().optional(),
+    // no need to grab the slot prop here
+  });
 }
 ```
 

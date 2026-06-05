@@ -22,7 +22,7 @@ class UserCard extends Component {
 
   props = props({
     name: t.string(),
-    "age?": t.number(),
+    age: t.number().optional(),
   });
 }
 ```
@@ -46,7 +46,7 @@ validateType([1, "two"], t.array(t.number())); // [{ message: "value is not a nu
 
 const userType = t.object({
   name: t.string(),
-  "age?": t.number(),
+  age: t.number().optional(),
 });
 
 validateType({ name: "Alice" }, userType); // [] (valid)
@@ -138,13 +138,13 @@ t.array(t.string()); // array of strings
 
 Validates that the value is an object. When a `shape` is provided (either an
 object mapping keys to validators, or an array of key names), the object is
-checked for the expected keys. Keys ending with `?` are optional. Extra keys
-are allowed.
+checked for the expected keys. A key whose type is marked with
+[`.optional()`](#optional) may be omitted. Extra keys are allowed.
 
 ```js
 t.object(); // any object
 t.object(["name", "age"]); // must have "name" and "age" keys
-t.object({ name: t.string(), "age?": t.number() }); // "name" required, "age" optional
+t.object({ name: t.string(), age: t.number().optional() }); // "name" required, "age" optional
 
 // validates: { name: "Alice", age: 30, extra: true }
 // rejects:   { age: 30 }  (missing required key "name")
@@ -157,7 +157,7 @@ Accepts either an array of key names or an object mapping keys to validators.
 
 ```js
 t.strictObject(["name", "age"]); // must have exactly "name" and "age" keys
-t.strictObject({ name: t.string(), "age?": t.number() }); // "name" required, "age" optional
+t.strictObject({ name: t.string(), age: t.number().optional() }); // "name" required, "age" optional
 
 // validates: { name: "Alice" }
 // validates: { name: "Alice", age: 30 }
@@ -342,3 +342,71 @@ t.customValidator(t.array(t.number()), (v) => v.length <= 10, "too many items");
 // rejects:   -1    with the first example ("value must be non-negative")
 // rejects:   "hi"  with the first example (fails base type: "value is not a number")
 ```
+
+### `.optional()`
+
+Every type exposes an `.optional()` method that marks the value as optional:
+`undefined` passes validation, and an object key with an optional type may be
+omitted.
+
+```js
+t.object({ name: t.string(), age: t.number().optional() });
+
+// validates: { name: "Alice" }
+// validates: { name: "Alice", age: 30 }
+// rejects:   { name: "Alice", age: "30" }  ("value is not a number")
+```
+
+A type with a [default](#defaultvalue) is already implicitly optional, so
+`.optional()` and `.default()` never need to be combined (and cannot be
+chained).
+
+### `.default(value)`
+
+Every type exposes a `.default()` method that attaches a default value to it.
+The default is metadata on the type: consumers such as
+[`props()`](props.md#default-values) and [`config()`](plugins.md#configuration)
+use it to fill in a value when none is provided. A value with a default is
+implicitly optional: `undefined` passes validation, since the default is meant
+to fill it.
+
+The default can be given as a factory (`() => value`), which is called once
+per consumer, so mutable defaults (`[]`, `{}`) are not shared between
+component instances. A default for a function type must use the factory form
+(`() => myCallback`).
+
+```js
+t.number().default(500);
+t.array(t.string()).default(() => []);
+t.object({ color: t.string().default("red") });
+
+// validates: 42         with the first example
+// validates: undefined  with the first example (the default fills it)
+// rejects:   "42"       with the first example ("value is not a number")
+```
+
+## `applyDefaults`
+
+```js
+applyDefaults(value, type);
+```
+
+Returns `value` with the defaults declared in `type` filled in, at any depth:
+a default fires when the value at its schema position is `undefined`. The
+input is never mutated; objects are copied along the changed paths only, so
+if nothing is filled in, the value is returned as is.
+
+```js
+const optionsType = t.object({
+  depth: t.number().default(3),
+  name: t.string(),
+});
+
+applyDefaults({ name: "abc" }, optionsType);
+// => { name: "abc", depth: 3 }
+```
+
+Note that `props()` and `config()` only apply defaults at the top level of
+the value (a deep fill would silently replace the object passed by the
+parent). Use `applyDefaults` explicitly when a nested configuration object
+should be completed with its defaults.

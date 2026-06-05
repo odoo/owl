@@ -451,7 +451,7 @@ class MyComponent extends Component {
 
   // now, this.props is an object with the two keys a and b, and IDEs can
   // infer that this.props.a is a string, and this.props.b is a optional number
-  props = props({ a: t.string(), "b?": t.number() });
+  props = props({ a: t.string(), b: t.number().optional() });
 }
 ```
 
@@ -463,7 +463,7 @@ import { Component, props } from "@odoo/owl";
 class MyComponent extends Component {
   static template = "mytemplate";
 
-  props = props({ a: t.string(), "b?": t.number() });
+  props = props({ a: t.string(), b: t.number().optional() });
   otherProps = props({ c: t.instanceOf(SomeClass) });
 
   // no description here => we get all props received by the component
@@ -471,17 +471,12 @@ class MyComponent extends Component {
   allProps = props();
 
   // short version, no type inference, but some validation
-  propsabc = props(t.object(["a", "b?", "c"]));
+  propsabc = props(t.object(["a", "b", "c"]));
 
-  // we can define default values as well, as second argument:
-  myProp = props(
-    {
-      "foo?": t.boolean(),
-    },
-    {
-      foo: true,
-    }
-  );
+  // we can define default values as well, in the schema:
+  myProp = props({
+    foo: t.boolean().default(true),
+  });
 }
 ```
 
@@ -530,19 +525,14 @@ class SomeComponent extends Component {
 class SomeComponent extends Component {
   static template = "...";
 
-  props = props(
-    {
-      name: t.string(),
-      "visible?": t.boolean(),
-      "immediate?": t.boolean(),
-      "leaveDuration?": t.number(),
-      "onLeave?": t.function(),
-      // no need to grab the slot prop here
-    },
-    {
-      leaveDuration: 100,
-    }
-  );
+  props = props({
+    name: t.string(),
+    visible: t.boolean().optional(),
+    immediate: t.boolean().optional(),
+    leaveDuration: t.number().default(100),
+    onLeave: t.function().optional(),
+    // no need to grab the slot prop here
+  });
 }
 ```
 
@@ -873,10 +863,10 @@ static props = {
 
 // owl 3.x
 props = props({
-  "mode?": t.string(),
-  "readonly?": t.boolean(),
-  "onChange?": t.function(),
-  "onBlur?": t.function(),
+  mode: t.string().optional(),
+  readonly: t.boolean().optional(),
+  onChange: t.function().optional(),
+  onBlur: t.function().optional(),
 });
 
 // other examples

@@ -1,8 +1,11 @@
-import { constructorType, types as coreTypes } from "@odoo/owl-core";
+import { constructorType, types as coreTypes, type Type } from "@odoo/owl-core";
 import { Component } from "./component";
 
-function componentType(): typeof Component {
+function componentType(): Type<typeof Component> {
   return constructorType(Component as any) as any;
 }
 
-export const types = { ...coreTypes, component: componentType };
+export const types: typeof coreTypes & { component: () => Type<typeof Component> } = {
+  ...coreTypes,
+  component: componentType,
+};

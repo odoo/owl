@@ -1,8 +1,10 @@
 import { computed } from "./computed";
+import { type ReactiveValue } from "./computations";
 import { OwlError } from "./owl_error";
 import { signal } from "./signal";
 import { ResourceAddOptions } from "./resource";
 import { useScope } from "./scope";
+import { type StripBrands } from "./types";
 import { assertType } from "./validation";
 
 interface RegistryOptions<T> {
@@ -14,8 +16,11 @@ interface RegistryAddOptions extends ResourceAddOptions {
   force?: boolean;
 }
 
+// T is the validation type; entries carry the value type it describes.
+type Item<T> = StripBrands<T>;
+
 export class Registry<T> {
-  private _map = signal.Object<Record<string, [number, T]>>(Object.create(null));
+  private _map = signal.Object<Record<string, [number, Item<T>]>>(Object.create(null));
   private _name: string;
   private _validation?: T;
 
@@ -24,23 +29,26 @@ export class Registry<T> {
     this._validation = options.validation;
   }
 
-  entries = computed(() => {
-    const entries: [string, T][] = Object.entries(this._map())
+  entries: ReactiveValue<[string, Item<T>][]> = computed(() => {
+    const entries: [string, Item<T>][] = Object.entries(this._map())
       .sort((el1, el2) => el1[1][0] - el2[1][0])
       .map(([str, elem]) => [str, elem[1]]);
     return entries;
   });
 
-  items = computed(() => this.entries().map((e) => e[1]));
+  items: ReactiveValue<Item<T>[]> = computed(() => this.entries().map((e) => e[1]));
 
-  addById<U extends { id: string } & T>(item: U, options: RegistryAddOptions = {}): Registry<T> {
+  addById<U extends { id: string } & Item<T>>(
+    item: U,
+    options: RegistryAddOptions = {}
+  ): Registry<T> {
     if (!item.id) {
       throw new OwlError(`Item should have an id key (registry '${this._name}')`);
     }
     return this.add(item.id, item, options);
   }
 
-  add(key: string, value: T, options: RegistryAddOptions = {}): Registry<T> {
+  add(key: string, value: Item<T>, options: RegistryAddOptions = {}): Registry<T> {
     if (!options.force && key in this._map()) {
       throw new OwlError(
         `Key "${key}" is already registered (registry '${this._name}'). Use { force: true } to overwrite.`
@@ -54,7 +62,7 @@ export class Registry<T> {
     return this;
   }
 
-  get(key: string, defaultValue?: T): T {
+  get(key: string, defaultValue?: Item<T>): Item<T> {
     const hasKey = key in this._map();
     if (!hasKey && arguments.length < 2) {
       throw new OwlError(`Cannot find key "${key}" (registry '${this._name}')`);
@@ -70,7 +78,7 @@ export class Registry<T> {
     return key in this._map();
   }
 
-  use(key: string, value: T, options: RegistryAddOptions = {}): Registry<T> {
+  use(key: string, value: Item<T>, options: RegistryAddOptions = {}): Registry<T> {
     const scope = useScope();
     this.add(key, value, options);
     scope.onDestroy(() => {
@@ -81,7 +89,10 @@ export class Registry<T> {
     return this;
   }
 
-  useById<U extends { id: string } & T>(item: U, options: RegistryAddOptions = {}): Registry<T> {
+  useById<U extends { id: string } & Item<T>>(
+    item: U,
+    options: RegistryAddOptions = {}
+  ): Registry<T> {
     if (!item.id) {
       throw new OwlError(`Item should have an id key (registry '${this._name}')`);
     }

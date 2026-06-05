@@ -266,7 +266,7 @@ test("plugin config are validated", async () => {
 
 test("optional plugin config work as expected (value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string()) || "abc";
+    inputA = config("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {
@@ -279,7 +279,7 @@ test("optional plugin config work as expected (value given)", async () => {
 
 test("optional plugin config work as expected (no value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string()) || "abc";
+    inputA = config("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {
@@ -292,7 +292,7 @@ test("optional plugin config work as expected (no value given)", async () => {
 
 test("optional plugin config work as expected (no config given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input?", t.string()) || "abc";
+    inputA = config("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {

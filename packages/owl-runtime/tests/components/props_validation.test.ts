@@ -181,7 +181,7 @@ describe("props validation", () => {
   test("can validate an optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ "p?": t.string() });
+      props = props({ p: t.string().optional() });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -398,7 +398,7 @@ describe("props validation", () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        myprop: t.array(t.object({ "num?": t.number() })),
+        myprop: t.array(t.object({ num: t.number().optional() })),
       });
     }
     let error: Error;
@@ -510,10 +510,10 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
   });
 
-  test("props: list of strings with optional props", async () => {
+  test("props: shape with optional props", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props(["message", "someProp?"]);
+      props = props({ message: t.any(), someProp: t.any().optional() });
     }
 
     await expect(
@@ -617,7 +617,7 @@ describe("props validation", () => {
   test("props: optional prop do not cause an error", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props(["message?"]);
+      props = props({ message: t.any().optional() });
     }
 
     await expect(
@@ -631,7 +631,7 @@ describe("props validation", () => {
   test("optional prop do not cause an error if value is undefined", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ "message?": t.string() });
+      props = props({ message: t.string().optional() });
     }
 
     await expect(
@@ -695,7 +695,7 @@ describe("props validation", () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ "p?": t.number() }, { p: 4 });
+      props = props({ p: t.number().default(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -711,41 +711,11 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test("default values are extracted from optional props", async () => {
-    let error: any;
-    class SubComp extends Component {
-      static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ "a": t.string(), "p?": t.number() }, { p: "4" as any });
-    }
-    try {
-      await mount(SubComp, fixture, { props: {  }, dev: true });
-    } catch (e) {
-      error = e;
-    }
-    expect(error).toBeDefined();
-    expect(error.message).toMatch("Invalid component default props (SubComp)");
-  });
-
-  test("default values should pass through prop validation", async () => {
-    let error: any;
-    class SubComp extends Component {
-      static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ "p?": t.number() }, { p: "4" as any });
-    }
-    try {
-      await mount(SubComp, fixture, { dev: true });
-    } catch (e) {
-      error = e;
-    }
-    expect(error).toBeDefined();
-    expect(error.message).toMatch("Invalid component default props (SubComp)");
-  });
-
   test("mix of optional and mandatory", async () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
       props = props({
-        "optional?": t.string(),
+        optional: t.string().optional(),
         mandatory: t.number(),
       });
     }
@@ -858,14 +828,14 @@ describe("props validation", () => {
 });
 
 //------------------------------------------------------------------------------
-// Default props
+// Schema defaults (.default())
 //------------------------------------------------------------------------------
 
-describe("default props", () => {
-  test("can set default values", async () => {
+describe("schema defaults", () => {
+  test("default values can be declared in the schema", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props(["p?"], { p: 4 });
+      props = props({ p: t.number().default(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp /></div>`;
@@ -875,10 +845,29 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test("default values are also set whenever component is updated", async () => {
+  test("a key with a schema default is implicitly optional", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props(["p?"], { p: 4 });
+      props = props({ p: t.number().default(4) });
+    }
+    // no error in dev mode even though p is not given and has no '?' suffix
+    await mount(SubComp, fixture, { dev: true });
+    expect(fixture.innerHTML).toBe("<div>4</div>");
+  });
+
+  test("schema defaults work next to optional props", async () => {
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p"/>|<t t-out="this.props.q"/></div>`;
+      props = props({ p: t.number().default(4), q: t.string().optional() });
+    }
+    await mount(SubComp, fixture, { dev: true });
+    expect(fixture.innerHTML).toBe("<div>4|</div>");
+  });
+
+  test("schema defaults are applied whenever component is updated", async () => {
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
+      props = props({ p: t.number().default(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -893,10 +882,13 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test("can set default boolean values", async () => {
+  test("falsy default values are applied", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t><t t-if="!this.props.q">hey</t></span>`;
-      props = props(["p?", "q?"], { p: true, q: false });
+      props = props({
+        p: t.boolean().default(true),
+        q: t.boolean().default(false),
+      });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp/></div>`;
@@ -906,22 +898,58 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
 
-  test("a default prop cannot be defined on a mandatory prop", async () => {
-    class Child extends Component {
-      static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
-      props = props(["mandatory"], { mandatory: 3 });
+  test("factory defaults are resolved once per component instance", async () => {
+    const values: number[][] = [];
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p.length"/></div>`;
+      props: any = props({ p: t.array(t.number()).default(() => []) });
+      setup() {
+        values.push(this.props.p);
+      }
     }
     class Parent extends Component {
-      static components = { Child };
-      static template = xml`<Child/>`;
+      static template = xml`<div><SubComp/><SubComp/></div>`;
+      static components = { SubComp };
+    }
+    await mount(Parent, fixture, { dev: true });
+    expect(fixture.innerHTML).toBe("<div><div>0</div><div>0</div></div>");
+    expect(values).toHaveLength(2);
+    expect(values[0]).not.toBe(values[1]);
+  });
+
+  test("a plain default value is shared between component instances", async () => {
+    const defaultValue: number[] = [];
+    const values: number[][] = [];
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p.length"/></div>`;
+      props: any = props({ p: t.array(t.number()).default(defaultValue) });
+      setup() {
+        values.push(this.props.p);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp/><SubComp/></div>`;
+      static components = { SubComp };
+    }
+    await mount(Parent, fixture, { dev: true });
+    expect(fixture.innerHTML).toBe("<div><div>0</div><div>0</div></div>");
+    expect(values).toHaveLength(2);
+    expect(values[0]).toBe(defaultValue);
+    expect(values[1]).toBe(defaultValue);
+  });
+
+  test("schema defaults are validated in dev mode", async () => {
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
+      props = props({ p: t.number().default("4" as any) });
     }
     let error: any;
     try {
-      await mount(Parent, fixture, { test: true });
+      await mount(SubComp, fixture, { dev: true });
     } catch (e) {
       error = e;
     }
-    expect(error!).toBeDefined();
-    expect(error!.message).toMatch("Invalid component default props (Child)");
+    expect(error).toBeDefined();
+    expect(error.message).toMatch("Invalid component default props (SubComp)");
   });
 });

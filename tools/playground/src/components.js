@@ -9,6 +9,7 @@ import {
   plugin,
   props,
   signal,
+  types as t,
   untrack,
   useEffect,
 } from "@odoo/owl";
@@ -420,9 +421,11 @@ class CodeEditor extends Component {
 
 class ConfirmDialog extends Component {
   static template = "ConfirmDialog";
-  props = props(["message", "confirmLabel?", "confirmClass?", "onConfirm"], {
-    confirmLabel: "Confirm",
-    confirmClass: "primary",
+  props = props({
+    message: t.any(),
+    confirmLabel: t.string().default("Confirm"),
+    confirmClass: t.string().default("primary"),
+    onConfirm: t.function(),
   });
   dialog = plugin(DialogPlugin);
 
@@ -706,8 +709,10 @@ class ProjectManager extends Component {
 
 class NewFileDialog extends Component {
   static template = "NewFileDialog";
-  props = props(["existingFiles", "onConfirm", "folder?"], {
-    folder: "",
+  props = props({
+    existingFiles: t.any(),
+    onConfirm: t.function(),
+    folder: t.string().default(""),
   });
   dialog = plugin(DialogPlugin);
 
@@ -799,7 +804,11 @@ class NewFolderDialog extends Component {
 
 class NewComponentDialog extends Component {
   static template = "NewComponentDialog";
-  props = props(["existingFiles", "onConfirm", "folder?"]);
+  props = props({
+    existingFiles: t.any(),
+    onConfirm: t.function(),
+    folder: t.string().optional(),
+  });
   dialog = plugin(DialogPlugin);
 
   setup() {

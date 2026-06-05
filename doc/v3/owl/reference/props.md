@@ -62,39 +62,49 @@ class MyComponent extends Component {
 }
 ```
 
-The `props` function accepts two optional arguments:
+The `props` function accepts one optional argument:
 
-### Schema (first argument)
+### Schema
 
 A schema describing the expected props. It can be:
 
 - **nothing**: accepts any props, no validation.
-- **an array of strings**: declares expected keys. Keys ending with `?` are
-  optional, all others are required.
+- **an array of strings**: declares expected keys, all required.
 - **an object**: maps keys to [type validators](types_validation.md#validators)
-  for full type checking. Keys ending with `?` are optional.
+  for full type checking. A prop is made optional with
+  [`.optional()`](types_validation.md#optional) on its type.
 
 Props are validated in [dev mode](app.md#configuration) whenever the component
 is created or updated. See [Props validation](#props-validation) for details.
 
 ```js
 props(); // no schema
-props(["name", "age?"]); // array form
-props({ name: t.string(), "age?": t.number() }); // typed form
+props(["name", "age"]); // array form
+props({ name: t.string(), age: t.number().optional() }); // typed form
 ```
 
-### Default values (second argument)
+### Default values
 
-An object of default values for optional props. When a prop is not provided
-by the parent (or is `undefined`), the default value is used instead.
-
-Defaults can only be defined on **optional** props (keys ending with `?`).
-Defining a default on a mandatory prop will cause a validation error.
+Default values are declared in the schema itself, with the
+[`.default()`](types_validation.md#defaultvalue) method of the type: when a
+prop is not provided by the parent (or is `undefined`), the default value is
+used instead. A key with a default is implicitly optional, so `.optional()`
+is not needed.
 
 ```js
-props(["color?"], { color: "red" });
-props({ "color?": t.string() }, { color: "red" });
+props({ color: t.string().default("red") });
 ```
+
+Mutable defaults (`[]`, `{}`) should be given as a factory, so that each
+component instance gets its own value. The factory is called once per
+component instance:
+
+```js
+props({ items: t.array(t.string()).default(() => []) });
+```
+
+Note that the array form of the schema cannot express defaults or optional
+keys: use the typed form when a prop needs either.
 
 ### Reactive reads
 
@@ -127,9 +137,10 @@ semantics.
 `props.static` is an alternative for components that only need to read a
 single prop and expect that prop to stay **static** — meaning the reference
 passed by the parent does not change across renders. It takes the prop name
-explicitly, an optional [type validator](types_validation.md#validators),
-and an optional default value. If the type is omitted, the prop is accepted
-as-is without validation.
+explicitly and an optional [type validator](types_validation.md#validators).
+If the type is omitted, the prop is accepted as-is without validation. A
+default value can be declared in the type with
+[`.default()`](types_validation.md#defaultvalue).
 
 ```js
 import { Component, props, types as t, xml } from "@odoo/owl";
@@ -141,7 +152,7 @@ class TodoView extends Component {
 
 class Header extends Component {
   static template = xml`<h1 t-out="this.label"/>`;
-  label = props.static("label", t.string(), "untitled");
+  label = props.static("label", t.string().default("untitled"));
 }
 
 class Passthrough extends Component {
@@ -249,7 +260,7 @@ class ProductList extends Component {
   props = props({
     count: t.number(),
     items: t.array(t.object({ id: t.number(), label: t.string() })),
-    "onSelect?": t.function(),
+    onSelect: t.function().optional(),
     size: t.selection(["small", "medium", "large"]),
   });
 }
@@ -290,7 +301,7 @@ provided to a component [as props](slots.md#slots-and-props).
 ```js
 class MyComponent extends Component {
   static template = xml`...`;
-  props = props(["someProp", "slots?"]);
+  props = props(["someProp", "slots"]);
 }
 ```
 
@@ -300,8 +311,8 @@ Or with type validation:
 class MyComponent extends Component {
   static template = xml`...`;
   props = props({
-    "someProp?": t.number(),
-    "slots?": t.object(),
+    someProp: t.number().optional(),
+    slots: t.object().optional(),
   });
 }
 ```

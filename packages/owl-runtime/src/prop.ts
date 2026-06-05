@@ -1,16 +1,24 @@
-import { assertType, OwlError } from "@odoo/owl-core";
+import {
+  assertType,
+  getDefault,
+  OwlError,
+  type Optional,
+  type StripBrands,
+  type WithDefault,
+} from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 
 export function staticProp<T = any>(key: string): T;
-export function staticProp<T>(key: string, type: T): T;
-export function staticProp<T>(key: string, type: T, defaultValue: T): T;
-export function staticProp(key: string, type?: any, ...args: any[]): any {
+export function staticProp<T>(key: string, type: WithDefault<T>): T;
+export function staticProp<T>(key: string, type: Optional<T>): T | undefined;
+export function staticProp<T>(key: string, type: T): StripBrands<T>;
+export function staticProp(key: string, type?: any): any {
   const node = getComponentScope();
-  const hasDefault = args.length > 0;
+  const defaultFactory = getDefault(type);
   const propValue = node.props[key];
 
   if (node.app.dev) {
-    if (type !== undefined && (!hasDefault || propValue !== undefined)) {
+    if (type !== undefined && (!defaultFactory || propValue !== undefined)) {
       assertType(propValue, type, `Invalid prop '${key}' in '${node.componentName}'`);
     }
     node.willUpdateProps.push((nextProps: Record<string, any>) => {
@@ -24,5 +32,5 @@ export function staticProp(key: string, type?: any, ...args: any[]): any {
     });
   }
 
-  return propValue === undefined && hasDefault ? args[0] : propValue;
+  return propValue === undefined && defaultFactory ? defaultFactory() : propValue;
 }

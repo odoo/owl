@@ -393,7 +393,7 @@ describe("basic features", () => {
 
     class PluginA extends Plugin {
       input = config("input");
-      defaulted = config("defaulted?", types.string(), "default");
+      defaulted = config("defaulted", types.string().default("default"));
 
       setup(): void {
         steps.push(`PluginA - ${this.input} - ${this.defaulted}`);
@@ -403,6 +403,25 @@ describe("basic features", () => {
     const plugins = new Resource({ validation: t.constructor(Plugin) }).add(PluginA);
     const app = new App({ plugins, config: { input: "hello" } });
     expect(steps.splice(0)).toEqual(["PluginA - hello - default"]);
+
+    app.destroy();
+  });
+
+  test("config default can be declared in the type (.default())", async () => {
+    const steps: string[] = [];
+
+    class PluginA extends Plugin {
+      defaulted = config("defaulted", types.string().default("default"));
+      given = config("given", types.string().default("unused"));
+
+      setup(): void {
+        steps.push(`PluginA - ${this.defaulted} - ${this.given}`);
+      }
+    }
+
+    const plugins = new Resource({ validation: t.constructor(Plugin) }).add(PluginA);
+    const app = new App({ plugins, config: { given: "hello" } });
+    expect(steps.splice(0)).toEqual(["PluginA - default - hello"]);
 
     app.destroy();
   });

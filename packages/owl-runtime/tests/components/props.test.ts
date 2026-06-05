@@ -607,10 +607,13 @@ test("arrow function props re-render when captured variable changes", async () =
   `);
 });
 
-test("no props validation and default props", async () => {
+test("schema defaults and signal-driven props", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.width"/> / <t t-out="this.props.height"/>`;
-    props = props(null as any, { width: 1, height: 1 });
+    props = props({
+      width: t.number().default(1),
+      height: t.number().default(1),
+    });
   }
 
   const height = signal<number | undefined>(undefined);
@@ -644,7 +647,7 @@ test("default props don't cause spurious updates with t-props", async () => {
   const updates: number[] = [];
   class Child extends Component {
     static template = xml`<t t-out="this.props.b"/>`;
-    props = props({ "a?": t.string(), b: t.number() }, { a: "default value" });
+    props = props({ a: t.string().default("default value"), b: t.number() });
     setup() {
       onWillUpdateProps(() => {
         updates.push(this.props.b);

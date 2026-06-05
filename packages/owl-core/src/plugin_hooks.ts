@@ -1,7 +1,7 @@
 import { OwlError } from "./owl_error";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
 import { useScope } from "./scope";
-import { types } from "./types";
+import { getDefault, types, type Optional, type StripBrands, type WithDefault } from "./types";
 import { assertType } from "./validation";
 
 export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
@@ -22,17 +22,17 @@ export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstan
 }
 
 export function config<T = any>(key: string): T;
-export function config<T>(key: string, type: T): T;
-export function config<T>(key: string, type: T, defaultValue: T): T;
-export function config(key: string, type?: any, defaultValue?: any): any {
+export function config<T>(key: string, type: WithDefault<T>): T;
+export function config<T>(key: string, type: Optional<T>): T | undefined;
+export function config<T>(key: string, type: T): StripBrands<T>;
+export function config(key: string, type?: any): any {
   const scope = useScope();
   if (!(scope instanceof PluginManager)) {
     throw new OwlError("Expected to be in a plugin scope");
   }
   if (scope.app.dev && type) {
-    // default needs validation
     assertType(scope.config, types.object({ [key]: type }), "Config does not match the type");
   }
-  const configValue = scope.config[key.endsWith("?") ? key.slice(0, -1) : key];
-  return configValue === undefined ? defaultValue : configValue;
+  const configValue = scope.config[key];
+  return configValue === undefined ? getDefault(type)?.() : configValue;
 }

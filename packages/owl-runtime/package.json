@@ -1,6 +1,6 @@
 {
   "name": "@odoo/owl-runtime",
-  "version": "3.0.0-alpha.33",
+  "version": "3.0.0-alpha.34",
   "description": "Component runtime and blockdom for Odoo Web Library (OWL)",
   "main": "dist/owl-runtime.cjs.js",
   "module": "dist/owl-runtime.es.js",

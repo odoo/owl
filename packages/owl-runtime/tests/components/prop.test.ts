@@ -1,4 +1,4 @@
-import { Component, mount, prop, proxy, signal, types as t, xml } from "../../src";
+import { Component, mount, props, proxy, signal, types as t, xml } from "../../src";
 import {
   getConsoleOutput,
   makeTestFixture,
@@ -24,7 +24,7 @@ describe("basics", () => {
   test("reads the named prop", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.value"/></span>`;
-      value = prop("value", t.number());
+      value = props.static("value", t.number());
     }
     class Parent extends Component {
       static template = xml`<div><Child value="42"/></div>`;
@@ -38,7 +38,7 @@ describe("basics", () => {
   test("default value when prop is absent", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label"/></span>`;
-      label = prop("label", t.string(), "untitled");
+      label = props.static("label", t.string(), "untitled");
     }
     class Parent extends Component {
       static template = xml`<div><Child/></div>`;
@@ -52,7 +52,7 @@ describe("basics", () => {
   test("provided value takes precedence over default", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label"/></span>`;
-      label = prop("label", t.string(), "untitled");
+      label = props.static("label", t.string(), "untitled");
     }
     class Parent extends Component {
       static template = xml`<div><Child label="'hello'"/></div>`;
@@ -66,8 +66,8 @@ describe("basics", () => {
   test("multiple prop fields in same component", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.a"/>/<t t-out="this.b"/></span>`;
-      a = prop("a", t.string());
-      b = prop("b", t.number());
+      a = props.static("a", t.string());
+      b = props.static("b", t.number());
     }
     class Parent extends Component {
       static template = xml`<div><Child a="'x'" b="2"/></div>`;
@@ -79,11 +79,10 @@ describe("basics", () => {
   });
 
   test("can be mixed with props()", async () => {
-    const { props } = await import("../../src");
     class Child extends Component {
       static template = xml`<span><t t-out="this.all.extra"/>/<t t-out="this.main"/></span>`;
       all = props({ "extra?": t.string() });
-      main = prop("main", t.number());
+      main = props.static("main", t.number());
     }
     class Parent extends Component {
       static template = xml`<div><Child main="7" extra="'side'"/></div>`;
@@ -97,7 +96,7 @@ describe("basics", () => {
   test("type argument is optional (accepts any value)", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.value"/></span>`;
-      value = prop("value");
+      value = props.static("value");
     }
     class Parent extends Component {
       static template = xml`<div><Child value="'anything'"/></div>`;
@@ -117,7 +116,7 @@ describe("basics", () => {
     }
     class Child extends Component {
       static template = xml`<span><t t-out="this.todo.name"/></span>`;
-      todo = prop("todo", t.instanceOf(Todo));
+      todo = props.static("todo", t.instanceOf(Todo));
     }
     class Parent extends Component {
       static template = xml`<div><Child todo="this.myTodo"/></div>`;
@@ -138,7 +137,7 @@ describe("dev mode", () => {
   test("validates initial type on mount (root component)", async () => {
     class Root extends Component {
       static template = xml`<div/>`;
-      value = prop("value", t.number());
+      value = props.static("value", t.number());
     }
 
     let error: any;
@@ -155,7 +154,7 @@ describe("dev mode", () => {
   test("validates initial type on mount (child component)", async () => {
     class Child extends Component {
       static template = xml`<div/>`;
-      value = prop("value", t.number());
+      value = props.static("value", t.number());
     }
     class Parent extends Component {
       static template = xml`<Child value="'not-a-number'"/>`;
@@ -176,7 +175,7 @@ describe("dev mode", () => {
     class Todo {}
     class Child extends Component {
       static template = xml`<div/>`;
-      todo = prop("todo", t.instanceOf(Todo));
+      todo = props.static("todo", t.instanceOf(Todo));
     }
     class Parent extends Component {
       static template = xml`<Child todo="this.state.todo"/>`;
@@ -197,7 +196,7 @@ describe("dev mode", () => {
 
     class Child extends Component {
       static template = xml`<div/>`;
-      todo = prop("todo", t.signal());
+      todo = props.static("todo", t.signal());
     }
     class Parent extends Component {
       static template = xml`<Child todo="this.todoSig"/>`;
@@ -218,7 +217,7 @@ describe("dev mode", () => {
   test("skips validation in non-dev mode", async () => {
     class Root extends Component {
       static template = xml`<div/>`;
-      value = prop("value", t.number());
+      value = props.static("value", t.number());
     }
 
     let error: any;
@@ -234,7 +233,7 @@ describe("dev mode", () => {
     class Todo {}
     class Child extends Component {
       static template = xml`<div/>`;
-      todo = prop("todo", t.instanceOf(Todo));
+      todo = props.static("todo", t.instanceOf(Todo));
     }
     class Parent extends Component {
       static template = xml`<Child todo="this.state.todo"/>`;
@@ -253,7 +252,7 @@ describe("dev mode", () => {
   test("default value skips validation when prop is absent", async () => {
     class Root extends Component {
       static template = xml`<div t-out="this.label"/>`;
-      label = prop("label", t.string(), "fallback");
+      label = props.static("label", t.string(), "fallback");
     }
 
     // No error even though prop is missing: default covers it
@@ -264,7 +263,7 @@ describe("dev mode", () => {
   test("omitted prop with default does not trigger static-prop error on re-render", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.label"/>`;
-      label = prop("label", t.string(), "fallback");
+      label = props.static("label", t.string(), "fallback");
     }
     class Parent extends Component {
       static template = xml`<Child/>`;
@@ -289,7 +288,7 @@ describe("dev mode", () => {
 test("throws if called outside a component scope", () => {
   let error: any;
   try {
-    prop("foo", t.string());
+    props.static("foo", t.string());
   } catch (e) {
     error = e;
   }

@@ -1618,34 +1618,22 @@ understand what is going on in a template. Also, it may make it harder for
 static tooling to work (in this case, the type of all signals is basically
 erased from the content of the template).
 
-### Simplified way to define a prop
+### Static prop helper
 
-It is often useful to only import a single prop:
+It is often useful to only import a single component prop:
 
 ```js
 class TodoItem extends Component {
   todo = props({ todo: t.instanceOf(Todo) }).todo;
 }
 
-class MyPlugin extends Plugin {
-  editable = plugin.props({ editable: t.signal() }).editable;
-}
-```
-
-Maybe it would be worth it to have a special simplified syntax for this usecase:
-
-```js
 class TodoItem extends Component {
-  todo = prop("todo", t.instanceOf(Todo));
-}
-
-class MyPlugin extends Plugin {
-  editable = plugin.prop("editable", t.signal());
+  todo = props.static("todo", t.instanceOf(Todo));
 }
 ```
 
-It's nicer and remove the repetition, but at the cost of adding yet another
-primitive function in Owl.
+The `props.static()` form keeps the static-prop semantics without adding a
+separate top-level primitive function in Owl.
 
 ## Examples
 

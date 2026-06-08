@@ -40,8 +40,8 @@ one. There can also be multiple apps loaded in the page like in website:
 <img src="./screenshots/multi_apps.png"/>
 
 There is a convenient search bar at the top of the components tree which will help finding
-the components tou want in the tree and also, an element picker can be used to directly select
-the component you want to focus on in the page which is especially useful when 1trying to find
+the components you want in the tree and also, an element picker can be used to directly select
+the component you want to focus on in the page which is especially useful when trying to find
 what you want. Just click on the elements picker icon and click on the element you want to focus
 on in the page and it will be selected in the devtools accordingly. Hovering any element in the
 page in this mode will highlight it and the same happens anytime in the components tree.
@@ -108,7 +108,7 @@ Do note that the modified values should be written in JSON format in order to be
 89, "yes", undefined, null, \["hello", 15\], {"a": 1}, true, ...). Editing any value will produce a
 manual render of the component (or the root component of the application in the case of env values).
 Whether the edition has an impact on the component or not and whether it produces an error is the
-responsability of the user.
+responsibility of the user.
 
 <img src="./screenshots/edit.png"/>
 

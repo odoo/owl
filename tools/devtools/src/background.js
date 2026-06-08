@@ -97,7 +97,10 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
     // Open the devtools documentation in a new tab
   } else if (message.type === "openDoc") {
     browserInstance.tabs.create(
-      { url: "https://github.com/odoo/owl/blob/master/doc/tools/devtools_guide.md", active: false },
+      {
+        url: "https://github.com/odoo/owl/blob/master/doc/v3/owl/tools/devtools_guide.md",
+        active: false,
+      },
       function (tab) {
         browserInstance.tabs.update(tab.id, { active: true });
       }

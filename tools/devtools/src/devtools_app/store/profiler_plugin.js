@@ -87,6 +87,7 @@ export class ProfilerPlugin extends Plugin {
     if (!Array.isArray(events)) {
       return;
     }
+    events = [...events].sort((a, b) => a.id - b.id);
     for (const event of events) {
       if (
         !isObjectWithShape(event, {
@@ -134,7 +135,11 @@ export class ProfilerPlugin extends Plugin {
               );
               let parent = tree[i];
               for (const key of relativePath) {
-                parent = parent.children.find((child) => child.key === key);
+                const found = parent.children.find((child) => child.key === key);
+                if (!found) {
+                  break;
+                }
+                parent = found;
               }
               eventNode.depth = parent.depth + 1;
               parent.children.push(eventNode);

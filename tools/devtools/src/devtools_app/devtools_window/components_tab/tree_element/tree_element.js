@@ -32,8 +32,6 @@ export class TreeElement extends Component {
         if (this.components.activeSelector() || !isElementInCenterViewport(el)) {
           el.scrollIntoView({ block: "center", behavior: "smooth" });
         }
-      }
-      if (el) {
         this.components.selectedElement.set(el);
       }
     });

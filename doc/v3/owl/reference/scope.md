@@ -119,7 +119,7 @@ it yourself.
 You can also name the parameter to access the full scope — e.g. to call
 `scope.until(p)`, covered below. The same pattern applies to any async work
 attached to a scope, including the fetcher passed to
-[`asyncComputed`](reactivity.md#async-computed-values).
+[`asyncComputed`](computed_values.md#async-computed-values).
 
 ### Cancelling between awaits
 

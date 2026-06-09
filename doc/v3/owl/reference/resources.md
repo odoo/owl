@@ -13,7 +13,7 @@ Resources support:
 - **scoped lifetime**: in components and plugins, items can be automatically
   removed when the owner is destroyed
 - **type validation**: items can be validated against a schema on insertion
-- **reactivity**: `items()` is a [reactive computed value](reactivity.md#computed-values)
+- **reactivity**: `items()` is a [reactive computed value](computed_values.md)
   — reading it inside a component render or an effect subscribes to changes
 
 For a keyed variant, see [Registry](registries.md).
@@ -98,7 +98,7 @@ commands.has(item); // true or false
 
 ### `items()`
 
-`items` is a reactive [computed value](reactivity.md#computed-values) that
+`items` is a reactive [computed value](computed_values.md) that
 returns the resource's contents sorted by sequence.
 
 ```js

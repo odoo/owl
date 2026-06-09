@@ -17,25 +17,29 @@ There is only one rule: every hook for a component has to be called in the
 _setup_ method, or in class fields:
 
 ```js
-// ok
+// ok: hook called in a class field
 class SomeComponent extends Component {
-  state = proxy({ value: 0 });
+  mouse = useMouse();
 }
 
-// also ok
+// also ok: hook called in setup
 class SomeComponent extends Component {
   setup() {
-    this.state = proxy({ value: 0 });
+    this.mouse = useMouse();
   }
 }
 
-// not ok: this is executed after the constructor is called
+// not ok: the onWillStart callback runs after the component is set up
 class SomeComponent extends Component {
-  async willStart() {
-    this.state = proxy({ value: 0 });
+  setup() {
+    onWillStart(async () => {
+      this.mouse = useMouse();
+    });
   }
 }
 ```
+
+(`useMouse` is a custom hook — see [the example below](#example-mouse-position).)
 
 ## Lifecycle Hooks
 
@@ -61,7 +65,7 @@ component's first render) until all plugin async initialization resolves. See
 
 ### `useEffect`
 
-The `useEffect` hook creates an [effect](reactivity.md#effects) that is
+The `useEffect` hook creates an [effect](effects.md) that is
 automatically cleaned up when the component is destroyed. It is equivalent to:
 
 ```js

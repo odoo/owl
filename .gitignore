@@ -2,10 +2,8 @@
 /dist
 /packages/*/dist
 /tools/playground/dist
-/doc/.vitepress/dist
-/doc/.vitepress/cache
-/doc/v2/.vitepress/dist
-/doc/v2/.vitepress/cache
+**/.vitepress/dist
+**/.vitepress/cache
 
 npm-debug.log
 

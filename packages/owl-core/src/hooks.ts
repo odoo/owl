@@ -32,6 +32,10 @@ export function useEffect(fn: Parameters<typeof effect>[0]): void {
  * listener is attached through a `useEffect` and re-attaches when the signal's
  * value changes; nothing is attached while the signal is null).
  *
+ * The handler is not bound: it is passed as-is to `addEventListener`, so inside
+ * it `this` is the event target, not the calling component. Wrap a method in an
+ * arrow function (or bind it) if it relies on `this`.
+ *
  * Example — close a menu when the user clicks anywhere on `window`:
  *   useListener(window, "click", () => this.close());
  */

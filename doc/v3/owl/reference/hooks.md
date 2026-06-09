@@ -123,12 +123,21 @@ reference:
 
 ```js
 // Listen on window — added immediately, removed on destroy
-useListener(window, "click", this.closeMenu, { capture: true });
+useListener(window, "click", (ev) => this.closeMenu(ev), { capture: true });
 
 // Listen on a ref signal — effect-based, re-attaches when element changes
 const ref = signal.ref();
-useListener(ref, "scroll", this.onScroll);
+useListener(ref, "scroll", (ev) => this.onScroll(ev));
 ```
+
+> **Note:** the handler is **not** bound — it is passed as-is to
+> `addEventListener`, so inside it `this` will be the event target (e.g.
+> `window`), not your component. Either wrap the method in an arrow function
+> (as above) or bind it explicitly:
+>
+> ```js
+> useListener(window, "click", this.closeMenu.bind(this), { capture: true });
+> ```
 
 ### `useApp`
 

@@ -106,7 +106,7 @@ exports[`refs > ref shared between t-if and t-else, t-else has a slotted compone
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`SlotCp\`, true, true, false, []);
+  const comp1 = createComponent(app, \`SlotCp\`, true, false, false, []);
   
   let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
   let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
@@ -189,7 +189,7 @@ exports[`refs > refs are properly bound in slots 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, callHandler, createRef, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx, ev);
-  const comp1 = createComponent(app, \`Dialog\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Dialog\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
   let block3 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);

@@ -229,14 +229,18 @@ function createComponent<P extends Record<string, any>>(
   app: App,
   name: string | null,
   isStatic: boolean,
-  hasSlotsProp: boolean,
+  hasOpaqueSlots: boolean,
   hasDynamicPropList: boolean,
   propList: string[]
 ) {
   const isDynamic = !isStatic;
   let arePropsDifferent: (p1: P, p2: P) => boolean;
   const hasNoProp = propList.length === 0;
-  if (hasSlotsProp) {
+  if (hasOpaqueSlots) {
+    // the compiler could not enumerate what the slot content captures (t-call,
+    // t-out="0", dynamic t-call-slot, or a capture written after the call
+    // site): always re-render. Analyzable slots are compared through their
+    // \x01slots.* synthetic propList entries instead.
     arePropsDifferent = (_1, _2) => true;
   } else if (hasDynamicPropList) {
     arePropsDifferent = function (props1: P, props2: P) {

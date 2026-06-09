@@ -635,7 +635,7 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["slots.test"]);
   
   let block2 = createBlock(\`<div block-ref="0">outside slot</div>\`);
   let block4 = createBlock(\`<div block-ref="0">I'm the default slot</div>\`);
@@ -654,7 +654,7 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
   return function template(ctx, node, key = "") {
     let ref1 = createRef(ctx['this'].myRef);
     const b2 = block2([ref1]);
-    const b7 = comp1({prop: (ctx['this'].method).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+    const b7 = comp1({prop: (ctx['this'].method).bind(this),"slots.test": ctx['test'],slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
     return multi([b2, b7]);
   }
 }"
@@ -690,7 +690,7 @@ exports[`t-call > t-call-context: slots don't make component available again whe
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   function slot1(ctx, node, key = "") {
     return safeOutput(Object.keys(ctx['this']));

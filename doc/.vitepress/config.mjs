@@ -130,8 +130,10 @@ export default defineConfig({
   srcExclude: ["v2/**"],
 
   // Links to ../playground/ and ../v2/ go outside VitePress's scope (sibling
-  // in the assembled site), so skip dead-link validation for them.
-  ignoreDeadLinks: [/playground/, /^(\.\/)?v2\//],
+  // in the assembled site), so skip dead-link validation for them. The v2
+  // pattern matches a `v2/` path segment at any relative depth (`v2/`,
+  // `./v2/`, `../../../v2/`, …).
+  ignoreDeadLinks: [/playground/, /(^|\/)v2\//],
 
   // Inject a static navbar into every page, outside Vue's DOM tree.
   transformHtml(code) {

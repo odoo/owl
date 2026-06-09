@@ -363,7 +363,7 @@ exports[`t-on > t-on on slot, with 'prevent' modifier 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<button>button</button>\`);
   
@@ -397,7 +397,7 @@ exports[`t-on > t-on on t-call-slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<p>something</p>\`);
   
@@ -437,7 +437,7 @@ exports[`t-on > t-on on t-set-slots 1`] = `
   let { safeOutput, createCatcher, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].state.count++;
   const catcher1 = createCatcher({"click":0});
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block6 = createBlock(\`<p>something</p>\`);
   let block7 = createBlock(\`<p>paragraph</p>\`);

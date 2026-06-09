@@ -191,6 +191,12 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   if (isStrict) {
     const unknownKeys: string[] = [];
     for (const key in context.value) {
+      // keys starting with \x01 are synthetic entries added by the template
+      // compiler for memoization (see formatProp/compileComponent); they are
+      // not user data and must not be reported as unknown keys
+      if (key.charCodeAt(0) === 1) {
+        continue;
+      }
       if (!keys.includes(key) && !(`${key}?` in shape)) {
         unknownKeys.push(key);
       }

@@ -763,7 +763,7 @@ exports[`props validation > can validate through slots 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp2 = createComponent(app, \`Wrapper\`, true, false, false, []);
   
   function slot1(ctx, node, key = "") {
     const props1 = {};

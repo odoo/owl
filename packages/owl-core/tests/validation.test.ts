@@ -579,6 +579,15 @@ test("strictObject", () => {
   expect(validateType({ a: 1 }, t.strictObject({ a: t.number() }))).toEqual([]);
 });
 
+test("strictObject ignores compiler synthetic keys (\\x01 prefix)", () => {
+  // the template compiler stores memoization entries on props objects under
+  // keys starting with \x01; they are not user data
+  expect(validateType({ a: 1, "\x01onClick.foo": 42 }, t.strictObject({ a: t.number() }))).toEqual(
+    []
+  );
+  expect(validateType({ "\x01slots.default": () => {} }, t.strictObject({}))).toEqual([]);
+});
+
 test("string", () => {
   expect(validateType("", t.string())).toEqual([]);
   expect(validateType("abc", t.string())).toEqual([]);

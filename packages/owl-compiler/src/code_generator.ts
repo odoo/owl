@@ -190,6 +190,12 @@ function createContext(parentCtx: Context, params?: Partial<Context>): Context {
   );
 }
 
+// Matches the context lookups produced by processExpr (always single-quoted:
+// `ctx['name']`). Generated context *writes* (t-foreach loop variables, t-set
+// assignments) use backticks or double quotes, so this pattern only collects
+// reads. Pinned by the "slot captures" compiler tests.
+const CTX_READ_RE = /ctx\['([^']+)'\]/g;
+
 class CodeTarget {
   name: string;
   indentLevel = 0;
@@ -201,6 +207,29 @@ class CodeTarget {
   deferReturn = false;
   needsScopeProtection = false;
   on: EventHandlers | null;
+  // Every ctx key read by the code of this function, including code compiled
+  // into nested targets (bubbled up by compileInNewTarget). For a slot target,
+  // this is the slot content's capture set: the template-scope values whose
+  // change must invalidate the component receiving the slot.
+  ctxRefs: Set<string> = new Set();
+  // Slot names re-rendered via a static <t t-call-slot="..."/> in this target
+  // (or a nested one): the content forwards the *defining component's own*
+  // incoming slot, which is captured by identity instead of by ctx reads.
+  forwardedSlots: Set<string> = new Set();
+  // True when this target's output can read ctx keys that cannot be statically
+  // enumerated (t-call, t-out="0", t-call-slot with a dynamic name). A slot
+  // compiled in such a target cannot be memoized by captures.
+  hasOpaqueCtxReads = false;
+  // Number of t-set compilations per variable name, in compilation (= code)
+  // order. Used to detect captures that are written *after* a component call
+  // site: the synthetic capture would then be evaluated before the write while
+  // the (lazy) slot rendering sees the post-write value.
+  tSetEvents: Map<string, number> = new Map();
+  // Names written by a t-set *reassignment* (a write to an outer loop level's
+  // ctx). The mutated ctx object is shared across loop iterations, so capture
+  // values read at a component call site can differ from what the lazily
+  // evaluated slot content sees, regardless of code order.
+  reassignedVars: Set<string> = new Set();
 
   constructor(name: string, on?: EventHandlers | null) {
     this.name = name;
@@ -213,6 +242,11 @@ class CodeTarget {
       this.code.push(prefix + line);
     } else {
       this.code.splice(idx, 0, prefix + line);
+    }
+    if (line.includes("ctx['")) {
+      for (const match of line.matchAll(CTX_READ_RE)) {
+        this.ctxRefs.add(match[1]);
+      }
     }
   }
 
@@ -267,6 +301,16 @@ export class CodeGenerator {
   staticDefs: { id: string; expr: string }[] = [];
   slotNames: Set<String | Symbol> = new Set();
   helpers: Set<string> = new Set();
+  // Component call sites whose opaque-slots flag depends on t-set writes that
+  // may be compiled after them; resolved by finalizeSlotMemoization once all
+  // targets are fully compiled.
+  slotMemoChecks: Array<{
+    def: { id: string; expr: string };
+    makeExpr: (opaqueSlots: boolean) => string;
+    target: CodeTarget;
+    captures: Set<string>;
+    tSetSnapshot: Map<string, number>;
+  }> = [];
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {
@@ -308,6 +352,7 @@ export class CodeGenerator {
       translationCtx: "",
       tKeyExpr: null,
     });
+    this.finalizeSlotMemoization();
     // define blocks and utility functions
     let mainCode = [`  let { text, createBlock, list, multi, html, toggler } = bdom;`];
     if (this.helpers.size) {
@@ -358,7 +403,34 @@ export class CodeGenerator {
     return code;
   }
 
-  compileInNewTarget(prefix: string, ast: AST, ctx: Context, on?: EventHandlers | null): string {
+  /**
+   * Resolves the deferred opaque-slots flag of component call sites: a call
+   * site whose slot captures include a variable that is t-set after it (or
+   * reassigned across loop iterations) cannot rely on captures read at the
+   * call site, and falls back to always re-rendering the child.
+   */
+  finalizeSlotMemoization() {
+    for (const check of this.slotMemoChecks) {
+      let opaqueSlots = false;
+      for (const varName of check.captures) {
+        if (
+          check.target.reassignedVars.has(varName) ||
+          (check.target.tSetEvents.get(varName) || 0) > (check.tSetSnapshot.get(varName) || 0)
+        ) {
+          opaqueSlots = true;
+          break;
+        }
+      }
+      check.def.expr = check.makeExpr(opaqueSlots);
+    }
+  }
+
+  compileInNewTarget(
+    prefix: string,
+    ast: AST,
+    ctx: Context,
+    on?: EventHandlers | null
+  ): CodeTarget {
     const name = generateId(prefix);
     const initialTarget = this.target;
     const target = new CodeTarget(name, on);
@@ -366,7 +438,19 @@ export class CodeGenerator {
     this.target = target;
     this.compileAST(ast, createContext(ctx));
     this.target = initialTarget;
-    return name;
+    // The new target's function is evaluated lazily but against the enclosing
+    // scope chain (slot __ctx, LazyValue/t-call body bound ctx), so whatever it
+    // reads from ctx is also read -- transitively -- by the enclosing target.
+    for (const varName of target.ctxRefs) {
+      initialTarget.ctxRefs.add(varName);
+    }
+    for (const slotName of target.forwardedSlots) {
+      initialTarget.forwardedSlots.add(slotName);
+    }
+    if (target.hasOpaqueCtxReads) {
+      initialTarget.hasOpaqueCtxReads = true;
+    }
+    return target;
   }
 
   addLine(line: string, idx?: number) {
@@ -526,6 +610,12 @@ export class CodeGenerator {
     }
 
     const compiled = compileExpr(handler);
+    // handlers are hoisted into staticDefs, bypassing addLine: collect their
+    // ctx reads here (the handler runs against the captured ctx, so its reads
+    // belong to the capture set of an enclosing slot)
+    for (const match of compiled.matchAll(CTX_READ_RE)) {
+      this.target.ctxRefs.add(match[1]);
+    }
     if (!compiled.trim()) {
       return `[${modifiersCode}, ctx]`;
     }
@@ -745,6 +835,9 @@ export class CodeGenerator {
 
   compileZero() {
     this.helpers.add("zero");
+    // ctx[zero] is a t-call body bound by the caller under a symbol key: it
+    // cannot be captured by name, so the enclosing target is not memoizable
+    this.target.hasOpaqueCtxReads = true;
     const isMultiple = this.slotNames.has(zero);
     this.slotNames.add(zero);
     let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
@@ -968,6 +1061,11 @@ export class CodeGenerator {
   compileTCall(ast: ASTTCall, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
 
+    // the called template is resolved at runtime (and can be overridden per
+    // App), so the set of ctx keys it reads through the scope chain cannot be
+    // enumerated here
+    this.target.hasOpaqueCtxReads = true;
+
     const attrs: string[] = ast.attrs
       ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
       : [];
@@ -978,7 +1076,7 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     if (ast.body) {
-      const name = this.compileInNewTarget("callBody", ast.body, ctx);
+      const name = this.compileInNewTarget("callBody", ast.body, ctx).name;
       const zeroStr = generateId("lazyBlock");
       this.define(zeroStr, `${name}.bind(this, ctx)`);
       this.helpers.add("zero");
@@ -1024,14 +1122,22 @@ export class CodeGenerator {
   }
 
   compileTSet(ast: ASTTSet, ctx: Context): null {
+    // record the write event (in compilation = code order) so component call
+    // sites can detect captures that are written after them (see
+    // finalizeSlotMemoization)
+    const tSetEvents = this.target.tSetEvents;
+    tSetEvents.set(ast.name, (tSetEvents.get(ast.name) || 0) + 1);
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     const isOuterScope = this.target.loopLevel === 0;
     const defLevel = this.target.tSetVars.get(ast.name);
     const isReassignment = defLevel !== undefined && this.target.loopLevel > defLevel;
+    if (isReassignment) {
+      this.target.reassignedVars.add(ast.name);
+    }
     if (ast.body) {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
-      const name = this.compileInNewTarget("value", bodyAst, ctx);
+      const name = this.compileInNewTarget("value", bodyAst, ctx).name;
       let key = this.target.currentKey(ctx);
       let value = `new LazyValue(${name}, ctx, this, node, ${key})`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
@@ -1197,32 +1303,90 @@ export class CodeGenerator {
 
     // slots
     let slotDef: string = "";
+    const slotCaptures: Set<string> = new Set();
+    const slotForwards: Set<string> = new Set();
+    let hasOpaqueSlots = false;
     if (ast.slots) {
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
         const slotAst = ast.slots[slotName];
         const params = [];
         if (slotAst.content) {
-          const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}.bind(this), __ctx: ctx`);
+          const target = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
+          params.push(`__render: ${target.name}.bind(this), __ctx: ctx`);
+          const scope = slotAst.scope;
+          for (const varName of target.ctxRefs) {
+            // the slot-scope variable is bound by callSlot at evaluation, not
+            // captured from the enclosing scope
+            if (varName !== scope) {
+              slotCaptures.add(varName);
+            }
+          }
+          for (const name of target.forwardedSlots) {
+            slotForwards.add(name);
+          }
+          hasOpaqueSlots = hasOpaqueSlots || target.hasOpaqueCtxReads;
         }
-        const scope = ast.slots[slotName].scope;
+        const scope = slotAst.scope;
         if (scope) {
           params.push(`__scope: "${scope}"`);
         }
-        if (ast.slots[slotName].attrs) {
-          params.push(
-            ...this.formatPropObject(
-              ast.slots[slotName].attrs!,
-              ast.slots[slotName].attrsTranslationCtx,
-              ctx.translationCtx
-            )
-          );
+        const attrs = slotAst.attrs;
+        if (attrs) {
+          for (const attrName in attrs) {
+            const [paramName, paramSuffix] = attrName.split(".");
+            if (paramSuffix && paramSuffix !== "bind") {
+              // .translate values are static and .alike explicitly opts out
+              // of comparison; unknown suffixes throw in formatProp
+              params.push(
+                this.formatProp(
+                  attrName,
+                  attrs[attrName],
+                  slotAst.attrsTranslationCtx,
+                  ctx.translationCtx
+                )
+              );
+              continue;
+            }
+            // slot params are evaluated in the parent scope and read by the
+            // child through props.slots: hoist each value so it can be shared
+            // between the slot object and its memoization synthetic. For
+            // .bind, the synthetic compares the unbound function: a stable
+            // identity keeps the (behaviorally identical) bound wrapper
+            // memoized.
+            const paramVar = generateId("slotParam");
+            this.define(paramVar, compileExpr(attrs[attrName]) || "undefined");
+            const quotedName = /^[a-z_]+$/i.test(paramName) ? paramName : `'${paramName}'`;
+            params.push(`${quotedName}: ${paramSuffix ? `${paramVar}.bind(this)` : paramVar}`);
+            const syntheticKey = `"\x01slots.${slotName}.@${paramName}"`;
+            props.push(`${syntheticKey}: ${paramVar}`);
+            propList.push(syntheticKey);
+          }
         }
         const slotInfo = `{${params.join(", ")}}`;
         slotStr.push(`'${slotName}': ${slotInfo}`);
       }
       slotDef = `{${slotStr.join(", ")}}`;
+    }
+
+    if (ast.slots && !hasOpaqueSlots) {
+      // Memoization synthetics. The slot closures themselves are rebuilt on
+      // every render and are not compared; what is compared is what they
+      // capture: enclosing template-scope values (t-as/t-set/outer slot-scope
+      // variables) and forwarded incoming slots. `this` is identity-stable for
+      // a given component node and reactive reads inside slot content are
+      // tracked by the child that renders it, so neither needs an entry.
+      slotCaptures.delete("this");
+      for (const varName of slotCaptures) {
+        const syntheticKey = `"\x01slots.${varName}"`;
+        props.push(`${syntheticKey}: ctx['${varName}']`);
+        propList.push(syntheticKey);
+      }
+      for (const slotName of slotForwards) {
+        const syntheticKey = `"\x01slots.__fwd.${slotName}"`;
+        props.push(`${syntheticKey}: ctx.__owl__.props.slots?.['${slotName}']`);
+        propList.push(syntheticKey);
+      }
     }
 
     if (slotDef && !(ast.dynamicProps || hasSlotsProp)) {
@@ -1264,12 +1428,26 @@ export class CodeGenerator {
     }
     let id = generateId("comp");
     this.helpers.add("createComponent");
-    this.staticDefs.push({
-      id,
-      expr: `createComponent(app, ${
+    const makeCreateComponentExpr = (opaqueSlots: boolean) =>
+      `createComponent(app, ${
         ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
-    });
+      }, ${!ast.isDynamic}, ${opaqueSlots}, ${!!ast.dynamicProps}, [${propList}])`;
+    const def = { id, expr: "" };
+    if (ast.slots && !hasOpaqueSlots) {
+      // whether a capture is written (t-set) after this call site is only
+      // known once the whole target is compiled: defer the opaque-slots
+      // decision to finalizeSlotMemoization
+      this.slotMemoChecks.push({
+        def,
+        makeExpr: makeCreateComponentExpr,
+        target: this.target,
+        captures: new Set(slotCaptures),
+        tSetSnapshot: new Map(this.target.tSetEvents),
+      });
+    } else {
+      def.expr = makeCreateComponentExpr(!!ast.slots);
+    }
+    this.staticDefs.push(def);
 
     if (ast.isDynamic) {
       // If the component class changes, this can cause delayed renders to go
@@ -1320,10 +1498,16 @@ export class CodeGenerator {
       dynamic = true;
       isMultiple = true;
       slotName = interpolate(ast.name);
+      // which incoming slot is rendered depends on a runtime value: an
+      // enclosing slot cannot capture it by name
+      this.target.hasOpaqueCtxReads = true;
     } else {
       slotName = "'" + ast.name + "'";
       isMultiple = isMultiple || this.slotNames.has(ast.name);
       this.slotNames.add(ast.name);
+      // the content rendered here is the defining component's own incoming
+      // slot: an enclosing slot captures it by identity (see compileComponent)
+      this.target.forwardedSlots.add(ast.name);
     }
     const attrs = { ...ast.attrs };
     const dynProps = attrs["t-props"];
@@ -1338,7 +1522,7 @@ export class CodeGenerator {
       : [];
     const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {
-      const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
+      const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx).name;
       blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name}.bind(this))`;
     } else {
       if (dynamic) {

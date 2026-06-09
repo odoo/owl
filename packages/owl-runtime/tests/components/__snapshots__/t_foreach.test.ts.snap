@@ -157,7 +157,7 @@ exports[`list of components > order is correct when slots are not of same type 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["slots.a.@active","slots.b.@active","slots.c.@active"]);
   
   let block2 = createBlock(\`<div>A</div>\`);
   
@@ -178,7 +178,10 @@ exports[`list of components > order is correct when slots are not of same type 1
   }
   
   return function template(ctx, node, key = "") {
-    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, active: !ctx['this'].state.active}, 'b': {__render: slot2.bind(this), __ctx: ctx, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx, active: ctx['this'].state.active}})}, key + \`__1\`, node, this, null);
+    const slotParam1 = !ctx['this'].state.active;
+    const slotParam2 = true;
+    const slotParam3 = ctx['this'].state.active;
+    return comp1({"slots.a.@active": slotParam1,"slots.b.@active": slotParam2,"slots.c.@active": slotParam3,slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, active: slotParam1}, 'b': {__render: slot2.bind(this), __ctx: ctx, active: slotParam2}, 'c': {__render: slot3.bind(this), __ctx: ctx, active: slotParam3}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;

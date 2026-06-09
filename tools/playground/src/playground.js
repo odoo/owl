@@ -72,7 +72,7 @@ class Playground extends Component {
       const project = this.project.activeProject();
       if (!project || !project.templateDesc) return "";
       if (this.project.isCurrentProjectDirty()) return "";
-      return project.templateDesc;
+      return project.tutorial ? `tutorial:${project.templateDesc}` : project.templateDesc;
     });
 
     useEffect(() => {
@@ -165,7 +165,6 @@ class Playground extends Component {
 
   async onTemplateChange(ev) {
     const desc = ev.target.value;
-    ev.target.value = this.currentTemplateValue();
     ev.target.blur();
     if (!desc) return;
 

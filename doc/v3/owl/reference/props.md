@@ -255,6 +255,32 @@ class ProductList extends Component {
 }
 ```
 
+Validators compose, so non-trivial prop shapes are supported as well. A prop can
+be a [signal](reactivity.md#signals) carrying a typed value, a function with
+typed parameters and return value, a union, or a custom-validated value:
+
+```js
+class Counter extends Component {
+  static template = xml`...`;
+
+  props = props({
+    // a signal whose value must be a number
+    count: t.signal(t.number()),
+    // a callback: (id: number) => boolean — params/return are inferred in TS
+    "onToggle?": t.function([t.number()], t.boolean()),
+    // a union of several accepted types
+    label: t.or([t.string(), t.number()]),
+    // a value passing both a base type and a custom predicate
+    "ratio?": t.customValidator(t.number(), (v) => v >= 0 && v <= 1, "ratio must be in [0, 1]"),
+  });
+}
+```
+
+For function and signal props, the inner types (`t.function([...], ...)` params
+and return, `t.signal(...)` value) are used for TypeScript inference only — they
+are not checked at runtime. See [Types Validation](types_validation.md) for the
+complete list of validators and their exact runtime behaviour.
+
 ### `slots` prop
 
 If a component that uses [slots](slots.md) also validates its props, the

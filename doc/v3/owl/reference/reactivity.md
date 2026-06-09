@@ -55,6 +55,33 @@ class Counter extends Component {
 }
 ```
 
+### Typing signals
+
+The type of a signal is normally inferred from its initial value, so `signal(0)`
+is a `Signal<number>`. When the initial value does not pin the type down — an
+empty array, or `null` — `signal` accepts a second `options` argument with a
+`type` to specify it explicitly:
+
+```js
+const ids = signal([], { type: [] as number[] }); // Signal<number[]>, not Signal<never[]>
+const selected = signal(null, { type: null as User | null }); // Signal<User | null>
+```
+
+The `type` option is only a hint for TypeScript inference — it has no runtime
+effect.
+
+Signals can also be **validated** when received as component props: the
+[`t.signal`](types_validation.md#tsignaltype) validator checks that a prop is a
+signal, with an optional inner type for inference.
+
+```js
+import { props, types as t } from "@odoo/owl";
+
+props = props({ count: t.signal(t.number()) });
+```
+
+See [Types Validation](types_validation.md) for the complete list of validators.
+
 ### Collection Signals
 
 Manipulating collections (arrays, objects, maps, sets) is a very common need.

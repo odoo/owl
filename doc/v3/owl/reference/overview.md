@@ -1,4 +1,4 @@
-# Reference
+# Overview
 
 Here is a list of everything exported by the Owl library.
 
@@ -17,14 +17,14 @@ Here is a list of everything exported by the Owl library.
 
 ## Reactivity
 
-- [`signal`](reactivity.md#signals): create a reactive value
-- [`computed`](reactivity.md#computed-values): create a lazily-evaluated derived value
-- [`asyncComputed`](reactivity.md#async-computed-values): like `computed`, but the deriver returns a `Promise`
-- [`proxy`](reactivity.md#proxy): create a reactive proxy for an object
-- [`effect`](reactivity.md#effects): create a side effect that re-runs when dependencies change
-- [`markRaw`](reactivity.md#markraw): mark an object so it is ignored by the reactivity system
-- [`toRaw`](reactivity.md#toraw): given a proxy, return the underlying non-reactive object
-- [`untrack`](reactivity.md#untrack): execute a function without tracking reactive dependencies
+- [`signal`](signals.md): create a reactive value
+- [`computed`](computed_values.md): create a lazily-evaluated derived value
+- [`asyncComputed`](computed_values.md#async-computed-values): like `computed`, but the deriver returns a `Promise`
+- [`proxy`](proxies.md): create a reactive proxy for an object
+- [`effect`](effects.md): create a side effect that re-runs when dependencies change
+- [`markRaw`](proxies.md#markraw): mark an object so it is ignored by the reactivity system
+- [`toRaw`](proxies.md#toraw): given a proxy, return the underlying non-reactive object
+- [`untrack`](effects.md#untrack): execute a function without tracking reactive dependencies
 
 ## Lifecycle Hooks
 

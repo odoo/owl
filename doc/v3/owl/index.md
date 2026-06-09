@@ -39,6 +39,6 @@ class Counter extends Component {
 mount(Counter, document.body);
 ```
 
-`count` is a [signal](reference/reactivity.md#signals): calling `this.count()` reads it, and
+`count` is a [signal](reference/signals.md): calling `this.count()` reads it, and
 `this.count.set(...)` updates it. When the value changes, Owl re-renders the
 component automatically — no manual subscriptions needed.

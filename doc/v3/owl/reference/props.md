@@ -114,7 +114,7 @@ class Total extends Component {
 
 When the parent re-renders with a different `value`, `this.props.value` is
 updated and the `double` computed value is invalidated. The same applies to
-[`effect`](reactivity.md#effects) and [`useEffect`](reactivity.md#useeffect):
+[`effect`](effects.md) and [`useEffect`](effects.md#useeffect):
 reading `this.props.value` inside the effect subscribes the effect to future
 updates of that prop.
 
@@ -163,8 +163,8 @@ In [dev mode](app.md#configuration), `props.static()` does two things:
   subsequent parent render.
 
 This makes `props.static()` a good fit for values the child treats as identity-stable
-(`instanceOf` models, event buses, or [signals](reactivity.md#signals)). If a
-[signal](reactivity.md#signals) is passed, the signal object itself stays the
+(`instanceOf` models, event buses, or [signals](signals.md)). If a
+[signal](signals.md) is passed, the signal object itself stays the
 same across renders even as its inner value updates — which is exactly what
 `props.static()` requires.
 
@@ -256,7 +256,7 @@ class ProductList extends Component {
 ```
 
 Validators compose, so non-trivial prop shapes are supported as well. A prop can
-be a [signal](reactivity.md#signals) carrying a typed value, a function with
+be a [signal](signals.md) carrying a typed value, a function with
 typed parameters and return value, a union, or a custom-validated value:
 
 ```js
@@ -395,7 +395,7 @@ renderings.
 
 ## Promoting values to signals
 
-Generic components often declare their props as [signals](reactivity.md#signals):
+Generic components often declare their props as [signals](signals.md):
 
 ```js
 class Counter extends Component {

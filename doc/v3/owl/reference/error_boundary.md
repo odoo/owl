@@ -23,7 +23,7 @@ the same DOM position.
 ## Accessing the error: the `error` prop
 
 ErrorBoundary accepts an optional `error` prop — a
-[`Signal`](reactivity.md#signals) that the boundary writes to when a
+[`Signal`](signals.md) that the boundary writes to when a
 descendant throws. The parent owns the signal, so it can read the error
 from inside the fallback, react to changes with an `effect`, or clear
 the error to retry:

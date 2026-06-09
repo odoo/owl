@@ -50,9 +50,9 @@ All changes are documented here in no particular order.
 
 - finer grained reactivity: owl 2 tracks change per key/component
 - finer grained reactivity: sub components can reobserve state ([doc](reference/reactivity.md))
-- new: `reactive` function: create reactive state (without being linked to a component) ([doc](reference/reactivity.md#proxy))
-- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](reference/reactivity.md#markraw))
-- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](reference/reactivity.md#toraw))
+- new: `reactive` function: create reactive state (without being linked to a component) ([doc](reference/proxies.md))
+- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](reference/proxies.md#markraw))
+- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](reference/proxies.md#toraw))
 
 **Slots**
 
@@ -369,8 +369,6 @@ Migration: there is no proper way to get an equivalent. The closest is to get
 a reference to the root App using `this.__owl__.app`. If you need to do this,
 let us know. If this is a legitimate usecase, we may add a `useApp` hook.
 
-Documentation: [Environment](reference/environment.md)
-
 ### 17. `t-component` no longer accepts strings
 
 In owl 1, we could write this:
@@ -537,8 +535,6 @@ components. This use case still works with `useSubEnv`.
 
 Migration: use `useSubEnv` instead of writing directly to the env. Also, note
 that the environment given to the App can initially contain anything.
-
-Documentation: [Environment](reference/environment.md)
 
 ### 29. `t-ref` does not work on component
 

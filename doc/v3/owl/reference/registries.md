@@ -12,7 +12,7 @@ Registries support:
 - **scoped lifetime**: in components and plugins, entries can be automatically
   removed when the owner is destroyed
 - **type validation**: values can be validated against a schema on insertion
-- **reactivity**: `items()` and `entries()` are [reactive computed values](reactivity.md#computed-values)
+- **reactivity**: `items()` and `entries()` are [reactive computed values](computed_values.md)
 
 For a keyless variant, see [Resource](resources.md).
 
@@ -147,7 +147,7 @@ views.get("kanban", null); // returns null
 
 ### `items()` and `entries()`
 
-Both are reactive [computed values](reactivity.md#computed-values), sorted
+Both are reactive [computed values](computed_values.md), sorted
 by sequence. `items()` returns values; `entries()` returns `[key, value]`
 tuples.
 

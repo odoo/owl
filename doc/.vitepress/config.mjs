@@ -18,13 +18,14 @@ import path from "path";
 const owlSidebar = [
   { text: "Introduction", link: "/v3/owl/" },
   { text: "Overview", link: "/v3/owl/reference/overview" },
-  { text: "Installation", link: "/v3/owl/installation" },
   {
     text: "Reference",
     items: [
       { text: "App and Roots", link: "/v3/owl/reference/app" },
       { text: "Component", link: "/v3/owl/reference/component" },
-      { text: "Environment", link: "/v3/owl/reference/environment" },
+      { text: "Computed Values", link: "/v3/owl/reference/computed_values" },
+      { text: "Concurrency Model", link: "/v3/owl/reference/concurrency_model" },
+      { text: "Effects", link: "/v3/owl/reference/effects" },
       { text: "Error Boundary", link: "/v3/owl/reference/error_boundary" },
       { text: "Error Handling", link: "/v3/owl/reference/error_handling" },
       { text: "Event Handling", link: "/v3/owl/reference/event_handling" },
@@ -32,13 +33,14 @@ const owlSidebar = [
       { text: "Hooks", link: "/v3/owl/reference/hooks" },
       { text: "Plugins", link: "/v3/owl/reference/plugins" },
       { text: "Portal", link: "/v3/owl/reference/portal" },
-      { text: "Precompiling Templates", link: "/v3/owl/reference/precompiling_templates" },
       { text: "Props", link: "/v3/owl/reference/props" },
+      { text: "Proxies", link: "/v3/owl/reference/proxies" },
       { text: "Reactivity", link: "/v3/owl/reference/reactivity" },
       { text: "Refs", link: "/v3/owl/reference/refs" },
       { text: "Registries", link: "/v3/owl/reference/registries" },
       { text: "Resources", link: "/v3/owl/reference/resources" },
       { text: "Scope", link: "/v3/owl/reference/scope" },
+      { text: "Signals", link: "/v3/owl/reference/signals" },
       { text: "Slots", link: "/v3/owl/reference/slots" },
       { text: "Suspense", link: "/v3/owl/reference/suspense" },
       { text: "Template Syntax", link: "/v3/owl/reference/template_syntax" },
@@ -48,15 +50,10 @@ const owlSidebar = [
     ],
   },
   {
-    text: "Misc",
+    text: "Deployment",
     items: [
-      { text: "Why OWL?", link: "/v3/owl/miscellaneous/why_owl" },
-      { text: "Design Principles", link: "/v3/owl/miscellaneous/design_principles" },
-      { text: "Architecture", link: "/v3/owl/miscellaneous/architecture" },
-      { text: "Compiled Templates", link: "/v3/owl/miscellaneous/compiled_template" },
-      { text: "Concurrency Model", link: "/v3/owl/reference/concurrency_model" },
-      { text: "Comparison", link: "/v3/owl/miscellaneous/comparison" },
-      { text: "OWL 3 Release Notes", link: "/v3/owl/owl3_design" },
+      { text: "Installation", link: "/v3/owl/installation" },
+      { text: "Precompiling Templates", link: "/v3/owl/reference/precompiling_templates" },
     ],
   },
   {
@@ -69,6 +66,7 @@ const owlSidebar = [
   {
     text: "Migration",
     items: [
+      { text: "OWL 3 Release Notes", link: "/v3/owl/owl3_design" },
       { text: "OWL 2 to OWL 3", link: "/v3/owl/migration_owl2_to_owl3" },
       { text: "OWL 1 to OWL 2", link: "/v3/owl/migration_owl1_to_owl2" },
     ],

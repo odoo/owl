@@ -1,7 +1,7 @@
 import { Plugin, computed, plugin, signal } from "@odoo/owl";
 import { generateId, getFileType, makeFileEntry } from "./file_utils.js";
-import { EXAMPLES, HELLO_WORLD_JS, TUTORIALS, loadFilesFromMapping } from "./samples.js";
-
+import { EXAMPLES, HELLO_WORLD_JS, TUTORIALS, WELCOME_STATE, loadFilesFromMapping } from "./samples.js";
+import { VERSIONS } from "./versions.js";
 class CodePlugin extends Plugin {
   static id = "code";
 
@@ -196,37 +196,68 @@ class CodePlugin extends Plugin {
   }
 }
 
+class VersionPlugin extends Plugin {
+  static id = "version";
+  static sequence = 10;
+
+  version = signal("v3");
+  versions = VERSIONS;
+
+  switchVersion(ver) {
+    this.version.set(ver);
+  }
+
+  getVersionPath() {
+    const ver = this.version();
+    return this.versions.find((version) => version.value == ver)?.path ?? "../owl.js";
+  }
+}
+
 class TemplatePlugin extends Plugin {
   static id = "templates";
 
-  examples = [];
-  tutorials = [];
-  list = [];
-  categories = [];
+  version = plugin(VersionPlugin)
 
-  setup() {
-    this.examples = EXAMPLES.map((example) => ({
+  examples = computed(() => {
+    const version = this.version.version();
+    return EXAMPLES[version]?.map((example) => ({
       ...example,
       code:
         Object.keys(example.files).length === 0
           ? () => Promise.resolve({ "main.js": HELLO_WORLD_JS })
           : () => loadFilesFromMapping(example.files),
-    }));
-    this.tutorials = TUTORIALS.map((tutorial) => ({
+    })) ?? [];
+  });
+
+  tutorials = computed(() => {
+    const version = this.version.version();
+    return TUTORIALS[version]?.map((tutorial) => ({
       ...tutorial,
       isTutorial: true,
-    }));
-    this.list = [...this.examples, ...this.tutorials];
-    this.categories = [];
-    for (const tmpl of this.examples) {
-      let cat = this.categories.find((c) => c.name === tmpl.category);
+    })) ?? [];
+  });
+
+  list = computed(() => {
+    return [...this.examples(), ...this.tutorials()];
+  });
+
+  categories = computed(() => {
+    const categories = [];
+    for (const tmpl of this.examples()) {
+      let cat = categories.find((c) => c.name === tmpl.category);
       if (!cat) {
         cat = { name: tmpl.category, templates: [] };
-        this.categories.push(cat);
+        categories.push(cat);
       }
       cat.templates.push(tmpl);
     }
-  }
+    return categories;
+  });
+
+  welcome_state = computed(() => {
+    const version = this.version.version();
+    return WELCOME_STATE[version] ?? {pills: [], version: "unknown"};
+  });
 
   async openTutorial(tutorial) {
     const { steps, name, description, id: tutorialId } = tutorial;
@@ -271,6 +302,7 @@ class ProjectPlugin extends Plugin {
   static id = "project";
 
   code = plugin(CodePlugin);
+  version = plugin(VersionPlugin);
   templates = plugin(TemplatePlugin);
 
   projects = signal([]);
@@ -353,9 +385,11 @@ class ProjectPlugin extends Plugin {
   createProject(name, fileNames, contents, templateDesc = null, description = "") {
     this._saveCurrentProject();
     const projects = this.projects();
+    const version = this.version.version();
     const project = {
       id: generateId(),
       name,
+      version,
       description,
       fileNames,
       files: { ...contents },
@@ -592,6 +626,8 @@ class ProjectPlugin extends Plugin {
   createTutorialProject(name, steps, templateDesc = null, tutorialId = null) {
     this._saveCurrentProject();
     const projects = this.projects();
+    const version = this.version.version();
+
     if (steps.length === 0) return null;
 
     const firstStep = steps[0];
@@ -599,6 +635,7 @@ class ProjectPlugin extends Plugin {
     const project = {
       id: generateId(),
       name,
+      version,
       fileNames,
       files: { ...firstStep.files },
       originalFiles: { ...firstStep.files },
@@ -836,7 +873,7 @@ class LocalStoragePlugin extends Plugin {
   project = plugin(ProjectPlugin);
   version = signal(0);
 
-  setup() {}
+  setup() { }
 
   saveProject(proj) {
     const existingData = this.load();
@@ -1058,6 +1095,7 @@ class ViewPlugin extends Plugin {
 
 export {
   CodePlugin,
+  VersionPlugin,
   DialogPlugin,
   LocalStoragePlugin,
   Plugin,

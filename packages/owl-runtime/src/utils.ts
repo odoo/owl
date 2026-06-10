@@ -1,6 +1,6 @@
 import { OwlError } from "@odoo/owl-core";
 
-export { batched, EventBus, htmlEscape, Markup, markup } from "@odoo/owl-core";
+export { batched, EventBus, htmlEscape, Markup, markup, shallowEqual } from "@odoo/owl-core";
 
 /**
  * Determine whether the given element is contained in its ownerDocument:

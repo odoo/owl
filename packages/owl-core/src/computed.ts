@@ -1,17 +1,26 @@
 import {
   atomSymbol,
   ComputationState,
+  Equals,
   onReadAtom,
   onWriteAtom,
   ReactiveValue,
+  toEqualsFn,
   updateComputation,
   createComputation,
 } from "./computations";
 import { OwlError } from "./owl_error";
 import { getScope } from "./scope";
 
-interface ComputedOptions<TWrite> {
+interface ComputedOptions<TRead, TWrite = TRead> {
   set?(value: TWrite): void;
+  /**
+   * Custom equality used after a recompute to decide whether observers should
+   * be notified (see Equals). Useful when the getter builds a fresh object
+   * each time (e.g. a filtered array): with a structural equality such as
+   * `shallowEqual`, an equal result stops the propagation.
+   */
+  equals?: Equals<TRead>;
 }
 
 function readonlySetter(): never {
@@ -22,13 +31,24 @@ function readonlySetter(): never {
 
 export function computed<TRead, TWrite = TRead>(
   getter: () => TRead,
-  options: ComputedOptions<TWrite> = {}
+  options: ComputedOptions<TRead, TWrite> = {}
 ): ReactiveValue<TRead, TWrite> {
+  const equalsFn = toEqualsFn(options.equals);
+  // The first compute has no previous value to compare against (and nothing
+  // observes the computation until the first read returns): skip the equality
+  // check so a custom equals never receives the initial undefined.
+  let hasValue = false;
   const computation = createComputation(() => {
     const newValue = getter();
-    if (!Object.is(computation.value, newValue)) {
+    if (hasValue) {
+      if (equalsFn(computation.value, newValue)) {
+        // discard the equal result: readers keep a stable identity, like a
+        // signal write that compares equal
+        return computation.value;
+      }
       onWriteAtom(computation);
     }
+    hasValue = true;
     return newValue;
   }, true);
 

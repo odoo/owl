@@ -60,11 +60,12 @@ export {
   type AsyncComputed,
   type AsyncComputedContext,
   type AsyncComputedOptions,
+  type Equals,
   type ReactiveValue,
   type Signal,
 } from "@odoo/owl-core";
 export { useEffect, useListener, useApp } from "./hooks";
-export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
+export { batched, EventBus, htmlEscape, shallowEqual, whenReady, markup } from "./utils";
 export {
   onWillStart,
   onMounted,

@@ -10,6 +10,23 @@ export interface ReactiveValue<TRead, TWrite = TRead> {
   set(nextValue: TWrite): void;
 }
 
+/**
+ * The `equals` option accepted by `signal` and `computed`: a custom equality
+ * used to decide whether a new value should notify observers. Defaults to
+ * `Object.is`. Pass `false` to disable the check entirely (every write or
+ * recompute notifies, even with an identical value — useful for values that
+ * are mutated in place).
+ */
+export type Equals<T> = false | ((a: T, b: T) => boolean);
+
+function neverEqual() {
+  return false;
+}
+
+export function toEqualsFn<T>(equals: Equals<T> | undefined): (a: T, b: T) => boolean {
+  return equals === false ? neverEqual : equals || Object.is;
+}
+
 export enum ComputationState {
   EXECUTED = 0,
   STALE = 1,

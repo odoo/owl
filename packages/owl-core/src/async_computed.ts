@@ -1,3 +1,4 @@
+import { Equals } from "./computations";
 import { getScope, isAbortError } from "./scope";
 import { effect } from "./effect";
 import { signal } from "./signal";
@@ -8,6 +9,12 @@ export interface AsyncComputedContext {
 
 export interface AsyncComputedOptions<T> {
   initial?: T;
+  /**
+   * Custom equality for the resolved value (see Equals): a fetch resolving to
+   * an equal value does not notify observers. Note that the previous value is
+   * `undefined` before the first resolution when no `initial` is given.
+   */
+  equals?: Equals<T | undefined>;
 }
 
 export interface AsyncComputed<T> {
@@ -33,7 +40,7 @@ export function asyncComputed<T>(
   fetcher: (ctx: AsyncComputedContext) => Promise<T>,
   options: AsyncComputedOptions<T> = {}
 ): AsyncComputed<T> {
-  const value = signal<T | undefined>(options.initial);
+  const value = signal<T | undefined>(options.initial, { equals: options.equals });
   const loading = signal(false);
   const error = signal<Error | null>(null);
   const refreshTick = signal(0);

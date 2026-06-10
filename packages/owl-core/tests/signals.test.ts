@@ -1,4 +1,4 @@
-import { atomSymbol, signal } from "../src";
+import { atomSymbol, shallowEqual, signal } from "../src";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 test("signal can be created and read", () => {
@@ -536,5 +536,83 @@ describe("signal write notifications", () => {
 
     delete reactiveObject().a;
     expect(notified()).toBe(1);
+  });
+});
+
+describe("equals option", () => {
+  test("custom equals can skip notifications, and the equal value is discarded", async () => {
+    const s = signal(1, { equals: (a, b) => Math.abs(a - b) < 2 });
+    const e = spyEffect(() => s());
+    e();
+    expectSpy(e.spy, 1);
+
+    s.set(2); // |1 - 2| < 2: considered equal
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+    expect(s()).toBe(1);
+
+    s.set(5);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 5 });
+  });
+
+  test("equals: false notifies even when the value is identical", async () => {
+    const obj = { a: 1 };
+    const s = signal(obj, { equals: false });
+    const e = spyEffect(() => s());
+    e();
+    expectSpy(e.spy, 1);
+
+    s.set(obj);
+    await waitScheduler();
+    expectSpy(e.spy, 2);
+  });
+
+  test("shallowEqual keeps the previous array when contents are equal", async () => {
+    const initial = [1, 2];
+    const s = signal(initial, { equals: shallowEqual });
+    const e = spyEffect(() => s());
+    e();
+    expectSpy(e.spy, 1);
+
+    s.set([1, 2]);
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+    expect(s()).toBe(initial);
+
+    s.set([1, 3]);
+    await waitScheduler();
+    expectSpy(e.spy, 2);
+  });
+
+  test("equals is forwarded by collection signals, and only gates set()", async () => {
+    const s = signal.Array([1, 2], { equals: shallowEqual });
+    const e = spyEffect(() => s().length);
+    e();
+    expectSpy(e.spy, 1);
+
+    s.set([1, 2]);
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+
+    // mutations through the proxy are not gated by equals
+    s().push(3);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 3 });
+  });
+
+  test("equals on signal.Object", async () => {
+    const s = signal.Object({ a: 1 }, { equals: shallowEqual });
+    const e = spyEffect(() => s().a);
+    e();
+    expectSpy(e.spy, 1);
+
+    s.set({ a: 1 });
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+
+    s.set({ a: 2 });
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 2 });
   });
 });

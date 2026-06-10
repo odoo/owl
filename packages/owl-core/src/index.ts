@@ -22,6 +22,7 @@ export { proxy, markRaw, toRaw, proxifyTarget } from "./proxy";
 // Reactivity: computations (core tracking primitives)
 export {
   untrack,
+  type Equals,
   type ReactiveValue,
   type Atom,
   type ComputationAtom,
@@ -129,4 +130,5 @@ export {
   htmlEscape,
   Markup,
   markup,
+  shallowEqual,
 } from "./utils";

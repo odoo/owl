@@ -1,8 +1,10 @@
-import { Component, mount, signal, computed, proxy, xml } from "@odoo/owl";
+import { Component, mount, signal, computed, proxy, shallowEqual, xml } from "@odoo/owl";
 
 // Reactive list: a `proxy` array + a `computed` filter + `t-foreach` with `t-key`.
 // Mutate the array (push, splice, property assignment) and the view updates.
 // Try: filter via the input, toggle done, add new todos.
+// The filter produces a fresh array on every recompute: `equals: shallowEqual`
+// stops the propagation (and the re-render) when its contents are unchanged.
 
 let _nextId = 1;
 const getId = () => _nextId++;
@@ -34,7 +36,7 @@ class TodoList extends Component {
     visible = computed(() => {
         const q = this.query().toLowerCase();
         return this.todos.filter((t) => t.text.toLowerCase().includes(q));
-    });
+    }, { equals: shallowEqual });
 
     add() {
         const id = getId();

@@ -1,5 +1,5 @@
 import { vi, type Mock } from "vitest";
-import { proxy, computed, signal } from "../src";
+import { proxy, computed, shallowEqual, signal } from "../src";
 import {
   atomSymbol,
   ComputationAtom,
@@ -645,5 +645,81 @@ describe("writable computed", () => {
     // can also set a number
     binary.set(7);
     expect(value()).toBe(7);
+  });
+});
+
+describe("equals option", () => {
+  test("an equal recompute does not notify observers and keeps the previous value", async () => {
+    const n = signal(1);
+    const getter = vi.fn(() => [n() > 0 ? "pos" : "neg"]);
+    const list = computed(getter, { equals: shallowEqual });
+
+    const e = spyEffect(() => list()[0]);
+    e();
+    expectSpy(e.spy, 1, { result: "pos" });
+    expect(getter).toHaveBeenCalledTimes(1);
+    const before = list();
+
+    n.set(2); // recomputes to a fresh but shallow-equal array
+    await waitScheduler();
+    expect(getter).toHaveBeenCalledTimes(2);
+    expectSpy(e.spy, 1);
+    expect(list()).toBe(before);
+
+    n.set(-1);
+    await waitScheduler();
+    expect(getter).toHaveBeenCalledTimes(3);
+    expectSpy(e.spy, 2, { result: "neg" });
+  });
+
+  test("equals cuts propagation through chained computeds", async () => {
+    const n = signal(1);
+    const c1 = computed(() => [n() > 0], { equals: shallowEqual });
+    const c2Getter = vi.fn(() => c1()[0]);
+    const c2 = computed(c2Getter);
+
+    const e = spyEffect(() => c2());
+    e();
+    expectSpy(e.spy, 1, { result: true });
+    expect(c2Getter).toHaveBeenCalledTimes(1);
+
+    n.set(2); // c1 recomputes to an equal value: c2 must not even recompute
+    await waitScheduler();
+    expect(c2Getter).toHaveBeenCalledTimes(1);
+    expectSpy(e.spy, 1);
+
+    n.set(-1);
+    await waitScheduler();
+    expect(c2Getter).toHaveBeenCalledTimes(2);
+    expectSpy(e.spy, 2, { result: false });
+  });
+
+  test("equals: false propagates identical values", async () => {
+    const n = signal(1);
+    const c = computed(() => (n(), 42), { equals: false });
+
+    const e = spyEffect(() => c());
+    e();
+    expectSpy(e.spy, 1, { result: 42 });
+
+    n.set(2);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 42 });
+  });
+
+  test("a custom equals never receives the initial undefined", async () => {
+    const n = signal(1);
+    const equals = vi.fn((a: number, b: number) => a === b);
+    const c = computed(() => n() * 10, { equals });
+
+    expect(c()).toBe(10);
+    expect(equals).not.toHaveBeenCalled();
+
+    const e = spyEffect(() => c());
+    e();
+    n.set(2);
+    await waitScheduler();
+    expect(equals).toHaveBeenCalledTimes(1);
+    expect(equals).toHaveBeenLastCalledWith(10, 20);
   });
 });

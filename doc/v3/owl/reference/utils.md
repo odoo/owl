@@ -105,3 +105,22 @@ const safe = markup`<b>${userInput}</b>`;
 
 The tag-function form is the safe default when composing HTML that mixes
 trusted markup with untrusted data.
+
+## `shallowEqual`
+
+`shallowEqual(a, b)` compares two values one level deep: arrays element by
+element and plain objects own key by own key, using `Object.is` on each
+element/value. Anything else (`Map`, `Set`, class instances, ...) only
+compares equal by identity.
+
+```js
+shallowEqual([1, 2], [1, 2]); // true
+shallowEqual({ a: 1 }, { a: 1 }); // true
+shallowEqual([[1]], [[1]]); // false — one level deep only
+shallowEqual(new Map(), new Map()); // false — not a plain object
+```
+
+It is designed to be passed as the `equals` option of
+[`signal`](signals.md#custom-equality) or
+[`computed`](computed_values.md#custom-equality) when a fresh array or object
+with stable contents is produced on each update.

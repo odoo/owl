@@ -6,6 +6,7 @@ import {
   onWillPatch,
   onWillUnmount,
   props,
+  shallowEqual,
   signal,
   proxy,
   xml,
@@ -529,5 +530,47 @@ describe("reactive cleanup on component destruction", () => {
     root.rows.set([]);
     await nextTick();
     expect(selectedIdAtom.observers.size).toBe(0);
+  });
+});
+
+describe("computed with equals in components", () => {
+  test("a recompute with a shallow-equal result does not re-render", async () => {
+    let renders = 0;
+    class TodoList extends Component {
+      static template = xml`
+        <ul>
+          <t t-out="this.track()"/>
+          <t t-foreach="this.visible()" t-as="todo" t-key="todo.id">
+            <li t-out="todo.text"/>
+          </t>
+        </ul>`;
+
+      todos = proxy([
+        { id: 1, text: "a", done: false },
+        { id: 2, text: "b", done: true },
+      ]);
+
+      visible = computed(() => this.todos.filter((t) => !t.done), { equals: shallowEqual });
+
+      track() {
+        renders++;
+        return "";
+      }
+    }
+    const list = await mount(TodoList, fixture);
+    expect(fixture.innerHTML).toBe("<ul><li>a</li></ul>");
+    expect(renders).toBe(1);
+
+    // the computed re-runs (the array structure changed), but its result has
+    // the same contents: the component must not re-render
+    list.todos.push({ id: 3, text: "c", done: true });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<ul><li>a</li></ul>");
+    expect(renders).toBe(1);
+
+    list.todos.push({ id: 4, text: "d", done: false });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<ul><li>a</li><li>d</li></ul>");
+    expect(renders).toBe(2);
   });
 });

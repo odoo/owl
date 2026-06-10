@@ -44,6 +44,44 @@ s(); // returns 2
 triple(); // returns 6
 ```
 
+## Custom Equality
+
+After a recompute, a computed value notifies its observers only when the new
+result differs from the previous one (`Object.is` by default). A getter that
+builds a fresh object on every run therefore always notifies, even when the
+contents are identical:
+
+```js
+const todos = proxy([...]);
+const visible = computed(() => todos.filter((t) => !t.done));
+```
+
+Here, adding a `done` todo recomputes `visible` to a new array with the same
+contents — and everything reading `visible()` re-runs for nothing. The
+`equals` option replaces the comparison:
+
+```js
+const visible = computed(() => todos.filter((t) => !t.done), {
+  equals: shallowEqual,
+});
+```
+
+With [`shallowEqual`](utils.md#shallowequal), an equal result stops the
+propagation right there: observers are not notified, and `visible()` keeps
+returning the previous array (stable identity). Dependents further down the
+graph are not even recomputed.
+
+Passing `equals: false` disables the comparison entirely: every recompute
+notifies, even when the result is identical. This can be useful when the
+getter returns a value that is mutated in place.
+
+The comparison is skipped on the very first evaluation: a custom `equals`
+never receives the initial `undefined`.
+
+`asyncComputed` (below) accepts the same option for its resolved value: a
+fetch resolving to an equal value does not notify. Note that there, the
+previous value _can_ be `undefined` when no `initial` is given.
+
 ## Async Computed Values
 
 > **Experimental.** `asyncComputed` is still shaking out; the exact API

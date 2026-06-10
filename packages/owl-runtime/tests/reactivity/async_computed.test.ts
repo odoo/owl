@@ -1,4 +1,4 @@
-import { App, Component, asyncComputed, computed, effect, onWillStart, signal, xml } from "../../src";
+import { App, Component, asyncComputed, computed, effect, onWillStart, shallowEqual, signal, xml } from "../../src";
 import { makeDeferred, makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
@@ -57,6 +57,38 @@ test("re-runs when a tracked dependency changes", async () => {
   expect(a()).toBe(20);
   expect(calls).toEqual([1, 2]);
 
+  a.dispose();
+});
+
+test("equals option: a fetch resolving to an equal value does not notify", async () => {
+  const id = signal(1);
+  let fetches = 0;
+  const a = asyncComputed(
+    async () => {
+      fetches++;
+      return [id() > 0 ? "pos" : "neg"];
+    },
+    { equals: shallowEqual }
+  );
+
+  const seen: any[] = [];
+  const stop = effect(() => seen.push(a()));
+  await flush();
+  expect(fetches).toBe(1);
+  expect(seen).toEqual([undefined, ["pos"]]);
+
+  a.refresh(); // re-fetches, resolves to a fresh but equal array
+  await flush();
+  expect(fetches).toBe(2);
+  expect(seen).toEqual([undefined, ["pos"]]);
+  expect(a.loading()).toBe(false);
+
+  id.set(-1);
+  await flush();
+  expect(fetches).toBe(3);
+  expect(seen).toEqual([undefined, ["pos"], ["neg"]]);
+
+  stop();
   a.dispose();
 });
 

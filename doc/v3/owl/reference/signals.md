@@ -63,6 +63,35 @@ props = useProps({ count: t.signal(t.number()) });
 
 See [Types Validation](types_validation.md) for the complete list of validators.
 
+## Custom Equality
+
+By default, `set` compares the new value to the current one with `Object.is`,
+and does nothing when they are equal. The `equals` option replaces that
+comparison:
+
+```js
+const point = signal({ x: 1, y: 2 }, { equals: shallowEqual });
+
+point.set({ x: 1, y: 2 }); // considered equal: no update, the new object is discarded
+point.set({ x: 3, y: 2 }); // different: subscribers are notified
+```
+
+When `equals` reports the values as equal, the write is discarded entirely:
+the signal keeps the previous value (and its identity).
+
+[`shallowEqual`](utils.md#shallowequal) compares arrays element by element and
+plain objects key by key, which covers the common "fresh object with the same
+contents" case. Any `(a, b) => boolean` function works.
+
+Passing `equals: false` disables the comparison: every `set` notifies, even
+with an identical value. This is occasionally useful for values that are
+mutated in place — though [collection signals](#collection-signals) or
+[`signal.trigger`](#manual-trigger) are usually a better fit.
+
+Collection signals accept `equals` as well; it only gates explicit `set(...)`
+calls. Mutations made through the proxy (`push`, property writes, ...) always
+notify.
+
 ## Collection Signals
 
 A plain signal holds a reference, so mutating the contents in place (e.g.

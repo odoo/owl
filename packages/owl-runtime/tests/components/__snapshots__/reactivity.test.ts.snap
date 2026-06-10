@@ -40,6 +40,32 @@ exports[`components and computed > simple component and computed value 1`] = `
 }"
 `;
 
+exports[`computed with equals in components > a recompute with a shallow-equal result does not re-render 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput, prepareList, withKey } = helpers;
+  
+  let block1 = createBlock(\`<ul><block-child-0/><block-child-1/></ul>\`);
+  let block4 = createBlock(\`<li><block-child-0/></li>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].track());
+    const ctx1 = ctx;
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['this'].visible());;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`todo\`] = k_block3[i1];
+      const key1 = ctx['todo'].id;
+      const b5 = safeOutput(ctx['todo'].text);
+      c_block3[i1] = withKey(block4([], [b5]), key1);
+    }
+    const b3 = list(c_block3);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
 exports[`reactive cleanup on component destruction > benchmark-like scenario: signal.Array rows with computed isSelected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

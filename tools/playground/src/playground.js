@@ -16,6 +16,7 @@ import {
   Explorer,
   ProjectManager,
   SettingsDialog,
+  ConfirmDialog,
   TutorialBar,
 } from "./components.js";
 import {
@@ -25,6 +26,7 @@ import {
   ProjectPlugin,
   SettingsPlugin,
   TemplatePlugin,
+  VersionPlugin,
   ViewPlugin,
 } from "./plugins.js";
 import { HELLO_WORLD_JS, loadFile } from "./samples.js";
@@ -38,6 +40,7 @@ class Playground extends Component {
     this.version = __info__.version;
     providePlugins([
       CodePlugin,
+      VersionPlugin,
       TemplatePlugin,
       ProjectPlugin,
       LocalStoragePlugin,
@@ -47,6 +50,7 @@ class Playground extends Component {
     ]);
 
     this.code = plugin(CodePlugin);
+    this.owlVersion = plugin(VersionPlugin);
     this.project = plugin(ProjectPlugin);
     this.templatePlugin = plugin(TemplatePlugin);
     this.localStorage = plugin(LocalStoragePlugin);
@@ -54,11 +58,11 @@ class Playground extends Component {
     this.dialog = plugin(DialogPlugin);
     this.view = plugin(ViewPlugin);
 
-    this.templates = this.templatePlugin.list;
-    this.categories = this.templatePlugin.categories;
-    this.tutorials = computed(() => this.templatePlugin.list.filter((t) => t.isTutorial));
+    this.templates = this.templatePlugin.list();
+    this.categories = this.templatePlugin.categories();
+    this.tutorials = computed(() => this.templatePlugin.list().filter((t) => t.isTutorial));
     this.nonTutorialCategories = computed(() =>
-      this.templatePlugin.categories
+      this.templatePlugin.categories()
         .filter((cat) => cat.name !== "Tutorials")
         .map((cat) => ({
           ...cat,
@@ -66,13 +70,20 @@ class Playground extends Component {
         }))
     );
     this.copied = signal(null);
-    this.templateSelectRef = signal(null);
+    this.templateSelectRef = signal.ref();
 
     this.currentTemplateValue = computed(() => {
       const project = this.project.activeProject();
       if (!project || !project.templateDesc) return "";
       if (this.project.isCurrentProjectDirty()) return "";
-      return project.tutorial ? `tutorial:${project.templateDesc}` : project.templateDesc;
+      const val = project.tutorial ? `tutorial:${project.templateDesc}` : project.templateDesc;
+      return `${project.version}:${val}`;
+    });
+
+    this.currentOWLVersion = computed(() => {
+      const project = this.project.activeProject();
+      if (!project || !project.version || this.project.isCurrentProjectDirty()) return this.owlVersion.version();
+      return project.version;
     });
 
     useEffect(() => {
@@ -81,11 +92,16 @@ class Playground extends Component {
       if (el) el.value = val;
     });
 
+    useEffect(() => {
+      const val = this.currentOWLVersion();
+      this.owlVersion.switchVersion(val);
+    })
+
     this.hashData = null;
     this.hashTutorial = null;
     if (window.location.hash) {
       const hash = decodeURIComponent(window.location.hash.slice(1));
-      const tutorial = this.templatePlugin.tutorials.find((t) => t.id === hash);
+      const tutorial = this.templatePlugin.tutorials().find((t) => t.id === hash);
       if (tutorial) {
         this.hashTutorial = tutorial;
       } else {
@@ -163,8 +179,23 @@ class Playground extends Component {
     onWillDestroy(() => document.removeEventListener("keydown", onKeyDown));
   }
 
+  onVersionChange(ev){
+    ev.preventDefault();
+    const ver = ev.target.value;
+    this.dialog.showDialog(ConfirmDialog, {
+      message: `Warning: Your code may not be compatible with Owl ${ver}. Switching versions could break your app.`,
+      confirmLabel: "Switch Anyway",
+      onConfirm: () => {
+        const templateSelect = this.templateSelectRef();
+        if(templateSelect) templateSelect.value = '';
+        this.owlVersion.switchVersion(ver);
+      }
+    });
+  }
+
   async onTemplateChange(ev) {
-    const desc = ev.target.value;
+    const owlVersion = this.owlVersion.version();
+    const desc = ev.target.value.slice(owlVersion.length + 1);
     ev.target.blur();
     if (!desc) return;
 

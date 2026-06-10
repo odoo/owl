@@ -383,10 +383,9 @@
           <div class="welcome-subtitle">
             <span class="welcome-tagline">Build, experiment, and learn — right in the browser.</span>
             <span class="welcome-features">
-              <span class="welcome-pill">Class components</span>
-              <span class="welcome-pill">Signal-based Reactivity</span>
-              <span class="welcome-pill">Hooks</span>
-              <span class="welcome-pill">Plugin system</span>
+              <t t-foreach="this.templatePlugin.welcome_state().pills" t-as="pill" t-key="pill">
+                <span class="welcome-pill" t-out="pill" />
+              </t>
             </span>
           </div>
         </div>
@@ -394,7 +393,7 @@
         <div class="welcome-divider"></div>
 
         <div class="welcome-tutorials">
-          <t t-foreach="this.templatePlugin.tutorials" t-as="tutorial" t-key="tutorial.id">
+          <t t-foreach="this.templatePlugin.tutorials()" t-as="tutorial" t-key="tutorial.id">
             <a class="welcome-tutorial-card" t-attf-href="{{ '#' + tutorial.id }}" t-on-click.prevent="() => this.startTutorial(tutorial)" t-attf-title="Open the {{ tutorial.name }} tutorial">
               <div class="welcome-tutorial-card-name">
                 <span><t t-out="tutorial.name"/></span>
@@ -409,7 +408,7 @@
           </t>
         </div>
 
-        <div class="welcome-version">v3.0.0 alpha</div>
+        <div class="welcome-version" t-out="this.templatePlugin.welcome_state().version" />
 
       </div>
     </div>
@@ -440,18 +439,28 @@
             <t t-foreach="this.nonTutorialCategories()" t-as="cat" t-key="cat.name">
               <optgroup t-att-label="cat.name">
                 <t t-foreach="cat.templates" t-as="tmpl" t-key="tmpl.description">
-                  <option t-att-value="tmpl.description"><t t-out="tmpl.description"/></option>
+                  <option t-att-value="this.owlVersion.version() + ':' + tmpl.description"><t t-out="tmpl.description"/></option>
                 </t>
               </optgroup>
             </t>
             <optgroup label="Tutorials">
               <t t-foreach="this.tutorials()" t-as="tutorial" t-key="tutorial.description">
-                <option t-att-value="'tutorial:' + tutorial.description"><t t-out="tutorial.description"/></option>
+                <option t-att-value="this.owlVersion.version() + ':' + 'tutorial:' + tutorial.description"><t t-out="tutorial.description"/></option>
               </t>
             </optgroup>
           </select>
         </div>
         <div class="navbar-right">
+          <div class="navbar-version-switcher">
+            <span class="navbar-label">Version:</span>
+            <select t-on-change="this.onVersionChange">
+              <t t-foreach="this.owlVersion.versions" t-as="version" t-key="version.label">
+                <option t-att-value="version.value" t-att-selected="this.owlVersion.version() == version.value">
+                  <t t-out="version.label" />
+                </option>
+              </t>
+            </select>
+          </div>
           <a class="btn flash share-code" t-on-click="this.shareCode" title="Copy a link to this playground">
             <i class="fas fa-share-alt"></i>
             <span class="copied-notification" t-if="this.copied()">Copied link to clipboard!</span>

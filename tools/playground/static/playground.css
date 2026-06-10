@@ -53,7 +53,7 @@ body {
   flex: 1;
 }
 
-.navbar-center {
+.navbar-center, .navbar-version-switcher {
   display: flex;
   align-items: center;
   gap: 8px;

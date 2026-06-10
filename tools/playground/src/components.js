@@ -37,6 +37,7 @@ import {
   ProjectPlugin,
   SettingsPlugin,
   TemplatePlugin,
+  VersionPlugin,
   ViewPlugin,
 } from "./plugins.js";
 import { HELLO_WORLD_JS } from "./samples.js";
@@ -696,9 +697,9 @@ class ProjectManager extends Component {
 
   openNewProjectDialog() {
     this.dialog.showDialog(NewProjectDialog, {
-      templates: this.templatePlugin.list,
+      templates: this.templatePlugin.list(),
       onConfirm: async (name, templateDesc) => {
-        const template = this.templatePlugin.list.find((t) => t.description === templateDesc);
+        const template = this.templatePlugin.list().find((t) => t.description === templateDesc);
         const contents = template ? await template.code() : { "main.js": HELLO_WORLD_JS };
         const fileNames = Object.keys(contents);
         this.project.createProject(name, fileNames, contents, templateDesc);
@@ -1247,9 +1248,9 @@ class Explorer extends Component {
   sidebarContextMenuNewProject() {
     this.hideContextMenu();
     this.dialog.showDialog(NewProjectDialog, {
-      templates: this.templatePlugin.list,
+      templates: this.templatePlugin.list(),
       onConfirm: async (name, templateDesc) => {
-        const template = this.templatePlugin.list.find((t) => t.description === templateDesc);
+        const template = this.templatePlugin.list().find((t) => t.description === templateDesc);
         const contents = template ? await template.code() : { "main.js": HELLO_WORLD_JS };
         const fileNames = Object.keys(contents);
         this.project.createProject(name, fileNames, contents, templateDesc);
@@ -1558,6 +1559,7 @@ class ContentView extends Component {
   static template = "ContentView";
 
   code = plugin(CodePlugin);
+  owlVersion = plugin(VersionPlugin);
   settings = plugin(SettingsPlugin);
   project = plugin(ProjectPlugin);
   dialog = plugin(DialogPlugin);
@@ -1770,7 +1772,7 @@ class ContentView extends Component {
           });
       }
 
-      const imports = { "@odoo/owl": "../owl.js" };
+      const imports = { "@odoo/owl": this.owlVersion.getVersionPath() };
       const blobUrls = [];
 
       const jsFileNames = Object.keys(jsFiles);

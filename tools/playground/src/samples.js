@@ -7,7 +7,7 @@ class Root extends Component {
 mount(Root, document.body, { templates: TEMPLATES, dev: true });
 `;
 
-const EXAMPLES = [
+const EXAMPLES_V3 = [
   { id: "hello_world", category: "Examples", description: "Hello World", files: {} },
   {
     id: "sub_component",
@@ -114,7 +114,11 @@ const EXAMPLES = [
   // },
 ];
 
-const TUTORIALS = [
+const EXAMPLES_V2 = [
+  { id: "hello_world", category: "Examples", description: "Hello World", files: {} },
+];
+
+const TUTORIALS_V3 = [
   {
     id: "getting_started",
     name: "Getting Started",
@@ -904,6 +908,40 @@ const TUTORIALS = [
   },
 ];
 
+const EXAMPLES = {
+  v3: EXAMPLES_V3,
+  v2: EXAMPLES_V2
+};
+
+const TUTORIALS = {
+  v3: TUTORIALS_V3
+};
+
+const WELCOME_STATE_V3 = {
+  pills: [
+    'Class Component',
+    'Signal-based Reactivity',
+    'Hooks',
+    'Plugin System'
+  ],
+  version: "v3.0.0 alpha",
+};
+
+const WELCOME_STATE_V2 = {
+  pills: [
+    'Class Component',
+    'State-based Reactivity',
+    'Hooks',
+    'Slots'
+  ],
+  version: "v2.8.3",
+};
+
+const WELCOME_STATE = {
+  v3: WELCOME_STATE_V3,
+  v2: WELCOME_STATE_V2
+};
+
 const fileCache = {};
 const loadFile = (path) => {
   if (!(path in fileCache)) {
@@ -934,4 +972,4 @@ async function loadFilesFromMapping(fileMapping) {
   return Object.fromEntries(entries.filter(Boolean));
 }
 
-export { HELLO_WORLD_JS, EXAMPLES, TUTORIALS, fileCache, loadFile, loadFilesFromMapping };
+export { HELLO_WORLD_JS, WELCOME_STATE, EXAMPLES, TUTORIALS, fileCache, loadFile, loadFilesFromMapping };

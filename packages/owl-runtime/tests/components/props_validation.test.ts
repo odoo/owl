@@ -695,7 +695,7 @@ describe("props validation", () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().default(4) });
+      props = props({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -828,14 +828,14 @@ describe("props validation", () => {
 });
 
 //------------------------------------------------------------------------------
-// Schema defaults (.default())
+// Schema defaults (.optional(value))
 //------------------------------------------------------------------------------
 
 describe("schema defaults", () => {
   test("default values can be declared in the schema", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().default(4) });
+      props = props({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp /></div>`;
@@ -845,12 +845,12 @@ describe("schema defaults", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test("a key with a schema default is implicitly optional", async () => {
+  test("a key with a schema default may be omitted", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().default(4) });
+      props = props({ p: t.number().optional(4) });
     }
-    // no error in dev mode even though p is not given and has no '?' suffix
+    // no error in dev mode even though p is not given
     await mount(SubComp, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div>4</div>");
   });
@@ -858,7 +858,7 @@ describe("schema defaults", () => {
   test("schema defaults work next to optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/>|<t t-out="this.props.q"/></div>`;
-      props = props({ p: t.number().default(4), q: t.string().optional() });
+      props = props({ p: t.number().optional(4), q: t.string().optional() });
     }
     await mount(SubComp, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div>4|</div>");
@@ -867,7 +867,7 @@ describe("schema defaults", () => {
   test("schema defaults are applied whenever component is updated", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().default(4) });
+      props = props({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -886,8 +886,8 @@ describe("schema defaults", () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t><t t-if="!this.props.q">hey</t></span>`;
       props = props({
-        p: t.boolean().default(true),
-        q: t.boolean().default(false),
+        p: t.boolean().optional(true),
+        q: t.boolean().optional(false),
       });
     }
     class Parent extends Component {
@@ -902,7 +902,7 @@ describe("schema defaults", () => {
     const values: number[][] = [];
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p.length"/></div>`;
-      props: any = props({ p: t.array(t.number()).default(() => []) });
+      props: any = props({ p: t.array(t.number()).optional(() => []) });
       setup() {
         values.push(this.props.p);
       }
@@ -922,7 +922,7 @@ describe("schema defaults", () => {
     const values: number[][] = [];
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p.length"/></div>`;
-      props: any = props({ p: t.array(t.number()).default(defaultValue) });
+      props: any = props({ p: t.array(t.number()).optional(defaultValue) });
       setup() {
         values.push(this.props.p);
       }
@@ -941,7 +941,7 @@ describe("schema defaults", () => {
   test("schema defaults are validated in dev mode", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().default("4" as any) });
+      props = props({ p: t.number().optional("4" as any) });
     }
     let error: any;
     try {

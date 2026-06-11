@@ -72,7 +72,7 @@ A schema describing the expected props. It can be:
 - **an array of strings**: declares expected keys, all required.
 - **an object**: maps keys to [type validators](types_validation.md#validators)
   for full type checking. A prop is made optional with
-  [`.optional()`](types_validation.md#optional) on its type.
+  [`.optional()`](types_validation.md#optionalvalue) on its type.
 
 Props are validated in [dev mode](app.md#configuration) whenever the component
 is created or updated. See [Props validation](#props-validation) for details.
@@ -85,14 +85,13 @@ props({ name: t.string(), age: t.number().optional() }); // typed form
 
 ### Default values
 
-Default values are declared in the schema itself, with the
-[`.default()`](types_validation.md#defaultvalue) method of the type: when a
+Default values are declared in the schema itself, by giving a value to the
+[`.optional()`](types_validation.md#optionalvalue) method of the type: when a
 prop is not provided by the parent (or is `undefined`), the default value is
-used instead. A key with a default is implicitly optional, so `.optional()`
-is not needed.
+used instead.
 
 ```js
-props({ color: t.string().default("red") });
+props({ color: t.string().optional("red") });
 ```
 
 Mutable defaults (`[]`, `{}`) should be given as a factory, so that each
@@ -100,7 +99,7 @@ component instance gets its own value. The factory is called once per
 component instance:
 
 ```js
-props({ items: t.array(t.string()).default(() => []) });
+props({ items: t.array(t.string()).optional(() => []) });
 ```
 
 Note that the array form of the schema cannot express defaults or optional
@@ -140,7 +139,7 @@ passed by the parent does not change across renders. It takes the prop name
 explicitly and an optional [type validator](types_validation.md#validators).
 If the type is omitted, the prop is accepted as-is without validation. A
 default value can be declared in the type with
-[`.default()`](types_validation.md#defaultvalue).
+[`.optional(value)`](types_validation.md#optionalvalue).
 
 ```js
 import { Component, props, t, xml } from "@odoo/owl";
@@ -152,7 +151,7 @@ class TodoView extends Component {
 
 class Header extends Component {
   static template = xml`<h1 t-out="this.label"/>`;
-  label = props.static("label", t.string().default("untitled"));
+  label = props.static("label", t.string().optional("untitled"));
 }
 
 class Passthrough extends Component {

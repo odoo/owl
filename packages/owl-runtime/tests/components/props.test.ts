@@ -611,8 +611,8 @@ test("schema defaults and signal-driven props", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.width"/> / <t t-out="this.props.height"/>`;
     props = props({
-      width: t.number().default(1),
-      height: t.number().default(1),
+      width: t.number().optional(1),
+      height: t.number().optional(1),
     });
   }
 
@@ -647,7 +647,7 @@ test("default props don't cause spurious updates with t-props", async () => {
   const updates: number[] = [];
   class Child extends Component {
     static template = xml`<t t-out="this.props.b"/>`;
-    props = props({ a: t.string().default("default value"), b: t.number() });
+    props = props({ a: t.string().optional("default value"), b: t.number() });
     setup() {
       onWillUpdateProps(() => {
         updates.push(this.props.b);

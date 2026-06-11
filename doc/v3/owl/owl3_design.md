@@ -475,7 +475,7 @@ class MyComponent extends Component {
 
   // we can define default values as well, in the schema:
   myProp = props({
-    foo: t.boolean().default(true),
+    foo: t.boolean().optional(true),
   });
 }
 ```
@@ -529,7 +529,7 @@ class SomeComponent extends Component {
     name: t.string(),
     visible: t.boolean().optional(),
     immediate: t.boolean().optional(),
-    leaveDuration: t.number().default(100),
+    leaveDuration: t.number().optional(100),
     onLeave: t.function().optional(),
     // no need to grab the slot prop here
   });

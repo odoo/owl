@@ -160,7 +160,7 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
       props = props({
         a: t.any(),
-        b: t.number().default(1),
+        b: t.number().optional(1),
       });
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);

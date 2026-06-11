@@ -1,4 +1,4 @@
-import { Component, props, types as t, plugin } from "@odoo/owl";
+import { Component, props, t, plugin } from "@odoo/owl";
 import { Window } from "./window";
 import { WindowManagerPlugin } from "./window_manager_plugin";
 

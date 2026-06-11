@@ -38,7 +38,7 @@ To iterate over a list in a template, use `t-foreach` with a `t-key`:
 To define and validate props on `TodoItem`, use the `props` helper:
 
 ```js
-import { Component, props, types as t } from "@odoo/owl";
+import { Component, props, t } from "@odoo/owl";
 
 class TodoItem extends Component {
     props = props({

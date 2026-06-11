@@ -71,7 +71,10 @@ export {
   onError,
 } from "./lifecycle_hooks";
 export { applyDefaults, assertType, getDefault, validateType } from "@odoo/owl-core";
-export { types } from "./types";
+// `t` is the documented short alias of `types`. Both must point to the
+// runtime namespace (which extends the core one with `component`), so do not
+// re-export them from @odoo/owl-core.
+export { types, types as t } from "./types";
 export type { Optional, StripBrands, Type, WithDefault } from "@odoo/owl-core";
 export { OwlError } from "@odoo/owl-core";
 export { config, plugin, providePlugins } from "./plugin_hooks";

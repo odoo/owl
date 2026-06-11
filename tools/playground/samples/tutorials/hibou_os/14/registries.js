@@ -1,4 +1,4 @@
-import { Registry, Component, Plugin, types as t } from "@odoo/owl";
+import { Registry, Component, Plugin, t } from "@odoo/owl";
 
 export const menuItemRegistry = new Registry({
     name: "menuItem",

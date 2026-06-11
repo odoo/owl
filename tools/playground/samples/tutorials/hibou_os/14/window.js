@@ -1,4 +1,4 @@
-import { Component, props, types as t, useEffect, onMounted } from "@odoo/owl";
+import { Component, props, t, useEffect, onMounted } from "@odoo/owl";
 import { useDragAndDrop } from "../utils/drag_and_drop";
 
 export class Window extends Component {

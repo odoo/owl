@@ -5,11 +5,16 @@ import {
   computed,
   getDefault,
   signal,
-  types as t,
+  t,
+  types,
   validateType,
 } from "../src";
 
 class A {}
+
+test("t is an alias of types", () => {
+  expect(t).toBe(types);
+});
 
 test("simple assertion", () => {
   expect(() => assertType("hey", t.string())).not.toThrow();

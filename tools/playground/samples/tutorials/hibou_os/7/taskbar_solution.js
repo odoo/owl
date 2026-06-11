@@ -1,4 +1,4 @@
-import { Component, plugin, props, types as t } from "@odoo/owl";
+import { Component, plugin, props, t } from "@odoo/owl";
 import { WindowManagerPlugin } from "./window/window_manager_plugin";
 
 export class Taskbar extends Component {

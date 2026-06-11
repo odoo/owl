@@ -1,6 +1,12 @@
-import { Component, types as t, validateType } from "../src";
+import { Component, t, types, validateType } from "../src";
 
 class A {}
+
+test("t is an alias of the runtime types namespace", () => {
+  expect(t).toBe(types);
+  // the runtime namespace extends the core one: the alias must carry it too
+  expect(typeof t.component).toBe("function");
+});
 
 test("t.component()", () => {
   class MyComponent extends Component {}

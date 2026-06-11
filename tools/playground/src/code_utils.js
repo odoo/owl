@@ -115,6 +115,7 @@ const OWL_IMPORTS = [
   { label: "Registry", type: "class" },
 
   // Type validation
+  { label: "t", type: "variable" },
   { label: "types", type: "variable" },
   { label: "validateType", type: "function" },
   { label: "assertType", type: "function" },

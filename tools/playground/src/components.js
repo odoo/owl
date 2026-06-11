@@ -9,7 +9,7 @@ import {
   plugin,
   props,
   signal,
-  types as t,
+  t,
   untrack,
   useEffect,
 } from "@odoo/owl";

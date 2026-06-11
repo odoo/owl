@@ -1,4 +1,4 @@
-import { Component, mount, signal, props, types as t } from "@odoo/owl";
+import { Component, mount, signal, props, t } from "@odoo/owl";
 
 class KanbanCard extends Component {
   static template = "tutorial.KanbanCard";

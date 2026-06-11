@@ -1,4 +1,4 @@
-import { Component, Plugin, providePlugins, props, types as t, assertType } from "@odoo/owl";
+import { Component, Plugin, providePlugins, props, t, assertType } from "@odoo/owl";
 import { Taskbar } from "./taskbar";
 import { WindowManager } from "./window/window_manager";
 import { WindowManagerPlugin } from "./window/window_manager_plugin";

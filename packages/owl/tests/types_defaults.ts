@@ -1,5 +1,5 @@
-// Compile-time checks for schema defaults (.default()). This file is only
-// typechecked (npm run test:types); it is not executed.
+// Compile-time checks for schema defaults (.optional(value)). This file is
+// only typechecked (npm run test:types); it is not executed.
 import { config, props, Registry, Resource, t, type GetProps } from "../src";
 
 // A call to assertEq<A, B>() only typechecks if A and B are mutually assignable
@@ -8,8 +8,8 @@ declare function assertEq<A, B>(...args: Eq<A, B> extends true ? [] : [never]): 
 
 class Comp {
   props = props({
-    p: t.number().default(4),
-    q: t.string().default("a"),
+    p: t.number().optional(4),
+    q: t.string().optional("a"),
     r: t.string(),
     s: t.boolean().optional(),
   });
@@ -35,19 +35,36 @@ const ko2: ParentProps = { r: "x", p: "nope" };
 // @ts-expect-error s must be a boolean
 const ko3: ParentProps = { r: "x", s: 1 };
 
+// without defaults, the reader and parent views coincide (and the props type
+// displays as a plain flat object)
+class OnlyOptionals {
+  props = props({
+    className: t.string().optional(),
+    close: t.function().optional(),
+  });
+}
+declare const onlyOptionals: OnlyOptionals;
+void onlyOptionals;
+assertEq<typeof onlyOptionals.props.className, string | undefined>();
+type OptParentProps = GetProps<OnlyOptionals>;
+const ok3: OptParentProps = {};
+const ok4: OptParentProps = { className: "a" };
+// @ts-expect-error className must be a string
+const ko4: OptParentProps = { className: 4 };
+
 // defaults must match the declared type, as a plain value or a factory
-props({ p: t.number().default(4) });
-props({ p: t.number().default(() => 4) });
+props({ p: t.number().optional(4) });
+props({ p: t.number().optional(() => 4) });
 // @ts-expect-error default must be a number
-props({ p: t.number().default("4") });
+props({ p: t.number().optional("4") });
 // a default for a function type must use the factory form
-props({ cb: t.function().default(() => () => {}) });
+props({ cb: t.function().optional(() => () => {}) });
 // @ts-expect-error a plain function default is rejected (factory form only)
-props({ cb: t.function().default(() => {}) });
+props({ cb: t.function().optional(() => {}) });
 
 // props.static: schema default strips to the value type, optional adds undefined
 function _staticPropCheck() {
-  const label = props.static("label", t.string().default("fallback"));
+  const label = props.static("label", t.string().optional("fallback"));
   assertEq<typeof label, string>();
   const plain = props.static("plain", t.string());
   assertEq<typeof plain, string>();
@@ -58,7 +75,7 @@ function _staticPropCheck() {
 
 // config: schema default strips to the value type, optional adds undefined
 function _configCheck() {
-  const delay = config("delay", t.number().default(500));
+  const delay = config("delay", t.number().optional(500));
   assertEq<typeof delay, number>();
   const plain = config("plain", t.number());
   assertEq<typeof plain, number>();
@@ -85,4 +102,4 @@ function _registryCheck() {
   void value;
 }
 
-void [ok1, ok2, ko1, ko2, ko3, _staticPropCheck, _configCheck, _registryCheck];
+void [ok1, ok2, ok3, ok4, ko1, ko2, ko3, ko4, _staticPropCheck, _configCheck, _registryCheck];

@@ -140,7 +140,7 @@ t.array(t.string()); // array of strings
 Validates that the value is an object. When a `shape` is provided (either an
 object mapping keys to validators, or an array of key names), the object is
 checked for the expected keys. A key whose type is marked with
-[`.optional()`](#optional) may be omitted. Extra keys are allowed.
+[`.optional()`](#optionalvalue) may be omitted. Extra keys are allowed.
 
 ```js
 t.object(); // any object
@@ -344,7 +344,7 @@ t.customValidator(t.array(t.number()), (v) => v.length <= 10, "too many items");
 // rejects:   "hi"  with the first example (fails base type: "value is not a number")
 ```
 
-### `.optional()`
+### `.optional(value?)`
 
 Every type exposes an `.optional()` method that marks the value as optional:
 `undefined` passes validation, and an object key with an optional type may be
@@ -358,18 +358,11 @@ t.object({ name: t.string(), age: t.number().optional() });
 // rejects:   { name: "Alice", age: "30" }  ("value is not a number")
 ```
 
-A type with a [default](#defaultvalue) is already implicitly optional, so
-`.optional()` and `.default()` never need to be combined (and cannot be
-chained).
-
-### `.default(value)`
-
-Every type exposes a `.default()` method that attaches a default value to it.
-The default is metadata on the type: consumers such as
+`.optional(value)` additionally attaches a default value to the type. The
+default is metadata on the type: consumers such as
 [`props()`](props.md#default-values) and [`config()`](plugins.md#configuration)
-use it to fill in a value when none is provided. A value with a default is
-implicitly optional: `undefined` passes validation, since the default is meant
-to fill it.
+use it to fill in the value when none is provided, so the reader of the value
+always gets one.
 
 The default can be given as a factory (`() => value`), which is called once
 per consumer, so mutable defaults (`[]`, `{}`) are not shared between
@@ -377,9 +370,9 @@ component instances. A default for a function type must use the factory form
 (`() => myCallback`).
 
 ```js
-t.number().default(500);
-t.array(t.string()).default(() => []);
-t.object({ color: t.string().default("red") });
+t.number().optional(500);
+t.array(t.string()).optional(() => []);
+t.object({ color: t.string().optional("red") });
 
 // validates: 42         with the first example
 // validates: undefined  with the first example (the default fills it)
@@ -399,7 +392,7 @@ if nothing is filled in, the value is returned as is.
 
 ```js
 const optionsType = t.object({
-  depth: t.number().default(3),
+  depth: t.number().optional(3),
   name: t.string(),
 });
 

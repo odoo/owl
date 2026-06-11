@@ -3,8 +3,8 @@ import { ValidationContext, ValidationIssue } from "./validation";
 
 export type Constructor<T = any> = { new (...args: any[]): T };
 
-// Runtime metadata attached to validators by `.default()`. The default is
-// normalized to a factory: an explicit factory produces a fresh value per
+// Runtime metadata attached to validators by `.optional(value)`. The default
+// is normalized to a factory: an explicit factory produces a fresh value per
 // consumer, a plain value is wrapped in a constant factory (so it is shared).
 const defaultSymbol = Symbol("default");
 // The wrapped type, so that `applyDefaults` can recurse through a default.
@@ -17,10 +17,10 @@ const elementTypeSymbol = Symbol("elementType");
 // optional type may be omitted.
 const optionalSymbol = Symbol("optional");
 
-// Type-level brand carried by `.default()`. It is phantom (declare): nothing
-// exists at runtime under this key. The brand stores the wrapped type so it
-// can be recovered with `infer`. Exported so that dependent declarations
-// (e.g. a `Resource<T>` field) can be emitted across modules.
+// Type-level brand carried by `.optional(value)`. It is phantom (declare):
+// nothing exists at runtime under this key. The brand stores the wrapped type
+// so it can be recovered with `infer`. Exported so that dependent
+// declarations (e.g. a `Resource<T>` field) can be emitted across modules.
 export declare const hasDefault: unique symbol;
 export type WithDefault<T> = T & { [hasDefault]: T };
 
@@ -29,26 +29,23 @@ export declare const isOptional: unique symbol;
 export type Optional<T> = T & { [isOptional]: T };
 
 // Type-level brand carried by every type built by the `types` factories. It
-// is phantom: at runtime, only the `default` and `optional` methods exist on
-// the validator.
+// is phantom: at runtime, only the `optional` method exists on the validator.
 export declare const typeBrand: unique symbol;
 export type Type<T> = T & {
   [typeBrand]: T;
   /**
-   * Attaches a default value to the type. A defaulted value is implicitly
-   * optional: `undefined` passes validation (the default is meant to fill
-   * it). The default can be given as a factory (`() => value`), which is
-   * called once per consumer, so mutable defaults ([], {}) are not shared. A
-   * default for a function type must use the factory form.
-   */
-  default(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
-  /**
    * Marks the type as optional: `undefined` passes validation, and an object
-   * key with an optional type may be omitted. A type with a default is
-   * already implicitly optional, so `.optional()` and `.default()` do not
-   * need to be combined (and cannot be chained).
+   * key with an optional type may be omitted.
    */
   optional(): Optional<T>;
+  /**
+   * Marks the type as optional, with a default value to fill it: the reader
+   * of the value always gets one (the default replaces an omitted value). The
+   * default can be given as a factory (`() => value`), which is called once
+   * per consumer, so mutable defaults ([], {}) are not shared. A default for
+   * a function type must use the factory form.
+   */
+  optional(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
 };
 
 type IsAny<T> = 0 extends 1 & T ? true : false;
@@ -62,12 +59,16 @@ type StripType<T> = T extends { [typeBrand]: infer U } ? U : T;
 export type StripBrands<T> = StripType<StripDefault<StripOptional<T>>>;
 type StripBrandsAll<T extends any[]> = { [K in keyof T]: StripBrands<T[K]> };
 
-// Entries whose type carries a default (brand stripped). Used by `props()`
-// to make defaulted keys required for the component reading them, while they
-// stay optional for the parent providing them.
-export type GetDefaultedEntries<T> = {
-  [K in keyof T as HasDefault<T[K]> extends true ? K : never]: StripBrands<T[K]>;
-};
+// Keys whose type carries a default. The distributive conditional makes the
+// union resolve eagerly, so editors display the plain union of key names
+// (`"p" | "q"`) instead of the unevaluated alias.
+export type GetDefaultedKeys<T> = keyof T extends infer K
+  ? K extends keyof T
+    ? HasDefault<T[K]> extends true
+      ? K
+      : never
+    : never
+  : never;
 
 export type GetOptionalEntries<T> = {
   [K in keyof T as IsOptional<T[K]> extends true
@@ -86,6 +87,18 @@ type GetRequiredEntries<T> = {
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
 
+// Object type as seen by the reader of the values once defaults are applied:
+// defaulted keys are required (the default fills them), only optional keys
+// may be absent. Resolves to a flat object type, so editors display it
+// expanded.
+export type ResolveReaderObjectType<T> = PrettifyShape<
+  {
+    [K in keyof T as IsOptional<T[K]> extends true ? never : K]: StripBrands<T[K]>;
+  } & {
+    [K in keyof T as IsOptional<T[K]> extends true ? K : never]?: StripBrands<T[K]>;
+  }
+>;
+
 export type KeyedObject<K extends string[]> = {
   [P in K[number]]: any;
 };
@@ -102,8 +115,8 @@ export type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) ext
   : never;
 
 /**
- * Returns the default value factory attached to a type by `.default()`, if
- * any. This is how consumers (props, config, ...) resolve defaults at
+ * Returns the default value factory attached to a type by `.optional(value)`,
+ * if any. This is how consumers (props, config, ...) resolve defaults at
  * runtime: validation only runs in dev mode, so defaults are metadata on the
  * schema, not a validation side-effect.
  */
@@ -111,25 +124,10 @@ export function getDefault(type: any): (() => any) | undefined {
   return typeof type === "function" ? type[defaultSymbol] : undefined;
 }
 
-function hasDefaultValue(type: any): boolean {
-  return typeof type === "function" && defaultSymbol in type;
-}
-
-// Runtime implementation of the `default` method declared on `Type`.
-function withDefault(type: any, value: any): any {
-  const validate = function validateWithDefault(context: ValidationContext) {
-    if (context.value === undefined) {
-      return;
-    }
-    context.validate(type);
-  } as any;
-  validate[defaultSymbol] = typeof value === "function" ? value : () => value;
-  validate[innerTypeSymbol] = type;
-  return validate;
-}
-
-// Runtime implementation of the `optional` method declared on `Type`.
-function makeOptional(type: any): any {
+// Runtime implementation of the `optional` method declared on `Type`. With a
+// `value` argument, the type also carries a default: it fills the value for
+// the reader when it is omitted.
+function makeOptional(type: any, value?: any): any {
   const validate = function validateOptional(context: ValidationContext) {
     if (context.value === undefined) {
       return;
@@ -138,6 +136,9 @@ function makeOptional(type: any): any {
   } as any;
   validate[optionalSymbol] = true;
   validate[innerTypeSymbol] = type;
+  if (value !== undefined) {
+    validate[defaultSymbol] = typeof value === "function" ? value : () => value;
+  }
   return validate;
 }
 
@@ -145,11 +146,10 @@ function isOptionalType(type: any): boolean {
   return typeof type === "function" && optionalSymbol in type;
 }
 
-// Attaches the `default` and `optional` methods to a validator: every `types`
-// factory funnels its validator through this.
+// Attaches the `optional` method to a validator: every `types` factory
+// funnels its validator through this.
 function makeType(validate: (context: ValidationContext) => void): any {
-  (validate as any).default = (value: any) => withDefault(validate, value);
-  (validate as any).optional = () => makeOptional(validate);
+  (validate as any).optional = (value?: any) => makeOptional(validate, value);
   return validate;
 }
 
@@ -366,8 +366,8 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   const missingKeys: string[] = [];
   for (const key of keys) {
     if (context.value[key] === undefined) {
-      // optional and defaulted keys may be omitted (the default fills it)
-      if (!isOptionalType(shape[key]) && !hasDefaultValue(shape[key])) {
+      // optional keys (with or without a default) may be omitted
+      if (!isOptionalType(shape[key])) {
         missingKeys.push(key);
       }
       continue;

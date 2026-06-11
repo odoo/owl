@@ -1353,7 +1353,7 @@ exports[`props validation > validation is only done in dev mode 3`] = `
 }"
 `;
 
-exports[`schema defaults > a key with a schema default is implicitly optional 1`] = `
+exports[`schema defaults > a key with a schema default may be omitted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

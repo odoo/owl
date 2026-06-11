@@ -424,8 +424,8 @@ class ConfirmDialog extends Component {
   static template = "ConfirmDialog";
   props = props({
     message: t.any(),
-    confirmLabel: t.string().default("Confirm"),
-    confirmClass: t.string().default("primary"),
+    confirmLabel: t.string().optional("Confirm"),
+    confirmClass: t.string().optional("primary"),
     onConfirm: t.function(),
   });
   dialog = plugin(DialogPlugin);
@@ -713,7 +713,7 @@ class NewFileDialog extends Component {
   props = props({
     existingFiles: t.any(),
     onConfirm: t.function(),
-    folder: t.string().default(""),
+    folder: t.string().optional(""),
   });
   dialog = plugin(DialogPlugin);
 

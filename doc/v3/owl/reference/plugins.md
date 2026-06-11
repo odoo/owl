@@ -144,7 +144,7 @@ options:
 ```js
 class ApiPlugin extends Plugin {
   baseUrl = config("apiBaseUrl", t.string());
-  timeout = config("apiTimeout", t.number().default(5000));
+  timeout = config("apiTimeout", t.number().optional(5000));
 
   setup() {
     // use this.baseUrl and this.timeout
@@ -153,11 +153,10 @@ class ApiPlugin extends Plugin {
 ```
 
 A config key is made optional with
-[`.optional()`](types_validation.md#optional) on its type. In dev mode, the
-type validator (second argument) is used to check the value. A default value
-can be declared in the type with
-[`.default()`](types_validation.md#defaultvalue); a key with a default is
-implicitly optional.
+[`.optional()`](types_validation.md#optionalvalue) on its type. In dev mode,
+the type validator (second argument) is used to check the value. A default
+value can be declared in the type with
+[`.optional(value)`](types_validation.md#optionalvalue).
 
 Providing config at app level:
 

@@ -887,9 +887,9 @@ test("assertType path is not hidden", () => {
   );
 });
 
-describe(".default()", () => {
+describe(".optional()", () => {
   test("validates the wrapped type, accepts undefined", () => {
-    const type = t.number().default(3);
+    const type = t.number().optional(3);
     expect(validateType(undefined, type)).toEqual([]);
     expect(validateType(5, type)).toEqual([]);
     expect(validateType("abc", type)).toEqual([
@@ -897,8 +897,8 @@ describe(".default()", () => {
     ]);
   });
 
-  test("a key with a default is implicitly optional", () => {
-    const type = t.object({ delay: t.number().default(500) });
+  test("a key with a default may be omitted", () => {
+    const type = t.object({ delay: t.number().optional(500) });
     expect(validateType({}, type)).toEqual([]);
     expect(validateType({ delay: 100 }, type)).toEqual([]);
     expect(validateType({ delay: "abc" }, type)).toEqual([
@@ -940,7 +940,7 @@ describe(".default()", () => {
   });
 
   test("defaulted keys are known to strict objects", () => {
-    const type = t.strictObject({ delay: t.number().default(500) });
+    const type = t.strictObject({ delay: t.number().optional(500) });
     expect(validateType({}, type)).toEqual([]);
     expect(validateType({ delay: 100 }, type)).toEqual([]);
     expect(validateType({ other: 1 }, type)).toEqual([
@@ -955,8 +955,8 @@ describe(".default()", () => {
   });
 
   test("getDefault returns the default factory", () => {
-    expect(getDefault(t.number().default(3))!()).toBe(3);
-    expect(getDefault(t.array(t.number()).default(() => [1]))!()).toEqual([1]);
+    expect(getDefault(t.number().optional(3))!()).toBe(3);
+    expect(getDefault(t.array(t.number()).optional(() => [1]))!()).toEqual([1]);
     expect(getDefault(t.number())).toBeUndefined();
     expect(getDefault(null)).toBeUndefined();
   });
@@ -964,15 +964,15 @@ describe(".default()", () => {
 
 describe("applyDefaults", () => {
   test("fills in a top level default", () => {
-    expect(applyDefaults(undefined, t.number().default(3))).toBe(3);
-    expect(applyDefaults(5, t.number().default(3))).toBe(5);
+    expect(applyDefaults(undefined, t.number().optional(3))).toBe(3);
+    expect(applyDefaults(5, t.number().optional(3))).toBe(5);
     expect(applyDefaults(undefined, t.number())).toBe(undefined);
   });
 
   test("fills in nested defaults without mutating the input", () => {
     const type = t.object({
       config: t.object({
-        depth: t.number().default(3),
+        depth: t.number().optional(3),
         name: t.string(),
       }),
     });
@@ -984,7 +984,7 @@ describe("applyDefaults", () => {
   });
 
   test("returns the input as is when there is nothing to fill in", () => {
-    const type = t.object({ depth: t.number().default(3) });
+    const type = t.object({ depth: t.number().optional(3) });
     const value = { depth: 5 };
     expect(applyDefaults(value, type)).toBe(value);
   });
@@ -992,14 +992,14 @@ describe("applyDefaults", () => {
   test("a default object is itself filled in recursively, without being mutated", () => {
     const defaultValue = {};
     const type = t
-      .object({ depth: t.number().default(3), name: t.string().optional() })
-      .default(defaultValue);
+      .object({ depth: t.number().optional(3), name: t.string().optional() })
+      .optional(defaultValue);
     expect(applyDefaults(undefined, type)).toEqual({ depth: 3 });
     expect(defaultValue).toEqual({});
   });
 
   test("factories are called for each application", () => {
-    const type = t.array(t.number()).default(() => []);
+    const type = t.array(t.number()).optional(() => []);
     const a = applyDefaults(undefined, type);
     const b = applyDefaults(undefined, type);
     expect(a).toEqual([]);
@@ -1008,12 +1008,12 @@ describe("applyDefaults", () => {
 
   test("a plain default value is used as is", () => {
     const defaultValue: number[] = [];
-    const type = t.array(t.number()).default(defaultValue);
+    const type = t.array(t.number()).optional(defaultValue);
     expect(applyDefaults(undefined, type)).toBe(defaultValue);
   });
 
   test("fills in tuple positions", () => {
-    const type = t.tuple([t.string(), t.number().default(3)]);
+    const type = t.tuple([t.string(), t.number().optional(3)]);
     const value: any[] = ["abc", undefined];
     expect(applyDefaults(value, type)).toEqual(["abc", 3]);
     expect(value).toEqual(["abc", undefined]);
@@ -1021,7 +1021,7 @@ describe("applyDefaults", () => {
 
   test("fills in array elements without mutating the input", () => {
     const type = t.object({
-      a: t.array(t.object({ n: t.number().default(1) })),
+      a: t.array(t.object({ n: t.number().optional(1) })),
     });
     const value = { a: [{}, { n: 2 }, { b: true }] };
     const result = applyDefaults(value, type);
@@ -1031,14 +1031,14 @@ describe("applyDefaults", () => {
   });
 
   test("returns an array as is when there is nothing to fill in", () => {
-    const type = t.array(t.object({ n: t.number().default(1) }));
+    const type = t.array(t.object({ n: t.number().optional(1) }));
     const value = [{ n: 2 }, { n: 3 }];
     expect(applyDefaults(value, type)).toBe(value);
   });
 
   test("fills in defaults through an optional wrapper", () => {
     const type = t.object({
-      config: t.object({ depth: t.number().default(3) }).optional(),
+      config: t.object({ depth: t.number().optional(3) }).optional(),
     });
     expect(applyDefaults({ config: {} }, type)).toEqual({ config: { depth: 3 } });
     expect(applyDefaults({}, type)).toEqual({});

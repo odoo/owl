@@ -46,7 +46,7 @@ Here is a list of everything exported by the Owl library.
 ## Scope and Lifetime
 
 - [`Scope`](scope.md): lifetime handle for components and plugins
-- [`getScope`](scope.md#getscope-scope--null): return the current scope, or `null` if none is active
+- [`getScope`](scope.md#getscope): return the current scope, or `null` if none is active
 
 ## Plugins
 

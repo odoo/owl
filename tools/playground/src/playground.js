@@ -209,7 +209,7 @@ class Playground extends Component {
       return;
     }
 
-    const template = this.templates.find((t) => t.description === desc);
+    const template = this.templatePlugin.list().find((t) => t.description === desc);
     if (!template) return;
 
     const projects = this.project.projects();

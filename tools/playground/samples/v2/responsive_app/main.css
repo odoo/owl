@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+}
+
+.app {
+    height: 100%;
+    flex-direction: column;
+}
+
+.app.desktop {
+    display: flex;
+}
+
+.navbar {
+    flex: 0 0 30px;
+    height: 30px;
+    background-color: cadetblue;
+    color: white;
+    line-height: 30px;
+}
+
+.controlpanel {
+    flex: 0 0 100px;
+    height: 100px;
+    background-color: #dddddd;
+    padding: 8px;
+}
+
+.content-wrapper {
+    flex: 1 1 auto;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.formview {
+    overflow-y: auto;
+    flex: 1 1 60%;
+    min-height: 200px;
+    padding: 8px;
+}
+
+.chatter {
+    overflow-y: auto;
+    flex: 1 1 40%;
+    background-color: #eeeeee;
+    color: #333333;
+    padding: 8px;
+}

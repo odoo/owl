@@ -1,0 +1,70 @@
+body {
+    margin: 0;
+}
+
+.app {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 50px;
+}
+
+.window-manager {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #eeeeee;
+    overflow: hidden;
+}
+
+.menubar {
+    background-color: #875a7b;
+    color: white;
+}
+
+.menubar button {
+    height: 40px;
+    font-size: 18px;
+    margin: 5px;
+}
+
+.window {
+    display: grid;
+    grid-template-rows: 30px auto;
+    border: 1px solid gray;
+    background-color: white;
+    position: absolute;
+    box-shadow: 1px 1px 2px 1px grey;
+}
+
+.window.dragging {
+    opacity: 0.75;
+}
+
+.window .header {
+    background-color: #875a7b;
+    display: grid;
+    grid-template-columns: auto 24px;
+    color: white;
+    line-height: 30px;
+    padding-left: 5px;
+    cursor: default;
+    user-select: none;
+}
+
+.window .header .close {
+    cursor: pointer;
+    font-size: 22px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: bold;
+}
+
+.counter {
+    font-size: 20px;
+}
+.counter button {
+    width: 80px;
+    height:40px;
+    font-size: 20px;
+}

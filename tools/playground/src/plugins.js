@@ -204,7 +204,9 @@ class VersionPlugin extends Plugin {
   versions = VERSIONS;
 
   switchVersion(ver) {
-    this.version.set(ver);
+    if(this.versions.find((version) => version.value == ver)){
+      this.version.set(ver);
+    }
   }
 
   getVersionPath() {

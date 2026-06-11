@@ -151,6 +151,12 @@ class Playground extends Component {
           "Hello World"
         );
       }
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const version = searchParams.get('v');
+      if(version){
+        this.owlVersion.switchVersion(version);
+      }
     });
 
     this.hashHandled = false;
@@ -236,6 +242,7 @@ class Playground extends Component {
     const state = btoa(JSON.stringify(snapshot));
     const link = new URL(window.location.href);
     link.hash = state;
+    link.searchParams.set('v', this.owlVersion.version());
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link.href);
       clearTimeout(this.copied());

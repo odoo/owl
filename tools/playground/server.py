@@ -3,6 +3,7 @@
 import os
 import threading
 import time
+from urllib.parse import urlparse
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 HOST = '127.0.0.1'
@@ -20,7 +21,8 @@ class OWLHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         # Redirect /playground to /playground/ so that relative URLs in
         # index.html (e.g. "playground.css") resolve under /playground/.
-        if self.path == '/playground':
+        path = urlparse(self.path).path  # ignore query params
+        if path == '/playground':
             self.send_response(301)
             self.send_header('Location', '/playground/')
             self.end_headers()
@@ -28,15 +30,13 @@ class OWLHandler(SimpleHTTPRequestHandler):
         # Serve OWL build. The playground iframe's import map points at
         # "../owl.js", which resolves to /owl.js when the iframe is hosted
         # under /playground/ (matching the integrated site layout).
-        if self.path == '/owl.js' or self.path == '/playground/owl.js':
+        if path == '/owl.js' or path == '/playground/owl.js':
             self.path = '/packages/owl/dist/owl.es.js'
         # Map playground routes to tools/playground
-        elif self.path.startswith('/playground/libs/'):
-            self.path = '/tools/playground' + self.path[len('/playground'):]
-        elif self.path.startswith('/playground/samples/'):
-            self.path = '/tools/playground' + self.path[len('/playground'):]
-        elif self.path.startswith('/playground'):
-            rest = self.path[len('/playground'):]
+        elif path.startswith('/playground/libs/') or path.startswith('/playground/samples/'):
+            self.path = '/tools/playground' + path[len('/playground'):]
+        elif path.startswith('/playground'):
+            rest = path[len('/playground'):]
             if rest == '' or rest == '/':
                 self.path = '/tools/playground/static/index.html'
             elif os.path.exists(os.path.join(REPO_ROOT, 'tools/playground/static' + rest)):

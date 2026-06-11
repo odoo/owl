@@ -22,7 +22,7 @@ To define and validate props, use the `props` function together with `types`.
 The property name you assign it to is how you access it in the template:
 
 ```js
-import { Component, props, types as t } from "@odoo/owl";
+import { Component, props, t } from "@odoo/owl";
 
 class ProductCard extends Component {
   props = props({

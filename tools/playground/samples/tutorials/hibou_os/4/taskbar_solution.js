@@ -1,4 +1,4 @@
-import { Component, props, types as t } from "@odoo/owl";
+import { Component, props, t } from "@odoo/owl";
 import { Clock } from "./clock";
 
 export class Taskbar extends Component {

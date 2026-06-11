@@ -56,7 +56,7 @@ notepad = plugin(NotepadPlugin);
 Define the app schema in `hibou.js`:
 
 ```js
-import { types as t } from "@odoo/owl";
+import { t } from "@odoo/owl";
 
 const APP_SCHEMA = t.object({
     name: t.string(),

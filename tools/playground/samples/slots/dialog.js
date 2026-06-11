@@ -1,4 +1,4 @@
-import { Component, props, types as t } from "@odoo/owl";
+import { Component, props, t } from "@odoo/owl";
 
 export class Dialog extends Component {
     static template = "example.Dialog";

@@ -1,4 +1,4 @@
-import { Component, xml, props, types as t } from "@odoo/owl";
+import { Component, xml, props, t } from "@odoo/owl";
 
 export class ProductCard extends Component {
     static template = xml`

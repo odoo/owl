@@ -62,9 +62,10 @@ export {
   type ValidationIssue,
 } from "./validation";
 
-// Type validators
+// Type validators (`t` is the documented short alias of `types`)
 export {
   types,
+  types as t,
   constructorType,
   applyDefaults,
   getDefault,

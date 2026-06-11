@@ -1,4 +1,4 @@
-import { Component, xml, signal, props, types as t, onMounted, onWillUnmount } from "@odoo/owl";
+import { Component, xml, signal, props, t, onMounted, onWillUnmount } from "@odoo/owl";
 
 export class Timer extends Component {
     static template = xml`

@@ -1,4 +1,4 @@
-import { Component, mount, signal, props, xml, types as t } from "@odoo/owl";
+import { Component, mount, signal, props, xml, t } from "@odoo/owl";
 
 class Counter extends Component {
     static template = xml`

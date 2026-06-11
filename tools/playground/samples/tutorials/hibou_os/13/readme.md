@@ -31,7 +31,7 @@ Here is what you need to do:
 Owl provides a `Registry` class with built-in validation and ordering:
 
 ```js
-import { Registry, Component, types as t } from "@odoo/owl";
+import { Registry, Component, t } from "@odoo/owl";
 
 export const menuItemRegistry = new Registry({
     name: "menuItem",

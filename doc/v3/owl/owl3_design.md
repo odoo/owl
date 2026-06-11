@@ -444,7 +444,7 @@ hook can grab some props), and better supported by IDEs, since types can be
 mostly inferred automatically.
 
 ```js
-import { Component, props, types as t } from "@odoo/owl";
+import { Component, props, t } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = "mytemplate";
@@ -1654,7 +1654,7 @@ class Counter extends Component {
 This example shows how to use a computed value in components:
 
 ```js
-import { Component, signal, mount, computed, xml, types as t, proxy, props } from "@odoo/owl";
+import { Component, signal, mount, computed, xml, t, proxy, props } from "@odoo/owl";
 
 class Counter extends Component {
   static template = xml`
@@ -1713,7 +1713,7 @@ import {
   useListener,
   providePlugins,
   computed,
-  types as t,
+  t,
 } from "@odoo/owl";
 
 // -----------------------------------------------------------------------------

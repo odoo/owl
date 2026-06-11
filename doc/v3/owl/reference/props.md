@@ -6,7 +6,7 @@ In Owl, `props` (short for _properties_) is an object which contains every piece
 of data given to a component by its parent.
 
 ```js
-import { Component, props, types as t, xml } from "@odoo/owl";
+import { Component, props, t, xml } from "@odoo/owl";
 
 class Child extends Component {
   static template = xml`<span t-out="this.props.message"/>`;
@@ -112,7 +112,7 @@ The object returned by `props()` exposes signal-backed getters. This means that
 any reactive context that reads a prop will update when that prop changes:
 
 ```js
-import { Component, computed, props, types as t, xml } from "@odoo/owl";
+import { Component, computed, props, t, xml } from "@odoo/owl";
 
 class Total extends Component {
   static template = xml`<span t-out="this.double()"/>`;
@@ -143,7 +143,7 @@ default value can be declared in the type with
 [`.default()`](types_validation.md#defaultvalue).
 
 ```js
-import { Component, props, types as t, xml } from "@odoo/owl";
+import { Component, props, t, xml } from "@odoo/owl";
 
 class TodoView extends Component {
   static template = xml`<div t-out="this.todo.title"/>`;

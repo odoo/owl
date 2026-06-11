@@ -3,7 +3,8 @@
 ## Overview
 
 Owl provides a type validation system built around the `types` object, which
-contains composable validators for common JavaScript types.
+contains composable validators for common JavaScript types. It is also
+exported as `t`, the short alias used throughout this documentation.
 
 The main use case is **props validation**: when developing components in dev
 mode, Owl uses these validators to check that props received by a component
@@ -11,7 +12,7 @@ match their declared types. This catches bugs early by reporting mismatches
 at render time rather than letting them propagate silently.
 
 ```js
-import { Component, xml, types as t, props } from "@odoo/owl";
+import { Component, xml, t, props } from "@odoo/owl";
 
 class UserCard extends Component {
   static template = xml`
@@ -36,7 +37,7 @@ Checks a value against a validator and returns a list of validation issues.
 An empty list means the value is valid.
 
 ```js
-import { types as t, validateType } from "@odoo/owl";
+import { t, validateType } from "@odoo/owl";
 
 validateType(42, t.number()); // [] (valid)
 validateType("hello", t.number()); // [{ message: "value is not a number" }]
@@ -60,7 +61,7 @@ Like `validateType`, but throws an `OwlError` if validation fails instead of
 returning the issues list. Accepts an optional error message prefix.
 
 ```js
-import { types as t, assertType } from "@odoo/owl";
+import { t, assertType } from "@odoo/owl";
 
 assertType(42, t.number()); // ok, does nothing
 
@@ -78,7 +79,7 @@ validators. Each validator can be used with `validateType`, `assertType`, or
 as a prop type in a component's `props` definition.
 
 ```js
-import { types as t } from "@odoo/owl";
+import { t } from "@odoo/owl";
 ```
 
 ### `t.any()`

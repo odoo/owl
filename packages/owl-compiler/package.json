@@ -1,6 +1,6 @@
 {
   "name": "@odoo/owl-compiler",
-  "version": "3.0.0-alpha.35",
+  "version": "3.0.0-alpha.36",
   "description": "Template compiler for Odoo Web Library (OWL)",
   "main": "dist/owl-compiler.cjs.js",
   "module": "dist/owl-compiler.es.js",

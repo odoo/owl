@@ -1,3 +1,8 @@
+const withVersion = (version, files) => {
+  const filesWithVersionPath = Object.entries(files).map(([name, path]) => [name, `${version}/${path}`]);
+  return Object.fromEntries(filesWithVersionPath);
+}
+
 const HELLO_WORLD_JS = `import { Component, mount, xml } from "@odoo/owl";
 
 class Root extends Component {
@@ -116,6 +121,104 @@ const EXAMPLES_V3 = [
 
 const EXAMPLES_V2 = [
   { id: "hello_world", category: "Examples", description: "Hello World", files: {} },
+
+  {
+    id: "components",
+    category: "Examples",
+    description: "Components",
+    files: {
+      "main.js": "components/main.js",
+      "main.xml": "components/main.xml",
+      "main.css": "components/main.css",
+    },
+  },
+  {
+    id: "form",
+    category: "Examples",
+    description: "Form Input Bindings",
+    files: {
+      "main.js": "form/main.js",
+      "main.xml": "form/main.xml",
+    },
+  },
+  {
+    id: "single_file_component",
+    category: "Examples",
+    description: "Inline templates",
+    files: {
+      "main.js": "single_file_component/main.js",
+    },
+  },
+  {
+    id: "lifecycle_demo",
+    category: "Examples",
+    description: "Lifecycle demo",
+    files: {
+      "main.js": "lifecycle_demo/main.js",
+      "main.xml": "lifecycle_demo/main.xml",
+      "main.css": "lifecycle_demo/main.css",
+    },
+  },
+  {
+    id: "custom_hooks",
+    category: "Examples",
+    description: "Customized hook",
+    files: {
+      "main.js": "custom_hooks/main.js",
+      "main.xml": "custom_hooks/main.xml",
+      "main.css": "custom_hooks/main.css",
+    },
+  },
+  {
+    id: "todo_app",
+    category: "Examples",
+    description: "Todo List App (with reactivity)",
+    files: {
+      "main.js": "todo_app/main.js",
+      "main.xml": "todo_app/main.xml",
+      "main.css": "todo_app/main.css",
+    },
+  },
+  {
+    id: "responsive_app",
+    category: "Examples",
+    description: "Responsive app",
+    files: {
+      "main.js": "responsive_app/main.js",
+      "main.xml": "responsive_app/main.xml",
+      "main.css": "responsive_app/main.css",
+    },
+  },
+  {
+    id: "slots",
+    category: "Examples",
+    description: "Slots And Generic Components",
+    files: {
+      "main.js": "slots/main.js",
+      "main.xml": "slots/main.xml",
+      "main.css": "slots/main.css",
+    },
+  },
+  {
+    id: "window_manager",
+    category: "Examples",
+    description: "Window Management System",
+    files: {
+      "main.js": "window_manager/main.js",
+      "main.xml": "window_manager/main.xml",
+      "main.css": "window_manager/main.css",
+    },
+  },
+  {
+    id: "benchmark",
+    category: "Examples",
+    description: "Benchmark example",
+    files: {
+      "main.js": "benchmark/main.js",
+      "main.xml": "benchmark/main.xml",
+      "main.css": "benchmark/main.css",
+    },
+  },
 ];
 
 const TUTORIALS_V3 = [
@@ -909,12 +1012,25 @@ const TUTORIALS_V3 = [
 ];
 
 const EXAMPLES = {
-  v3: EXAMPLES_V3,
-  v2: EXAMPLES_V2
+  v3: EXAMPLES_V3.map((example) => ({
+    ...example,
+    files: withVersion("v3", example.files)
+  })),
+  v2: EXAMPLES_V2.map((example) => ({
+    ...example,
+    files: withVersion("v2", example.files)
+  }))
 };
 
 const TUTORIALS = {
-  v3: TUTORIALS_V3
+  v3: TUTORIALS_V3.map((item) => ({
+    ...item,
+    steps: item.steps.map((step) => ({
+      ...step,
+      files: withVersion("v3", step.files),
+      solution: withVersion("v3", step.solution)
+    }))
+  })),
 };
 
 const WELCOME_STATE_V3 = {

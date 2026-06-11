@@ -1,0 +1,43 @@
+.main {
+    display: flex;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #eeeeee;
+    width: 200px;
+    height: 100px;
+    margin: 10px;
+    border: 1px solid gray;
+}
+
+.card.full {
+    height: 100px;
+}
+
+.card.small {
+    height: 25px;
+}
+
+.card-title {
+    flex: 0 0 25px;
+    font-weight: bold;
+    background-color: darkcyan;
+    color: white;
+    padding: 2px;
+}
+
+.card-title button {
+    float: right;
+}
+
+.card-content {
+    flex: 1 1 auto;
+    padding: 5px;
+    border-top: 1px solid white;
+}
+
+.card-footer {
+    border-top: 1px solid white;
+}

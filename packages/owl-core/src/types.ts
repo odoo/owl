@@ -380,7 +380,6 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
     context.addIssue({
       message: "object value has missing keys",
       missingKeys,
-      expectedKeys: keys,
     });
   }
   if (isStrict) {
@@ -394,7 +393,6 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
       context.addIssue({
         message: "object value has unknown keys",
         unknownKeys,
-        expectedKeys: keys,
       });
     }
   }

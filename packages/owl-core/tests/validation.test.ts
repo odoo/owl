@@ -732,6 +732,49 @@ test("or", () => {
   ]);
 });
 
+test("union of a nested union and an array", () => {
+  // a nested union failing must not stop the outer union from trying its
+  // remaining members: its probe failures are not deep failures
+  const nullable = t.or([t.literal(false), t.literal(null)]);
+  const type = t.or([nullable, t.array(nullable)]);
+  expect(validateType(false, type)).toEqual([]);
+  expect(validateType(null, type)).toEqual([]);
+  expect(validateType([false], type)).toEqual([]);
+  expect(validateType([null, false], type)).toEqual([]);
+  expect(validateType("x", type)).toEqual([
+    {
+      message: "value does not match union type",
+      path: "",
+      received: "x",
+      subIssues: [
+        {
+          message: "value does not match union type",
+          path: "",
+          received: "x",
+          subIssues: [
+            { message: "value is not equal to false", path: "", received: "x" },
+            { message: "value is not equal to null", path: "", received: "x" },
+          ],
+        },
+        { message: "value is not an array", path: "", received: "x" },
+      ],
+    },
+  ]);
+  // an element failing inside the array is a deep failure: it is reported
+  // directly, as the best matching member
+  expect(validateType([1], type)).toEqual([
+    {
+      message: "value does not match union type",
+      path: "0",
+      received: 1,
+      subIssues: [
+        { message: "value is not equal to false", path: "0", received: 1 },
+        { message: "value is not equal to null", path: "0", received: 1 },
+      ],
+    },
+  ]);
+});
+
 test("complex type", () => {
   const complexType = t.object({
     a: t.number().optional(),

@@ -55,7 +55,12 @@ function createContext(
   issues: ValidationIssue[],
   value: any,
   path: PropertyKey[],
-  parent?: ValidationContext
+  parent?: ValidationContext,
+  // depth of this context's value relative to its parent: a `withKey` child is
+  // one level below, a `withIssues` probe (union member) stays at the same
+  // level. Union probe failures must not look like deep failures to an
+  // enclosing union, or it would stop trying the remaining members.
+  depthOffset = 1
 ): ValidationContext {
   return {
     issueDepth: 0,
@@ -77,11 +82,11 @@ function createContext(
     validate(type: any) {
       type(this);
       if (!this.isValid && parent) {
-        parent.issueDepth = this.issueDepth + 1;
+        parent.issueDepth = this.issueDepth + depthOffset;
       }
     },
     withIssues(issues) {
-      return createContext(issues, this.value, this.path, this);
+      return createContext(issues, this.value, this.path, this, 0);
     },
     withKey(key) {
       return createContext(issues, this.value[key], this.path.concat(key), this);

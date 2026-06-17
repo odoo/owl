@@ -724,10 +724,9 @@
         cancelAnimationFrame(this._selectorRafId);
         this._selectorRafId = null;
       }
-      if (ev) {
-        if (!ev.isTrusted) {
-          return;
-        }
+      // Only block propagation for real user clicks; synthetic (untrusted) clicks
+      // must still reach the cleanup path so the devtools state stays in sync.
+      if (ev && ev.isTrusted) {
         ev.stopPropagation();
         ev.preventDefault();
       }

@@ -266,9 +266,9 @@ exports[`misc > other complex template 1`] = `
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
     let hdlr4 = [hdlr_fn4, ctx];
     let hdlr5 = [hdlr_fn5, ctx];
-    let ref1 = createRef(ctx['search_input']);
+    let ref1 = createRef(ctx['search_input'], node);
     let hdlr6 = [hdlr_fn6, ctx];
-    let ref2 = createRef(ctx['settings_menu']);
+    let ref2 = createRef(ctx['settings_menu'], node);
     if (ctx['triggers']) {
       const ctx3 = ctx;
       const [k_block23, v_block23, l_block23, c_block23] = prepareList(ctx['triggers']);;

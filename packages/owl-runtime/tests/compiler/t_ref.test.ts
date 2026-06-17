@@ -105,7 +105,8 @@ describe("t-ref", () => {
     app.addTemplate("sub", sub);
 
     const name = signal<any>(null);
-    const bdom = app.getTemplate("main").call(null, { name }, {});
+    // `node` would be a ComponentNode in real rendering; stub what createRef needs
+    const bdom = app.getTemplate("main").call(null, { name }, { trackRef() {} });
     mount(bdom, document.createElement("div"));
 
     expect(name().tagName).toBe("SPAN");

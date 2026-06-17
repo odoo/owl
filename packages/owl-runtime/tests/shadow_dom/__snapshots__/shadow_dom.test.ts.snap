@@ -90,7 +90,7 @@ exports[`shadow_dom > ref 1`] = `
   let block1 = createBlock(\`<div class="my-div" block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].div);
+    let ref1 = createRef(ctx['this'].div, node);
     return block1([ref1]);
   }
 }"

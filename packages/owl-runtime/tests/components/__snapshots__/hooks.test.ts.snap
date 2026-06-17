@@ -12,7 +12,7 @@ exports[`hooks > autofocus hook > input in a t-if 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['this'].state.flag) {
-      let ref1 = createRef(ctx['this'].input);
+      let ref1 = createRef(ctx['this'].input, node);
       b2 = block2([ref1]);
     }
     return block1([], [b2]);
@@ -29,7 +29,7 @@ exports[`hooks > autofocus hook > simple input 1`] = `
   let block1 = createBlock(\`<div><input/><input block-ref="0"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].input);
+    let ref1 = createRef(ctx['this'].input, node);
     return block1([ref1]);
   }
 }"
@@ -174,7 +174,7 @@ exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['this'].state.value) {
-      let ref1 = createRef(ctx['this'].ref);
+      let ref1 = createRef(ctx['this'].ref, node);
       b2 = block2([ref1]);
     }
     return multi([b2]);
@@ -264,7 +264,7 @@ exports[`hooks > useListener work with references 1`] = `
   let block1 = createBlock(\`<span block-ref="0"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].span);
+    let ref1 = createRef(ctx['this'].span, node);
     const b2 = safeOutput(ctx['this'].value());
     return block1([ref1], [b2]);
   }

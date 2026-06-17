@@ -9,7 +9,7 @@ exports[`t-ref > can get a ref on a node 1`] = `
   let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['myspan']);
+    let ref1 = createRef(ctx['myspan'], node);
     return block1([ref1]);
   }
 }"
@@ -39,7 +39,7 @@ exports[`t-ref > ref in a t-call 2`] = `
   let block1 = createBlock(\`<div>1<span block-ref="0"/>2</div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['name']);
+    let ref1 = createRef(ctx['name'], node);
     return block1([ref1]);
   }
 }"
@@ -57,7 +57,7 @@ exports[`t-ref > ref in a t-if 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = createRef(ctx['name']);
+      let ref1 = createRef(ctx['name'], node);
       b2 = block2([ref1]);
     }
     return block1([], [b2]);
@@ -82,7 +82,7 @@ exports[`t-ref > refs in a loop 1`] = `
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'].id;
       const tKey_1 = ctx['item'].id;
-      let ref1 = createRef(ctx['item'].ref);
+      let ref1 = createRef(ctx['item'].ref, node);
       const b4 = toggler(tKey_1, safeOutput(ctx['item'].id));
       c_block2[i1] = withKey(block3([ref1], [b4]), tKey_1 + key1);
     }
@@ -104,10 +104,10 @@ exports[`t-ref > two refs, one in a t-if 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = createRef(ctx['refs'].name);
+      let ref1 = createRef(ctx['refs'].name, node);
       b2 = block2([ref1]);
     }
-    let ref2 = createRef(ctx['refs'].p);
+    let ref2 = createRef(ctx['refs'].p, node);
     return block1([ref2], [b2]);
   }
 }"

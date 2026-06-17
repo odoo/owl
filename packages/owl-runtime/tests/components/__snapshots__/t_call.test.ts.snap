@@ -643,7 +643,7 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
   
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    let ref2 = createRef(ctx['this'].myRef2);
+    let ref2 = createRef(ctx['this'].myRef2, node);
     const b4 = block4([ref2]);
     ctx["test"] = 3;
     const b6 = safeOutput(ctx['test']);
@@ -652,7 +652,7 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
   }
   
   return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef);
+    let ref1 = createRef(ctx['this'].myRef, node);
     const b2 = block2([ref1]);
     const b7 = comp1({prop: (ctx['this'].method).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
     return multi([b2, b7]);

@@ -131,8 +131,12 @@ export class StorePlugin extends Plugin {
   }
 
   async refreshExtension() {
-    await loadScripts();
-    await this._resetData();
+    const loaded = await loadScripts().catch(() => false);
+    if (loaded) {
+      await this._resetData();
+    } else {
+      window.location.reload();
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -316,40 +320,14 @@ export class StorePlugin extends Plugin {
 // Standalone helper functions (exported for use by sub-plugins)
 // -------------------------------------------------------------------------
 
-export async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
-  const stringifiedArgs = [...args].map((arg) => {
-    arg = JSON.stringify(arg);
-    return arg;
-  });
-  const argsString = "(" + stringifiedArgs.join(", ") + ");";
-  let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
-  return await new Promise((resolve, reject) => {
-    if (frameUrl !== "top") {
-      browserInstance.devtools.inspectedWindow.eval(
-        script,
-        { frameURL: frameUrl },
-        (result, isException) => {
-          if (!isException) {
-            resolve(result);
-          } else {
-            reject(script);
-          }
-        }
-      );
-    } else {
-      browserInstance.devtools.inspectedWindow.eval(script, (result, isException) => {
-        if (!isException) {
-          resolve(result);
-        } else {
-          reject(script);
-        }
-      });
-    }
-  });
+export function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
+  const stringifiedArgs = [...args].map((arg) => JSON.stringify(arg));
+  const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}(${stringifiedArgs.join(", ")});`;
+  return evalInWindow(script, frameUrl);
 }
 
-export async function evalInWindow(code, frameUrl = "top") {
-  return await new Promise((resolve, reject) => {
+export function evalInWindow(code, frameUrl = "top") {
+  return new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
       browserInstance.devtools.inspectedWindow.eval(
         code,

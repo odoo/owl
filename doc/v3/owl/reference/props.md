@@ -277,11 +277,13 @@ class Counter extends Component {
     // a signal whose value must be a number
     count: t.signal(t.number()),
     // a callback: (id: number) => boolean — params/return are inferred in TS
-    "onToggle?": t.function([t.number()], t.boolean()),
+    onToggle: t.function([t.number()], t.boolean()).optional(),
     // a union of several accepted types
     label: t.or([t.string(), t.number()]),
     // a value passing both a base type and a custom predicate
-    "ratio?": t.customValidator(t.number(), (v) => v >= 0 && v <= 1, "ratio must be in [0, 1]"),
+    ratio: t
+      .customValidator(t.number(), (v) => v >= 0 && v <= 1, "ratio must be in [0, 1]")
+      .optional(),
   });
 }
 ```

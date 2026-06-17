@@ -43,15 +43,28 @@ export class ComponentsPlugin extends Plugin {
 
   async loadComponentsTree(fromOld) {
     if (IS_FIREFOX) {
-      await evalInWindow("window.$0 = $0;", this._store.activeFrame());
+      await evalInWindow("try { window.$0 = $0; } catch(e) {}");
     }
-    const [apps, details] = await evalFunctionInWindow(
-      "getComponentsTree",
+    const args =
       fromOld && this.activeComponent()
         ? [this.activeComponent().path, this.apps(), this.activeComponent()]
-        : [],
+        : [];
+    let treeResult = await evalFunctionInWindow(
+      "getComponentsTree",
+      args,
       this._store.activeFrame()
     );
+    if (treeResult === undefined) {
+      // Delayed retry on failure
+      await new Promise((r) => setTimeout(r, 500));
+      treeResult = await evalFunctionInWindow("getComponentsTree", args, this._store.activeFrame());
+      // Hard reload when even the retry fails
+      if (treeResult === undefined) {
+        this._store.refreshExtension();
+        return;
+      }
+    }
+    const [apps, details] = treeResult;
     this.apps.set(proxy(apps || []));
     if (!fromOld && this._store.expandByDefault()) {
       this.apps().forEach((tree) => expandNodes(tree, this._store.componentsToggleBlacklist()));

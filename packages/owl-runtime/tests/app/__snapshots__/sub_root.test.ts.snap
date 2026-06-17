@@ -30,7 +30,7 @@ exports[`destroy a subroot while another component is mounted in main app 2`] = 
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`a\`);
-    let ref1 = createRef(ctx['this'].ref);
+    let ref1 = createRef(ctx['this'].ref, node);
     const b3 = block3([ref1]);
     return multi([b2, b3]);
   }

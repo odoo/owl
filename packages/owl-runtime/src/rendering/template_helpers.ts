@@ -146,7 +146,7 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
   return toggler(safeKey, block);
 }
 
-function createRef(ref: any) {
+function createRef(ref: any, node: ComponentNode) {
   if (!ref) {
     throw new OwlError(`Ref is undefined or null`);
   }
@@ -169,6 +169,15 @@ function createRef(ref: any) {
           if (atom.value === prevEl) ref.set(null);
         }
       : () => ref.set(null);
+    // The block-ref callback above only fires when this block's own remove() is
+    // called. When an enclosing block is removed in bulk (e.g. a slot host),
+    // the callback is skipped and the signal would keep pointing at a detached
+    // element. Track the ref on its host component, which clears it on unmount
+    // and sweeps detached refs after each patch. `node` is the host even for
+    // forwarded slot content (createRef sees the innermost host via callSlot).
+    if (atom) {
+      node.trackRef(ref, atom);
+    }
   } else {
     throw new OwlError(
       `Ref should implement either a 'set' function or 'add' and 'delete' functions`

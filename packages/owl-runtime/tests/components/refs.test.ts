@@ -4,6 +4,7 @@ import {
   mount,
   onMounted,
   onPatched,
+  onWillDestroy,
   proxy,
   xml,
   props,
@@ -295,5 +296,168 @@ describe("refs", () => {
     root.cond.set(false);
     await nextTick();
     expect(root.ref()).toBe(fixture.querySelector(".elsebranch"));
+  });
+
+  test("ref in slot is unset when the slot host is removed", async () => {
+    class Wrapper extends Component {
+      static template = xml`<div><t t-call-slot="default"/></div>`;
+    }
+    class Root extends Component {
+      static components = { Wrapper };
+      static template = xml`
+        <t t-if="this.visible()">
+          <Wrapper>
+            <div class="slotted" t-ref="this.myRef">Coucou</div>
+          </Wrapper>
+        </t>`;
+      visible = signal(false);
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).toBeNull();
+
+    root.visible.set(true);
+    await nextTick();
+    expect(root.myRef()).toBe(fixture.querySelector(".slotted"));
+
+    // Removing the wrapper removes the slotted element from the DOM; the ref
+    // signal (owned by the surviving Root) must be cleared too.
+    root.visible.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).not.toContain("Coucou");
+    expect(root.myRef()).toBeNull();
+  });
+
+  test("ref in slot is unset across a t-if nested inside the slot content", async () => {
+    class Wrapper extends Component {
+      static template = xml`<section><t t-call-slot="default"/></section>`;
+    }
+    class Root extends Component {
+      static components = { Wrapper };
+      static template = xml`
+        <t t-if="this.visible()">
+          <Wrapper>
+            <t t-if="this.inner()"><span t-ref="this.myRef">hi</span></t>
+          </Wrapper>
+        </t>`;
+      visible = signal(true);
+      inner = signal(true);
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).not.toBeNull();
+
+    // tearing down the host (and the slot content with it) clears the ref
+    root.visible.set(false);
+    await nextTick();
+    expect(root.myRef()).toBeNull();
+  });
+
+  test("ref in slot is unset when forwarded through a nested component", async () => {
+    class Inner extends Component {
+      static template = xml`<i><t t-call-slot="default"/></i>`;
+    }
+    class Wrapper extends Component {
+      static components = { Inner };
+      static template = xml`<div><Inner><t t-call-slot="default"/></Inner></div>`;
+    }
+    class Root extends Component {
+      static components = { Wrapper };
+      static template = xml`
+        <t t-if="this.visible()">
+          <Wrapper><b t-ref="this.myRef">x</b></Wrapper>
+        </t>`;
+      visible = signal(true);
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).not.toBeNull();
+
+    root.visible.set(false);
+    await nextTick();
+    expect(root.myRef()).toBeNull();
+  });
+
+  test("ref in slot is unset when the host removes it in place (host survives)", async () => {
+    class Wrapper extends Component {
+      static template = xml`<div t-if="this.show()"><t t-call-slot="default"/></div>`;
+      show = signal(true);
+    }
+    class Root extends Component {
+      static components = { Wrapper };
+      static template = xml`<Wrapper><span class="slotted" t-ref="this.myRef">hi</span></Wrapper>`;
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).toBe(fixture.querySelector(".slotted"));
+
+    // Wrapper is NOT unmounted; toggling its own t-if removes the slot element
+    // in place, so the ref is cleared by Wrapper's post-patch sweep.
+    const wrapper = Object.values((root as any).__owl__.children)[0] as any;
+    wrapper.component.show.set(false);
+    await nextTick();
+    expect(fixture.querySelector(".slotted")).toBeNull();
+    expect(root.myRef()).toBeNull();
+  });
+
+  test("ref in slot is unset when an intermediate host is removed in place", async () => {
+    class Inner extends Component {
+      static template = xml`<i><t t-call-slot="default"/></i>`;
+    }
+    class Root extends Component {
+      static components = { Inner };
+      // The ref is hosted by Inner (it owns the slotted span's dom), but Inner
+      // is a block-child of a t-if that Root removes in place: Root survives, so
+      // its own post-patch sweep doesn't cover Inner, and Inner.remove() never
+      // fires (the block bulk-removes it). The removal must still clear the ref.
+      static template = xml`<div t-if="this.show()"><Inner><span t-ref="this.myRef">x</span></Inner></div>`;
+      show = signal(true);
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).not.toBeNull();
+
+    root.show.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect(root.myRef()).toBeNull();
+  });
+
+  test("ref is unset even when a sub-root is destroyed re-entrantly mid-removal", async () => {
+    const subApp = new App({ test: true });
+    class Sub extends Component {
+      static template = xml`<p>sub</p>`;
+    }
+    const subFixture = document.createElement("div");
+    document.body.appendChild(subFixture);
+    await subApp.createRoot(Sub).mount(subFixture);
+
+    class Wrapper extends Component {
+      static template = xml`<div><t t-call-slot="default"/></div>`;
+      setup() {
+        // Like Portal/Suspense: tear down a sub-root from this component's own
+        // teardown — a removal that re-enters while the parent patch that hosts
+        // our ref is still collecting. Only the outermost removal must sweep.
+        onWillDestroy(() => subApp.destroy());
+      }
+    }
+    class Root extends Component {
+      static components = { Wrapper };
+      static template = xml`<t t-if="this.show()"><Wrapper><span t-ref="this.myRef">hi</span></Wrapper></t>`;
+      show = signal(true);
+      myRef = signal.ref();
+    }
+
+    const root = await mount(Root, fixture);
+    expect(root.myRef()).not.toBeNull();
+
+    root.show.set(false);
+    await nextTick();
+    expect(root.myRef()).toBeNull();
   });
 });

@@ -47,6 +47,11 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
+  // t-ref signals bound to an element hosted by this component, mapped to their
+  // atom (so the element can be read without subscribing). Swept by isConnected
+  // after each patch and after this subtree is removed, to unset a ref pointing
+  // at a bulk-removed element (slot host, enclosing t-if) — see sweepRefs.
+  trackedRefs: Map<{ set(v: null): void }, { value: HTMLElement | null }> | null = null;
 
   constructor(
     C: ComponentConstructor,
@@ -190,9 +195,15 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
 
   destroy() {
     let shouldRemove = this.status === STATUS.MOUNTED;
-    this._destroy();
+    removalDepth++;
+    try {
+      this._destroy();
+    } finally {
+      removalDepth--;
+    }
     if (shouldRemove) {
       this.bdom!.remove();
+      sweepRemovedRefs();
     }
   }
 
@@ -203,11 +214,47 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
         cb.call(component);
       }
     }
+    // While a removal is in progress, collect ref-bearing nodes on the way down
+    // (we are walking the whole subtree anyway for willUnmount). They are swept
+    // once their dom is detached, by whoever drives the outermost removal — see
+    // sweepRemovedRefs. A removed component's own remove() is not always called
+    // (a block can bulk-remove it), so it cannot be relied on to sweep itself.
+    if (removalDepth && this.trackedRefs) {
+      (removed ||= []).push(this);
+    }
     for (let childKey in this.children) {
       this.children[childKey]._destroy();
     }
     this.finalize((e) => handleError({ error: e, node: this }));
     disposeComputation(this.signalComputation);
+  }
+
+  /**
+   * Unset any tracked t-ref whose element is no longer in the document, and stop
+   * tracking it (createRef re-registers it on the next render if the element
+   * comes back). `isConnected` is the discriminator: a ref the block's own
+   * remove() failed to clear (bulk removal) points at a detached element and is
+   * cleared, while a ref a surviving sibling just took over (t-if/t-else with a
+   * shared signal) points at a still-connected element and is left alone.
+   *
+   * Called after this component's dom settles: at the tail of `_patch` (before
+   * user `onPatched`), so an element removed in place is caught, and — for the
+   * nodes collected during `_destroy` — after a removed subtree is detached.
+   */
+  sweepRefs() {
+    const refs = this.trackedRefs;
+    if (!refs) {
+      return;
+    }
+    for (const [ref, atom] of refs) {
+      const el = atom.value;
+      if (!el) {
+        refs.delete(ref);
+      } else if (!el.isConnected) {
+        ref.set(null);
+        refs.delete(ref);
+      }
+    }
   }
 
   /**
@@ -229,7 +276,14 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     } else {
       // if we get here, this is the component that handled the error and rerendered
       // itself, so we can simply patch the dom
-      this.bdom!.patch(this.fiber!.bdom, false);
+      removalDepth++;
+      try {
+        this.bdom!.patch(this.fiber!.bdom, false);
+      } finally {
+        removalDepth--;
+      }
+      this.sweepRefs();
+      sweepRemovedRefs();
       this.fiber!.appliedToDom = true;
       this.fiber = null;
     }
@@ -262,6 +316,15 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.bdom!.moveBeforeVNode(other ? other.bdom : null, afterNode);
   }
 
+  /**
+   * Register a t-ref signal bound to an element this component hosts, so its
+   * lifecycle can clear it (see sweepRefs / _destroy). Idempotent — re-tracking
+   * the same signal on each render just refreshes its atom.
+   */
+  trackRef(ref: { set(v: null): void }, atom: { value: HTMLElement | null }) {
+    (this.trackedRefs ||= new Map()).set(ref, atom);
+  }
+
   patch() {
     if (this.fiber && this.fiber.parent) {
       // we only patch here renderings coming from above. renderings initiated
@@ -279,7 +342,14 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     }
     const fiber = this.fiber!;
     this.children = fiber.childrenMap;
-    this.bdom!.patch(fiber.bdom!, hasChildren);
+    removalDepth++;
+    try {
+      this.bdom!.patch(fiber.bdom!, hasChildren);
+    } finally {
+      removalDepth--;
+    }
+    this.sweepRefs();
+    sweepRemovedRefs();
     fiber.appliedToDom = true;
     this.fiber = null;
   }
@@ -290,6 +360,30 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
 
   remove() {
     this.bdom!.remove();
+  }
+}
+
+// While a removal is in progress (a component patch that drops a subtree, or a
+// destroy), the ref-bearing nodes of the removed subtree(s) accumulate in this
+// single global list, then get swept once their dom is detached. `removalDepth`
+// counts how deeply removals are nested — removals re-enter, e.g. a Portal or
+// Suspense destroys its sub-root from onWillDestroy mid-patch — and only the
+// outermost one (depth back to 0) does the sweep, so a nested removal never
+// clears the list out from under the one driving it. The list is lazy, so a
+// patch that removes nothing allocates nothing.
+let removalDepth = 0;
+let removed: ComponentNode[] | null = null;
+
+// Sweep the collected nodes if this is the outermost removal and anything was
+// collected. Their dom is detached by now, so sweepRefs's isConnected check
+// correctly unsets refs left dangling by a bulk removal.
+function sweepRemovedRefs() {
+  if (removalDepth === 0 && removed) {
+    const nodes = removed;
+    removed = null;
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].sweepRefs();
+    }
   }
 }
 

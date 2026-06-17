@@ -688,7 +688,11 @@ export class CodeGenerator {
     if (ast.ref) {
       const refExpr = compileExpr(ast.ref);
       this.helpers.add("createRef");
-      const setRefStr = `createRef(${refExpr})`;
+      // `node` is the component that physically hosts this element (for slot
+      // content it is the innermost host, threaded through callSlot). createRef
+      // registers the ref there so it is cleared if the element is removed
+      // without this block's own remove() running (bulk removal).
+      const setRefStr = `createRef(${refExpr}, node)`;
       const idx = block!.insertData(setRefStr, "ref");
       attrs["block-ref"] = String(idx);
     }

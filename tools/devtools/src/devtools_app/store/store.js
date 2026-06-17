@@ -66,11 +66,15 @@ export class StorePlugin extends Plugin {
   // -------------------------------------------------------------------------
 
   async updateIFrameList() {
-    const frames = await evalFunctionInWindow("getIFrameUrls");
     this.frameUrls.set(["top"]);
     if (this.activeFrame() !== "top") {
       this.selectFrame("top");
     }
+    // Firefox doesn't support per-frame eval, so iframe detection is not possible
+    if (IS_FIREFOX) {
+      return;
+    }
+    const frames = await evalFunctionInWindow("getIFrameUrls");
     for (const frame of frames) {
       const hasOwl = await evalInWindow("window.__OWL_DEVTOOLS__?.Fiber !== undefined;", frame);
       if (hasOwl) {
@@ -327,6 +331,10 @@ export function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 }
 
 export function evalInWindow(code, frameUrl = "top") {
+  // Firefox does not support the frameURL option in devtools.inspectedWindow.eval
+  if (IS_FIREFOX && frameUrl !== "top") {
+    return Promise.resolve(undefined);
+  }
   return new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
       browserInstance.devtools.inspectedWindow.eval(

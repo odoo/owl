@@ -106,7 +106,8 @@ class Playground extends Component {
         this.hashTutorial = tutorial;
       } else {
         try {
-          const parsed = JSON.parse(atob(hash));
+          const decodedHash = decodeURIComponent(atob(hash));
+          const parsed = JSON.parse(decodedHash);
           if ("js" in parsed && typeof parsed.js === "string") {
             const { js, css, xml } = parsed;
             const fileNames = [];
@@ -239,7 +240,8 @@ class Playground extends Component {
 
   shareCode() {
     const snapshot = this.code.getSnapshot();
-    const state = btoa(JSON.stringify(snapshot));
+    const encodedSnapshot = encodeURIComponent(JSON.stringify(snapshot));
+    const state = btoa(encodedSnapshot);
     const link = new URL(window.location.href);
     link.hash = state;
     link.searchParams.set('v', this.owlVersion.version());

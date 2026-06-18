@@ -293,11 +293,11 @@ function customValidator<T>(
 }
 
 function functionType(): Type<(...parameters: any[]) => any>;
-function functionType<const P extends any[]>(
+function functionType<const P extends unknown[]>(
   parameters: P
 ): Type<(...parameters: StripBrandsAll<P>) => void>;
-function functionType<const P extends any[], R>(): Type<(...parameters: P) => R>;
-function functionType<const P extends any[], R>(
+function functionType<const P extends unknown[], R>(): Type<(...parameters: P) => R>;
+function functionType<const P extends unknown[], R>(
   parameters: P,
   result: R
 ): Type<(...parameters: StripBrandsAll<P>) => StripBrands<R>>;
@@ -459,7 +459,7 @@ function recordType(valueType?: any): any {
   });
 }
 
-function tuple<const T extends any[]>(types: T): Type<StripBrandsAll<T>> {
+function tuple<const T extends unknown[]>(types: T): Type<StripBrandsAll<T>> {
   const validate = makeType(function validateTuple(context: ValidationContext) {
     if (!Array.isArray(context.value)) {
       context.addIssue({ message: "value is not an array" });
@@ -477,7 +477,7 @@ function tuple<const T extends any[]>(types: T): Type<StripBrandsAll<T>> {
   return validate;
 }
 
-function union<T extends any[]>(types: T): Type<StripBrands<T[number]>> {
+function union<T extends unknown[]>(types: T): Type<StripBrands<T[number]>> {
   return makeType(function validateUnion(context: ValidationContext) {
     let firstIssueIndex = 0;
     const subIssues: ValidationIssue[] = [];

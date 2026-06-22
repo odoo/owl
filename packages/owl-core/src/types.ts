@@ -46,6 +46,8 @@ export type Type<T> = T & {
    * a function type must use the factory form.
    */
   optional(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
+
+  type: T;
 };
 
 type IsAny<T> = 0 extends 1 & T ? true : false;

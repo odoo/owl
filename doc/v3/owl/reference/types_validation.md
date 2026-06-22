@@ -379,6 +379,43 @@ t.object({ color: t.string().optional("red") });
 // rejects:   "42"       with the first example ("value is not a number")
 ```
 
+## Deriving a TypeScript type
+
+Every type exposes a `.type` field that carries the TypeScript type of the
+values it validates. This lets a schema — which is a runtime value — double as
+the single source of truth for a static type, so you don't have to declare the
+shape twice and keep them in sync.
+
+```ts
+const userType = t.object({
+  name: t.string(),
+  age: t.number().optional(),
+});
+
+type User = typeof userType.type;
+// => { name: string; age?: number }
+```
+
+Optional keys become optional properties, and a default declared with
+`.optional(value)` is reflected too. The field is purely a type-level handle:
+nothing exists under `.type` at runtime (reading it returns `undefined`), so it
+must only be used in a type position (`typeof ...`).
+
+It also works from plain JavaScript through a JSDoc annotation, which is handy
+for typing a function argument against a schema without writing the type by
+hand:
+
+```js
+const optionsType = t.object({ depth: t.number(), name: t.string() });
+
+/**
+ * @param {typeof optionsType.type} options
+ */
+function run(options) {
+  // options is typed as { depth: number, name: string }
+}
+```
+
 ## `applyDefaults`
 
 ```js

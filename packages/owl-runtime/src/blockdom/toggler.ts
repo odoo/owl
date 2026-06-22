@@ -4,7 +4,12 @@ import type { VNode } from "./index";
 // Toggler node
 // -----------------------------------------------------------------------------
 
-const txt = document.createTextNode("");
+// Shared anchor text node, reused across togglers. Accessed through
+// `globalThis` and optional-chained so that merely importing owl does not
+// crash without a `document`: this lets the non-rendering APIs (reactivity,
+// type system, ...) run in environments such as Node.js. It is only ever read
+// in `patch`, which runs while rendering into a real DOM, so the `!` holds.
+const txt = globalThis.document?.createTextNode("")!;
 
 class VToggler {
   key: string;

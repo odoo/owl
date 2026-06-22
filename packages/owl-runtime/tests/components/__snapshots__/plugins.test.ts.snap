@@ -111,10 +111,9 @@ exports[`components mounted by plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].p.value);
+    return text(\`abc\`);
   }
 }"
 `;
@@ -123,9 +122,10 @@ exports[`components mounted by plugin 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(\`abc\`);
+    return safeOutput(ctx['this'].p.value);
   }
 }"
 `;

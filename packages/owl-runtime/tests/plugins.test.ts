@@ -777,6 +777,264 @@ describe("onWillStart in plugins", () => {
     rpc.resolve(0);
   });
 
+  test("root.setup() observes loaded global async plugin state", async () => {
+    const rpc = makeDeferred<number>();
+    let valueAtRootSetup = -1;
+
+    class AsyncPlugin extends Plugin {
+      static id = "async";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc;
+        });
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<span t-out="this.p.value"/>`;
+      p = plugin(AsyncPlugin);
+      setup() {
+        valueAtRootSetup = this.p.value;
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [AsyncPlugin] });
+    // Setup must NOT have run yet — plugins are still pending.
+    const mounted = app.createRoot(Root).mount(fixture);
+    expect(valueAtRootSetup).toBe(-1);
+    await nextTick();
+    expect(valueAtRootSetup).toBe(-1);
+
+    rpc.resolve(99);
+    await mounted;
+    expect(valueAtRootSetup).toBe(99);
+    expect(fixture.innerHTML).toBe("<span>99</span>");
+    app.destroy();
+  });
+
+  test("descendant of root observes loaded global async plugin state", async () => {
+    const rpc = makeDeferred<number>();
+    let valueAtChildSetup = -1;
+
+    class AsyncPlugin extends Plugin {
+      static id = "async";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc;
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span t-out="this.p.value"/>`;
+      p = plugin(AsyncPlugin);
+      setup() {
+        valueAtChildSetup = this.p.value;
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App({ plugins: [AsyncPlugin] });
+    const mounted = app.createRoot(Root).mount(fixture);
+    await nextTick();
+    expect(valueAtChildSetup).toBe(-1);
+
+    rpc.resolve(7);
+    await mounted;
+    expect(valueAtChildSetup).toBe(7);
+    expect(fixture.innerHTML).toBe("<span>7</span>");
+    app.destroy();
+  });
+
+  test("nested providePlugins: grandchild sees both levels loaded", async () => {
+    const rpc1 = makeDeferred<number>();
+    const rpc2 = makeDeferred<number>();
+    let outerAtGrandchildSetup = -1;
+    let innerAtGrandchildSetup = -1;
+
+    class Outer extends Plugin {
+      static id = "outer";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc1;
+        });
+      }
+    }
+
+    class Inner extends Plugin {
+      static id = "inner";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc2;
+        });
+      }
+    }
+
+    class Grandchild extends Component {
+      static template = xml`<i t-out="this.o.value + '-' + this.i.value"/>`;
+      o = plugin(Outer);
+      i = plugin(Inner);
+      setup() {
+        outerAtGrandchildSetup = this.o.value;
+        innerAtGrandchildSetup = this.i.value;
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<Grandchild/>`;
+      static components = { Grandchild };
+      setup() {
+        providePlugins([Inner]);
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+      setup() {
+        providePlugins([Outer]);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    const mounted = app.createRoot(Root).mount(fixture);
+    await nextTick();
+    expect(outerAtGrandchildSetup).toBe(-1);
+    expect(innerAtGrandchildSetup).toBe(-1);
+
+    rpc1.resolve(10);
+    rpc2.resolve(20);
+    await mounted;
+    expect(outerAtGrandchildSetup).toBe(10);
+    expect(innerAtGrandchildSetup).toBe(20);
+    expect(fixture.innerHTML).toBe("<i>10-20</i>");
+    app.destroy();
+  });
+
+  test("providePlugins with multiple async plugins waits for all", async () => {
+    const rpc1 = makeDeferred<number>();
+    const rpc2 = makeDeferred<number>();
+    let aAtChildSetup = -1;
+    let bAtChildSetup = -1;
+
+    class A extends Plugin {
+      static id = "a";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc1;
+        });
+      }
+    }
+    class B extends Plugin {
+      static id = "b";
+      value = 0;
+      setup() {
+        onWillStart(async () => {
+          this.value = await rpc2;
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<span/>`;
+      a = plugin(A);
+      b = plugin(B);
+      setup() {
+        aAtChildSetup = this.a.value;
+        bAtChildSetup = this.b.value;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+      setup() {
+        providePlugins([A, B]);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    const mounted = app.createRoot(Parent).mount(fixture);
+
+    // Resolve only one of the two — child must NOT have been constructed yet.
+    rpc1.resolve(1);
+    await nextTick();
+    expect(aAtChildSetup).toBe(-1);
+    expect(bAtChildSetup).toBe(-1);
+
+    rpc2.resolve(2);
+    await mounted;
+    expect(aAtChildSetup).toBe(1);
+    expect(bAtChildSetup).toBe(2);
+    app.destroy();
+  });
+
+  test("providePlugins with only sync plugins does not defer render", async () => {
+    let renderedSynchronously = false;
+
+    class SyncPlugin extends Plugin {
+      static id = "sync";
+      value = 42;
+    }
+
+    class Parent extends Component {
+      static template = xml`<t t-out="this.p.value"/>`;
+      declare p: PluginInstance<typeof SyncPlugin>;
+      setup() {
+        providePlugins([SyncPlugin]);
+        this.p = plugin(SyncPlugin);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    const root = app.createRoot(Parent);
+    // The root mounts the same tick — no plugin manager wait, no extra
+    // microtasks. We assert mount() returned a resolved promise content by
+    // checking the DOM is populated after a single await.
+    const mounted = root.mount(fixture);
+    mounted.then(() => (renderedSynchronously = true));
+    await nextTick();
+    expect(renderedSynchronously).toBe(true);
+    expect(fixture.innerHTML).toBe("42");
+    app.destroy();
+  });
+
+  test("providePlugins plugin rejection rejects mount", async () => {
+    class Broken extends Plugin {
+      setup() {
+        onWillStart(async () => {
+          throw new Error("kaboom");
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml``;
+      setup() {
+        providePlugins([Broken]);
+      }
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    await expect(app.createRoot(Parent).mount(fixture)).rejects.toMatchObject({
+      message: "kaboom",
+    });
+    app.destroy();
+  });
+
   test("providePlugins defers owning component render", async () => {
     const rpc = makeDeferred<number>();
     let valueAtChildSetup = -1;

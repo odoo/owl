@@ -15,7 +15,7 @@ import {
   useEffect,
 } from "@odoo/owl";
 import { parseMarkdown } from "./code_utils.js";
-import { getFileType, makeFileEntry, parseFilePaths , TAB_SIZES } from "./file_utils.js";
+import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import * as monaco from "@libs/monaco";
 import { setupShiki } from "./monaco/shiki.js";
 import {
@@ -35,6 +35,7 @@ class CodeEditor extends Component {
   static template = "CodeEditor";
 
   code = plugin(CodePlugin);
+  owlVersion = plugin(VersionPlugin);
   settings = plugin(SettingsPlugin);
   project = plugin(ProjectPlugin);
   view = plugin(ViewPlugin);
@@ -61,6 +62,7 @@ class CodeEditor extends Component {
     };
 
     let lastVersion = null;
+    let owlTypesDisposable = null;
 
     onWillStart(async () => {
       const workerBasePath = '/playground/libs/workers';
@@ -108,6 +110,10 @@ class CodeEditor extends Component {
         noSemanticValidation: false,
         noSyntaxValidation: false,
       });
+      monaco.typescript.javascriptDefaults.addExtraLib(
+        `declare const TEMPLATES: Record<string, string>;`,
+        "file:///globals.d.ts"
+      );
       await setupShiki(monaco);
     });
 
@@ -156,6 +162,27 @@ class CodeEditor extends Component {
 
       pane.lastFile = fileName;
       lastVersion = this.code.contentVersion();
+    });
+
+    useEffect(() => {
+      const version = this.owlVersion.current();
+
+      (async () => {
+        owlTypesDisposable?.dispose();
+
+        const dts = await fetch(version.types).then((r) => r.text());
+
+        owlTypesDisposable =
+          monaco.typescript.javascriptDefaults.addExtraLib(
+            dts,
+            `file:///node_modules/@odoo/owl/index.d.ts`
+          );
+      })();
+
+      return () => {
+        owlTypesDisposable?.dispose();
+        owlTypesDisposable = null;
+      };
     });
 
     useEffect(() => {

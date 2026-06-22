@@ -209,9 +209,12 @@ class VersionPlugin extends Plugin {
     }
   }
 
+  current(){
+    return this.versions.find((version) => version.value == this.version());
+  }
+
   getVersionPath() {
-    const ver = this.version();
-    return this.versions.find((version) => version.value == ver)?.path ?? "../owl.js";
+    return this.current()?.path ?? "../owl.js";
   }
 }
 

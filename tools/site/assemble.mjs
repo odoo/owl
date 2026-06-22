@@ -24,6 +24,7 @@ cpSync(resolve(__dirname, "main.css"), resolve(out, "main.css"));
 
 // OWL build
 cpSync(resolve(root, "packages/owl/dist/owl.es.js"), resolve(out, "owl.js"));
+cpSync(resolve(root, "packages/owl/dist/types/owl.d.ts"), resolve(out, "owl.d.ts"));
 
 // Playground
 cpSync(resolve(root, "tools/playground/static"), resolve(out, "playground"), { recursive: true });

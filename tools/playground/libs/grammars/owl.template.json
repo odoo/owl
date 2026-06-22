@@ -1,0 +1,549 @@
+{
+    "name": "owl-template",
+    "injectionSelector": "L:text.xml -comment",
+    "scopeName": "owl.template",
+    "patterns": [
+        {
+            "include": "#component-tags"
+        },
+        {
+            "include": "#html-tags"
+        },
+        {
+            "include": "#t-tag"
+        }
+    ],
+    "repository": {
+        "inline-js": {
+            "patterns": [
+                {
+                    "match": "\\s(=>)\\s",
+                    "captures": {
+                        "1": {
+                            "name": "string.quoted.double.xml owl.arrow"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(props)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "variable.language.js owl.expression.props"
+                        }
+                    }
+                },
+                {
+                    "match": "\\s(and|or)\\s",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.logical.js owl.logical"
+                        }
+                    }
+                },
+                {
+                    "include": "source.js"
+                }
+            ]
+        },
+        "formatted-string": {
+            "contentName": "meta.embedded.block.javascript",
+            "begin": "({{)",
+            "beginCaptures": {
+                "1": {
+                    "name": "owl.double-curlybrackets"
+                }
+            },
+            "end": "(}})",
+            "endCaptures": {
+                "1": {
+                    "name": "owl.double-curlybrackets"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#inline-js"
+                }
+            ]
+        },
+        "html-attributes": {
+            "patterns": [
+                {
+                    "contentName": "string.quoted.double.xml",
+                    "begin": "(\\s*)([a-z]{2}[a-z_:.-]+)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.xml.attribute"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": []
+                },
+                {
+                    "contentName": "string.quoted.single.xml",
+                    "begin": "(\\s*)([a-z]{2}[a-z_:.-]+)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.xml.attribute"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": []
+                }
+            ]
+        },
+        "props-attributes": {
+            "patterns": [
+                {
+                    "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
+                    "begin": "(\\s*)([a-zA-Z]{2}[a-zA-Z_:.]*)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.props"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#inline-js"
+                        }
+                    ]
+                },
+                {
+                    "contentName": "meta.embedded.block.javascript string.quoted.single.xml",
+                    "begin": "(\\s*)([a-zA-Z]{2}[a-zA-Z_:.]*)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.props"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#inline-js"
+                        }
+                    ]
+                }
+            ]
+        },
+        "owl-attributes-dynamic": {
+            "patterns": [
+                {
+                    "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
+                    "begin": "(\\s*)(t-if|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att|t-tag|t-log|t-model|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.dynamic"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#inline-js"
+                        }
+                    ]
+                },
+                {
+                    "contentName": "meta.embedded.block.javascript string.quoted.single.xml",
+                    "begin": "(\\s*)(t-if|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att|t-tag|t-log|t-model|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.dynamic"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#inline-js"
+                        }
+                    ]
+                }
+            ]
+        },
+        "owl-attributes-static": {
+            "patterns": [
+                {
+                    "contentName": "string.quoted.double.xml",
+                    "begin": "(\\s*)(t-name|t-else|t-ref|t-set-slot|t-inherit|t-inherit-mode|t-translation|t-debug)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.static"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": []
+                },
+                {
+                    "contentName": "string.quoted.single.xml",
+                    "begin": "(\\s*)(t-name|t-else|t-ref|t-set-slot|t-inherit|t-inherit-mode|t-translation|t-debug)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.static"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": []
+                }
+            ]
+        },
+        "owl-attributes-formatted-string": {
+            "patterns": [
+                {
+                    "contentName": "string.quoted.double.xml",
+                    "begin": "(\\s*)(t-call|t-slot|t-attf-[a-z_:.-]+)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.formatted"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#formatted-string"
+                        }
+                    ]
+                },
+                {
+                    "contentName": "string.quoted.single.xml",
+                    "begin": "(\\s*)(t-call|t-slot|t-attf-[a-z_:.-]+)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.formatted"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#formatted-string"
+                        }
+                    ]
+                }
+            ]
+        },
+        "xpath": {
+            "patterns": [
+                {
+                    "begin": "\\[",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition"
+                        }
+                    },
+                    "end": "\\]",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "begin": "'",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition"
+                                }
+                            },
+                            "end": "'",
+                            "endCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition"
+                                }
+                            },
+                            "contentName": "string.quoted.single"
+                        },
+                        {
+                            "begin": "\\\"",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition"
+                                }
+                            },
+                            "end": "\\\"",
+                            "endCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition"
+                                }
+                            },
+                            "contentName": "string.quoted.double"
+                        },
+                        {
+                            "match": "(@)([a-zA-Z0-9_:\\-]+)\\b",
+                            "captures": {
+                                "1": {
+                                    "name": "punctuation.definition"
+                                },
+                                "2": {
+                                    "name": "entity.other.attribute-name"
+                                }
+                            }
+                        },
+                        {
+                            "match": "(\\(|\\))",
+                            "name": "meta.brace.round"
+                        },
+                        {
+                            "match": "[0-9]+(\\.[0-9]+)?",
+                            "name": "constant.numeric.decimal"
+                        },
+                        {
+                            "match": "\\b(hasclass)\\b",
+                            "captures": {
+                                "1": {
+                                    "name": "entity.name.function"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "match": "/{1,2}",
+                    "name": "text"
+                },
+                {
+                    "match": "(?<!@)([A-Z][a-zA-Z]+)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.class"
+                        }
+                    }
+                },
+                {
+                    "match": "(?<!@)([a-z][a-zA-Z0-9_:.]+|[abiqsuw])\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.tag"
+                        }
+                    }
+                }
+            ]
+        },
+        "xpath-attributes": {
+            "patterns": [
+                {
+                    "contentName": "string.quoted.double.xml",
+                    "begin": "(\\s*)(expr)(=)(\")",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.xml.attribute owl.xml.attribute.xpath"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(\")",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#xpath"
+                        }
+                    ]
+                },
+                {
+                    "contentName": "string.quoted.single.xml",
+                    "begin": "(\\s*)(expr)(=)(')",
+                    "beginCaptures": {
+                        "2": {
+                            "name": "entity.other.attribute-name.localname.xml owl.xml.attribute owl.xml.attribute.xpath"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.string.begin.xml"
+                        }
+                    },
+                    "end": "(')",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.xml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#xpath"
+                        }
+                    ]
+                }
+            ]
+        },
+        "component-tags": {
+            "begin": "(</?)([A-Z][a-zA-Z0-9_]*)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.xml.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.type.class owl.component"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#owl-attributes-dynamic"
+                },
+                {
+                    "include": "#owl-attributes-dynamic"
+                },
+                {
+                    "include": "#props-attributes"
+                }
+            ]
+        },
+        "html-tags": {
+            "begin": "(</?)([a-z][a-zA-Z0-9_:.]+|[abiqsuw])",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.xml.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.tag.localname.xml owl.xml.tag"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#owl-attributes-formatted-string"
+                },
+                {
+                    "include": "#xpath-attributes"
+                },
+                {
+                    "include": "#owl-attributes-dynamic"
+                },
+                {
+                    "include": "#owl-attributes-static"
+                },
+                {
+                    "include": "#html-attributes"
+                }
+            ]
+        },
+        "t-tag": {
+            "begin": "(</?)(t(?![a-zA-Z]))",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.xml.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.tag.localname.xml owl.tag"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#props-attributes"
+                },
+                {
+                    "include": "#owl-attributes-formatted-string"
+                },
+                {
+                    "include": "#owl-attributes-dynamic"
+                },
+                {
+                    "include": "#owl-attributes-static"
+                }
+            ]
+        }
+    },
+    "injectTo": [
+        "text.xml"
+    ],
+    "embeddedLangs": [
+        "javascript"
+    ]
+}

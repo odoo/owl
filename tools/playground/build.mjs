@@ -11,8 +11,12 @@ const externalsPlugin = {
       path: "../owl.js",
       external: true,
     }));
-    build.onResolve({ filter: /^@libs\/codemirror$/ }, () => ({
-      path: "./libs/codemirror.bundle.js",
+    build.onResolve({ filter: /^@libs\/monaco$/ }, () => ({
+      path: "./libs/monaco/monaco.bundle.js",
+      external: true,
+    }));
+    build.onResolve({filter: /^@libs\/shiki$/}, () => ({
+      path: "./libs/monaco/shiki.bundle.js",
       external: true,
     }));
   },

@@ -29,6 +29,8 @@ export const {
   languages,
   Uri,
   Range,
+  KeyMod,
+  KeyCode,
   typescript,
 } = monaco;
 `

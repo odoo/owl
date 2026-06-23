@@ -143,30 +143,7 @@ class CodeEditor extends Component {
 
       pane.models[fileName] = model;
 
-      pane.editor = monaco.editor.create(
-        this.primaryEditorNode(),
-        {
-          model,
-          theme: this.settings.darkMode()
-            ? "slate-dark"
-            : "github-light",
-          automaticLayout: true,
-          linkedEditing: true,
-          minimap: {
-            enabled: false,
-          },
-        }
-      );
-
-      pane.editor.onDidChangeModelContent(() => {
-        const fileName = pane.lastFile;
-
-        this.code.setContent(
-          fileName,
-          pane.editor.getValue()
-        );
-      });
-
+      pane.editor = this.createEditor(pane,this.primaryEditorNode(), model);
       pane.lastFile = fileName;
       lastVersion = this.code.contentVersion();
     });
@@ -229,28 +206,7 @@ class CodeEditor extends Component {
         const pane = this.panes.secondary;
         const model = this.createModel(content, fileName);
 
-        pane.editor = monaco.editor.create(
-          node,
-          {
-            model,
-            theme: this.settings.darkMode()
-              ? "slate-dark"
-              : "github-light",
-            automaticLayout: true,
-            linkedEditing: true,
-            minimap: {
-              enabled: false,
-            },
-          }
-        );
-        pane.editor.onDidChangeModelContent(() => {
-          const fileName = pane.lastFile;
-
-          this.code.setContent(
-            fileName,
-            pane.editor.getValue()
-          );
-        });
+        pane.editor = this.createEditor(pane, node, model);
         pane.models[fileName] = model;
         pane.lastFile = fileName;
       }
@@ -493,6 +449,48 @@ class CodeEditor extends Component {
       },
       { once: true }
     );
+  }
+
+  createEditor(pane, node, model) {
+    const editor = monaco.editor.create(
+      node,
+      {
+        model,
+        theme: this.settings.darkMode()
+          ? "slate-dark"
+          : "github-light",
+        automaticLayout: true,
+        linkedEditing: true,
+        minimap: {
+          enabled: false,
+        },
+      }
+    );
+
+    editor.onDidChangeModelContent(() => {
+      const fileName = pane.lastFile;
+
+      this.code.setContent(
+        fileName,
+        pane.editor.getValue()
+      );
+    });
+
+    editor.addAction({
+      id: "run-code",
+      label: "Run Code",
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
+      ],
+      run: () => {
+        this.code.run();
+        const activeId = this.project.activeProjectId();
+        if (activeId) {
+          this.project.markProjectAsRun(activeId);
+        }
+      },
+    });
+    return editor;
   }
 
   createModel(content, fileName) {

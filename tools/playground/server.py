@@ -32,6 +32,8 @@ class OWLHandler(SimpleHTTPRequestHandler):
         # under /playground/ (matching the integrated site layout).
         if path == '/owl.js' or path == '/playground/owl.js':
             self.path = '/packages/owl/dist/owl.es.js'
+        elif path == '/owl.d.ts' or path == '/playground/owl.d.ts':
+            self.path = '/packages/owl/dist/types/owl.d.ts'
         # Map playground routes to tools/playground
         elif path.startswith('/playground/libs/') or path.startswith('/playground/samples/'):
             self.path = '/tools/playground' + path[len('/playground'):]

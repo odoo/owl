@@ -24,12 +24,14 @@ cpSync(resolve(__dirname, "main.css"), resolve(out, "main.css"));
 
 // OWL build
 cpSync(resolve(root, "packages/owl/dist/owl.es.js"), resolve(out, "owl.js"));
+cpSync(resolve(root, "packages/owl/dist/types/owl.d.ts"), resolve(out, "owl.d.ts"));
 
 // Playground
 cpSync(resolve(root, "tools/playground/static"), resolve(out, "playground"), { recursive: true });
 cpSync(resolve(root, "tools/playground/dist/playground.js"), resolve(out, "playground/playground.js"));
 cpSync(resolve(root, "tools/playground/libs"), resolve(out, "playground/libs"), { recursive: true });
 cpSync(resolve(root, "tools/playground/samples"), resolve(out, "playground/samples"), { recursive: true });
+cpSync(resolve(root, "tools/playground/dist/grammars"), resolve(out, "playground/grammars"), { recursive: true });
 
 // Documentation (VitePress) — v3 (current)
 cpSync(resolve(root, "doc/.vitepress/dist"), resolve(out, "documentation"), { recursive: true });

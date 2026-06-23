@@ -1,17 +1,4 @@
-import { css as cssLang, markdown, } from "@libs/codemirror";
-
-import {
-  createOwlJsLanguage,
-  createOwlXmlLanguage
-} from "./owl_language";
-
-const LANGUAGES = {
-  js: () => createOwlJsLanguage(),
-  css: () => cssLang(),
-  xml: () => createOwlXmlLanguage(),
-  md: () => markdown(),
-};
-
+const LANGUAGES = { js: 'js', css: 'css', xml: 'xml', md: 'md' };
 const TAB_SIZES = { js: 4, css: 4, xml: 2, md: 2 };
 
 const FILE_ICON_CLASSES = {

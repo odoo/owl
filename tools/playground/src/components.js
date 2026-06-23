@@ -5,6 +5,7 @@ import {
   onMounted,
   onPatched,
   onWillPatch,
+  onWillStart,
   onWillUnmount,
   plugin,
   props,
@@ -13,23 +14,12 @@ import {
   untrack,
   useEffect,
 } from "@odoo/owl";
-import { createOwlCompletions, parseMarkdown, xmlTagRename } from "./code_utils.js";
-import { getFileType, LANGUAGES, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
-import {
-  abbreviationTracker,
-  acceptCompletion,
-  basicSetup,
-  Compartment,
-  EditorState,
-  EditorView,
-  expandAbbreviation,
-  indentLess,
-  indentMore,
-  indentUnit,
-  keymap,
-  oneDark,
-  Prec,
-} from "@libs/codemirror";
+import { parseMarkdown } from "./code_utils.js";
+import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
+import * as monaco from "@libs/monaco";
+import { setupShiki } from "./monaco/shiki.js";
+import { registerCustomTsWorker } from "./monaco/auto_import.js";
+import { registerOwlSnippets } from "./monaco/snippets.js";
 import {
   CodePlugin,
   DialogPlugin,
@@ -42,20 +32,13 @@ import {
 } from "./plugins.js";
 import { HELLO_WORLD_JS } from "./samples.js";
 import { debounce } from "./utils.js";
-
-// Override oneDark's background colors to match the slate UI theme.
-// Prec.override ensures this beats oneDark's theme styles.
-const slateTheme = Prec.highest(EditorView.theme({
-  "&": { backgroundColor: "#243447" },
-  ".cm-gutters": { backgroundColor: "#243447", borderRight: "1px solid #2e4055" },
-  ".cm-activeLine": { backgroundColor: "rgba(255,255,255,0.03)" },
-  ".cm-activeLineGutter": { backgroundColor: "#1a2840" },
-}));
+import { registerXmlTagRename } from "./monaco/xml_tag_rename.js";
 
 class CodeEditor extends Component {
   static template = "CodeEditor";
 
   code = plugin(CodePlugin);
+  owlVersion = plugin(VersionPlugin);
   settings = plugin(SettingsPlugin);
   project = plugin(ProjectPlugin);
   view = plugin(ViewPlugin);
@@ -66,29 +49,130 @@ class CodeEditor extends Component {
     this.primaryMarkdownPreview = signal(null);
     this.secondaryMarkdownPreview = signal(null);
 
-    this.fontSizeCompartment = new Compartment();
-    this.themeCompartment = new Compartment();
     this.panes = {
-      primary: { view: null, states: {}, scrolls: {}, lastFile: null },
-      secondary: { view: null, states: {}, scrolls: {}, lastFile: null },
+      primary: {
+        editor: null,
+        models: {},
+        scrolls: {},
+        lastFile: null,
+      },
+      secondary: {
+        editor: null,
+        models: {},
+        scrolls: {},
+        lastFile: null,
+      },
     };
 
     let lastVersion = null;
+    let owlTypesDisposable = null;
+
+    onWillStart(async () => {
+      const workerBasePath = '/playground/libs/workers';
+      window.MonacoEnvironment = {
+        getWorker(_, label) {
+          switch (label) {
+            case "typescript":
+            case "javascript":
+              return new Worker(
+                `${workerBasePath}/ts.worker.js`
+              );
+
+            case "css":
+              return new Worker(
+                `${workerBasePath}/css.worker.js`
+              );
+
+            case "html":
+              return new Worker(
+                `${workerBasePath}/html.worker.js`
+              );
+
+            default:
+              return new Worker(
+                `${workerBasePath}/editor.worker.js`
+              );
+          };
+        },
+      };
+      monaco.editor.defineTheme("slate-dark", { base: "vs-dark" });
+      monaco.typescript.javascriptDefaults.setCompilerOptions({
+        allowJs: true,
+        allowNonTsExtensions: true,
+        checkJs: true,
+        noImplicitAny: false,
+        moduleResolution:
+          monaco.typescript.ModuleResolutionKind.NodeJs,
+        module:
+          monaco.typescript.ModuleKind.ESNext,
+        target:
+          monaco.typescript.ScriptTarget.ESNext,
+        baseUrl: "file:///",
+      });
+      monaco.typescript.javascriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: false,
+        noSyntaxValidation: false,
+      });
+      monaco.typescript.javascriptDefaults.addExtraLib(
+        `declare const TEMPLATES: Record<string, string>;`,
+        "file:///globals.d.ts"
+      );
+      registerOwlSnippets(monaco);
+      registerXmlTagRename(monaco);
+      await registerCustomTsWorker(monaco);
+      await setupShiki(monaco);
+    });
+
+    useEffect(() => {
+      const files = this.code.files();
+      for (const file of files) {
+        if (getFileType(file.name) !== "js") {
+          continue;
+        }
+        this.createModel(this.code.getContent(file.name), file.name);
+      }
+    });
 
     onMounted(() => {
       const fileName = this.code.primaryFile();
       const pane = this.panes.primary;
-      const state = this.createEditorState(this.code.getContent(fileName), fileName, "primary");
-      pane.view = new EditorView({ parent: this.primaryEditorNode(), state });
-      pane.states[fileName] = state;
+      const model = this.createModel(
+        this.code.getContent(fileName),
+        fileName
+      );
+
+      pane.models[fileName] = model;
+
+      pane.editor = this.createEditor(pane,this.primaryEditorNode(), model);
       pane.lastFile = fileName;
       lastVersion = this.code.contentVersion();
     });
 
     useEffect(() => {
+      const version = this.owlVersion.current();
+
+      (async () => {
+        owlTypesDisposable?.dispose();
+
+        const dts = await fetch(version.types).then((r) => r.text());
+
+        owlTypesDisposable =
+          monaco.typescript.javascriptDefaults.addExtraLib(
+            dts,
+            `file:///node_modules/@odoo/owl/index.d.ts`
+          );
+      })();
+
+      return () => {
+        owlTypesDisposable?.dispose();
+        owlTypesDisposable = null;
+      };
+    });
+
+    useEffect(() => {
       this.code.focusRequest();
-      if (this.panes.primary.view) {
-        this.panes.primary.view.focus();
+      if (this.panes.primary.editor) {
+        this.panes.primary.editor.focus();
       }
     });
 
@@ -100,7 +184,7 @@ class CodeEditor extends Component {
         "primary",
         untrack(() => this.code.primaryFile())
       );
-      if (this.panes.secondary.view) {
+      if (this.panes.secondary.editor) {
         this._resetPane(
           "secondary",
           untrack(() => this.code.secondaryFile())
@@ -116,18 +200,19 @@ class CodeEditor extends Component {
     useEffect(() => {
       const split = this.code.splitMode();
       const node = this.secondaryEditorNode();
-      if (split && node && !this.panes.secondary.view) {
+      if (split && node && !this.panes.secondary.editor) {
         const fileName = untrack(() => this.code.secondaryFile());
         const content = untrack(() => this.code.getContent(fileName));
         const pane = this.panes.secondary;
-        const state = this.createEditorState(content, fileName, "secondary");
-        pane.view = new EditorView({ parent: node, state });
-        pane.states[fileName] = state;
+        const model = this.createModel(content, fileName);
+
+        pane.editor = this.createEditor(pane, node, model);
+        pane.models[fileName] = model;
         pane.lastFile = fileName;
       }
-      if (!split && this.panes.secondary.view) {
-        this.panes.secondary.view.destroy();
-        this.panes.secondary = { view: null, states: {}, scrolls: {}, lastFile: null };
+      if (!split && this.panes.secondary.editor) {
+        this.panes.secondary.editor.dispose();
+        this.panes.secondary = { editor: null, models: {}, scrolls: {}, lastFile: null };
       }
     });
 
@@ -145,32 +230,29 @@ class CodeEditor extends Component {
       if (primaryFile !== secondaryFile) return;
       const content = contents[primaryFile] || "";
       for (const pane of Object.values(this.panes)) {
-        if (pane.view && pane.view.state.doc.toString() !== content) {
-          pane.view.dispatch({
-            changes: { from: 0, to: pane.view.state.doc.length, insert: content },
-          });
+        if (pane.editor) {
+          const model = pane.editor.getModel();
+          if (model && model.getValue() !== content) {
+            model.setValue(content);
+          }
         }
       }
     });
 
     useEffect(() => {
       const size = this.settings.fontSize();
-      const theme = EditorView.theme({ "&": { fontSize: size + "px" } });
       for (const pane of Object.values(this.panes)) {
-        if (pane.view) {
-          pane.view.dispatch({ effects: this.fontSizeCompartment.reconfigure(theme) });
+        if (pane.editor) {
+          pane.editor.updateOptions({
+            fontSize: size,
+          });
         }
       }
     });
 
     useEffect(() => {
       const isDark = this.settings.darkMode();
-      const ext = isDark ? [oneDark, slateTheme] : [];
-      for (const pane of Object.values(this.panes)) {
-        if (pane.view) {
-          pane.view.dispatch({ effects: this.themeCompartment.reconfigure(ext) });
-        }
-      }
+      monaco.editor.setTheme(isDark ? "slate-dark" : "github-light");
     });
 
     useEffect(() => {
@@ -206,7 +288,10 @@ class CodeEditor extends Component {
 
     onWillUnmount(() => {
       for (const pane of Object.values(this.panes)) {
-        if (pane.view) pane.view.destroy();
+        if (pane.editor) pane.editor.dispose();
+        for (const model of Object.values(pane.models)) {
+          model.dispose();
+        }
       }
     });
   }
@@ -238,43 +323,44 @@ class CodeEditor extends Component {
 
   _resetPane(paneId, fileName) {
     const pane = this.panes[paneId];
-    if (!pane.view) return;
-    pane.states = {};
+    if (!pane.editor) return;
     pane.scrolls = {};
-    pane.lastFile = fileName;
     const content = this.code.getContent(fileName);
-    const newState = this.createEditorState(content, fileName, paneId);
-    pane.states[fileName] = newState;
-    pane.view.setState(newState);
+    const model = this.createModel(content, fileName);
+    pane.models[fileName] = model;
+    pane.lastFile = fileName;
+    if (pane.editor.getModel() !== model) {
+      pane.editor.setModel(model);
+    }
   }
 
   _switchPaneFile(paneId, fileName) {
     const pane = this.panes[paneId];
-    if (!pane.view || fileName === pane.lastFile) return;
+    if (!pane.editor || fileName === pane.lastFile) return;
     if (pane.lastFile) {
-      pane.states[pane.lastFile] = pane.view.state;
-      pane.scrolls[pane.lastFile] = pane.view.scrollDOM.scrollTop;
+      pane.scrolls[pane.lastFile] = pane.editor.getScrollTop();
     }
     pane.lastFile = fileName;
-    if (!pane.states[fileName]) {
-      pane.states[fileName] = this.createEditorState(
+    if (!pane.models[fileName]) {
+      pane.models[fileName] = this.createModel(
         this.code.getContent(fileName),
-        fileName,
-        paneId
+        fileName
       );
     }
-    pane.view.setState(pane.states[fileName]);
+
+    pane.editor.setModel(
+      pane.models[fileName]
+    );
     const content = this.code.getContent(fileName);
-    if (pane.view.state.doc.toString() !== content) {
-      pane.view.dispatch({
-        changes: { from: 0, to: pane.view.state.doc.length, insert: content },
-      });
+    const model = pane.editor.getModel();
+    if (model && model.getValue() != content) {
+      model.setValue(content);
     }
     const scrollTop = pane.scrolls[fileName] || 0;
     requestAnimationFrame(() => {
-      if (pane.view) pane.view.scrollDOM.scrollTop = scrollTop;
+      if (pane.editor) pane.editor.setScrollTop(scrollTop);
     });
-    pane.view.focus();
+    pane.editor.focus();
   }
 
   primaryPaneStyle = computed(() => {
@@ -365,58 +451,87 @@ class CodeEditor extends Component {
     );
   }
 
-  createEditorState(content, fileName, paneId) {
-    const lang = getFileType(fileName);
-    const tabSize = TAB_SIZES[lang];
-    return EditorState.create({
-      doc: content,
-      extensions: [
-        basicSetup,
-        Prec.highest(
-          keymap.of([
-            {
-              key: "Tab",
-              run: (view) =>
-                acceptCompletion(view) ||
-                (lang === "xml" && expandAbbreviation(view)) ||
-                indentMore(view),
-              shift: indentLess,
-            },
-            {
-              key: "Mod-Enter",
-              run: () => {
-                this.code.run();
-                const activeId = this.project.activeProjectId();
-                if (activeId) {
-                  this.project.markProjectAsRun(activeId);
-                }
-                return true;
-              },
-            },
-          ])
-        ),
-        new Compartment().of(LANGUAGES[lang]()),
-        new Compartment().of(indentUnit.of(" ".repeat(tabSize))),
-        EditorState.tabSize.of(tabSize),
-        ...(lang === "md" ? [EditorView.lineWrapping] : []),
-        ...(lang === "js" ? [createOwlCompletions()] : []),
-        ...(lang === "xml" ? [abbreviationTracker(), xmlTagRename()] : []),
-        this.fontSizeCompartment.of(
-          EditorView.theme({ "&": { fontSize: this.settings.fontSize() + "px" } })
-        ),
-        this.themeCompartment.of(this.settings.darkMode() ? [oneDark, slateTheme] : []),
-        EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            const value = update.state.doc.toString();
-            const pane = this.panes[paneId];
-            const file = pane.lastFile;
-            if (file && this.code.getContent(file) !== value) {
-              this.code.setContent(file, value);
-            }
-          }
-        }),
-      ],
+  createEditor(pane, node, model) {
+    const editor = monaco.editor.create(
+      node,
+      {
+        model,
+        theme: this.settings.darkMode()
+          ? "slate-dark"
+          : "github-light",
+        automaticLayout: true,
+        linkedEditing: true,
+        minimap: {
+          enabled: false,
+        },
+      }
+    );
+
+    editor.onDidChangeModelContent(() => {
+      const fileName = pane.lastFile;
+
+      this.code.setContent(
+        fileName,
+        pane.editor.getValue()
+      );
     });
+
+    editor.addAction({
+      id: "run-code",
+      label: "Run Code",
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
+      ],
+      run: () => {
+        this.code.run();
+        const activeId = this.project.activeProjectId();
+        if (activeId) {
+          this.project.markProjectAsRun(activeId);
+        }
+      },
+    });
+    return editor;
+  }
+
+  createModel(content, fileName) {
+    const lang = getFileType(fileName);
+    const activeProject = this.project.activeProject();
+    const tabSize = TAB_SIZES[lang];
+    const uri = monaco.Uri.parse(`file:///${activeProject?.name ?? 'unknown'}/${fileName}`);
+
+    let model = monaco.editor.getModel(uri);
+    if (!model) {
+      model = monaco.editor.createModel(
+        content,
+        this.getMonacoLanguage(getFileType(fileName)),
+        uri
+      );
+    } else if (model.getValue() !== content) {
+      model.setValue(content);
+    }
+    model.updateOptions({
+      tabSize
+    })
+    return model;
+  }
+
+  getMonacoLanguage(lang) {
+    switch (lang) {
+      case "js":
+        return "javascript";
+
+      case "xml":
+        return "xml";
+
+      case "css":
+        return "css";
+
+      case "md":
+        return "markdown";
+
+      default:
+        return "plaintext";
+    }
   }
 }
 

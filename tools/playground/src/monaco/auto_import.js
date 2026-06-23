@@ -1,5 +1,7 @@
 /* Inspired from https://github.com/pieterjanv/monaco-editor-module-auto-import-demo */
 
+import { playgroundAssetUrl } from "../asset_url.js";
+
 let KIND_MAP = null;
 
 const buildKindMap = (monaco) => {
@@ -48,7 +50,7 @@ let providerDisposable = null;
 export const registerCustomTsWorker = async (monaco) => {
   buildKindMap(monaco);
   monaco.typescript.javascriptDefaults.setWorkerOptions({
-    customWorkerPath: "/playground/libs/workers/custom_ts_worker.js",
+    customWorkerPath: playgroundAssetUrl("./libs/workers/custom_ts_worker.js"),
   });
 
   const getWorker = await monaco.typescript.getJavaScriptWorker();

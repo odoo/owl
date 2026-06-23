@@ -1,8 +1,9 @@
 import { createHighlighter, shikiToMonaco, oneDarkPro } from "@libs/shiki";
+import { playgroundAssetUrl } from "../asset_url.js";
 
 async function loadGrammar(grammar) {
   return await fetch(
-    `/playground/grammars/${grammar}`
+    playgroundAssetUrl(`./grammars/${grammar}`)
   ).then(r => r.json());
 }
 

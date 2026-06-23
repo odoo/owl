@@ -17,6 +17,7 @@ import {
 import { parseMarkdown } from "./code_utils.js";
 import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import * as monaco from "@libs/monaco";
+import { playgroundAssetUrl } from "./asset_url.js";
 import { setupShiki } from "./monaco/shiki.js";
 import { registerCustomTsWorker } from "./monaco/auto_import.js";
 import { registerOwlSnippets } from "./monaco/snippets.js";
@@ -68,29 +69,28 @@ class CodeEditor extends Component {
     let owlTypesDisposable = null;
 
     onWillStart(async () => {
-      const workerBasePath = '/playground/libs/workers';
       window.MonacoEnvironment = {
         getWorker(_, label) {
           switch (label) {
             case "typescript":
             case "javascript":
               return new Worker(
-                `${workerBasePath}/ts.worker.js`
+                playgroundAssetUrl("./libs/workers/ts.worker.js")
               );
 
             case "css":
               return new Worker(
-                `${workerBasePath}/css.worker.js`
+                playgroundAssetUrl("./libs/workers/css.worker.js")
               );
 
             case "html":
               return new Worker(
-                `${workerBasePath}/html.worker.js`
+                playgroundAssetUrl("./libs/workers/html.worker.js")
               );
 
             default:
               return new Worker(
-                `${workerBasePath}/editor.worker.js`
+                playgroundAssetUrl("./libs/workers/editor.worker.js")
               );
           };
         },

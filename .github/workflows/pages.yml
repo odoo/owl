@@ -28,6 +28,7 @@ jobs:
         node-version: 22.x
     - run: npm ci
     - run: npm run build
+    - run: npm run build:types
     - run: npm run build:playground
     - run: npm run build:monaco -w tools/playground
     - run: npm run build:doc

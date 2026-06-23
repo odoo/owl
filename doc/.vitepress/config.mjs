@@ -2,6 +2,7 @@ import { defineConfig } from "vitepress";
 import { buildNavbar } from "./navbar.mjs";
 import fs from "fs";
 import path from "path";
+import { getShikiGrammars } from "../../tools/shiki-grammars.mjs";
 
 // Re-enable this group at the top of each per-route sidebar when a second
 // package lands (owl-router, owl-orm, …). For now it's noise — a single
@@ -73,15 +74,6 @@ const owlSidebar = [
   },
 ];
 
-function loadGrammar(file) {
-  return JSON.parse(
-    fs.readFileSync(
-      path.resolve(__dirname, `./grammars/${file}`),
-      'utf-8'
-    )
-  )
-}
-
 export default defineConfig({
   title: "OWL",
   description: "Odoo Web Library - A reactive component framework for the web",
@@ -117,9 +109,7 @@ export default defineConfig({
     },
     languages: [
       'typescript', 'javascript', 'xml', 'html', 'css',
-      loadGrammar('owl.template.json'),
-      loadGrammar('owl.template.inline.json'),
-      loadGrammar('owl.markup.inline.json')
+      ...getShikiGrammars(),
     ],
   },
 

@@ -1,6 +1,7 @@
 import * as esbuild from "esbuild";
-import { dirname } from "path";
+import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
+import { writeShikiGrammars } from "../shiki-grammars.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -30,3 +31,7 @@ await esbuild.build({
   absWorkingDir: __dirname,
   plugins: [externalsPlugin],
 });
+
+writeShikiGrammars(
+  resolve(__dirname, "dist/grammars")
+);

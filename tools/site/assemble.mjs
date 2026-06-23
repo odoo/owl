@@ -31,6 +31,7 @@ cpSync(resolve(root, "tools/playground/static"), resolve(out, "playground"), { r
 cpSync(resolve(root, "tools/playground/dist/playground.js"), resolve(out, "playground/playground.js"));
 cpSync(resolve(root, "tools/playground/libs"), resolve(out, "playground/libs"), { recursive: true });
 cpSync(resolve(root, "tools/playground/samples"), resolve(out, "playground/samples"), { recursive: true });
+cpSync(resolve(root, "tools/playground/dist/grammars"), resolve(out, "playground/grammars"), { recursive: true });
 
 // Documentation (VitePress) — v3 (current)
 cpSync(resolve(root, "doc/.vitepress/dist"), resolve(out, "documentation"), { recursive: true });

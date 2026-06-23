@@ -2,7 +2,7 @@ import { createHighlighter, shikiToMonaco, oneDarkPro } from "@libs/shiki";
 
 async function loadGrammar(grammar) {
   return await fetch(
-    `/playground/libs/grammars/${grammar}`
+    `/playground/grammars/${grammar}`
   ).then(r => r.json());
 }
 

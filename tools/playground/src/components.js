@@ -19,6 +19,7 @@ import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_ut
 import * as monaco from "@libs/monaco";
 import { setupShiki } from "./monaco/shiki.js";
 import { registerCustomTsWorker } from "./monaco/auto_import.js";
+import { registerOwlSnippets } from "./monaco/snippets.js";
 import {
   CodePlugin,
   DialogPlugin,
@@ -115,6 +116,7 @@ class CodeEditor extends Component {
         `declare const TEMPLATES: Record<string, string>;`,
         "file:///globals.d.ts"
       );
+      registerOwlSnippets(monaco);
       await registerCustomTsWorker(monaco);
       await setupShiki(monaco);
     });

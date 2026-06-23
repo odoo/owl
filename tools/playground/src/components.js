@@ -32,6 +32,7 @@ import {
 } from "./plugins.js";
 import { HELLO_WORLD_JS } from "./samples.js";
 import { debounce } from "./utils.js";
+import { registerXmlTagRename } from "./monaco/xml_tag_rename.js";
 
 class CodeEditor extends Component {
   static template = "CodeEditor";
@@ -117,6 +118,7 @@ class CodeEditor extends Component {
         "file:///globals.d.ts"
       );
       registerOwlSnippets(monaco);
+      registerXmlTagRename(monaco);
       await registerCustomTsWorker(monaco);
       await setupShiki(monaco);
     });
@@ -149,6 +151,7 @@ class CodeEditor extends Component {
             ? "slate-dark"
             : "github-light",
           automaticLayout: true,
+          linkedEditing: true,
           minimap: {
             enabled: false,
           },
@@ -234,6 +237,7 @@ class CodeEditor extends Component {
               ? "slate-dark"
               : "github-light",
             automaticLayout: true,
+            linkedEditing: true,
             minimap: {
               enabled: false,
             },

@@ -5,6 +5,10 @@ import * as esbuild from "esbuild";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "../..");
+const monacoRoot = path.resolve(
+  rootDir,
+  "node_modules/monaco-editor/esm/vs"
+);
 
 const outputFile = path.resolve(
   __dirname,
@@ -76,17 +80,25 @@ try {
 
   await esbuild.build({
     entryPoints: {
-      "editor.worker":
-        "node_modules/monaco-editor/esm/vs/editor/editor.worker.js",
+      "editor.worker": path.join(
+        monacoRoot,
+        "editor/editor.worker.js"
+      ),
 
-      "ts.worker":
-        "node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js",
+      "ts.worker": path.join(
+        monacoRoot,
+        "language/typescript/ts.worker.js"
+      ),
 
-      "css.worker":
-        "node_modules/monaco-editor/esm/vs/language/css/css.worker.js",
+      "css.worker": path.join(
+        monacoRoot,
+        "language/css/css.worker.js"
+      ),
 
-      "html.worker":
-        "node_modules/monaco-editor/esm/vs/language/html/html.worker.js",
+      "html.worker": path.join(
+        monacoRoot,
+        "language/html/html.worker.js"
+      ),
     },
 
     outdir: path.resolve(__dirname, "libs/workers"),

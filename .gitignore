@@ -2,6 +2,10 @@
 /dist
 /packages/*/dist
 /tools/playground/dist
+/tools/playground/libs/monaco/
+/tools/playground/libs/workers/*.worker.js
+/tools/playground/static/monaco.bundle.css
+/tools/playground/static/codicon.ttf
 **/.vitepress/dist
 **/.vitepress/cache
 

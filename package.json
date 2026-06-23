@@ -28,7 +28,7 @@
     "build:playground": "npm run build -w tools/playground",
     "build:doc": "vitepress build doc",
     "build:doc-v2": "vitepress build doc/v2",
-    "build:site": "npm run build && npm run build:playground && npm run build:doc && npm run build:doc-v2 && node tools/site/assemble.mjs",
+    "build:site": "npm run build && npm run build:playground && npm run build:monaco -w tools/playground && npm run build:doc && npm run build:doc-v2 && node tools/site/assemble.mjs",
     "serve:site": "npm run build:site && python3 tools/site/server.py || python tools/site/server.py",
     "playground:serve": "python3 tools/playground/server.py || python tools/playground/server.py",
     "playground": "npm run build && npm run build:types && npm run build:playground && npm run playground:serve",

@@ -26,7 +26,9 @@ import "monaco-editor/esm/vs/language/typescript/monaco.contribution.js";
 
 export const {
   editor,
+  languages,
   Uri,
+  Range,
   typescript,
 } = monaco;
 `

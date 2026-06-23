@@ -18,6 +18,7 @@ import { parseMarkdown } from "./code_utils.js";
 import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import * as monaco from "@libs/monaco";
 import { setupShiki } from "./monaco/shiki.js";
+import { registerCustomTsWorker } from "./monaco/auto_import.js";
 import {
   CodePlugin,
   DialogPlugin,
@@ -114,6 +115,7 @@ class CodeEditor extends Component {
         `declare const TEMPLATES: Record<string, string>;`,
         "file:///globals.d.ts"
       );
+      await registerCustomTsWorker(monaco);
       await setupShiki(monaco);
     });
 

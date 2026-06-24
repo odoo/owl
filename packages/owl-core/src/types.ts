@@ -16,6 +16,9 @@ const elementTypeSymbol = Symbol("elementType");
 // Attached to validators created by `.optional()`: an object key with an
 // optional type may be omitted.
 const optionalSymbol = Symbol("optional");
+// Attached to intersection validators (`and`), so that `applyDefaults` can
+// fold defaults from every member type into the value.
+const intersectionSymbol = Symbol("intersection");
 
 // Type-level brand carried by `.optional(value)`. It is phantom (declare):
 // nothing exists at runtime under this key. The brand stores the wrapped type
@@ -183,6 +186,14 @@ function applyDefaultsRec(value: any, type: any): any {
   if (typeof inner !== "function" || !value || typeof value !== "object") {
     return value;
   }
+  const members = inner[intersectionSymbol];
+  if (members) {
+    let result = value;
+    for (const member of members) {
+      result = applyDefaultsRec(result, member);
+    }
+    return result;
+  }
   const elementType = inner[elementTypeSymbol];
   if (elementType && Array.isArray(value)) {
     let result = value;
@@ -320,11 +331,13 @@ function instanceType<T extends Constructor>(constructor: T): Type<InstanceType<
 }
 
 function intersection<T extends any[]>(types: T): Type<UnionToIntersection<StripBrands<T[number]>>> {
-  return makeType(function validateIntersection(context: ValidationContext) {
+  const validate = makeType(function validateIntersection(context: ValidationContext) {
     for (const type of types) {
       context.validate(type);
     }
   });
+  validate[intersectionSymbol] = types;
+  return validate;
 }
 
 export type LiteralTypes = number | string | boolean | null | undefined;

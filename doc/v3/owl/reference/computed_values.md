@@ -71,6 +71,7 @@ user.loading(); // reactive boolean: true while a run is in flight
 user.error(); // reactive Error | null
 user.refresh(); // re-run the fetcher even if nothing changed
 user.dispose(); // tear down (auto-called when the surrounding scope dies)
+user.currentPromise(); // promise that resolves once no run is in flight
 ```
 
 The `abortSignal` argument follows the same convention as
@@ -85,6 +86,34 @@ While a fetch is in flight, the previous resolved value remains visible via
 When created inside a component or a plugin's `setup`, `asyncComputed` cleans
 up automatically on destroy. Outside any scope, you must call `.dispose()`
 yourself.
+
+### Awaiting the current run
+
+`currentPromise()` returns a promise that resolves as soon as no run is in
+flight: if a run is currently running it resolves once that run — or any run
+that supersedes it — settles, otherwise it resolves immediately. It never
+rejects; a fetcher error is reported through `error()`, not by rejecting.
+
+This pairs naturally with [`onWillStart`](scope.md) to hold the first render
+until the initial data is available:
+
+```js
+class UserCard extends Component {
+  static template = xml`<div t-out="this.user()?.name"/>`;
+  user = asyncComputed(async ({ abortSignal }) => {
+    const res = await fetch(`/api/users/${userId()}`, { signal: abortSignal });
+    return res.json();
+  });
+  setup() {
+    onWillStart(() => this.user.currentPromise());
+  }
+}
+```
+
+The component mounts only once the first fetch settles, so `this.user()` is
+already populated on the initial render. Later re-runs (a dependency changed,
+or `refresh()`) update the value reactively without blocking, and you can
+branch on `loading()` to show a spinner for those.
 
 ### Tracking only happens before the first `await`
 

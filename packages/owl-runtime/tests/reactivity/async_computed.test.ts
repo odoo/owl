@@ -1,4 +1,4 @@
-import { App, Component, asyncComputed, computed, effect, signal, xml } from "../../src";
+import { App, Component, asyncComputed, computed, effect, onWillStart, signal, xml } from "../../src";
 import { makeDeferred, makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
@@ -315,4 +315,155 @@ test("composes with computed: downstream computed re-runs when value resolves", 
 
   stop();
   list.dispose();
+});
+
+test("currentPromise() resolves once the in-flight run settles", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def);
+
+  let resolved = false;
+  a.currentPromise().then(() => (resolved = true));
+
+  await flush();
+  expect(resolved).toBe(false);
+  expect(a.loading()).toBe(true);
+
+  def.resolve(42);
+  await flush();
+  expect(resolved).toBe(true);
+  expect(a()).toBe(42);
+
+  a.dispose();
+});
+
+test("currentPromise() resolves immediately when no run is in flight", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def);
+  def.resolve(1);
+  await flush();
+  expect(a.loading()).toBe(false);
+
+  // Awaiting it and reaching the next line proves it already resolved.
+  let resolved = false;
+  await a.currentPromise().then(() => (resolved = true));
+  expect(resolved).toBe(true);
+
+  a.dispose();
+});
+
+test("currentPromise() reuses one deferred per in-flight run, lazily", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def);
+
+  // Repeated calls within a single in-flight run hand out the same promise
+  // (the deferred is created once, on the first call, and reused).
+  const p1 = a.currentPromise();
+  const p2 = a.currentPromise();
+  expect(p1).toBe(p2);
+
+  def.resolve(1);
+  await flush();
+  expect(a.loading()).toBe(false);
+
+  // Once idle, a fresh already-resolved promise is returned instead.
+  const p3 = a.currentPromise();
+  expect(p3).not.toBe(p1);
+  await p3;
+
+  a.dispose();
+});
+
+test("currentPromise() resolves only after the latest run when superseded", async () => {
+  const id = signal(1);
+  const def1 = makeDeferred<number>();
+  const def2 = makeDeferred<number>();
+  const defs = [def1, def2];
+  const a = asyncComputed(async () => defs[id() - 1]);
+
+  let resolved = false;
+  a.currentPromise().then(() => (resolved = true));
+
+  await Promise.resolve();
+  id.set(2); // supersede run 1 with run 2
+  await flush();
+  expect(resolved).toBe(false);
+
+  // Resolving the superseded run 1 must NOT resolve currentPromise.
+  def1.resolve(100);
+  await flush();
+  expect(resolved).toBe(false);
+  expect(a.loading()).toBe(true);
+
+  // Resolving the latest run 2 does.
+  def2.resolve(200);
+  await flush();
+  expect(resolved).toBe(true);
+  expect(a()).toBe(200);
+
+  a.dispose();
+});
+
+test("currentPromise() resolves (does not reject) when the run errors", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def);
+
+  let outcome = "";
+  a.currentPromise().then(
+    () => (outcome = "resolved"),
+    () => (outcome = "rejected")
+  );
+
+  def.reject(new Error("boom"));
+  await flush();
+  expect(outcome).toBe("resolved");
+  expect(a.error()).toMatchObject({ message: "boom" });
+
+  a.dispose();
+});
+
+test("currentPromise() resolves on dispose so awaiters do not hang", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def);
+
+  let resolved = false;
+  a.currentPromise().then(() => (resolved = true));
+
+  await flush();
+  expect(resolved).toBe(false);
+
+  a.dispose();
+  await flush();
+  expect(resolved).toBe(true);
+});
+
+test("onWillStart can await currentPromise() before mounting", async () => {
+  const def = makeDeferred<string>();
+
+  class Root extends Component {
+    static template = xml`<div t-out="this.data() || 'pending'"/>`;
+    data = asyncComputed(() => def);
+    setup() {
+      onWillStart(() => this.data.currentPromise());
+    }
+  }
+
+  const app = new App();
+  let mounted = false;
+  const mountProm = app
+    .createRoot(Root)
+    .mount(fixture)
+    .then(() => (mounted = true));
+
+  await flush();
+  // onWillStart is still awaiting the in-flight fetch: not mounted yet.
+  expect(mounted).toBe(false);
+  expect(fixture.innerHTML).toBe("");
+
+  def.resolve("hello");
+  await mountProm;
+  // The value is ready by the time the component renders.
+  expect(mounted).toBe(true);
+  expect(fixture.innerHTML).toBe("<div>hello</div>");
+
+  app.destroy();
 });

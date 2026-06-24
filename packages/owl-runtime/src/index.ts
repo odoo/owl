@@ -41,7 +41,12 @@ export { ErrorBoundary } from "./error_boundary";
 export { Portal } from "./portal";
 export { Suspense } from "./suspense";
 export { props } from "./props";
-export type { GetProps } from "./props";
+// `isProps` is a phantom (declare const) brand symbol referenced by the public
+// `Props`/`PropsWithDefaults`/`GetProps` types. It must be exported from the
+// package's type surface so downstream projects can name it when emitting their
+// own declaration files (see owl#1958). Type-only export: it has no runtime
+// value, so this adds nothing to the JS bundle.
+export type { GetProps, isProps } from "./props";
 export { status } from "./status";
 export {
   asyncComputed,
@@ -75,7 +80,15 @@ export { applyDefaults, assertType, getDefault, validateType } from "@odoo/owl-c
 // runtime namespace (which extends the core one with `component`), so do not
 // re-export them from @odoo/owl-core.
 export { types, types as t } from "./types";
-export type { Optional, StripBrands, Type, WithDefault } from "@odoo/owl-core";
+export type {
+  hasDefault,
+  isOptional,
+  Optional,
+  StripBrands,
+  Type,
+  typeBrand,
+  WithDefault,
+} from "@odoo/owl-core";
 export { OwlError } from "@odoo/owl-core";
 export { config, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";

@@ -83,6 +83,12 @@ export {
   type Type,
   type UnionToIntersection,
   type WithDefault,
+  // Phantom brand symbols carried by the public `Type`/`Optional`/`WithDefault`
+  // types. Exported (type-only) so downstream projects can name them when
+  // emitting declaration files, mirroring `isProps` (see owl#1958).
+  type hasDefault,
+  type isOptional,
+  type typeBrand,
 } from "./types";
 
 // Registry / Resource

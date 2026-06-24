@@ -1080,4 +1080,35 @@ describe("applyDefaults", () => {
     expect(applyDefaults({ config: {} }, type)).toEqual({ config: { depth: 3 } });
     expect(applyDefaults({}, type)).toEqual({});
   });
+
+  test("fills in defaults from every member of an intersection", () => {
+    const type = t.and([
+      t.object({ label: t.string().optional() }),
+      t.object({ title: t.string().optional("Default title") }),
+    ]);
+    const value = { label: "Apples" };
+    const result = applyDefaults(value, type);
+    expect(result).toEqual({ label: "Apples", title: "Default title" });
+    expect(value).toEqual({ label: "Apples" });
+    expect(result).not.toBe(value);
+  });
+
+  test("returns the input as is when an intersection has nothing to fill in", () => {
+    const type = t.and([
+      t.object({ label: t.string().optional() }),
+      t.object({ title: t.string().optional("Default title") }),
+    ]);
+    const value = { label: "Apples", title: "Pears" };
+    expect(applyDefaults(value, type)).toBe(value);
+  });
+
+  test("fills in defaults through an optional intersection wrapper", () => {
+    const type = t.object({
+      props: t
+        .and([t.object({ a: t.number().optional(1) }), t.object({ b: t.number().optional(2) })])
+        .optional(),
+    });
+    expect(applyDefaults({ props: { a: 5 } }, type)).toEqual({ props: { a: 5, b: 2 } });
+    expect(applyDefaults({}, type)).toEqual({});
+  });
 });

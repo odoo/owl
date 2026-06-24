@@ -11,7 +11,7 @@ import { getComponentScope } from "./component_node";
 import { staticProp } from "./prop";
 import { types } from "./types";
 
-declare const isProps: unique symbol;
+export declare const isProps: unique symbol;
 
 // The brand stores the defaulted key names: those keys are required for the
 // component reading the props (the default fills them), but may be omitted by

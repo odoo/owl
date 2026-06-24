@@ -5,7 +5,7 @@ import { readFileSync, mkdirSync } from "fs";
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
 const IIFE_FILENAME = "dist/owl.iife.js";
-const CJS_FILENAME = "dist/owl.cjs.js";
+const CJS_FILENAME = "dist/owl.cjs";
 const ES_FILENAME = "dist/owl.es.js";
 
 if (pkg.module !== ES_FILENAME || pkg.main !== CJS_FILENAME) {

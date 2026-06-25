@@ -6,6 +6,6 @@ export class Taskbar extends Component {
     static components = { Clock };
 
     props = props({
-        "onClockClick?": t.function(),
+        onClockClick: t.function().optional(),
     });
 }

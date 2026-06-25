@@ -2,7 +2,7 @@ import { Component, props, t } from "@odoo/owl";
 
 export class Dialog extends Component {
     static template = "example.Dialog";
-    props = props({ title: t.string(), "onClose?": t.function()})
+    props = props({ title: t.string(), onClose: t.function().optional() })
 
     close() {
         if (this.props.onClose) {

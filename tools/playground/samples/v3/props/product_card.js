@@ -6,6 +6,6 @@ export class ProductCard extends Component {
     props = props({
         name: t.string(),
         price: t.number(),
-        "image?": t.string(),
+        image: t.string().optional(),
     });
 }

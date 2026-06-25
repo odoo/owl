@@ -6,11 +6,11 @@ export class Window extends Component {
 
     props = props({
         title: t.string(),
-        "onClose?": t.function(),
-        "x?": t.signal(),
-        "y?": t.signal(),
-        "zIndex?": t.signal(),
-        "component?": t.function(),
+        onClose: t.function().optional(),
+        x: t.signal().optional(),
+        y: t.signal().optional(),
+        zIndex: t.signal().optional(),
+        component: t.function().optional(),
     });
 
     dnd = useDragAndDrop(this.props.x, this.props.y);

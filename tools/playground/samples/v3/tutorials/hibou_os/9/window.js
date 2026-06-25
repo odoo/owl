@@ -5,10 +5,10 @@ export class Window extends Component {
 
     props = props({
         title: t.string(),
-        "onClose?": t.function(),
-        "x?": t.number(),
-        "y?": t.number(),
-        "zIndex?": t.signal(),
-        "component?": t.function(),
+        onClose: t.function().optional(),
+        x: t.number().optional(),
+        y: t.number().optional(),
+        zIndex: t.signal().optional(),
+        component: t.function().optional(),
     });
 }

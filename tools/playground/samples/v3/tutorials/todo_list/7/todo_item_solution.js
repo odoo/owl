@@ -5,6 +5,6 @@ export class TodoItem extends Component {
 
     props = props({
         todo: t.object({ id: t.number(), text: t.string(), completed: t.signal() }),
-        "onDelete?": t.function(),
+        onDelete: t.function().optional(),
     });
 }

@@ -5,6 +5,6 @@ export class Window extends Component {
 
     props = props({
         title: t.string(),
-        "onClose?": t.function(),
+        onClose: t.function().optional(),
     });
 }

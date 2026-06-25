@@ -7,8 +7,8 @@ const APP_SCHEMA = t.object({
     name: t.string(),
     icon: t.string(),
     window: t.constructor(Component),
-    "systrayItems?": t.array(t.constructor(Component)),
-    "plugins?": t.array(t.constructor(Plugin)),
+    systrayItems: t.array(t.constructor(Component)).optional(),
+    plugins: t.array(t.constructor(Plugin)).optional(),
 });
 
 export class Hibou extends Component {

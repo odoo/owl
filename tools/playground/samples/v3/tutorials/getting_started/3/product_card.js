@@ -15,8 +15,6 @@ export class ProductCard extends Component {
         name: t.string(),
         description: t.string(),
         price: t.number(),
-        "image?": t.string(),
-    }, {
-        image: "📦",
+        image: t.string().optional("📦"),
     });
 }

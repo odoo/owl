@@ -6,8 +6,8 @@ export const menuItemRegistry = new Registry({
         name: t.string(),
         icon: t.string(),
         window: t.constructor(Component),
-        "width?": t.number(),
-        "height?": t.number(),
+        width: t.number().optional(),
+        height: t.number().optional(),
     }),
 });
 

@@ -1,5 +1,5 @@
 import { compile } from "@odoo/owl-compiler";
-import { App, Component, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { App, Component, onMounted, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { useApp } from "../../src/hooks";
 import { STATUS, status } from "../../src/status";
 import {
@@ -122,6 +122,69 @@ describe("app", () => {
         "B:willDestroy",
       ]
     `);
+  });
+
+  test("destroying one root does not mount another pending root", async () => {
+    const steps: string[] = [];
+
+    class A extends Component {
+      static template = xml`<span>A</span>`;
+    }
+
+    class B extends Component {
+      static template = xml`<span>B</span>`;
+      setup() {
+        onMounted(() => steps.push("B:mounted"));
+      }
+    }
+
+    const app = new App();
+    const rootA = app.createRoot(A);
+    await rootA.mount(fixture);
+
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    const rootB = app.createRoot(B);
+    const mountedB = rootB.mount(target);
+    expect(target.innerHTML).toBe("");
+
+    rootA.destroy();
+    expect(target.innerHTML).toBe("");
+    expect(steps).toEqual([]);
+
+    await mountedB;
+    expect(target.innerHTML).toBe("<span>B</span>");
+    expect(steps).toEqual(["B:mounted"]);
+    app.destroy();
+    target.remove();
+  });
+
+  test("destroying an app does not mount pending roots", async () => {
+    const steps: string[] = [];
+
+    class A extends Component {
+      static template = xml`<span>A</span>`;
+    }
+
+    class B extends Component {
+      static template = xml`<span>B</span>`;
+      setup() {
+        onMounted(() => steps.push("B:mounted"));
+      }
+    }
+
+    const app = new App();
+    await app.createRoot(A).mount(fixture);
+
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    app.createRoot(B).mount(target);
+    expect(target.innerHTML).toBe("");
+
+    app.destroy();
+    expect(target.innerHTML).toBe("");
+    expect(steps).toEqual([]);
+    target.remove();
   });
 
   test("can load templates from an object name-string", async () => {

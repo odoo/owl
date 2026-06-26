@@ -65,10 +65,7 @@ export class Scheduler {
     }
     this.processing = true;
     this.frame = 0;
-    for (let node of this.cancelledNodes) {
-      node._destroy();
-    }
-    this.cancelledNodes.clear();
+    this.processCancelledNodes();
     for (let fiber of this.tasks) {
       if (fiber.root !== fiber) {
         this.tasks.delete(fiber);
@@ -103,5 +100,17 @@ export class Scheduler {
       }
     }
     this.processing = false;
+  }
+
+  processCancelledNodes() {
+    for (let node of this.cancelledNodes) {
+      node._destroy();
+    }
+    this.cancelledNodes.clear();
+    for (let task of this.tasks) {
+      if (task.node.status === STATUS.DESTROYED) {
+        this.tasks.delete(task);
+      }
+    }
   }
 }

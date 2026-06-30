@@ -10,6 +10,11 @@ import type { ComponentNode } from "../component_node";
 import { STATUS } from "../status";
 import { fibersInError, handleError } from "./error_handling";
 
+// Max times a root fiber may be re-rendered before being committed to the DOM
+// before we treat it as an infinite render loop. A healthy render commits after
+// ~1 pass; only a self-retriggering loop ever approaches this. See issue #1968.
+const MAX_RENDER_ITERATIONS = 1000;
+
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
@@ -23,6 +28,10 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root!;
+    // This fiber is being re-rendered before it was ever committed to the DOM.
+    // In a healthy app a fiber is committed (and node.fiber nulled) before the
+    // next render, so this only climbs without bound in a render loop (#1968).
+    root.renderCount++;
     // lock root fiber because canceling children fibers may destroy components,
     // which means any arbitrary code can be run in onWillDestroy, which may
     // trigger new renderings
@@ -149,6 +158,24 @@ export class Fiber {
     const node = this.node;
     const root = this.root;
     if (root) {
+      // Bail before touching the computation tracking pointer (below) so a
+      // detected loop never leaves currentComputation pinned to a signalComputation
+      // that app.destroy is about to dispose. The root's own render runs right
+      // after makeRootFiber bumped renderCount and before any child render, so
+      // the reported component is always the looping root.
+      if (root.renderCount > MAX_RENDER_ITERATIONS) {
+        handleError({
+          node,
+          error: new OwlError(
+            `Maximum render iterations (${MAX_RENDER_ITERATIONS}) exceeded. ` +
+              `Component "${node.componentName}" is stuck in a render loop: rendering it ` +
+              `keeps triggering another render before the DOM is updated. A common cause is ` +
+              `updating reactive state during render or setup() — e.g. calling a parent's ` +
+              `state setter from a child's setup().`
+          ),
+        });
+        return;
+      }
       const c = getCurrentComputation();
       removeSources(node.signalComputation);
       setComputation(node.signalComputation);
@@ -172,6 +199,9 @@ export class Fiber {
 
 export class RootFiber extends Fiber {
   counter: number = 1;
+  // Number of times this (uncommitted) fiber has been recycled by makeRootFiber.
+  // Climbs without bound only in a render loop; see issue #1968.
+  renderCount = 0;
 
   // only add stuff in this if they have registered some hooks
   willPatch: Fiber[] = [];

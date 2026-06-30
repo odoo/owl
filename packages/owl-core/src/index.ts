@@ -69,6 +69,7 @@ export {
   constructorType,
   applyDefaults,
   getDefault,
+  getShape,
   type Constructor,
   type GetDefaultedKeys,
   type GetOptionalEntries,

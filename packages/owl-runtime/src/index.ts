@@ -75,7 +75,7 @@ export {
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";
-export { applyDefaults, assertType, getDefault, validateType } from "@odoo/owl-core";
+export { applyDefaults, assertType, getDefault, getShape, validateType } from "@odoo/owl-core";
 // `t` is the documented short alias of `types`. Both must point to the
 // runtime namespace (which extends the core one with `component`), so do not
 // re-export them from @odoo/owl-core.

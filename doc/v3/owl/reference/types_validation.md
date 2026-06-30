@@ -328,6 +328,9 @@ t.and([t.object({ name: t.string() }), t.object({ age: t.number() })]);
 // rejects:   { name: "Alice" }  (missing "age")
 ```
 
+When every member is an object schema, [`.toShape()`](#toshape) returns the
+merged shape, so a composed schema can be reused as component props.
+
 ### `t.customValidator(type, predicate, errorMessage?)`
 
 Validates the value against a base type, then applies a custom predicate
@@ -377,6 +380,30 @@ t.object({ color: t.string().optional("red") });
 // validates: 42         with the first example
 // validates: undefined  with the first example (the default fills it)
 // rejects:   "42"       with the first example ("value is not a number")
+```
+
+### `.toShape()`
+
+Object schemas ([`t.object`](#tobjectshape), [`t.strictObject`](#tstrictobjectshape))
+and intersections of them ([`t.and`](#tandtypes)) expose a `.toShape()` method
+that returns the `{ key: type }` map the schema was built from, with the
+[`.optional()`](#optionalvalue) markers intact. For an intersection, the shapes
+of the members are merged (members with no shape, such as a plain
+[`t.customValidator`](#tcustomvalidatortype-predicate-errormessage), are skipped).
+
+This lets a reusable schema drive component props without redeclaring it:
+[`props()`](props.md#schema) expects a shape, so pass `schema.toShape()`.
+
+```js
+const NotificationSchema = t.and([
+  t.object({ message: t.string() }),
+  t.object({ sticky: t.boolean().optional(), autocloseDelay: t.number().optional(4000) }),
+]);
+
+NotificationSchema.toShape();
+// { message: t.string(), sticky: ..., autocloseDelay: ... }
+
+props(NotificationSchema.toShape()); // reuse the schema as props
 ```
 
 ## Deriving a TypeScript type

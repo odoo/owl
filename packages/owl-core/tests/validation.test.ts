@@ -1112,3 +1112,50 @@ describe("applyDefaults", () => {
     expect(applyDefaults({}, type)).toEqual({});
   });
 });
+
+describe("toShape", () => {
+  test("t.object returns the shape it was built from", () => {
+    const shape = { name: t.string(), age: t.number().optional() };
+    expect(t.object(shape).toShape()).toBe(shape);
+  });
+
+  test("t.strictObject returns the shape it was built from", () => {
+    const shape = { name: t.string(), age: t.number().optional() };
+    expect(t.strictObject(shape).toShape()).toBe(shape);
+  });
+
+  test("t.and merges the shapes of its members", () => {
+    const a = t.object({ label: t.string() });
+    const b = t.object({ title: t.string().optional("x") });
+    const shape = t.and([a, b]).toShape();
+    expect(Object.keys(shape)).toEqual(["label", "title"]);
+    // the merged shape reuses the members' type validators (defaults preserved)
+    expect(shape.label).toBe(a.toShape().label);
+    expect(shape.title).toBe(b.toShape().title);
+    expect(getDefault(shape.title)!()).toBe("x");
+  });
+
+  test("t.and skips members with no shape", () => {
+    const shape = t.and([t.object({ a: t.string() }), t.string()]).toShape();
+    expect(Object.keys(shape)).toEqual(["a"]);
+  });
+
+  test("t.and skips a key-list member (no per-key types to merge)", () => {
+    const shape = t.and([t.object(["a", "b"]), t.object({ c: t.string() })]).toShape();
+    // the key list ["a", "b"] must not leak numeric index keys into the shape
+    expect(Object.keys(shape)).toEqual(["c"]);
+  });
+
+  test("t.and recurses through a nested intersection", () => {
+    const inner = t.and([t.object({ a: t.string() }), t.object({ b: t.string() })]);
+    const shape = t.and([inner, t.object({ c: t.string() })]).toShape();
+    expect(Object.keys(shape)).toEqual(["a", "b", "c"]);
+  });
+
+  test("later members win on overlapping keys", () => {
+    const first = t.object({ v: t.string() });
+    const second = t.object({ v: t.number() });
+    const shape = t.and([first, second]).toShape();
+    expect(shape.v).toBe(second.toShape().v);
+  });
+});

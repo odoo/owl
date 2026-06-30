@@ -1584,3 +1584,123 @@ exports[`schema defaults > the defaults argument takes precedence over schema de
   }
 }"
 `;
+
+exports[`schema.toShape() > a composed (t.and) schema drives props via toShape() 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Notification\`, true, false, false, ["message","title"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {message: 'hello',title: 'DEBUG'};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`schema.toShape() > a composed (t.and) schema drives props via toShape() 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<h1/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`schema.toShape() > a schema's props reports genuinely missing required keys 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["a"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {a: 'x'};
+    const b2 = comp1(props1, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`schema.toShape() > a schema's props still rejects invalid values 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["count"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: 'not a number'};
+    const b2 = comp1(props1, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`schema.toShape() > an object schema drives props via toShape() 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["title"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {title: 'hello'};
+    const b2 = comp1(props1, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`schema.toShape() > an object schema drives props via toShape() 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.title);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`schema.toShape() > applyDefaults completes nested defaults from the same schema 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Notification\`, true, false, false, ["message","buttons"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {message: 'hi',buttons: [{name:'ok'}]};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`schema.toShape() > applyDefaults completes nested defaults from the same schema 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<h1/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;

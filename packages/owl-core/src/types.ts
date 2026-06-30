@@ -53,6 +53,25 @@ export type Type<T> = T & {
   type: T;
 };
 
+/**
+ * A {@link Type} that also carries the object shape it was built from, exposed
+ * through `toShape()`: `t.object`/`t.strictObject` return their own shape, and
+ * `t.and` merges the shapes of the members that have one. The shape is the
+ * `{ key: type }` map (with `.optional()` brands intact), so it can be reused —
+ * most notably to drive component props: `props(schema.toShape())`.
+ */
+export type ShapeType<Shape, T> = Type<T> & {
+  toShape(): Shape;
+};
+
+// The shape carried by an intersection member, or `never` if it has none (only
+// object/intersection types expose `toShape`).
+type MemberShape<M> = M extends { toShape(): infer S } ? S : never;
+// Merges the shapes of the members of an intersection that carry one, so
+// `t.and(...)` exposes a single shape like a plain object schema. Overlapping
+// keys intersect at the type level (the runtime merge lets later members win).
+type MergedShape<T extends any[]> = UnionToIntersection<MemberShape<T[number]>>;
+
 type IsAny<T> = 0 extends 1 & T ? true : false;
 type HasDefault<T> = IsAny<T> extends true ? false : T extends { [hasDefault]: any } ? true : false;
 type IsOptional<T> = IsAny<T> extends true ? false : T extends { [isOptional]: any } ? true : false;
@@ -330,13 +349,30 @@ function instanceType<T extends Constructor>(constructor: T): Type<InstanceType<
   });
 }
 
-function intersection<T extends any[]>(types: T): Type<UnionToIntersection<StripBrands<T[number]>>> {
+function intersection<T extends any[]>(
+  types: T
+): ShapeType<MergedShape<T>, UnionToIntersection<StripBrands<T[number]>>> {
   const validate = makeType(function validateIntersection(context: ValidationContext) {
     for (const type of types) {
       context.validate(type);
     }
   });
   validate[intersectionSymbol] = types;
+  // Merge the members that carry a keyed shape (`t.object`/`t.strictObject`/
+  // `t.and`), so the intersection exposes one shape usable by `props()`. Later
+  // members win, mirroring `applyDefaults` folding defaults in order. The
+  // key-list form (`t.object(["a"])`) exposes its keys as an array, which has
+  // no per-key types to merge, so it is skipped.
+  validate.toShape = () => {
+    const shape: Record<string, any> = {};
+    for (const member of types as any[]) {
+      const memberShape = typeof member.toShape === "function" ? member.toShape() : undefined;
+      if (memberShape && !Array.isArray(memberShape)) {
+        Object.assign(shape, memberShape);
+      }
+    }
+    return shape;
+  };
   return validate;
 }
 
@@ -413,12 +449,14 @@ function validateObject(context: ValidationContext, schema: any, isStrict: boole
   }
 }
 
-function objectType(): Type<Record<string, any>>;
+function objectType(): ShapeType<Record<string, any>, Record<string, any>>;
 function objectType<const Keys extends string[]>(
   keys: Keys
-): Type<ResolveOptionalEntries<KeyedObject<Keys>>>;
-function objectType<Shape extends {}>(): Type<ResolveOptionalEntries<Shape>>;
-function objectType<Shape extends {}>(shape: Shape): Type<ResolveOptionalEntries<Shape>>;
+): ShapeType<Keys, ResolveOptionalEntries<KeyedObject<Keys>>>;
+function objectType<Shape extends {}>(): ShapeType<Shape, ResolveOptionalEntries<Shape>>;
+function objectType<Shape extends {}>(
+  shape: Shape
+): ShapeType<Shape, ResolveOptionalEntries<Shape>>;
 function objectType(schema = {}): any {
   const validate = makeType(function validateLooseObject(context: ValidationContext) {
     validateObject(context, schema, false);
@@ -426,13 +464,16 @@ function objectType(schema = {}): any {
   if (!Array.isArray(schema)) {
     validate[shapeSymbol] = schema;
   }
+  validate.toShape = () => schema;
   return validate;
 }
 
 function strictObjectType<const Keys extends string[]>(
   keys: Keys
-): Type<ResolveOptionalEntries<KeyedObject<Keys>>>;
-function strictObjectType<Shape extends {}>(shape: Shape): Type<ResolveOptionalEntries<Shape>>;
+): ShapeType<Keys, ResolveOptionalEntries<KeyedObject<Keys>>>;
+function strictObjectType<Shape extends {}>(
+  shape: Shape
+): ShapeType<Shape, ResolveOptionalEntries<Shape>>;
 function strictObjectType(schema: any): any {
   const validate = makeType(function validateStrictObject(context: ValidationContext) {
     validateObject(context, schema, true);
@@ -440,6 +481,7 @@ function strictObjectType(schema: any): any {
   if (!Array.isArray(schema)) {
     validate[shapeSymbol] = schema;
   }
+  validate.toShape = () => schema;
   return validate;
 }
 

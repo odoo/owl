@@ -226,6 +226,39 @@ function applyDefaultsRec(value: any, type: any): any {
   return result;
 }
 
+/**
+ * Returns the top-level object shape (a key → type map) carried by a type
+ * validator: an object type built from a shape (`t.object`/`t.strictObject`)
+ * exposes its shape directly, and an intersection (`t.and`) merges the shapes
+ * of its members (later members win, as in `applyDefaults`). Returns
+ * `undefined` for a type with no keyed object shape — a primitive, a union, a
+ * tuple, or the key-list object form.
+ *
+ * This lets consumers that derive per-key metadata from a shape (e.g. `props`
+ * collecting defaults and declared keys) accept a composed schema and not just
+ * a plain shape object.
+ */
+export function getShape(type: any): Record<string, any> | undefined {
+  if (typeof type !== "function") {
+    return undefined;
+  }
+  const members = type[intersectionSymbol];
+  if (members) {
+    let shape: Record<string, any> | undefined;
+    for (const member of members) {
+      const memberShape = getShape(member);
+      if (memberShape) {
+        shape = Object.assign(shape || {}, memberShape);
+      }
+    }
+    return shape;
+  }
+  const shape = type[shapeSymbol];
+  // `shapeSymbol` is also attached to tuples, whose shape is an array of
+  // element types — only keyed object shapes are relevant here.
+  return shape && !Array.isArray(shape) ? shape : undefined;
+}
+
 function anyType(): Type<any> {
   return makeType(function validateAny() {});
 }

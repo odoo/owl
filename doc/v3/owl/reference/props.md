@@ -73,6 +73,10 @@ A schema describing the expected props. It can be:
 - **an object**: maps keys to [type validators](types_validation.md#validators)
   for full type checking. A prop is made optional with
   [`.optional()`](types_validation.md#optionalvalue) on its type.
+- **a type validator**: an object schema built with
+  [`t.object`](types_validation.md#tobjectshape) or composed with
+  [`t.and`](types_validation.md#tandtypes), so a reusable schema can be shared
+  between props and other consumers (such as [`applyDefaults`](types_validation.md#applydefaults)).
 
 Props are validated in [dev mode](app.md#configuration) whenever the component
 is created or updated. See [Props validation](#props-validation) for details.
@@ -81,6 +85,8 @@ is created or updated. See [Props validation](#props-validation) for details.
 props(); // no schema
 props(["name", "age"]); // array form
 props({ name: t.string(), age: t.number().optional() }); // typed form
+props(t.object({ name: t.string() })); // type validator
+props(t.and([NameSchema, AgeSchema])); // composed schema
 ```
 
 ### Default values

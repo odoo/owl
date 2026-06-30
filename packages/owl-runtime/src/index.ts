@@ -84,6 +84,7 @@ export type {
   hasDefault,
   isOptional,
   Optional,
+  ShapeType,
   StripBrands,
   Type,
   typeBrand,

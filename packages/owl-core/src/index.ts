@@ -79,6 +79,7 @@ export {
   type ResolveObjectType,
   type ResolveOptionalEntries,
   type ResolveReaderObjectType,
+  type ShapeType,
   type StripBrands,
   type Type,
   type UnionToIntersection,

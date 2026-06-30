@@ -1,4 +1,4 @@
-import { Component, mount, onError, props, types as t, xml } from "../../src";
+import { applyDefaults, Component, mount, onError, props, types as t, xml } from "../../src";
 import {
   makeTestFixture,
   nextTick,
@@ -951,5 +951,155 @@ describe("schema defaults", () => {
     }
     expect(error).toBeDefined();
     expect(error.message).toMatch("Invalid component default props (SubComp)");
+  });
+});
+
+//------------------------------------------------------------------------------
+// Reusing a schema as props via schema.toShape() — see #1966
+//------------------------------------------------------------------------------
+
+describe("schema.toShape()", () => {
+  test("t.object().toShape() returns the shape it was built from", () => {
+    const shape = { title: t.string(), color: t.string().optional("red") };
+    expect(t.object(shape).toShape()).toBe(shape);
+    expect(t.strictObject(shape).toShape()).toBe(shape);
+  });
+
+  test("t.and().toShape() merges the shapes of its members", () => {
+    const a = t.object({ message: t.string() });
+    const b = t.object({ title: t.string().optional() });
+    const shape = t.and([a, b]).toShape();
+    expect(Object.keys(shape)).toEqual(["message", "title"]);
+    expect(shape.message).toBe(a.toShape().message);
+    expect(shape.title).toBe(b.toShape().title);
+  });
+
+  test("t.and().toShape() ignores members with no shape and recurses", () => {
+    const inner = t.and([t.object({ a: t.string() }), t.object({ b: t.string() })]);
+    const shape = t.and([inner, t.string(), t.object({ c: t.string() })]).toShape();
+    // t.string() carries no shape and is skipped; the nested t.and is merged
+    expect(Object.keys(shape)).toEqual(["a", "b", "c"]);
+  });
+
+  test("an object schema drives props via toShape()", async () => {
+    let captured: any;
+    class SubComp extends Component {
+      static template = xml`<div><t t-out="this.props.title"/></div>`;
+      props = props(t.object({ title: t.string(), color: t.string().optional("red") }).toShape());
+      setup() {
+        captured = this.props;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp title="'hello'"/></div>`;
+      static components = { SubComp };
+    }
+    await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("<div><div>hello</div></div>");
+    // a schema default is filled, and the declared key is reactive-readable
+    expect(captured.color).toBe("red");
+  });
+
+  test("a composed (t.and) schema drives props via toShape()", async () => {
+    // #1966: passing the composed schema itself to props() failed with a
+    // spurious missingKeys: ["optional"]. Passing schema.toShape() works.
+    const OptionSchema = t.object({
+      type: t.selection(["warning", "danger"]).optional("warning"),
+      title: t.string().optional(),
+      autocloseDelay: t.number().optional(4000),
+    });
+    const Schema = t.and([t.object({ message: t.string() }), OptionSchema]);
+
+    let captured: any;
+    class Notification extends Component {
+      static template = xml`<h1/>`;
+      props = props(Schema.toShape());
+      setup() {
+        captured = this.props;
+      }
+    }
+    class Root extends Component {
+      static components = { Notification };
+      static template = xml`<Notification message="'hello'" title="'DEBUG'"/>`;
+    }
+    await mount(Root, fixture, { test: true });
+    expect(captured.message).toBe("hello");
+    expect(captured.title).toBe("DEBUG");
+    // top-level defaults from either member of the intersection are applied
+    expect(captured.type).toBe("warning");
+    expect(captured.autocloseDelay).toBe(4000);
+  });
+
+  test("a schema's props still rejects invalid values", async () => {
+    class SubComp extends Component {
+      static template = xml`<div/>`;
+      props = props(t.object({ count: t.number() }).toShape());
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp count="'not a number'"/></div>`;
+      static components = { SubComp };
+    }
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("value is not a number");
+  });
+
+  test("a schema's props reports genuinely missing required keys", async () => {
+    class SubComp extends Component {
+      static template = xml`<div/>`;
+      props = props(t.and([t.object({ a: t.string() }), t.object({ b: t.string() })]).toShape());
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp a="'x'"/></div>`;
+      static components = { SubComp };
+    }
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toMatch("Invalid component props (SubComp)");
+    expect(error.message).toMatch("missing keys");
+    expect(error.message).toMatch('"b"');
+    // crucially, "optional" is not reported as a missing key
+    expect(error.message).not.toMatch('"optional"');
+  });
+
+  test("applyDefaults completes nested defaults from the same schema", async () => {
+    const Schema = t.and([
+      t.object({ message: t.string() }),
+      t.object({
+        autocloseDelay: t.number().optional(4000),
+        buttons: t
+          .array(t.object({ name: t.string(), primary: t.boolean().optional(false) }))
+          .optional(() => []),
+      }),
+    ]);
+
+    let captured: any;
+    class Notification extends Component {
+      static template = xml`<h1/>`;
+      props = applyDefaults(props(Schema.toShape()), Schema);
+      setup() {
+        captured = this.props;
+      }
+    }
+    class Root extends Component {
+      static components = { Notification };
+      static template = xml`<Notification message="'hi'" buttons="[{ name: 'ok' }]"/>`;
+    }
+    await mount(Root, fixture, { test: true });
+    expect(captured.message).toBe("hi");
+    expect(captured.autocloseDelay).toBe(4000);
+    // nested default inside the array element is filled by applyDefaults
+    expect(captured.buttons).toEqual([{ name: "ok", primary: false }]);
   });
 });

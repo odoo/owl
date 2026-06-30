@@ -83,6 +83,18 @@ props(["name", "age"]); // array form
 props({ name: t.string(), age: t.number().optional() }); // typed form
 ```
 
+To reuse a schema defined elsewhere (for instance one also passed to
+[`applyDefaults`](types_validation.md#applydefaults)), pass its shape with
+[`.toShape()`](types_validation.md#toshape). It is available on object schemas
+([`t.object`](types_validation.md#tobjectshape),
+[`t.strictObject`](types_validation.md#tstrictobjectshape)) and on intersections
+of them ([`t.and`](types_validation.md#tandtypes)):
+
+```js
+props(NotificationSchema.toShape()); // a t.object / t.strictObject schema
+props(t.and([BaseSchema, ExtraSchema]).toShape()); // a composed schema
+```
+
 ### Default values
 
 Default values are declared in the schema itself, by giving a value to the

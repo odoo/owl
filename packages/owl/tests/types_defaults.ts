@@ -102,4 +102,34 @@ function _registryCheck() {
   void value;
 }
 
+// schema.toShape(): a reusable object schema drives props with the same reader
+// view as passing the shape inline (defaulted keys required, optionals may be
+// undefined).
+const NotificationShape = {
+  message: t.string(),
+  className: t.string().optional("card"),
+  sticky: t.boolean().optional(),
+};
+class FromObjectSchema {
+  props = props(t.object(NotificationShape).toShape());
+}
+declare const fromObjectSchema: FromObjectSchema;
+assertEq<typeof fromObjectSchema.props.message, string>();
+assertEq<typeof fromObjectSchema.props.className, string>();
+assertEq<typeof fromObjectSchema.props.sticky, boolean | undefined>();
+
+// t.and(...).toShape() merges the members' shapes into a single props shape
+const ComposedSchema = t.and([
+  t.object({ message: t.string() }),
+  t.object({ autocloseDelay: t.number().optional(4000), sticky: t.boolean().optional() }),
+]);
+class FromComposedSchema {
+  props = props(ComposedSchema.toShape());
+}
+declare const fromComposedSchema: FromComposedSchema;
+assertEq<typeof fromComposedSchema.props.message, string>();
+assertEq<typeof fromComposedSchema.props.autocloseDelay, number>();
+assertEq<typeof fromComposedSchema.props.sticky, boolean | undefined>();
+
 void [ok1, ok2, ok3, ok4, ko1, ko2, ko3, ko4, _staticPropCheck, _configCheck, _registryCheck];
+void [fromObjectSchema, fromComposedSchema];

@@ -1,4 +1,14 @@
-import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
+import {
+  Component,
+  mount,
+  onWillUpdateProps,
+  OwlError,
+  props,
+  proxy,
+  signal,
+  t,
+  xml,
+} from "../../src";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -8,6 +18,7 @@ import {
   nextMicroTick,
   render,
   steps,
+  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -488,4 +499,34 @@ test("children, default props and renderings", async () => {
       "Parent:patched",
     ]
   `);
+});
+
+describe("render loop detection", () => {
+  test("throws a clear error instead of freezing on a render loop (#1968)", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.value"/>`;
+      props = props({ value: t.number(), inc: t.function() });
+      setup() {
+        // Updating parent state during setup retriggers the parent render, which
+        // recreates this child, whose setup runs again: an infinite render loop.
+        this.props.inc();
+      }
+    }
+    class Root extends Component {
+      static components = { Child };
+      static template = xml`<Child value="this.value()" inc="this.inc"/>`;
+      value = signal(1);
+      // arrow so it stays bound to the Root instance when called from the child
+      inc = () => this.value.set(this.value() + 1);
+    }
+
+    let error: any;
+    // Before the fix this never resolves (the tab freezes); now it rejects.
+    await mount(Root, fixture, { test: true }).catch((e) => (error = e));
+
+    expect(error).toBeInstanceOf(OwlError);
+    expect(error.message).toMatch(/render loop/);
+    expect(error.message).toContain("Root");
+    expect(getConsoleOutput()).toEqual([]);
+  });
 });

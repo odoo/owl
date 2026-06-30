@@ -65,6 +65,32 @@ exports[`force render in case of existing render 3`] = `
 }"
 `;
 
+exports[`render loop detection > throws a clear error instead of freezing on a render loop (#1968) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value","inc"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`render loop detection > throws a clear error instead of freezing on a render loop (#1968) 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.value);
+  }
+}"
+`;
+
 exports[`rendering semantics > can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

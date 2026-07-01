@@ -409,6 +409,20 @@ exports[`style and class handling > error in subcomponent with class 2`] = `
 }"
 `;
 
+exports[`style and class handling > longhand override is preserved when a preceding shorthand changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].getStyle();
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`style and class handling > no class is set is child ignores it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

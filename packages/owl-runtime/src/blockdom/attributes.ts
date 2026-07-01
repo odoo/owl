@@ -285,9 +285,15 @@ export function updateStyle(this: HTMLElement, val: any, oldVal: any) {
       style.removeProperty(prop);
     }
   }
+  // Properties are applied in declaration order. Re-setting a shorthand (e.g.
+  // `background`, `margin`) resets the longhands it covers, so once any property
+  // has been re-applied we must also re-apply every following property, even if
+  // its value is unchanged, otherwise an earlier shorthand silently clobbers it.
+  let changed = false;
   for (let prop in val) {
-    if (val[prop] !== oldVal[prop]) {
+    if (changed || val[prop] !== oldVal[prop]) {
       setStyleProp(style, prop, val[prop]);
+      changed = true;
     }
   }
   if (!style.cssText) {

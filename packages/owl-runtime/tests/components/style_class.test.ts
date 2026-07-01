@@ -400,6 +400,27 @@ describe("style and class handling", () => {
     expect(div.style.fontWeight).toBe("");
   });
 
+  test("longhand override is preserved when a preceding shorthand changes", async () => {
+    // `margin` is a shorthand that resets `margin-top`. When only the shorthand
+    // changes, the diff must still re-apply the following longhand, otherwise the
+    // shorthand silently clobbers it. (Same class of bug as `background` +
+    // `background-color`.)
+    class App extends Component {
+      static template = xml`<div t-att-style="this.getStyle()" />`;
+      state = proxy({ m: "10px" });
+      getStyle() {
+        return `margin: ${this.state.m}; margin-top: 50px;`;
+      }
+    }
+    const widget = await mount(App, fixture);
+    const div = fixture.querySelector("div")!;
+    expect(div.style.marginTop).toBe("50px");
+
+    widget.state.m = "20px";
+    await nextTick();
+    expect(div.style.marginTop).toBe("50px");
+  });
+
   test("t-att-style with object value", async () => {
     class App extends Component {
       static template = xml`<div t-att-style="this.state.style" />`;

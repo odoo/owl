@@ -53,7 +53,13 @@ declare global {
 import type { MountTarget } from "./blockdom";
 
 interface Root<T extends ComponentConstructor> {
-  node: ComponentNode;
+  // The root ComponentNode. Null while waiting for the app's plugin manager to
+  // finish its async startup — instantiation is deferred so that Root.setup()
+  // observes a fully populated plugin state. Becomes non-null synchronously
+  // when plugins are already MOUNTED at createRoot time (the common case,
+  // including all sub-roots created via Portal / Suspense), and otherwise
+  // once `prepare()` has awaited `pluginManager.ready`.
+  node: ComponentNode | null;
   promise: Promise<ComponentInstance<T>>;
   // Kick off rendering without a DOM target. Descendants' onWillStart fires
   // immediately and the bdom is built in memory. Idempotent — second call
@@ -112,34 +118,43 @@ export class App extends TemplateSet {
       resolve = res;
       reject = rej;
     });
-    let node: ComponentNode;
-    let error: any = null;
-    try {
-      node = new ComponentNode(Root, props, this, null, null);
-    } catch (e) {
-      error = e;
-      reject(e);
-    }
-
+    let node: ComponentNode | null = null;
     let fiber: MountFiber | null = null;
+    let error: any = null;
+    let cancelled = false;
     let preparedPromise: Promise<void> | null = null;
 
-    const prepare = (): Promise<void> => {
-      if (preparedPromise) {
-        return preparedPromise;
+    const instantiateNode = () => {
+      try {
+        node = new ComponentNode(Root, props, this, null, null);
+      } catch (e) {
+        error = e;
+        reject(e);
       }
-      if (error) {
-        return Promise.reject(error);
-      }
-      fiber = new MountFiber(node, null);
+    };
+
+    // Fast path: when the plugin manager is already MOUNTED (no plugins, or
+    // they finished startup, or this is a sub-root from Portal / Suspense)
+    // build the node now so `root.node` is available synchronously. Otherwise
+    // defer until prepare() can await `pluginManager.ready`, so Root.setup()
+    // observes plugin state that has been populated by async onWillStart.
+    if (this.pluginManager.status >= STATUS.MOUNTED) {
+      instantiateNode();
+    }
+
+    // Render-startup logic, factored out so it can run either synchronously
+    // (fast path) or after awaiting plugins (deferred path).
+    const startRender = (): Promise<void> => {
+      const n = node!;
+      fiber = new MountFiber(n, null);
 
       // Set up error handler. We install it at prepare() time so that errors
       // during the render phase (e.g. a descendant's onWillStart rejecting)
       // reject both `promise` (the mount result) and the prepared promise.
-      let handlers = nodeErrorHandlers.get(node);
+      let handlers = nodeErrorHandlers.get(n);
       if (!handlers) {
         handlers = [];
-        nodeErrorHandlers.set(node, handlers);
+        nodeErrorHandlers.set(n, handlers);
       }
       handlers.unshift((_, finalize) => {
         const finalError = finalize();
@@ -149,28 +164,22 @@ export class App extends TemplateSet {
       const ready = new Promise<void>((res) => {
         fiber!.onPrepared = () => res();
       });
-      preparedPromise = ready;
 
       // Install the mount-resolve callback up front so the sync render path's
       // `if (node.mounted.length)` check sees it and registers the fiber in
       // root.mounted. Without this ordering the callback would never fire for
       // the commit-after-prepare sequence.
-      node.mounted.push(() => {
-        resolve(node.component);
+      n.mounted.push(() => {
+        resolve(n.component);
         handlers!.shift();
       });
 
       this.scheduler.addFiber(fiber);
-      if (this.pluginManager.status < STATUS.MOUNTED) {
-        // Plugins have pending onWillStart callbacks — await them before the
-        // root renders, so plugin state is populated during first render.
-        node.willStart.unshift(() => this.pluginManager.ready);
-      }
-      if (node.willStart.length) {
-        node.initiateRender(fiber);
+      if (n.willStart.length) {
+        n.initiateRender(fiber);
       } else {
-        node.fiber = fiber;
-        if (node.mounted.length) {
+        n.fiber = fiber;
+        if (n.mounted.length) {
           fiber.root!.mounted.push(fiber);
         }
         try {
@@ -178,6 +187,36 @@ export class App extends TemplateSet {
         } catch (e) {
           reject(e);
         }
+      }
+      return ready;
+    };
+
+    const prepare = (): Promise<void> => {
+      if (preparedPromise) {
+        return preparedPromise;
+      }
+      if (error) {
+        return Promise.reject(error);
+      }
+      if (node) {
+        preparedPromise = startRender();
+      } else {
+        // Deferred path: wait for plugin startup, then construct the root and
+        // proceed. Rejection from a plugin's onWillStart propagates to the
+        // mount promise so callers see a single failure surface.
+        preparedPromise = this.pluginManager.ready.then(
+          () => {
+            if (cancelled) return;
+            instantiateNode();
+            if (error) throw error;
+            return startRender();
+          },
+          (e) => {
+            if (cancelled) return;
+            reject(e);
+            throw e;
+          }
+        );
       }
       return preparedPromise;
     };
@@ -187,17 +226,50 @@ export class App extends TemplateSet {
         return promise;
       }
       App.validateTarget(target);
-      prepare();
-      fiber!.commit(target, options);
-      return promise;
+      if (node) {
+        prepare();
+        fiber!.commit(target, options);
+        return promise;
+      }
+      // Deferred path. We collapse instantiate + startRender + commit into a
+      // single microtask after `pluginManager.ready` so that the DOM mutation
+      // happens before any subsequent microtask (such as the awaiter of an
+      // outer mount() that finished synchronously). Multiple chained .then()s
+      // would otherwise let those continuations run first.
+      if (preparedPromise) {
+        // prepare() was already called externally — its chain owns the
+        // instantiate + startRender phase. Just commit when it lands.
+        return preparedPromise.then(() => {
+          if (cancelled || error || !fiber) return promise;
+          fiber.commit(target, options);
+          return promise;
+        });
+      }
+      return this.pluginManager.ready.then(
+        () => {
+          if (cancelled) return promise;
+          instantiateNode();
+          if (error) return promise;
+          preparedPromise = startRender();
+          fiber!.commit(target, options);
+          return promise;
+        },
+        (e) => {
+          if (!cancelled) reject(e);
+          return promise;
+        }
+      );
     };
 
-    const root = {
-      node: node!,
+    const root: Root<T> = {
+      get node() {
+        return node;
+      },
       promise,
       prepare,
       mount,
       destroy: () => {
+        cancelled = true;
         this.roots.delete(root);
         node?.destroy();
         this.scheduler.processCancelledNodes();

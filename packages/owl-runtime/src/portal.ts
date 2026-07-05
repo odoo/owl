@@ -44,17 +44,23 @@ export class Portal extends Component {
 
       root = app.createRoot(PortalContent, { props: { slots } } as any);
 
+      // Sub-roots from Portal are created while their parent is being
+      // rendered, i.e. after the app's plugin manager has reached MOUNTED, so
+      // `createRoot` takes the synchronous fast path and `root.node` is
+      // available immediately. (See the comment on Root.node in app.ts.)
+      const subNode = root.node!;
+
       // Forward the plugin chain from this Portal (same pattern as Suspense:
       // createRoot defaults sub-roots to the app-level plugin manager; we
       // override so `providePlugins` contributions from ancestors are visible
       // inside the portaled content).
-      root.node.pluginManager = portalNode.pluginManager;
+      subNode.pluginManager = portalNode.pluginManager;
 
       // Route errors from the portaled subtree back through Portal's parent
       // chain so consumer `onError` handlers still catch them. Without this,
       // sub-root errors would propagate to app._handleError and tear down
       // the whole app.
-      nodeErrorHandlers.set(root.node, [forwardErrorToParent(portalNode)]);
+      nodeErrorHandlers.set(subNode, [forwardErrorToParent(portalNode)]);
 
       root.mount(target);
 

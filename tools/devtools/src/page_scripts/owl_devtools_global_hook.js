@@ -1724,7 +1724,9 @@
       }
       return getter;
     }
-    // Gives the DOM elements which correspond to the given component node
+    // Gives the DOM elements which are rendered by the given component node.
+    // A component which currently renders nothing (root t-if being false, root t-foreach
+    // on an empty collection, ...) yields an empty array.
     getDOMElementsRecursive(node) {
       if (node.hasOwnProperty("bdom")) {
         return this.getDOMElementsRecursive(node.bdom);
@@ -1747,14 +1749,7 @@
             elements = elements.concat(this.getDOMElementsRecursive(child));
           }
         }
-        if (elements.length > 0) {
-          return elements;
-        }
-      }
-      if (node.hasOwnProperty("parentEl")) {
-        if (node.parentEl instanceof Element) {
-          return [node.parentEl];
-        }
+        return elements;
       }
       return [];
     }
@@ -2056,6 +2051,9 @@
     inspectComponentDOM(path) {
       const componentNode = this.getComponentNode(path);
       const elements = this.getDOMElementsRecursive(componentNode);
+      if (!elements.length) {
+        return;
+      }
       if (IS_FIREFOX) {
         window.$temp = elements[0];
       } else {

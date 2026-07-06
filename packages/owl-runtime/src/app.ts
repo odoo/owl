@@ -27,6 +27,18 @@ interface RootConfig<P> {
   props?: P;
 }
 
+// Internal-only options threaded into createRoot by Portal/Suspense sub-roots.
+// Not part of the public RootConfig — passed via `as any` at those call sites
+// and read through a cast inside createRoot.
+interface SubRootConfig<P> extends RootConfig<P> {
+  // overrides the root node's plugin manager so ancestor `providePlugins`
+  // contributions are visible in the subtree. Defaults to app.pluginManager.
+  pluginManager?: PluginManager;
+  // error handler seeded on the root node so descendant errors route back into
+  // the host's parent chain instead of tearing down the whole app.
+  onError?: (error: any, finalize: Function) => void;
+}
+
 export interface AppConfig extends TemplateSetConfig {
   name?: string;
   plugins?: PluginConstructor[] | Resource<PluginConstructor>;
@@ -53,8 +65,11 @@ declare global {
 import type { MountTarget } from "./blockdom";
 
 interface Root<T extends ComponentConstructor> {
-  node: ComponentNode;
   promise: Promise<ComponentInstance<T>>;
+  // true once the render phase has finished. Read synchronously right after
+  // prepare() to detect a fully-synchronous subtree (Suspense's no-flash fast
+  // path). false while the render is still pending or not yet started.
+  readonly prepared: boolean;
   // Kick off rendering without a DOM target. Descendants' onWillStart fires
   // immediately and the bdom is built in memory. Idempotent — second call
   // returns the same promise. Resolves when the render phase finishes.
@@ -116,6 +131,15 @@ export class App extends TemplateSet {
     let error: any = null;
     try {
       node = new ComponentNode(Root, props, this, null, null);
+      // Sub-roots (Portal/Suspense) thread their host's scope and error routing
+      // in through internal config, applied before the render phase begins.
+      const subConfig = config as SubRootConfig<any>;
+      if (subConfig.pluginManager) {
+        node.pluginManager = subConfig.pluginManager;
+      }
+      if (subConfig.onError) {
+        nodeErrorHandlers.set(node, [subConfig.onError]);
+      }
     } catch (e) {
       error = e;
       reject(e);
@@ -193,7 +217,12 @@ export class App extends TemplateSet {
     };
 
     const root = {
-      node: node!,
+      get prepared() {
+        // counter === 0 means every descendant has rendered — the synchronous
+        // signal that the render phase is done. (MountFiber.prepared is only
+        // set later, when the scheduler runs complete() in the next frame.)
+        return fiber ? fiber.counter === 0 : false;
+      },
       promise,
       prepare,
       mount,

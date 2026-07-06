@@ -3,8 +3,7 @@ import { Component } from "./component";
 import { useEffect } from "./hooks";
 import { onMounted, onWillDestroy } from "./lifecycle_hooks";
 import { props } from "./props";
-import { forwardErrorToParent, nodeErrorHandlers } from "./rendering/error_handling";
-import type { MountFiber } from "./rendering/fibers";
+import { forwardErrorToParent } from "./rendering/error_handling";
 import { xml } from "./template_set";
 import { types as t } from "./types";
 
@@ -46,17 +45,15 @@ export class Suspense extends Component {
     // MountFiber — its willStart fires in parallel with the outer tree.
     const root = suspenseNode.app.createRoot(SuspenseHost, {
       props: { slots: this.props.slots },
+      // Thread the plugin manager so `providePlugins` contributions from
+      // ancestors are visible inside the default slot. (createRoot defaults
+      // sub-roots to the app-level plugin manager; override here.) Destroy
+      // cascade is handled explicitly below via `onWillDestroy`.
+      pluginManager: suspenseNode.pluginManager,
+      // Route errors from the sub-root back into Suspense's parent chain so
+      // consumer `onError` handlers still catch descendant failures.
+      onError: forwardErrorToParent(suspenseNode),
     } as any);
-
-    // Thread the plugin manager so `providePlugins` contributions from
-    // ancestors are visible inside the default slot. (createRoot defaults
-    // sub-roots to the app-level plugin manager; override here.) Destroy
-    // cascade is handled explicitly below via `onWillDestroy`.
-    root.node.pluginManager = suspenseNode.pluginManager;
-
-    // Route errors from the sub-root back into Suspense's parent chain so
-    // consumer `onError` handlers still catch descendant failures.
-    nodeErrorHandlers.set(root.node, [forwardErrorToParent(suspenseNode)]);
 
     // Kick off the render phase now — descendants' onWillStart fires in
     // parallel with the outer tree's mount, no target needed yet.
@@ -65,8 +62,7 @@ export class Suspense extends Component {
     // Sync fast path: if the sub-root's render phase finished synchronously
     // (no pending onWillStart in the subtree), flip `prepared` *now* so the
     // first render skips the fallback entirely — no flash.
-    const fiber = root.node.fiber as MountFiber | null;
-    if (fiber && fiber.counter === 0) {
+    if (root.prepared) {
       this.prepared.set(true);
     }
 

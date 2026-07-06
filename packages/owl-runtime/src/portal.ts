@@ -3,7 +3,7 @@ import { Component } from "./component";
 import { useEffect } from "./hooks";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { props } from "./props";
-import { forwardErrorToParent, nodeErrorHandlers } from "./rendering/error_handling";
+import { forwardErrorToParent } from "./rendering/error_handling";
 import { xml } from "./template_set";
 import { types as t } from "./types";
 
@@ -42,19 +42,18 @@ export class Portal extends Component {
         return;
       }
 
-      root = app.createRoot(PortalContent, { props: { slots } } as any);
-
-      // Forward the plugin chain from this Portal (same pattern as Suspense:
-      // createRoot defaults sub-roots to the app-level plugin manager; we
-      // override so `providePlugins` contributions from ancestors are visible
-      // inside the portaled content).
-      root.node.pluginManager = portalNode.pluginManager;
-
-      // Route errors from the portaled subtree back through Portal's parent
-      // chain so consumer `onError` handlers still catch them. Without this,
-      // sub-root errors would propagate to app._handleError and tear down
-      // the whole app.
-      nodeErrorHandlers.set(root.node, [forwardErrorToParent(portalNode)]);
+      root = app.createRoot(PortalContent, {
+        props: { slots },
+        // Forward the plugin chain from this Portal (createRoot defaults
+        // sub-roots to the app-level plugin manager) so `providePlugins`
+        // contributions from ancestors are visible inside the portaled content.
+        pluginManager: portalNode.pluginManager,
+        // Route errors from the portaled subtree back through Portal's parent
+        // chain so consumer `onError` handlers still catch them. Without this,
+        // sub-root errors would propagate to app._handleError and tear down
+        // the whole app.
+        onError: forwardErrorToParent(portalNode),
+      } as any);
 
       root.mount(target);
 

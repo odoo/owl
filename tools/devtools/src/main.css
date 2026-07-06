@@ -240,8 +240,11 @@
 }
 
 .events-container {
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: auto;
+}
+
+.events-wrapper {
+  min-width: max-content;
 }
 
 .split-screen-right {

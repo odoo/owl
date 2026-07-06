@@ -31,16 +31,18 @@
           </div>
         </t>
         <t t-else="">
-          <t t-if="this.profiler.eventsTreeView()">
-            <t t-foreach="this.profiler.eventsTree()" t-as="event" t-key="event.id">
-              <EventNode event="event"/>
+          <div class="events-wrapper">
+            <t t-if="this.profiler.eventsTreeView()">
+              <t t-foreach="this.profiler.eventsTree()" t-as="event" t-key="event.id">
+                <EventNode event="event"/>
+              </t>
             </t>
-          </t>
-          <t t-else="">
-            <t t-foreach="this.profiler.events()" t-as="event" t-key="event_index">
-              <Event event="event"/>
+            <t t-else="">
+              <t t-foreach="this.profiler.events()" t-as="event" t-key="event_index">
+                <Event event="event"/>
+              </t>
             </t>
-          </t>
+          </div>
         </t>
       </div>
     </div>

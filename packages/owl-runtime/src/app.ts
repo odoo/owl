@@ -230,6 +230,12 @@ export async function mount<T extends ComponentConstructor>(
   config: AppConfig & RootConfig<GetProps<ComponentInstance<T>>> & MountOptions = {}
 ): Promise<ComponentInstance<T>> {
   const app = new App(config);
+  if (app.pluginManager.status < STATUS.MOUNTED) {
+    // Plugins are still starting: wait for them before building the root, so
+    // the root's setup/field initializers can safely call plugin() — including
+    // plugins that only start in a later sequence batch.
+    await app.pluginManager.ready;
+  }
   const root = app.createRoot(C, config);
   return root.mount(target, config) as any;
 }

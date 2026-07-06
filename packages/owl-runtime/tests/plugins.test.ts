@@ -5,6 +5,7 @@ import {
   computed,
   config,
   effect,
+  mount,
   onWillDestroy,
   onWillStart,
   plugin,
@@ -698,6 +699,41 @@ describe("onWillStart in plugins", () => {
     expect(instance.p.data).toBe("hello");
     expect(fixture.innerHTML).toBe("<span>ok</span>");
     app.destroy();
+  });
+
+  test("mount waits for a plugin that only starts in a later sequence batch", async () => {
+    // The root reads state from a plugin (OtherPlugin) that only starts after
+    // an async foundational plugin (DataPlugin, lower sequence). mount() must
+    // wait for every configured plugin before building the root, otherwise
+    // `plugin(OtherPlugin)` in the root's field initializer throws.
+    const rpc = makeDeferred<void>();
+
+    class DataPlugin extends Plugin {
+      static sequence = 10;
+      state = signal<string | null>(null);
+      setup() {
+        onWillStart(() => rpc.then(() => this.state.set("some state")));
+      }
+    }
+
+    class OtherPlugin extends Plugin {
+      data = plugin(DataPlugin);
+    }
+
+    class Root extends Component {
+      static template = xml`<t t-out="this.other.data.state().length"/>`;
+      other = plugin(OtherPlugin);
+    }
+
+    const fixture = makeTestFixture();
+    const mounted = mount(Root, fixture, { plugins: [DataPlugin, OtherPlugin] });
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    rpc.resolve();
+    const instance = await mounted;
+    expect(instance.other.data.state()).toBe("some state");
+    expect(fixture.innerHTML).toBe("10");
   });
 
   test("multiple plugin willStarts run in parallel", async () => {

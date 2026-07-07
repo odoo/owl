@@ -105,18 +105,15 @@ function onReadTargetKey(target: Target, key: PropertyKey, atom: Atom | null): v
  * @param key the key that changed (or Symbol `KEYCHANGES` if a key was created
  *   or deleted)
  */
-function onWriteTargetKey(target: Target, key: PropertyKey, atom: Atom | null): void {
-  if (!atom) {
-    const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
-    if (!keyToAtomItem) {
-      return;
-    }
-    if (!keyToAtomItem.has(key)) {
-      return;
-    }
-    atom = keyToAtomItem.get(key)!;
+function onWriteTargetKey(target: Target, key: PropertyKey): void {
+  const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
+  if (!keyToAtomItem) {
+    return;
   }
-  onWriteAtom(atom);
+  if (!keyToAtomItem.has(key)) {
+    return;
+  }
+  onWriteAtom(keyToAtomItem.get(key)!);
 }
 
 // Maps proxy objects to the underlying target
@@ -210,25 +207,39 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       const hadKey = objectHasOwnProperty.call(target, key);
       const originalValue = Reflect.get(target, key, receiver);
       const ret = Reflect.set(target, key, toRaw(value), receiver);
-      if (!hadKey && objectHasOwnProperty.call(target, key)) {
-        onWriteTargetKey(target, KEYCHANGES, atom);
-      }
-      // While Array length may trigger the set trap, it's not actually set by this
-      // method but is updated behind the scenes, and the trap is not called with the
-      // new value. We disable the "same-value-optimization" for it because of that.
-      if (
-        originalValue !== Reflect.get(target, key, receiver) ||
-        (key === "length" && Array.isArray(target))
-      ) {
-        onWriteTargetKey(target, key, atom);
+      const keyCreated = !hadKey && objectHasOwnProperty.call(target, key);
+      const valueChanged = originalValue !== Reflect.get(target, key, receiver);
+      if (atom) {
+        // Signal-based proxies observe a single atom: notify it at most once
+        // per write, even when the write both creates a key and changes a
+        // value. Array "length" writes triggered by array methods (push, ...)
+        // don't need the special case below: the index write that caused them
+        // already notified the atom.
+        if (keyCreated || valueChanged) {
+          onWriteAtom(atom);
+        }
+      } else {
+        if (keyCreated) {
+          onWriteTargetKey(target, KEYCHANGES);
+        }
+        // While Array length may trigger the set trap, it's not actually set by this
+        // method but is updated behind the scenes, and the trap is not called with the
+        // new value. We disable the "same-value-optimization" for it because of that.
+        if (valueChanged || (key === "length" && Array.isArray(target))) {
+          onWriteTargetKey(target, key);
+        }
       }
       return ret;
     },
     deleteProperty(target, key) {
       const ret = Reflect.deleteProperty(target, key);
       // TODO: only notify when something was actually deleted
-      onWriteTargetKey(target, KEYCHANGES, atom);
-      onWriteTargetKey(target, key, atom);
+      if (atom) {
+        onWriteAtom(atom);
+      } else {
+        onWriteTargetKey(target, KEYCHANGES);
+        onWriteTargetKey(target, key);
+      }
       return ret;
     },
     ownKeys(target) {
@@ -326,10 +337,10 @@ function delegateAndNotify(
     const ret = target[setterName](key, value);
     const hasKey = target.has(key);
     if (hadKey !== hasKey) {
-      onWriteTargetKey(target, KEYCHANGES, null);
+      onWriteTargetKey(target, KEYCHANGES);
     }
     if (originalValue !== target[getterName](key)) {
-      onWriteTargetKey(target, key, null);
+      onWriteTargetKey(target, key);
     }
     return ret;
   };
@@ -344,9 +355,9 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
   return () => {
     const allKeys = [...target.keys()];
     target.clear();
-    onWriteTargetKey(target, KEYCHANGES, null);
+    onWriteTargetKey(target, KEYCHANGES);
     for (const key of allKeys) {
-      onWriteTargetKey(target, key, null);
+      onWriteTargetKey(target, key);
     }
   };
 }

@@ -9,6 +9,7 @@ import {
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
+  reactive,
   useState,
   xml,
 } from "../../src";
@@ -5004,3 +5005,54 @@ test("component destroyed just after render", async () => {
 //     );
 //   });
 // });
+
+test("cancelled fiber does not swallow a render coalesced into it", async () => {
+  // A reactive change notifying a component whose parent holds a pending,
+  // not-yet-rendered child fiber for it is coalesced into that fiber (the
+  // component's reactive subscriptions are cleared at notification time). A
+  // second parent render cancelling that fiber used to drop the coalesced
+  // render whenever the child's props compared equal to its committed props,
+  // leaving the child stale and unsubscribed from the reactive state (hence
+  // deaf to all its further changes).
+  const shared = reactive({ value: "a" });
+  let def: ReturnType<typeof makeDeferred> | null = null;
+  class Child extends Component {
+    static template = xml`<t t-esc="props.p"/><t t-esc="shared.value"/>`;
+    shared: any;
+    setup() {
+      this.shared = useState(shared);
+      onWillUpdateProps(() => def);
+    }
+  }
+  let parent: any;
+  class Parent extends Component {
+    static template = xml`<Child p="state.p"/>`;
+    static components = { Child };
+    state = useState({ p: 1 });
+    setup() {
+      parent = this;
+    }
+  }
+  await mount(Parent, fixture);
+  expect(fixture.textContent).toBe("1a");
+  // parent render pass 1: Child's props differ, so the parent creates a child
+  // fiber for it, held pending by the gate on willUpdateProps
+  def = makeDeferred();
+  parent.state.p = 2;
+  await nextMicroTick();
+  await nextMicroTick();
+  // reactive change: Child's re-render is coalesced into the pending fiber
+  shared.value = "b";
+  await nextMicroTick();
+  // parent render pass 2: the prop reverts; the pending child fiber is
+  // cancelled and Child's props compare equal to its committed props
+  parent.state.p = 1;
+  def.resolve();
+  def = null;
+  await nextTick();
+  expect(fixture.textContent).toBe("1b");
+  // the child must also still react to later changes
+  shared.value = "c";
+  await nextTick();
+  expect(fixture.textContent).toBe("1c");
+});

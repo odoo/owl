@@ -152,6 +152,31 @@ exports[`calling render in destroy 3`] = `
 }"
 `;
 
+exports[`cancelled fiber does not swallow a render coalesced into it 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"p\\"]);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({p: ctx['state'].p}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`cancelled fiber does not swallow a render coalesced into it 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['props'].p);
+    const b3 = text(ctx['shared'].value);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

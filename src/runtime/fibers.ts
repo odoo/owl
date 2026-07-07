@@ -76,6 +76,15 @@ function cancelFibers(fibers: Fiber[]): number {
       node.forceNextRender = true;
     } else {
       result++;
+      if (node.bdom) {
+        // a mounted node whose pending fiber is cancelled before it could
+        // render may have renders coalesced into that fiber (requested by
+        // reactive changes, whose subscriptions were cleared when they were
+        // notified), so dropping the fiber would silently lose them: force
+        // the cancelling render to re-render the node even if its props are
+        // unchanged.
+        node.forceNextRender = true;
+      }
     }
     result += cancelFibers(fiber.children);
   }

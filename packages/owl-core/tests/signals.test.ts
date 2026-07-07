@@ -1,4 +1,4 @@
-import { signal } from "../src";
+import { atomSymbol, signal } from "../src";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 test("signal can be created and read", () => {
@@ -470,5 +470,71 @@ describe("signal.Set", () => {
 
     await waitScheduler();
     expectSpy(e.spy, 4, { result: [2] });
+  });
+});
+
+describe("signal write notifications", () => {
+  // Counts how many times onWriteAtom is called on the signal's atom by
+  // counting iterations of its observers set (onWriteAtom iterates it once
+  // per call).
+  function countAtomNotifications(sig: any): () => number {
+    const atom = sig[atomSymbol];
+    let count = 0;
+    atom.observers = new (class extends Set<any> {
+      [Symbol.iterator]() {
+        count++;
+        return super[Symbol.iterator]();
+      }
+    })(atom.observers);
+    return () => count;
+  }
+
+  test("adding an element to a signal.Array notifies its atom only once", () => {
+    const reactiveArray = signal.Array<number>([0, 1]);
+    const notified = countAtomNotifications(reactiveArray);
+
+    reactiveArray()[2] = 2;
+    expect(notified()).toBe(1);
+  });
+
+  test("push on a signal.Array notifies its atom only once", () => {
+    const reactiveArray = signal.Array<number>([0]);
+    const notified = countAtomNotifications(reactiveArray);
+
+    reactiveArray().push(1);
+    expect(notified()).toBe(1);
+  });
+
+  test("writing the same value to a signal.Array does not notify", () => {
+    const reactiveArray = signal.Array<number>([0]);
+    const notified = countAtomNotifications(reactiveArray);
+
+    reactiveArray()[0] = 0;
+    expect(notified()).toBe(0);
+  });
+
+  test("truncating a signal.Array through length notifies its atom only once", () => {
+    const reactiveArray = signal.Array<number>([0, 1, 2]);
+    const notified = countAtomNotifications(reactiveArray);
+
+    reactiveArray().length = 1;
+    expect(notified()).toBe(1);
+    expect(reactiveArray()).toEqual([0]);
+  });
+
+  test("adding a key to a signal.Object notifies its atom only once", () => {
+    const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
+    const notified = countAtomNotifications(reactiveObject);
+
+    reactiveObject().b = 2;
+    expect(notified()).toBe(1);
+  });
+
+  test("deleting a key from a signal.Object notifies its atom only once", () => {
+    const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
+    const notified = countAtomNotifications(reactiveObject);
+
+    delete reactiveObject().a;
+    expect(notified()).toBe(1);
   });
 });

@@ -1,4 +1,4 @@
-import { atomSymbol, signal } from "../src";
+import { atomSymbol, effect, signal } from "../src";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 test("signal can be created and read", () => {
@@ -476,8 +476,10 @@ describe("signal.Set", () => {
 describe("signal write notifications", () => {
   // Counts how many times onWriteAtom is called on the signal's atom by
   // counting iterations of its observers set (onWriteAtom iterates it once
-  // per call).
+  // per call). A real effect is subscribed first: writes to an atom with no
+  // observers skip the notification path entirely.
   function countAtomNotifications(sig: any): () => number {
+    effect(() => sig());
     const atom = sig[atomSymbol];
     let count = 0;
     atom.observers = new (class extends Set<any> {

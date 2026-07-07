@@ -1,5 +1,5 @@
 import { OwlError } from "./owl_error";
-import { onReadAtom, onWriteAtom, Atom } from "./computations";
+import { hasCurrentComputation, onReadAtom, onWriteAtom, Atom } from "./computations";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -93,7 +93,18 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
  * @param callback the function to call when the key changes
  */
 function onReadTargetKey(target: Target, key: PropertyKey, atom: Atom | null): void {
-  onReadAtom(atom ?? getTargetKeyAtom(target, key));
+  if (atom) {
+    onReadAtom(atom);
+    return;
+  }
+  // Don't create a per-key atom when nothing is tracking: reads outside a
+  // computation (event handlers, plain functions) subscribe nothing, and the
+  // atom would be retained in targetToKeysToAtomItem for the target's
+  // lifetime without ever having an observer.
+  if (!hasCurrentComputation()) {
+    return;
+  }
+  onReadAtom(getTargetKeyAtom(target, key));
 }
 
 /**

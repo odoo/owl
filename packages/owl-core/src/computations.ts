@@ -57,17 +57,24 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
-  for (const ctx of atom.observers) {
-    if (ctx.state === ComputationState.EXECUTED) {
-      if (ctx.isDerived) {
-        markDownstream(ctx);
-      } else {
-        observers.push(ctx);
+  if (atom.observers.size !== 0) {
+    for (const ctx of atom.observers) {
+      if (ctx.state === ComputationState.EXECUTED) {
+        if (ctx.isDerived) {
+          markDownstream(ctx);
+        } else {
+          observers.push(ctx);
+        }
       }
+      ctx.state = ComputationState.STALE;
     }
-    ctx.state = ComputationState.STALE;
   }
-  batchProcessEffects();
+  // Only schedule a flush when an effect was actually queued (here or by an
+  // earlier write in the same batch): writes to unobserved atoms, or atoms
+  // only observed by derived computations, have nothing to process.
+  if (observers.length !== 0) {
+    batchProcessEffects();
+  }
 }
 
 const batchProcessEffects = batched(processEffects);
@@ -83,6 +90,10 @@ export function getCurrentComputation() {
   return currentComputation;
 }
 
+export function hasCurrentComputation(): boolean {
+  return currentComputation !== undefined;
+}
+
 export function setComputation(computation: ComputationAtom | undefined) {
   currentComputation = computation;
 }
@@ -94,7 +105,8 @@ export function updateComputation(computation: ComputationAtom) {
   }
   if (state === ComputationState.PENDING) {
     for (const source of computation.sources) {
-      if (!("compute" in source)) {
+      // Plain atoms have no compute: a property load is cheaper than `in`.
+      if ((source as ComputationAtom).compute === undefined) {
         continue;
       }
       updateComputation(source as ComputationAtom);

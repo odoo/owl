@@ -35,6 +35,8 @@ export {
   updateComputation,
   removeSources,
   disposeComputation,
+  startTracking,
+  finishTracking,
 } from "./computations";
 
 // Reactivity: signal

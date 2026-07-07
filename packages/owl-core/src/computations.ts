@@ -26,6 +26,16 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  // Positional dependency tracking: sourcesList records the atoms in read
+  // order (duplicates included). On a re-run, reads are matched against it
+  // position by position; while they match, the existing subscriptions are
+  // reused with no Set operation at all. On the first mismatch the run
+  // switches to recording mode (trackDiverged) and the links are reconciled
+  // in finishTracking.
+  sourcesList: Atom[];
+  trackIndex: number;
+  trackDiverged: boolean;
+  newSources: Atom[];
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -45,15 +55,80 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    sourcesList: [],
+    trackIndex: 0,
+    trackDiverged: true,
+    newSources: [],
   };
 }
 
 export function onReadAtom(atom: Atom) {
-  if (!currentComputation) {
+  const computation = currentComputation;
+  if (!computation) {
     return;
   }
-  currentComputation.sources.add(atom);
-  atom.observers.add(currentComputation);
+  if (!computation.trackDiverged) {
+    const list = computation.sourcesList;
+    const i = computation.trackIndex;
+    if (i < list.length && list[i] === atom) {
+      computation.trackIndex = i + 1;
+      return;
+    }
+    // The read sequence no longer matches the previous run: switch to
+    // recording mode, keeping the already-matched prefix.
+    computation.trackDiverged = true;
+    computation.newSources = list.slice(0, i);
+  }
+  computation.newSources.push(atom);
+  computation.sources.add(atom);
+  atom.observers.add(computation);
+}
+
+/**
+ * Start a tracking run for the given computation, reusing the source links
+ * from its previous run for as long as reads arrive in the same order.
+ * Must be paired with finishTracking.
+ */
+export function startTracking(computation: ComputationAtom) {
+  computation.trackIndex = 0;
+  computation.trackDiverged = computation.sourcesList.length === 0;
+  if (computation.trackDiverged) {
+    computation.newSources = [];
+  }
+}
+
+/**
+ * Reconcile the source links after a tracking run: unsubscribe from sources
+ * that were not read this run, and commit the new read list.
+ */
+export function finishTracking(computation: ComputationAtom) {
+  if (!computation.trackDiverged) {
+    if (computation.trackIndex === computation.sourcesList.length) {
+      // Exact same reads as last run: all links are already correct.
+      return;
+    }
+    // Read a strict prefix of the previous run: drop the tail.
+    computation.newSources = computation.sourcesList.slice(0, computation.trackIndex);
+    computation.trackDiverged = true;
+  }
+  const newList = computation.newSources;
+  if (computation.sourcesList.length === 0) {
+    // First run (or run right after a full teardown): there were no previous
+    // links, so nothing can be stale. `sources` was filled during recording
+    // and is already exact.
+    computation.sourcesList = newList;
+    computation.newSources = [];
+    return;
+  }
+  const newSet = new Set(newList);
+  for (const source of computation.sources) {
+    if (!newSet.has(source)) {
+      source.observers.delete(computation);
+    }
+  }
+  computation.sources = newSet;
+  computation.sourcesList = newList;
+  computation.newSources = [];
 }
 
 export function onWriteAtom(atom: Atom) {
@@ -127,18 +202,18 @@ export function updateComputation(computation: ComputationAtom) {
       return;
     }
   }
-  // todo: test performance. We might want to avoid removing the atoms to
-  // directly re-add them at compute. Especially as we are making them stale.
-  removeSources(computation);
+  startTracking(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
   try {
     computation.value = computation.compute();
     computation.state = ComputationState.EXECUTED;
   } finally {
-    // Restore the previous tracking pointer even if compute() threw, so a
-    // subsequent atom read does not silently attach itself as a source of
-    // the failed computation.
+    // Reconcile subscriptions even if compute() threw (only the reads that
+    // actually happened count as sources), and restore the previous tracking
+    // pointer so a subsequent atom read does not silently attach itself as a
+    // source of the failed computation.
+    finishTracking(computation);
     currentComputation = previousComputation;
   }
 }
@@ -152,6 +227,12 @@ export function removeSources(computation: ComputationAtom) {
     // todo: test it
   }
   sources.clear();
+  // Leave the computation in recording mode: callers may start reading right
+  // after removeSources without going through startTracking.
+  computation.sourcesList = [];
+  computation.newSources = [];
+  computation.trackIndex = 0;
+  computation.trackDiverged = true;
 }
 
 export function disposeComputation(computation: ComputationAtom) {
@@ -168,6 +249,10 @@ export function disposeComputation(computation: ComputationAtom) {
     }
   }
   sources.clear();
+  computation.sourcesList = [];
+  computation.newSources = [];
+  computation.trackIndex = 0;
+  computation.trackDiverged = true;
   // Mark as stale so it recomputes correctly if ever re-used (shared computed case)
   computation.state = ComputationState.STALE;
 }

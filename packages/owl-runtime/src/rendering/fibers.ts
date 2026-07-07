@@ -1,9 +1,10 @@
 import {
   ComputationState,
+  finishTracking,
   getCurrentComputation,
   OwlError,
-  removeSources,
   setComputation,
+  startTracking,
 } from "@odoo/owl-core";
 import { BDom, mount, type MountTarget } from "../blockdom";
 import type { ComponentNode } from "../component_node";
@@ -177,7 +178,7 @@ export class Fiber {
         return;
       }
       const c = getCurrentComputation();
-      removeSources(node.signalComputation);
+      startTracking(node.signalComputation);
       setComputation(node.signalComputation);
       node.signalComputation.state = ComputationState.EXECUTED;
       try {
@@ -186,6 +187,7 @@ export class Fiber {
       } catch (e) {
         handleError({ node, error: e });
       } finally {
+        finishTracking(node.signalComputation);
         setComputation(c);
       }
       const newCounter = root.counter - 1;

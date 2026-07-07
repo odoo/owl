@@ -1,4 +1,13 @@
-import { computed, effect, proxy, signal, untrack } from "../src";
+import {
+  computed,
+  ComputationState,
+  createComputation,
+  effect,
+  proxy,
+  signal,
+  untrack,
+  updateComputation,
+} from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -498,6 +507,62 @@ describe("effect", () => {
       cleanupSignal.set(1);
       await waitScheduler();
       expect(outerRuns).toBe(1);
+    });
+  });
+
+  describe("positional source reuse", () => {
+    test("re-running with unchanged read order reuses the source links", () => {
+      const a = signal(1);
+      const b = signal(2);
+      const comp = createComputation(() => a() + b(), false);
+      updateComputation(comp);
+      const sources = comp.sources;
+      const sourcesList = comp.sourcesList;
+      expect(sourcesList.length).toBe(2);
+
+      comp.state = ComputationState.STALE;
+      updateComputation(comp);
+      // same reads in the same order: the links were not torn down/rebuilt
+      expect(comp.sources).toBe(sources);
+      expect(comp.sourcesList).toBe(sourcesList);
+      expect(comp.value).toBe(3);
+    });
+
+    test("reading a strict prefix of the previous run drops the tail", async () => {
+      const stop = signal(false);
+      const a = signal(1);
+      const spy = vi.fn(() => (stop() ? -1 : a()));
+      effect(spy);
+      expectSpy(spy, 1, { result: 1 });
+
+      stop.set(true);
+      await waitScheduler();
+      expectSpy(spy, 2, { result: -1 });
+
+      // a was read after stop in the previous run and is no longer read:
+      // writing it must not re-run the effect
+      a.set(42);
+      await waitScheduler();
+      expectSpy(spy, 2);
+
+      stop.set(false);
+      await waitScheduler();
+      expectSpy(spy, 3, { result: 42 });
+    });
+
+    test("repeated reads of the same atom are matched positionally", async () => {
+      const a = signal(1);
+      const spy = vi.fn(() => a() + a() + a());
+      effect(spy);
+      expectSpy(spy, 1, { result: 3 });
+
+      a.set(2);
+      await waitScheduler();
+      expectSpy(spy, 2, { result: 6 });
+
+      a.set(3);
+      await waitScheduler();
+      expectSpy(spy, 3, { result: 9 });
     });
   });
 });

@@ -10,19 +10,22 @@ import {
 
 export function effect<T>(fn: () => T) {
   const computation = createComputation(() => {
-    // Only run the unsubscribe dance (and the surrounding setComputation
-    // save/restore) when there's actually something to clean up: a stored
-    // cleanup function (computation.value) or nested child effects
-    // (computation.observers). For the common "leaf effect" case this is
-    // both empty, and removeSources alone suffices.
+    // Source-link maintenance is handled by the tracking run itself
+    // (startTracking/finishTracking in updateComputation); here we only run
+    // the user cleanup function and tear down nested child effects. Calling
+    // removeSources on ourselves here would reset the in-progress positional
+    // tracking state.
     if (computation.value || computation.observers.size) {
       // Keep cleanup function and child cleanup from tracking atom reads as
       // sources of this effect.
       setComputation(undefined);
-      unsubscribeEffect(computation);
+      cleanupEffect(computation);
+      for (const childEffect of computation.observers) {
+        childEffect.state = ComputationState.EXECUTED;
+        unsubscribeEffect(childEffect);
+      }
+      computation.observers.clear();
       setComputation(computation);
-    } else {
-      removeSources(computation);
     }
     return fn();
   }, false);

@@ -198,7 +198,10 @@ export function proxy<T extends Target>(target: T): T {
 function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
-      onReadTargetKey(target, key, atom);
+      // Track per-key even for signal-based proxies: the signal's own atom
+      // only stands for the value as a whole (invalidated by sig.set), while
+      // reading a key subscribes to that key only. See #1903 for collections.
+      onReadTargetKey(target, key, null);
       const value = Reflect.get(target, key, receiver);
       // Fast path: signal-based proxies and primitive values don't need wrapping
       if (atom || typeof value !== "object" || value === null) {
@@ -220,48 +223,39 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       const ret = Reflect.set(target, key, toRaw(value), receiver);
       const keyCreated = !hadKey && objectHasOwnProperty.call(target, key);
       const valueChanged = originalValue !== Reflect.get(target, key, receiver);
-      if (atom) {
-        // Signal-based proxies observe a single atom: notify it at most once
-        // per write, even when the write both creates a key and changes a
-        // value. Array "length" writes triggered by array methods (push, ...)
-        // don't need the special case below: the index write that caused them
-        // already notified the atom.
-        if (keyCreated || valueChanged) {
-          onWriteAtom(atom);
+      if (keyCreated) {
+        onWriteTargetKey(target, KEYCHANGES);
+        // An index write that creates a key on an array also updates its
+        // length behind the scenes, without going through the length set
+        // trap: notify length observers explicitly.
+        if (Array.isArray(target)) {
+          onWriteTargetKey(target, "length");
         }
-      } else {
-        if (keyCreated) {
-          onWriteTargetKey(target, KEYCHANGES);
-        }
-        // While Array length may trigger the set trap, it's not actually set by this
-        // method but is updated behind the scenes, and the trap is not called with the
-        // new value. We disable the "same-value-optimization" for it because of that.
-        if (valueChanged || (key === "length" && Array.isArray(target))) {
-          onWriteTargetKey(target, key);
-        }
+      }
+      // While Array length may trigger the set trap, it's not actually set by this
+      // method but is updated behind the scenes, and the trap is not called with the
+      // new value. We disable the "same-value-optimization" for it because of that.
+      if (valueChanged || (key === "length" && Array.isArray(target))) {
+        onWriteTargetKey(target, key);
       }
       return ret;
     },
     deleteProperty(target, key) {
       const ret = Reflect.deleteProperty(target, key);
       // TODO: only notify when something was actually deleted
-      if (atom) {
-        onWriteAtom(atom);
-      } else {
-        onWriteTargetKey(target, KEYCHANGES);
-        onWriteTargetKey(target, key);
-      }
+      onWriteTargetKey(target, KEYCHANGES);
+      onWriteTargetKey(target, key);
       return ret;
     },
     ownKeys(target) {
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES, null);
       return Reflect.ownKeys(target);
     },
     has(target, key) {
       // TODO: this observes all key changes instead of only the presence of the argument key
       // observing the key itself would observe value changes instead of presence changes
       // so we may need a finer grained system to distinguish observing value vs presence.
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES, null);
       return Reflect.has(target, key);
     },
   } as ProxyHandler<T>;

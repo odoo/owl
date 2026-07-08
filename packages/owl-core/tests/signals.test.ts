@@ -473,8 +473,8 @@ describe("signal.Set", () => {
   });
 });
 
-describe("signal write notifications", () => {
-  // Counts how many times onWriteAtom is called on the signal's atom by
+describe("signal write granularity", () => {
+  // Counts how many times onWriteAtom is called on the signal's own atom by
   // counting iterations of its observers set (onWriteAtom iterates it once
   // per call). A real effect is subscribed first: writes to an atom with no
   // observers skip the notification path entirely.
@@ -491,52 +491,87 @@ describe("signal write notifications", () => {
     return () => count;
   }
 
-  test("adding an element to a signal.Array notifies its atom only once", () => {
+  test("mutating a signal.Array does not notify the signal atom", () => {
     const reactiveArray = signal.Array<number>([0, 1]);
     const notified = countAtomNotifications(reactiveArray);
 
+    // mutations only notify per-key atoms; the signal atom stands for the
+    // value as a whole and is only notified by set()
     reactiveArray()[2] = 2;
-    expect(notified()).toBe(1);
-  });
-
-  test("push on a signal.Array notifies its atom only once", () => {
-    const reactiveArray = signal.Array<number>([0]);
-    const notified = countAtomNotifications(reactiveArray);
-
-    reactiveArray().push(1);
-    expect(notified()).toBe(1);
-  });
-
-  test("writing the same value to a signal.Array does not notify", () => {
-    const reactiveArray = signal.Array<number>([0]);
-    const notified = countAtomNotifications(reactiveArray);
-
-    reactiveArray()[0] = 0;
-    expect(notified()).toBe(0);
-  });
-
-  test("truncating a signal.Array through length notifies its atom only once", () => {
-    const reactiveArray = signal.Array<number>([0, 1, 2]);
-    const notified = countAtomNotifications(reactiveArray);
-
+    reactiveArray().push(3);
     reactiveArray().length = 1;
+    delete reactiveArray()[0];
+    expect(notified()).toBe(0);
+
+    reactiveArray.set([]);
     expect(notified()).toBe(1);
-    expect(reactiveArray()).toEqual([0]);
   });
 
-  test("adding a key to a signal.Object notifies its atom only once", () => {
+  test("mutating a signal.Object does not notify the signal atom", () => {
     const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
     const notified = countAtomNotifications(reactiveObject);
 
     reactiveObject().b = 2;
+    delete reactiveObject().a;
+    expect(notified()).toBe(0);
+
+    reactiveObject.set({});
     expect(notified()).toBe(1);
   });
 
-  test("deleting a key from a signal.Object notifies its atom only once", () => {
-    const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
-    const notified = countAtomNotifications(reactiveObject);
+  test("writing an index does not re-run readers of another index", async () => {
+    const data = signal.Array<number>();
 
-    delete reactiveObject().a;
-    expect(notified()).toBe(1);
+    const e = spyEffect(() => data()[1]);
+    e();
+    expectSpy(e.spy, 1, { result: undefined });
+
+    data()[2] = 2;
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+
+    data()[1] = 1;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
+  });
+
+  test("writing a key does not re-run readers of another key", async () => {
+    const obj = signal.Object<Record<string, number>>({ a: 1, b: 2 });
+
+    const e = spyEffect(() => obj().a);
+    e();
+    expectSpy(e.spy, 1, { result: 1 });
+
+    obj().b = 20;
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+
+    obj().a = 10;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 10 });
+  });
+
+  test("growing an array by index write notifies length readers", async () => {
+    const data = signal.Array<number>([0]);
+
+    const e = spyEffect(() => data().length);
+    e();
+    expectSpy(e.spy, 1, { result: 1 });
+
+    data()[3] = 3;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 4 });
+  });
+
+  test("writing the same value does not notify", async () => {
+    const data = signal.Array<number>([0]);
+
+    const e = spyEffect(() => data()[0]);
+    e();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    data()[0] = 0;
+    await waitScheduler();
+    expectSpy(e.spy, 1);
   });
 });

@@ -95,7 +95,7 @@ class CodeEditor extends Component {
           };
         },
       };
-      monaco.editor.defineTheme("slate-dark", { base: "vs-dark" });
+      await setupShiki(monaco);
       monaco.typescript.javascriptDefaults.setCompilerOptions({
         allowJs: true,
         allowNonTsExtensions: true,
@@ -120,7 +120,6 @@ class CodeEditor extends Component {
       registerOwlSnippets(monaco);
       registerXmlTagRename(monaco);
       await registerCustomTsWorker(monaco);
-      await setupShiki(monaco);
     });
 
     useEffect(() => {

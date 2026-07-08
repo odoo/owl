@@ -17,10 +17,6 @@ import {
 import { parseMarkdown } from "./code_utils.js";
 import { getFileType, makeFileEntry, parseFilePaths, TAB_SIZES } from "./file_utils.js";
 import * as monaco from "@libs/monaco";
-import { playgroundAssetUrl } from "./asset_url.js";
-import { setupShiki } from "./monaco/shiki.js";
-import { registerCustomTsWorker } from "./monaco/auto_import.js";
-import { registerOwlSnippets } from "./monaco/snippets.js";
 import {
   CodePlugin,
   DialogPlugin,
@@ -33,7 +29,7 @@ import {
 } from "./plugins.js";
 import { HELLO_WORLD_JS } from "./samples.js";
 import { debounce } from "./utils.js";
-import { registerXmlTagRename } from "./monaco/xml_tag_rename.js";
+import { initiateMonaco } from "./monaco/initialize_monaco.js";
 
 class CodeEditor extends Component {
   static template = "CodeEditor";
@@ -69,57 +65,7 @@ class CodeEditor extends Component {
     let owlTypesDisposable = null;
 
     onWillStart(async () => {
-      window.MonacoEnvironment = {
-        getWorker(_, label) {
-          switch (label) {
-            case "typescript":
-            case "javascript":
-              return new Worker(
-                playgroundAssetUrl("./libs/workers/ts.worker.js")
-              );
-
-            case "css":
-              return new Worker(
-                playgroundAssetUrl("./libs/workers/css.worker.js")
-              );
-
-            case "html":
-              return new Worker(
-                playgroundAssetUrl("./libs/workers/html.worker.js")
-              );
-
-            default:
-              return new Worker(
-                playgroundAssetUrl("./libs/workers/editor.worker.js")
-              );
-          };
-        },
-      };
-      await setupShiki(monaco);
-      monaco.typescript.javascriptDefaults.setCompilerOptions({
-        allowJs: true,
-        allowNonTsExtensions: true,
-        checkJs: true,
-        noImplicitAny: false,
-        moduleResolution:
-          monaco.typescript.ModuleResolutionKind.NodeJs,
-        module:
-          monaco.typescript.ModuleKind.ESNext,
-        target:
-          monaco.typescript.ScriptTarget.ESNext,
-        baseUrl: "file:///",
-      });
-      monaco.typescript.javascriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: false,
-        noSyntaxValidation: false,
-      });
-      monaco.typescript.javascriptDefaults.addExtraLib(
-        `declare const TEMPLATES: Record<string, string>;`,
-        "file:///globals.d.ts"
-      );
-      registerOwlSnippets(monaco);
-      registerXmlTagRename(monaco);
-      await registerCustomTsWorker(monaco);
+      await initiateMonaco(monaco);
     });
 
     useEffect(() => {

@@ -69,6 +69,12 @@ The transitions `NEW → CANCELLED` and any transition into `DESTROYED` will
 abort the scope's abort signal (see below). Code that looks at `scope.status`
 should usually ask "is it greater than `MOUNTED`?" to mean "this is dead."
 
+The `scope.isDestroyed()` method answers the stricter question "has this scope
+been fully destroyed?" — it returns `true` only once all cleanup (destroy
+callbacks, computation disposal) has run. A `CANCELLED` scope is dead but not
+yet destroyed, so `isDestroyed()` still returns `false` for it until the
+scheduler finalizes it.
+
 The `status()` helper function (which takes a `Component` or `Plugin` instance
 directly) is a more convenient frontend for reading a scope's status:
 
@@ -252,6 +258,9 @@ active. Reach for this only when the absence of a scope is meaningful.
 - `until<T>(p: Promise<T>): Promise<T>` — awaits `p`, throwing `AbortError`
   if the scope is dead before or after the await. Does not allocate a
   controller.
+- `isDestroyed(): boolean` — true once the scope is fully destroyed (all
+  cleanup has run). A `CANCELLED` scope is not yet destroyed — to ask "is this
+  scope dead?", check `status > MOUNTED` instead.
 - `onDestroy(cb: () => void): void` — registers a destroy callback. If the
   scope is already destroyed, calls the callback immediately.
 - `cancel(): void` — marks the scope as `CANCELLED` and aborts its abort

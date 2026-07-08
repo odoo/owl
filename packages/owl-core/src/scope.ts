@@ -100,6 +100,17 @@ export abstract class Scope {
   }
 
   /**
+   * Returns true once the scope has been fully destroyed, i.e. `finalize` has
+   * run: the abort signal is aborted, onDestroy callbacks have executed and
+   * computations are disposed. Note that a CANCELLED scope (abandoned before
+   * mount, but not yet finalized) is dead but not destroyed — to ask "is this
+   * scope dead?", check `status > STATUS.MOUNTED` instead.
+   */
+  isDestroyed(): boolean {
+    return this.status >= STATUS.DESTROYED;
+  }
+
+  /**
    * Registers a callback to run when the scope is destroyed. If the scope is
    * already destroyed, the callback is invoked immediately.
    */

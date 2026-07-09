@@ -87,6 +87,24 @@ describe("useScope", () => {
     app.destroy();
   });
 
+  test("forwards extra arguments to the run callback", async () => {
+    let scope: any;
+
+    class Root extends Component {
+      static template = xml``;
+
+      setup() {
+        scope = useScope();
+      }
+    }
+    const app = new App();
+    await app.createRoot(Root).mount(fixture);
+
+    const result = scope!.run((a: number, b: number) => a + b, 2, 3);
+    expect(result).toBe(5);
+    app.destroy();
+  });
+
   test("throws outside any scope", () => {
     expect(() => useScope()).toThrow("No active scope");
   });
@@ -114,7 +132,7 @@ describe("async cancellation via signal", () => {
     expect(() => signal.throwIfAborted()).toThrow();
   });
 
-  test("scope.until() rejects with AbortError after component destroy", async () => {
+  test("scope.run() rejects with AbortError after component destroy", async () => {
     const steps: string[] = [];
     let scope: any;
 
@@ -137,12 +155,12 @@ describe("async cancellation via signal", () => {
     expect(steps.splice(0)).toEqual(["destroy"]);
 
     const deferred = makeDeferred();
-    await expect(scope!.until(deferred as Promise<unknown>)).rejects.toMatchObject({
+    await expect(scope!.run(() => deferred as Promise<unknown>)).rejects.toMatchObject({
       name: "AbortError",
     });
   });
 
-  test("scope.until() resolves normally if scope is alive", async () => {
+  test("scope.run() resolves normally if scope is alive", async () => {
     const steps: string[] = [];
     let scope: any;
 
@@ -157,7 +175,7 @@ describe("async cancellation via signal", () => {
     await app.createRoot(Root).mount(fixture);
 
     const deferred = makeDeferred();
-    scope!.until(deferred as Promise<unknown>).then(() => {
+    scope!.run(() => deferred as Promise<unknown>).then(() => {
       steps.push("resolved");
     });
     await nextTick();
@@ -168,7 +186,7 @@ describe("async cancellation via signal", () => {
     app.destroy();
   });
 
-  test("scope.until() method cancels chain when destroyed", async () => {
+  test("scope.run() method cancels chain when destroyed", async () => {
     const steps: string[] = [];
 
     class Root extends Component {
@@ -179,9 +197,9 @@ describe("async cancellation via signal", () => {
         onWillStart(async () => {
           try {
             steps.push("before-rpc1");
-            await scope.until(rpc1);
+            await scope.run(() => rpc1);
             steps.push("between");
-            await scope.until(rpc2);
+            await scope.run(() => rpc2);
             steps.push("after-rpc2");
           } finally {
             steps.push("finally");

@@ -123,7 +123,7 @@ fires, the `fetch` is cancelled by the browser, and the `await` throws an
 it yourself.
 
 You can also name the parameter to access the full scope — e.g. to call
-`scope.until(p)`, covered below. The same pattern applies to any async work
+`scope.run(fn)`, covered below. The same pattern applies to any async work
 attached to a scope, including the fetcher passed to
 [`asyncComputed`](computed_values.md#async-computed-values).
 
@@ -145,21 +145,23 @@ onWillStart(async ({ abortSignal }) => {
 });
 ```
 
-**Option 2 — `scope.until(promise)`**, a method on the scope that wraps a
-promise so it rejects with `AbortError` if the scope is dead before or after
-the await:
+**Option 2 — `scope.run(fn)`**, a method on the scope that runs `fn` in the
+scope and, when `fn` returns a promise, guards the await so it rejects with
+`AbortError` if the scope dies while awaiting:
 
 ```js
 onWillStart(async (scope) => {
-  const rec = await scope.until(loadRecord(id));
-  const extra = await scope.until(loadExtras(rec.id));
+  const rec = await scope.run(() => loadRecord(id));
+  const extra = await scope.run(() => loadExtras(rec.id));
   this.data = { ...rec, ...extra };
 });
 ```
 
-`scope.until` uses status checks and does **not** allocate an
-`AbortController`, so using it never forces a controller to exist if nothing
-else has asked for the abort signal.
+The guard uses status checks and does **not** allocate an `AbortController`,
+so using it never forces a controller to exist if nothing else has asked for
+the abort signal. See [Running Code in a Captured Scope](#running-code-in-a-captured-scope)
+for the full behavior of `scope.run` (argument forwarding, the up-front throw
+on a dead scope, and synchronous callbacks).
 
 If you need the same pattern against an `AbortSignal` that doesn't come from
 a scope (e.g. `AbortSignal.timeout(5000)`), `signal.throwIfAborted()` between
@@ -203,11 +205,31 @@ class Form extends Component {
 }
 ```
 
-`scope.run` pushes the scope on the stack for the duration of the synchronous
-callback, then pops it on return (even if the callback throws). It does _not_
-keep the scope "live" across `await` — once the synchronous body returns, the
-scope is popped again. If you need to run async code with a live scope, make
-each synchronous chunk its own `scope.run` call.
+`scope.run(fn, ...args)` pushes the scope on the stack, invokes `fn` with any
+extra arguments you pass, then pops the scope on return (even if the callback
+throws). It returns whatever `fn` returns.
+
+**Extra arguments** are forwarded straight through, so you can reuse a single
+function without wrapping it in a closure:
+
+```js
+scope.run(loadRecord, id); // same as scope.run(() => loadRecord(id))
+```
+
+**Dead-scope guard (up front).** If the scope is already dead
+(`status > MOUNTED`) when you call `scope.run`, it throws an `OwlError`
+_before_ invoking `fn` — scheduling work in a destroyed scope is a
+programming error. This is deliberately **not** an `AbortError`: an
+`AbortError` signals the normal async-cancellation workflow (see below),
+whereas the `OwlError` flags a bug.
+
+**Async guard (across the await).** If `fn` returns a promise, `scope.run`
+wraps it so the returned promise rejects with an `AbortError` if the scope
+dies while the promise is in flight. This is the [cancelling-between-awaits](#cancelling-between-awaits)
+pattern above. For a synchronous callback there is no await to guard, so the
+scope is only on the stack for the duration of the synchronous body — it is
+_not_ kept "live" across a later `await`. If you need to run several async
+chunks with a live scope, make each chunk its own `scope.run` call.
 
 ## Cleanup Callbacks
 
@@ -255,9 +277,6 @@ active. Reach for this only when the absence of a scope is meaningful.
 - `parent: Scope | null` — parent scope in the tree.
 - `abortSignal: AbortSignal` — an `AbortSignal` aborted when the scope dies.
   Lazily allocates an `AbortController` on first access.
-- `until<T>(p: Promise<T>): Promise<T>` — awaits `p`, throwing `AbortError`
-  if the scope is dead before or after the await. Does not allocate a
-  controller.
 - `isDestroyed(): boolean` — true once the scope is fully destroyed (all
   cleanup has run). A `CANCELLED` scope is not yet destroyed — to ask "is this
   scope dead?", check `status > MOUNTED` instead.
@@ -265,4 +284,8 @@ active. Reach for this only when the absence of a scope is meaningful.
   scope is already destroyed, calls the callback immediately.
 - `cancel(): void` — marks the scope as `CANCELLED` and aborts its abort
   signal. Used internally when a component is abandoned before mount.
-- `run<T>(fn: () => T): T` — pushes the scope for the duration of `fn`.
+- `run<Args, T>(fn: (...args: Args) => T, ...args: Args): T` — pushes the
+  scope for the duration of `fn`, forwarding any extra arguments to it.
+  Throws an `OwlError` up front if the scope is already dead. If `fn` returns
+  a promise, guards the await so it rejects with `AbortError` should the scope
+  die in flight. Does not allocate a controller.

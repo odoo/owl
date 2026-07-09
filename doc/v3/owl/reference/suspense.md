@@ -73,7 +73,7 @@ Descendants inside `<Suspense>` share the component lifecycle: if
 is pending, those callbacks' `abortSignal` is aborted. This works out of the
 box as long as the descendant uses the `abortSignal` it receives from
 `onWillStart`, e.g. `fetch(url, { signal: abortSignal })` or
-`scope.until(...)`. See [Scope](./scope.md) for details.
+`scope.run(...)`. See [Scope](./scope.md) for details.
 
 ## Nested Suspense
 

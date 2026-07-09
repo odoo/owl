@@ -54,16 +54,38 @@ export abstract class Scope {
   }
 
   /**
-   * Pushes this scope on the stack for the duration of `callback`. Any code
-   * executed inside `callback` can reach this scope via `useScope()`.
+   * Pushes this scope on the stack for the duration of `fn`, invoking it with
+   * the given arguments. Any code executed synchronously inside `fn` can reach
+   * this scope via `useScope()`.
+   *
+   * If `fn` returns a promise, `run` guards the await with the scope's
+   * lifetime: the returned promise rejects with an AbortError if the scope is
+   * dead before or after the await. This does not allocate an AbortController
+   * — status checks are sufficient for guarding between awaits.
    */
-  run<T>(callback: () => T): T {
+  run<Args extends any[], T>(fn: (...args: Args) => T, ...args: Args): T {
     scopeStack.push(this);
+    let result: T;
     try {
-      return callback();
+      result = fn(...args);
     } finally {
       scopeStack.pop();
     }
+    if (result !== null && typeof (result as any)?.then === "function") {
+      return this._guard(result as any) as T;
+    }
+    return result;
+  }
+
+  private async _guard<T>(p: Promise<T>): Promise<T> {
+    if (this.status > STATUS.MOUNTED) {
+      throw makeAbortError();
+    }
+    const result = await p;
+    if (this.status > STATUS.MOUNTED) {
+      throw makeAbortError();
+    }
+    return result;
   }
 
   /**
@@ -80,23 +102,6 @@ export abstract class Scope {
       return this._controller.signal;
     }
     return (this._controller ??= new AbortController()).signal;
-  }
-
-  /**
-   * Awaits `p`, throwing an AbortError if the scope is dead before or after
-   * the await. Unlike `until(signal, p)`, this does not allocate an
-   * AbortController — status checks are sufficient for guarding between
-   * awaits.
-   */
-  async until<T>(p: Promise<T>): Promise<T> {
-    if (this.status > STATUS.MOUNTED) {
-      throw makeAbortError();
-    }
-    const result = await p;
-    if (this.status > STATUS.MOUNTED) {
-      throw makeAbortError();
-    }
-    return result;
   }
 
   /**

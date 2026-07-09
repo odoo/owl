@@ -1,4 +1,4 @@
-import { immediateEffect, effect, proxy, signal } from "../src";
+import { computed, immediateEffect, effect, proxy, signal } from "../src";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -46,6 +46,47 @@ describe("immediateEffect", () => {
     expectSpy(spy, 2, { args: [2] });
     s.set(3);
     expectSpy(spy, 3, { args: [3] });
+  });
+
+  test("immediateEffect keeps synchronous timing through a computed", () => {
+    const s = signal(1);
+    const double = computed(() => s() * 2);
+    const spy = vi.fn();
+    immediateEffect(() => spy(double()));
+    expectSpy(spy, 1, { args: [2] });
+    s.set(2);
+    expectSpy(spy, 2, { args: [4] });
+    s.set(3);
+    expectSpy(spy, 3, { args: [6] });
+  });
+
+  test("computed dependency does not degrade a direct dependency to batched", () => {
+    const a = signal(1);
+    const b = signal(10);
+    const isPositive = computed(() => a() > 0);
+    const spy = vi.fn();
+    immediateEffect(() => spy(isPositive(), b()));
+    expectSpy(spy, 1, { args: [true, 10] });
+    // Write reaching the effect through the computed: must not leave the
+    // effect parked in the batched queue...
+    a.set(-1);
+    expectSpy(spy, 2, { args: [false, 10] });
+    // ...nor with a non-EXECUTED state that would make onWriteAtom skip
+    // scheduling this later direct write in the same task.
+    b.set(20);
+    expectSpy(spy, 3, { args: [false, 20] });
+  });
+
+  test("immediateEffect does not rerun when a computed dependency recomputes to an equal value", () => {
+    const a = signal(1);
+    const isPositive = computed(() => a() > 0);
+    const spy = vi.fn();
+    immediateEffect(() => spy(isPositive()));
+    expectSpy(spy, 1, { args: [true] });
+    a.set(2);
+    expectSpy(spy, 1, { args: [true] });
+    a.set(-1);
+    expectSpy(spy, 2, { args: [false] });
   });
 
   test("immediateEffect should unsubscribe previous dependencies", () => {

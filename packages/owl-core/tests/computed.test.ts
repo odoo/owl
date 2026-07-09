@@ -347,6 +347,115 @@ describe("disposeComputation", () => {
   });
 });
 
+describe("detach on write", () => {
+  const atomOf = (r: any): ComputationAtom => r[atomSymbol];
+
+  test("discarded computed unsubscribes from its source on next write", async () => {
+    const store = signal(1);
+    const storeAtom = atomOf(store);
+    const d = spyComputed(() => store() * 2);
+    expect(d()).toBe(2);
+    expect(storeAtom.observers.size).toBe(1);
+
+    // nothing observes d: the next write to store severs the subscription
+    store.set(2);
+    await waitScheduler();
+    expect(storeAtom.observers.size).toBe(0);
+    // still lazy: the write did not recompute it
+    expectSpy(d.spy, 1);
+  });
+
+  test("detached computed recomputes and resubscribes on next read", async () => {
+    const store = signal(1);
+    const storeAtom = atomOf(store);
+    const d = spyComputed(() => store() * 2);
+    d();
+    store.set(2);
+    await waitScheduler();
+    expect(storeAtom.observers.size).toBe(0);
+
+    expect(d()).toBe(4);
+    expectSpy(d.spy, 2);
+    expect(storeAtom.observers.size).toBe(1);
+
+    store.set(3);
+    await waitScheduler();
+    expect(storeAtom.observers.size).toBe(0);
+    expect(d()).toBe(6);
+  });
+
+  test("dead computed chain fully detaches in one flush", async () => {
+    const store = signal(1);
+    const storeAtom = atomOf(store);
+    const a = computed(() => store() + 1);
+    const b = computed(() => a() * 10);
+    expect(b()).toBe(20);
+    expect(storeAtom.observers.size).toBe(1);
+    expect(atomOf(a).observers.size).toBe(1);
+
+    store.set(2);
+    await waitScheduler();
+    // disposing b drops a's last observer, which recursively detaches a
+    expect(atomOf(a).observers.size).toBe(0);
+    expect(storeAtom.observers.size).toBe(0);
+  });
+
+  test("computed observed by an effect stays subscribed", async () => {
+    const store = signal(1);
+    const storeAtom = atomOf(store);
+    const d = computed(() => store() * 2);
+    const e = spyEffect(() => d());
+    const stop = e();
+
+    store.set(2);
+    await waitScheduler();
+    expectSpy(e.spy, 2);
+    expect(storeAtom.observers.size).toBe(1);
+    stop();
+  });
+
+  test("computed re-observed before the flush is not disposed", async () => {
+    const store = signal(1);
+    const d = spyComputed(() => store() * 2);
+    d();
+    // this write makes d a disposal candidate...
+    store.set(2);
+    // ...but an effect subscribes to it before the batched flush runs
+    const e = spyEffect(() => d());
+    const stop = e();
+    await waitScheduler();
+    expect(atomOf(store).observers.size).toBe(1);
+
+    store.set(3);
+    await waitScheduler();
+    expectSpy(e.spy, 2);
+    expect(d()).toBe(6);
+    stop();
+  });
+
+  test("effect that stops reading a computed lets the next write detach it", async () => {
+    const cond = signal(true);
+    const store = signal(1);
+    const storeAtom = atomOf(store);
+    const d = spyComputed(() => store() * 2);
+    const e = spyEffect(() => (cond() ? d() : 0));
+    const stop = e();
+    expect(storeAtom.observers.size).toBe(1);
+
+    cond.set(false);
+    await waitScheduler();
+    // the effect dropped d, but d is still subscribed to store...
+    expect(atomOf(d).observers.size).toBe(0);
+    expect(storeAtom.observers.size).toBe(1);
+
+    // ...until the next write to store mops it up
+    store.set(2);
+    await waitScheduler();
+    expect(storeAtom.observers.size).toBe(0);
+    stop();
+  });
+});
+
 describe("nested computed", () => {
   test("computed can depend on another computed", async () => {
     const state = proxy({ a: 1, b: 2 });

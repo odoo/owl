@@ -32,6 +32,15 @@ export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
+// Derived computations that were notified of a write while nothing observed
+// them. Left alone, they would stay subscribed to their sources forever (a
+// lazy computed with no observer never re-runs, so removeSources never fires
+// for it): a long-lived signal would retain every discarded computed that
+// ever read it. Disposal is deferred to the effect flush because "unobserved"
+// can be transient — an effect queued by the same write may re-subscribe, and
+// a computation being pulled lazily is unobserved while it recomputes — so
+// the flush re-checks before disposing.
+let pendingDisposals = new Set<ComputationAtom>();
 
 export function createComputation(
   compute: () => any,
@@ -66,6 +75,9 @@ export function onWriteAtom(atom: Atom) {
       }
     }
     ctx.state = ComputationState.STALE;
+    if (ctx.isDerived && ctx.observers.size === 0) {
+      pendingDisposals.add(ctx);
+    }
   }
   batchProcessEffects();
 }
@@ -76,6 +88,19 @@ function processEffects() {
   observers = [];
   for (let i = 0; i < pending.length; i++) {
     updateComputation(pending[i]);
+  }
+  if (pendingDisposals.size !== 0) {
+    const candidates = pendingDisposals;
+    pendingDisposals = new Set();
+    for (const computation of candidates) {
+      // Re-check: the effects above (or any read since the write) may have
+      // re-subscribed to the candidate. Disposing an unobserved derived is
+      // safe: it is already STALE, so a later read fully recomputes it and
+      // re-subscribes to whatever it reads.
+      if (computation.observers.size === 0) {
+        disposeComputation(computation);
+      }
+    }
   }
 }
 
@@ -165,6 +190,11 @@ function markDownstream(computation: ComputationAtom) {
   let current: ComputationAtom | undefined;
   while ((current = stack.pop())) {
     for (const observer of current.observers) {
+      // Collect dead branches before the staleness short-circuit below: an
+      // already-stale unobserved derived still needs to be unsubscribed.
+      if (observer.isDerived && observer.observers.size === 0) {
+        pendingDisposals.add(observer);
+      }
       if (observer.state) {
         continue;
       }

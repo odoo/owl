@@ -93,7 +93,7 @@ The `App` config accepts the following fields:
   to start when the app boots — see [plugins](plugins.md). Plugins'
   `onWillStart` callbacks defer the first root render until they resolve.
 - **`config (Record<string, any>)`**: values readable from plugin code via
-  the `config()` helper — see
+  the `useConfig()` hook — see
   [Plugins — Configuration](plugins.md#configuration).
 - **`name (string)`**: optional debug label (visible in the devtools panel).
 

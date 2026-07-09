@@ -192,20 +192,22 @@ if it hasn't been started already.
 
 ## Configuration
 
-Plugins can read configuration values using the `config()` function. Config
+Plugins can read configuration values using the `useConfig()` hook. Config
 is passed as the second argument to `providePlugins()`, or in the `mount()`
 options:
 
 ```js
 class ApiPlugin extends Plugin {
-  baseUrl = config("apiBaseUrl", t.string());
-  timeout = config("apiTimeout", t.number().optional(5000));
+  baseUrl = useConfig("apiBaseUrl", t.string());
+  timeout = useConfig("apiTimeout", t.number().optional(5000));
 
   setup() {
     // use this.baseUrl and this.timeout
   }
 }
 ```
+
+> `useConfig` was previously named `config`; `config` remains available as a deprecated alias.
 
 A config key is made optional with
 [`.optional()`](types_validation.md#optionalvalue) on its type. In dev mode,

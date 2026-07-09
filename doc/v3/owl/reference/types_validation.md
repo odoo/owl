@@ -363,7 +363,7 @@ t.object({ name: t.string(), age: t.number().optional() });
 
 `.optional(value)` additionally attaches a default value to the type. The
 default is metadata on the type: consumers such as
-[`useProps()`](props.md#default-values) and [`config()`](plugins.md#configuration)
+[`useProps()`](props.md#default-values) and [`useConfig()`](plugins.md#configuration)
 use it to fill in the value when none is provided, so the reader of the value
 always gets one.
 
@@ -464,7 +464,7 @@ applyDefaults({ name: "abc" }, optionsType);
 // => { name: "abc", depth: 3 }
 ```
 
-Note that `useProps()` and `config()` only apply defaults at the top level of
+Note that `useProps()` and `useConfig()` only apply defaults at the top level of
 the value (a deep fill would silently replace the object passed by the
 parent). Use `applyDefaults` explicitly when a nested configuration object
 should be completed with its defaults.

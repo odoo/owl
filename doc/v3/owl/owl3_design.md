@@ -1770,7 +1770,7 @@ class NotificationManager extends Component {
 // -----------------------------------------------------------------------------
 
 class ContentPlugin extends Plugin {
-  el = config("el", t.signal());
+  el = useConfig("el", t.signal());
 }
 
 class SelectionPlugin extends Plugin {

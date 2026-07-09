@@ -6,11 +6,11 @@ In Owl, `props` (short for _properties_) is an object which contains every piece
 of data given to a component by its parent.
 
 ```js
-import { Component, props, t, xml } from "@odoo/owl";
+import { Component, useProps, t, xml } from "@odoo/owl";
 
 class Child extends Component {
   static template = xml`<span t-out="this.props.message"/>`;
-  props = props({ message: t.string() });
+  props = useProps({ message: t.string() });
 }
 
 class Parent extends Component {
@@ -23,7 +23,7 @@ In this example, the `Child` component receives a `message` prop from its parent
 Props are collected into an object by Owl, with each value being evaluated in the
 context of the parent. So, `this.props.message` is equal to `'hello'`.
 
-The `props` function must be called at the top level of the component class body
+The `useProps` function must be called at the top level of the component class body
 (or inside `setup`). It returns an object with getters for each declared prop.
 Reading one of these getters is reactive: templates, computed values, and
 effects that read `this.props.someProp` subscribe to that prop and are notified
@@ -48,21 +48,23 @@ In this example:
 - `ComponentA` receives props `a` and `b`,
 - `ComponentB` receives prop `model` (`t-if` is a directive, not a prop).
 
-## The `props` function
+## The `useProps` function
 
-To access props inside a component, call the `props` function. It returns an
+> `useProps` was previously named `props`; `props` remains available as a deprecated alias.
+
+To access props inside a component, call the `useProps` function. It returns an
 object with getters for each prop.
 
 ```js
-import { Component, props, xml } from "@odoo/owl";
+import { Component, useProps, xml } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = xml`<span t-out="this.props.name"/>`;
-  props = props();
+  props = useProps();
 }
 ```
 
-The `props` function accepts one optional argument:
+The `useProps` function accepts one optional argument:
 
 ### Schema
 
@@ -78,9 +80,9 @@ Props are validated in [dev mode](app.md#configuration) whenever the component
 is created or updated. See [Props validation](#props-validation) for details.
 
 ```js
-props(); // no schema
-props(["name", "age"]); // array form
-props({ name: t.string(), age: t.number().optional() }); // typed form
+useProps(); // no schema
+useProps(["name", "age"]); // array form
+useProps({ name: t.string(), age: t.number().optional() }); // typed form
 ```
 
 To reuse a schema defined elsewhere (for instance one also passed to
@@ -91,8 +93,8 @@ To reuse a schema defined elsewhere (for instance one also passed to
 of them ([`t.and`](types_validation.md#tandtypes)):
 
 ```js
-props(NotificationSchema.toShape()); // a t.object / t.strictObject schema
-props(t.and([BaseSchema, ExtraSchema]).toShape()); // a composed schema
+useProps(NotificationSchema.toShape()); // a t.object / t.strictObject schema
+useProps(t.and([BaseSchema, ExtraSchema]).toShape()); // a composed schema
 ```
 
 ### Default values
@@ -103,7 +105,7 @@ prop is not provided by the parent (or is `undefined`), the default value is
 used instead.
 
 ```js
-props({ color: t.string().optional("red") });
+useProps({ color: t.string().optional("red") });
 ```
 
 Mutable defaults (`[]`, `{}`) should be given as a factory, so that each
@@ -111,7 +113,7 @@ component instance gets its own value. The factory is called once per
 component instance:
 
 ```js
-props({ items: t.array(t.string()).optional(() => []) });
+useProps({ items: t.array(t.string()).optional(() => []) });
 ```
 
 Note that the array form of the schema cannot express defaults or optional
@@ -119,16 +121,16 @@ keys: use the typed form when a prop needs either.
 
 ### Reactive reads
 
-The object returned by `props()` exposes signal-backed getters. This means that
+The object returned by `useProps()` exposes signal-backed getters. This means that
 any reactive context that reads a prop will update when that prop changes:
 
 ```js
-import { Component, computed, props, t, xml } from "@odoo/owl";
+import { Component, computed, useProps, t, xml } from "@odoo/owl";
 
 class Total extends Component {
   static template = xml`<span t-out="this.double()"/>`;
 
-  props = props({ value: t.number() });
+  props = useProps({ value: t.number() });
   double = computed(() => this.props.value * 2);
 }
 ```
@@ -139,13 +141,13 @@ updated and the `double` computed value is invalidated. The same applies to
 reading `this.props.value` inside the effect subscribes the effect to future
 updates of that prop.
 
-This only applies to props accessed through `props()`. The singular
-[`props.static()`](#the-propsstatic-method) helper keeps its static, reference-stable
+This only applies to props accessed through `useProps()`. The singular
+[`useProps.static()`](#the-usepropsstatic-method) helper keeps its static, reference-stable
 semantics.
 
-## The `props.static` method
+## The `useProps.static` method
 
-`props.static` is an alternative for components that only need to read a
+`useProps.static` is an alternative for components that only need to read a
 single prop and expect that prop to stay **static** — meaning the reference
 passed by the parent does not change across renders. It takes the prop name
 explicitly and an optional [type validator](types_validation.md#validators).
@@ -154,59 +156,59 @@ default value can be declared in the type with
 [`.optional(value)`](types_validation.md#optionalvalue).
 
 ```js
-import { Component, props, t, xml } from "@odoo/owl";
+import { Component, useProps, t, xml } from "@odoo/owl";
 
 class TodoView extends Component {
   static template = xml`<div t-out="this.todo.title"/>`;
-  todo = props.static("todo", t.instanceOf(Todo));
+  todo = useProps.static("todo", t.instanceOf(Todo));
 }
 
 class Header extends Component {
   static template = xml`<h1 t-out="this.label"/>`;
-  label = props.static("label", t.string().optional("untitled"));
+  label = useProps.static("label", t.string().optional("untitled"));
 }
 
 class Passthrough extends Component {
   static template = xml`<div t-out="this.payload"/>`;
-  payload = props.static("payload"); // no type: any value accepted
+  payload = useProps.static("payload"); // no type: any value accepted
 }
 ```
 
-Each `props.static()` call declares one prop. The value is read once, at component
+Each `useProps.static()` call declares one prop. The value is read once, at component
 construction time, and assigned directly to the class field — so `this.todo`
 is the `Todo` instance, not a getter or accessor.
 
 ### Static semantics
 
-In [dev mode](app.md#configuration), `props.static()` does two things:
+In [dev mode](app.md#configuration), `useProps.static()` does two things:
 
 - validates the initial value against the declared type,
 - registers a check that throws if the prop's reference changes on a
   subsequent parent render.
 
-This makes `props.static()` a good fit for values the child treats as identity-stable
+This makes `useProps.static()` a good fit for values the child treats as identity-stable
 (`instanceOf` models, event buses, or [signals](signals.md)). If a
 [signal](signals.md) is passed, the signal object itself stays the
 same across renders even as its inner value updates — which is exactly what
-`props.static()` requires.
+`useProps.static()` requires.
 
 In production mode, the type check and the immutability check are skipped
 entirely.
 
-### When to use `props.static()` vs `props()`
+### When to use `useProps.static()` vs `useProps()`
 
-Use `props()` when the child needs to observe prop changes (the parent
+Use `useProps()` when the child needs to observe prop changes (the parent
 re-renders with a new value and the child must reflect it), when computed values
 or effects should react to prop changes, or when the child declares several
 props at once.
 
-Use `props.static()` when:
+Use `useProps.static()` when:
 
 - the child only needs one (or a few) specific props,
 - the prop is conceptually static — a model instance, a signal, an event bus,
 - you want dev mode to flag unexpected reference changes.
 
-`props.static()` and `props()` can be mixed freely in the same component.
+`useProps.static()` and `useProps()` can be mixed freely in the same component.
 
 ## Translatable props
 
@@ -259,7 +261,7 @@ informal way. This leads to two issues:
 A prop type system solves both issues, by describing the types and shapes
 of the props. Here is how it works in Owl:
 
-- the `props` function accepts an optional schema as its first argument,
+- the `useProps` function accepts an optional schema as its first argument,
 - props are validated whenever a component is created or updated,
 - props are only validated in `dev` mode (see [how to configure an app](app.md#configuration)),
 - if a prop does not match the schema, an error is thrown.
@@ -268,7 +270,7 @@ of the props. Here is how it works in Owl:
 class ProductList extends Component {
   static template = xml`...`;
 
-  props = props({
+  props = useProps({
     count: t.number(),
     items: t.array(t.object({ id: t.number(), label: t.string() })),
     onSelect: t.function().optional(),
@@ -285,7 +287,7 @@ typed parameters and return value, a union, or a custom-validated value:
 class Counter extends Component {
   static template = xml`...`;
 
-  props = props({
+  props = useProps({
     // a signal whose value must be a number
     count: t.signal(t.number()),
     // a callback: (id: number) => boolean — params/return are inferred in TS
@@ -314,7 +316,7 @@ provided to a component [as props](slots.md#slots-and-props).
 ```js
 class MyComponent extends Component {
   static template = xml`...`;
-  props = props(["someProp", "slots"]);
+  props = useProps(["someProp", "slots"]);
 }
 ```
 
@@ -323,7 +325,7 @@ Or with type validation:
 ```js
 class MyComponent extends Component {
   static template = xml`...`;
-  props = props({
+  props = useProps({
     someProp: t.number().optional(),
     slots: t.object().optional(),
   });
@@ -331,7 +333,7 @@ class MyComponent extends Component {
 ```
 
 Note that it is not mandatory, if a component does not need to forward its
-slots to a child, there is usually no need to mention them in the props
+slots to a child, there is usually no need to mention them in the useProps
 function.
 
 ## Props comparison
@@ -424,7 +426,7 @@ Generic components often declare their props as [signals](signals.md):
 ```js
 class Counter extends Component {
   static template = xml`<span t-out="this.props.count()"/>`;
-  props = props({ count: t.signal(t.number()) });
+  props = useProps({ count: t.signal(t.number()) });
 }
 ```
 

@@ -11,8 +11,8 @@ Here is a list of everything exported by the Owl library.
 - [`Portal`](portal.md): render content into a target DOM element elsewhere on the page
 - [`mount`](app.md#mount-helper): mount a component to a DOM target
 - [`xml`](template_syntax.md#inline-templates): define an inline template
-- [`props`](props.md): declare and validate component props
-- [`props.static`](props.md#the-propsstatic-method): declare a single static prop on a component
+- [`useProps`](props.md): declare and validate component props
+- [`useProps.static`](props.md#the-usepropsstatic-method): declare a single static prop on a component
 - [`status`](component.md#status-helper): get the status of a component (new, mounted, destroyed)
 
 ## Reactivity
@@ -51,7 +51,7 @@ Here is a list of everything exported by the Owl library.
 ## Plugins
 
 - [`Plugin`](plugins.md): base class for plugins
-- [`plugin`](plugins.md): import a plugin dependency
+- [`usePlugin`](plugins.md): import a plugin dependency
 - [`providePlugins`](plugins.md): make plugins available to a component subtree
 - [`config`](plugins.md#configuration): read a value from the plugin manager's config
 

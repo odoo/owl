@@ -56,9 +56,9 @@ Signals can also be **validated** when received as component props: the
 signal, with an optional inner type for inference.
 
 ```js
-import { props, types as t } from "@odoo/owl";
+import { useProps, types as t } from "@odoo/owl";
 
-props = props({ count: t.signal(t.number()) });
+props = useProps({ count: t.signal(t.number()) });
 ```
 
 See [Types Validation](types_validation.md) for the complete list of validators.

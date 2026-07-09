@@ -204,12 +204,12 @@ class MyComponent extends Component {
 }
 
 // in owl 3:
-import { props, Component, ... } from "@odoo/owl";
+import { useProps, Component, ... } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = "...";
 
-  props = props();
+  props = useProps();
   setup() {
     // here, this.props is defined, thanks to the props call
   }
@@ -248,7 +248,7 @@ class SomeComponent extends Component {
 class SomeComponent extends Component {
   static template = "...";
 
-  props = props({
+  props = useProps({
     name: t.string(),
     visible: t.boolean().optional(),
     immediate: t.boolean().optional(),
@@ -278,9 +278,9 @@ There are multiple ideas that are impacted by this change:
 - all current services will need to be replaced by corresponding (global) plugins
 - all `useService` call will need to be replaced by an import of the corresponding plugin
 - all `useSubEnv` should be replaced by `providePlugins(...)`,
-- all `useEnv` should be replaced by `plugin(SomePlugin)`
+- all `useEnv` should be replaced by `usePlugin(SomePlugin)`
 - all components that read something from the `env` should do something like this:
-  `this.thing = plugin(ThingPlugin)`
+  `this.thing = usePlugin(ThingPlugin)`
 
 ```js
 // owl 2
@@ -309,7 +309,7 @@ setup() {
 
 // in child component
 setup() {
-  const dashboard = plugin(DashboardPlugin);
+  const dashboard = usePlugin(DashboardPlugin);
   // here, we can read dashboard.state, or whatever
 }
 ```
@@ -366,7 +366,7 @@ class C extends Component {
 class C extends Component {
   static template = "...";
 
-  props = props({ counter: t.signal(t.number()) });
+  props = useProps({ counter: t.signal(t.number()) });
   isLarge = computed(() => this.props.counter() > 10);
 }
 ```
@@ -396,7 +396,7 @@ class C extends Component {
 class C extends Component {
   static template = "...";
 
-  props = props({ resId: t.signal(t.number()) });
+  props = useProps({ resId: t.signal(t.number()) });
   someText = signal("");
 
   setup() {
@@ -417,7 +417,7 @@ no really good way to solve the issue other than with a `useEffect`.
 class C extends Component {
   static template = "...";
 
-  props = props({ resId: t.signal(t.number()) });
+  props = useProps({ resId: t.signal(t.number()) });
 
   setup() {
     useEffect(async () => {
@@ -436,7 +436,7 @@ issue properly, we will provide a `asyncComputed` helper in Odoo:
 class C extends Component {
   static template = "...";
 
-  props = props({ resId: t.signal(t.number()) });
+  props = useProps({ resId: t.signal(t.number()) });
   state = asyncComputed(() => this.loadRecord(this.props.resId()));
 }
 ```
@@ -708,7 +708,7 @@ const c = useComponent();
 // do something with c.props
 
 // owl 3
-const props = props({ value: t.string() });
+const props = useProps({ value: t.string() });
 // do something with props
 ```
 
@@ -861,7 +861,7 @@ Here is a detailed list of tasks:
 | `useState` removed            |                                                                                                                       | `owl.useState = owl.proxy`                                                                                                                              |
 | `reactive` removed            |                                                                                                                       | `owl.reactive = owl.proxy` or `(val, fn) => { if(fn) throw Error; else return proxy(val) }`. If error occurs, convert code to use `useEffect` from Odoo |
 | `useEffect`                   | copy Owl2 `useEffect` code to `useLayoutEffect` in `@web/owl2/utils`; remap all imports and uses to `useLayoutEffect` |                                                                                                                                                         |
-| `this.props` removed          |                                                                                                                       | import props function, add `props = props();` in each component with script. If possible, get static props and default props as well                    |
+| `this.props` removed          |                                                                                                                       | import useProps function, add `props = useProps();` in each component with script. If possible, get static props and default props as well                    |
 | `this.env` removed            |                                                                                                                       | monkey patch env, useEnv, useSubEnv, useChildSubEnv using EnvPlugin                                                                                     |
 | Rendering context changes     | use scripts to add `this.` to all free variables in components/templates                                              |                                                                                                                                                         |
 | `onWillUpdateProps` removed   | remove some uses of `onWillUpdateProps`                                                                               | remove all uses of `onWillUpdateProps`                                                                                                                  |
@@ -911,7 +911,7 @@ class EnvPlugin extends Plugin {
   env = {};
 }
 
-const useEnv = () => plugin(EnvPlugin).env;
+const useEnv = () => usePlugin(EnvPlugin).env;
 owl.useEnv = useEnv;
 
 owl.useSubEnv = function (extension) {
@@ -941,7 +941,7 @@ owl.useExternalListener = ... // duplicate current code from owl
 owl.Component.ComponentNode.beforeSetup = function() {
     if (!this.component.props) {
         // only patch it if component does not define it before
-        this.component.props = props();
+        this.component.props = useProps();
     }
     if (!this.component.env) {
         this.component.env = useEnv();
@@ -960,7 +960,7 @@ Phase 1
 - rename t-esc => t-out (simple)
 - replace useState => proxy in all js code
 - replace reactive => proxy (except if second argument)
-- add `props = props()` or `props = props(type, defaultprops)` in all components
+- add `props = useProps()` or `props = useProps(type, defaultprops)` in all components
 
 Phase 2
 

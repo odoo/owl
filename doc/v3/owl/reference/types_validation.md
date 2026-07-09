@@ -12,7 +12,7 @@ match their declared types. This catches bugs early by reporting mismatches
 at render time rather than letting them propagate silently.
 
 ```js
-import { Component, xml, t, props } from "@odoo/owl";
+import { Component, xml, t, useProps } from "@odoo/owl";
 
 class UserCard extends Component {
   static template = xml`
@@ -21,7 +21,7 @@ class UserCard extends Component {
       <span t-if="this.props.age" t-out="this.props.age"/>
     </div>`;
 
-  props = props({
+  props = useProps({
     name: t.string(),
     age: t.number().optional(),
   });
@@ -363,7 +363,7 @@ t.object({ name: t.string(), age: t.number().optional() });
 
 `.optional(value)` additionally attaches a default value to the type. The
 default is metadata on the type: consumers such as
-[`props()`](props.md#default-values) and [`config()`](plugins.md#configuration)
+[`useProps()`](props.md#default-values) and [`config()`](plugins.md#configuration)
 use it to fill in the value when none is provided, so the reader of the value
 always gets one.
 
@@ -392,7 +392,7 @@ of the members are merged (members with no shape, such as a plain
 [`t.customValidator`](#tcustomvalidatortype-predicate-errormessage), are skipped).
 
 This lets a reusable schema drive component props without redeclaring it:
-[`props()`](props.md#schema) expects a shape, so pass `schema.toShape()`.
+[`useProps()`](props.md#schema) expects a shape, so pass `schema.toShape()`.
 
 ```js
 const NotificationSchema = t.and([
@@ -403,7 +403,7 @@ const NotificationSchema = t.and([
 NotificationSchema.toShape();
 // { message: t.string(), sticky: ..., autocloseDelay: ... }
 
-props(NotificationSchema.toShape()); // reuse the schema as props
+useProps(NotificationSchema.toShape()); // reuse the schema as props
 ```
 
 ## Deriving a TypeScript type
@@ -464,7 +464,7 @@ applyDefaults({ name: "abc" }, optionsType);
 // => { name: "abc", depth: 3 }
 ```
 
-Note that `props()` and `config()` only apply defaults at the top level of
+Note that `useProps()` and `config()` only apply defaults at the top level of
 the value (a deep fill would silently replace the object passed by the
 parent). Use `applyDefaults` explicitly when a nested configuration object
 should be completed with its defaults.

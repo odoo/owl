@@ -56,7 +56,7 @@ class MyPlugin extends Plugin {
 
 ## Using a Plugin
 
-The `plugin()` function imports a plugin instance. It can be used in component
+The `usePlugin()` function imports a plugin instance. It can be used in component
 class fields or in the `setup()` method:
 
 ```js
@@ -68,13 +68,15 @@ class App extends Component {
       </t>
     </div>`;
 
-  notifications = plugin(NotificationManager);
+  notifications = usePlugin(NotificationManager);
 }
 ```
 
 The return value is the plugin instance with full type information (minus the
 `setup` method). Any reactive values on the plugin (signals, computed) are
 tracked automatically when read during a component render.
+
+> `usePlugin` was previously named `plugin`; `plugin` remains available as a deprecated alias.
 
 ## Providing Plugins
 
@@ -109,7 +111,7 @@ destroyed.
 
 ## Plugin Dependencies
 
-A plugin can depend on other plugins by calling `plugin()` in its class
+A plugin can depend on other plugins by calling `usePlugin()` in its class
 fields or `setup()`. If the dependency has not been started yet, it is
 auto-started:
 
@@ -123,7 +125,7 @@ class RouterPlugin extends Plugin {
 }
 
 class ActionPlugin extends Plugin {
-  router = plugin(RouterPlugin);
+  router = usePlugin(RouterPlugin);
 
   doAction(action) {
     // ... perform action ...
@@ -199,7 +201,7 @@ class DarkSection extends Component {
 ```
 
 Components inside `DarkSection` will get `DarkThemePlugin` when calling
-`plugin(ThemePlugin)`, while components outside still get the original.
+`usePlugin(ThemePlugin)`, while components outside still get the original.
 
 ## Resources
 
@@ -221,7 +223,7 @@ Components contribute items by calling `use()` on the resource:
 
 ```js
 class MyComponent extends Component {
-  systray = plugin(SystrayPlugin);
+  systray = usePlugin(SystrayPlugin);
 
   setup() {
     this.systray.items.use({ label: "Settings", action: () => this.openSettings() });
@@ -289,7 +291,7 @@ callbacks still run in parallel.
 
 Two things to keep in mind:
 
-- An explicit dependency wins over sequence: calling `plugin(X)` starts `X`
+- An explicit dependency wins over sequence: calling `usePlugin(X)` starts `X`
   immediately, even if `X` has a higher sequence number.
 - If an `onWillStart` callback in a batch rejects, the remaining batches are
   not started and the mount is rejected.

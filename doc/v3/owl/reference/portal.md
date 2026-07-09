@@ -73,7 +73,7 @@ into the source tree's [scope](scope.md) and plugin chain:
   Reactivity is global, not tied to component trees.
 - **Plugin chain** — `providePlugins` contributions from the Portal's
   ancestors are visible inside the portaled content, exactly as if the
-  content lived in-tree. `plugin(SomePlugin)` works the same.
+  content lived in-tree. `usePlugin(SomePlugin)` works the same.
 - **Errors** — exceptions thrown in the portaled subtree (including
   `onWillStart` rejections) propagate to the nearest `onError` handler
   on the Portal's parent chain, the same as in-tree errors.

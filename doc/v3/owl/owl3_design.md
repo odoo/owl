@@ -333,7 +333,7 @@ In Odoo, plugins will replace services.
 The main ideas for plugins are:
 
 - the `Plugin` class: every plugin should subclass it,
-- the `plugin` function, useful to import a dependency in a typesafe way (either
+- the `usePlugin` function, useful to import a dependency in a typesafe way (either
   in a plugin, or in a component),
 - a function `providePlugins` that allows a component to define a set of plugins
   kind of like a `useSubEnv`: these plugins are available only for the component
@@ -357,14 +357,14 @@ class Clock extends Plugin {
 
 class A extends Plugin {
   // import the instance of plugin Clock in A
-  clock = plugin(Clock);
+  clock = usePlugin(Clock);
   mcm = computed(() => 2 * this.clock.value());
 }
 
 class Root extends Component {
   static template = xml`<t t-out="this.a.mcm()"/>`;
 
-  a = plugin(A); // import plugin A into component
+  a = usePlugin(A); // import plugin A into component
 }
 
 mount(Root, document.body, { plugins: [Clock, A] });
@@ -381,7 +381,7 @@ import {
   signal,
   mount,
   Plugin,
-  plugin,
+  usePlugin,
   providePlugins,
   computed,
   xml,
@@ -403,13 +403,13 @@ class Clock extends Plugin {
 
 class A extends Plugin {
   // import the instance of plugin Clock in A
-  clock = plugin(Clock);
+  clock = usePlugin(Clock);
   mcm = computed(() => 2 * this.clock.value());
 }
 
 class ChildChild extends Component {
   static template = xml`<t t-out="this.a.mcm()"/>`;
-  a = plugin(A);
+  a = usePlugin(A);
 }
 
 class Child extends Component {
@@ -417,7 +417,7 @@ class Child extends Component {
   static template = xml`<ChildChild/>`;
 
   // cannot import A here => no provider
-  // a = plugin(A);
+  // a = usePlugin(A);
   setup() {
     providePlugins([A]);
     // can now import A
@@ -428,7 +428,7 @@ class Root extends Component {
   static template = xml`<Child />`;
 
   // cannot import A => no provider
-  // a = plugin(A);
+  // a = usePlugin(A);
 }
 
 // Clock is a global plugin (service)
@@ -444,47 +444,47 @@ hook can grab some props), and better supported by IDEs, since types can be
 mostly inferred automatically.
 
 ```js
-import { Component, props, t } from "@odoo/owl";
+import { Component, useProps, t } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = "mytemplate";
 
   // now, this.props is an object with the two keys a and b, and IDEs can
   // infer that this.props.a is a string, and this.props.b is a optional number
-  props = props({ a: t.string(), b: t.number().optional() });
+  props = useProps({ a: t.string(), b: t.number().optional() });
 }
 ```
 
-The `props` function can be called multiple times in a component:
+The `useProps` function can be called multiple times in a component:
 
 ```js
-import { Component, props } from "@odoo/owl";
+import { Component, useProps } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = "mytemplate";
 
-  props = props({ a: t.string(), b: t.number().optional() });
-  otherProps = props({ c: t.instanceOf(SomeClass) });
+  props = useProps({ a: t.string(), b: t.number().optional() });
+  otherProps = useProps({ c: t.instanceOf(SomeClass) });
 
   // no description here => we get all props received by the component
   // no type inference nor validation here!
-  allProps = props();
+  allProps = useProps();
 
   // short version, no type inference, but some validation
-  propsabc = props(t.object(["a", "b", "c"]));
+  propsabc = useProps(t.object(["a", "b", "c"]));
 
   // we can define default values as well, in the schema:
-  myProp = props({
+  myProp = useProps({
     foo: t.boolean().optional(true),
   });
 }
 ```
 
-Props validation is performed (in development mode) at each props function call,
+Props validation is performed (in development mode) at each useProps function call,
 but only for the props explicitly defined in the component's props description.
 This represents a small philosophical change: we no longer validate or care about
 extra props passed to a component. An Owl component simply declares, via its
-props function calls, which props it expects to receive. It is more ergonomic
+useProps function calls, which props it expects to receive. It is more ergonomic
 for some cases, for example, we no longer need to declare the `slots` prop,
 unless we want to explicitly use it.
 
@@ -499,8 +499,8 @@ Small note: the app config key `warnifnostaticprops` has been removed.
 
 The simple upgrade process is this:
 
-- import the `props` function
-- replace the static props description object by a call to the `props` function,
+- import the `useProps` function
+- replace the static props description object by a call to the `useProps` function,
   adding default values if necessary.
 - maybe remove unneeded props (like `slots`)
 
@@ -525,7 +525,7 @@ class SomeComponent extends Component {
 class SomeComponent extends Component {
   static template = "...";
 
-  props = props({
+  props = useProps({
     name: t.string(),
     visible: t.boolean().optional(),
     immediate: t.boolean().optional(),
@@ -612,7 +612,7 @@ class EnvPlugin extends Plugin {
   env = {};
 }
 
-const useEnv = () => plugin(EnvPlugin).env;
+const useEnv = () => usePlugin(EnvPlugin).env;
 owl.useEnv = useEnv;
 
 patch(Component.prototype, {
@@ -651,7 +651,7 @@ class RouterPlugin extends Plugin {
 // action service
 class ActionPlugin extends Plugin {
   // import router service
-  router = plugin(RouterPlugin);
+  router = usePlugin(RouterPlugin);
   ...
 
   doAction(action) {
@@ -670,8 +670,8 @@ class NotificationPlugin extends Plugin {
 // in a component:
 class MyComponent extends Component {
   // import services
-  notification = plugin(NotificationPlugin);
-  action = plugin(ActionPlugin);
+  notification = usePlugin(NotificationPlugin);
+  action = usePlugin(ActionPlugin);
 
   doSomething() {
     // call services
@@ -862,7 +862,7 @@ static props = {
 };
 
 // owl 3.x
-props = props({
+props = useProps({
   mode: t.string().optional(),
   readonly: t.boolean().optional(),
   onChange: t.function().optional(),
@@ -870,7 +870,7 @@ props = props({
 });
 
 // other examples
-props = props({
+props = useProps({
   someObject: t.object({
     id: t.string(),
     values: t.union([t.array(), t.number()])
@@ -898,7 +898,7 @@ the signal from a performance standpoint.
 ```js
 class Child extends Component {
   static template = xml`<t t-out="this.double()"/>`;
-  props = props({ count: t.signal(t.number()) });
+  props = useProps({ count: t.signal(t.number()) });
 
   // double is always updated
   double = computed(() => 2 * this.props.count());
@@ -1420,7 +1420,7 @@ class PortalPlugin extends Plugin {
 }
 
 function usePortal(selector, component, props) {
-  const portal = plugin(PortalPlugin);
+  const portal = usePlugin(PortalPlugin);
   const remove = portal.add(selector, component, props);
   onWillDestroy(remove);
 }
@@ -1614,15 +1614,15 @@ It is often useful to only import a single component prop:
 
 ```js
 class TodoItem extends Component {
-  todo = props({ todo: t.instanceOf(Todo) }).todo;
+  todo = useProps({ todo: t.instanceOf(Todo) }).todo;
 }
 
 class TodoItem extends Component {
-  todo = props.static("todo", t.instanceOf(Todo));
+  todo = useProps.static("todo", t.instanceOf(Todo));
 }
 ```
 
-The `props.static()` form keeps the static-prop semantics without adding a
+The `useProps.static()` form keeps the static-prop semantics without adding a
 separate top-level primitive function in Owl.
 
 ## Examples
@@ -1654,7 +1654,7 @@ class Counter extends Component {
 This example shows how to use a computed value in components:
 
 ```js
-import { Component, signal, mount, computed, xml, t, proxy, props } from "@odoo/owl";
+import { Component, signal, mount, computed, xml, t, proxy, useProps } from "@odoo/owl";
 
 class Counter extends Component {
   static template = xml`
@@ -1662,7 +1662,7 @@ class Counter extends Component {
         Count: <t t-out="this.props.count()"/>
       </div>`;
 
-  props = props({ count: t.signal(t.number()) });
+  props = useProps({ count: t.signal(t.number()) });
 
   increment() {
     this.props.count.set(this.props.count() + 1);
@@ -1705,9 +1705,9 @@ import {
   useApp,
   xml,
   Resource,
-  plugin,
+  usePlugin,
   Plugin,
-  props,
+  useProps,
   onWillDestroy,
   useEffect,
   useListener,
@@ -1750,7 +1750,7 @@ class Notification extends Component {
             <h3><t t-out="this.props.notification.title"/></h3>
             <div><t t-out="this.props.notification.message"/></div>
         </div>`;
-  props = props({
+  props = useProps({
     notification: t.object({ title: t.string(), message: t.string() }),
   });
 }
@@ -1763,7 +1763,7 @@ class NotificationManager extends Component {
         </t>
     </div>`;
 
-  notification = plugin(NotificationPlugin);
+  notification = usePlugin(NotificationPlugin);
 }
 // -----------------------------------------------------------------------------
 // Editor
@@ -1775,7 +1775,7 @@ class ContentPlugin extends Plugin {
 
 class SelectionPlugin extends Plugin {
   selectionHandlers = new Resource();
-  content = plugin(ContentPlugin);
+  content = usePlugin(ContentPlugin);
   selection = signal(this.getSelection());
 
   setup() {
@@ -1818,8 +1818,8 @@ class TextToolsPlugin extends Plugin {
 }
 
 class GEDPlugin extends Plugin {
-  selection = plugin(SelectionPlugin).selection;
-  notification = plugin(NotificationPlugin);
+  selection = usePlugin(SelectionPlugin).selection;
+  notification = usePlugin(NotificationPlugin);
 
   setup() {
     useEffect(() => {
@@ -1850,7 +1850,7 @@ class Editor extends Component {
     providePlugins([ContentPlugin, SelectionPlugin, TextToolsPlugin, GEDPlugin], {
       ContentPlugin: { el: this.editable },
     });
-    this.textTools = plugin(TextToolsPlugin);
+    this.textTools = usePlugin(TextToolsPlugin);
   }
 }
 
@@ -1867,7 +1867,7 @@ class MyApp extends Component {
     </div>
     <Editor t-if="this.isEditorVisible()"/> `;
 
-  notifications = plugin(NotificationPlugin);
+  notifications = usePlugin(NotificationPlugin);
   isEditorVisible = signal(true);
 
   toggleEditor() {

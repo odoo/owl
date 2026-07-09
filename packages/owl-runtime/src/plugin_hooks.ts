@@ -1,7 +1,7 @@
 import { onWillDestroy, onWillStart, PluginConstructor, PluginManager, Resource, startPlugins, STATUS } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 
-export { config, usePlugin, plugin, type PluginInstance } from "@odoo/owl-core";
+export { useConfig, config, usePlugin, plugin, type PluginInstance } from "@odoo/owl-core";
 
 export function providePlugins(
   pluginConstructors: PluginConstructor[] | Resource<PluginConstructor>,

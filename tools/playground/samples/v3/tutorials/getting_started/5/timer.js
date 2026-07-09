@@ -1,4 +1,4 @@
-import { Component, xml, signal, props, t, onMounted, onWillUnmount } from "@odoo/owl";
+import { Component, xml, signal, useProps, t, onMounted, onWillUnmount } from "@odoo/owl";
 
 export class Timer extends Component {
     static template = xml`
@@ -6,7 +6,7 @@ export class Timer extends Component {
         <span t-out="this.value()"/>
       </div>`;
 
-    props = props({
+    props = useProps({
         increment: t.number(),
     });
 

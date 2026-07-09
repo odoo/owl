@@ -102,7 +102,9 @@ class ORM extends Plugin {
   // escape hatch: the shared, unguarded instance
   unscoped = this;
 
-  read = async (model, ids) => { /* ... rpc ... */ };
+  read = async (model, ids) => {
+    /* ... rpc ... */
+  };
 }
 
 class Customer extends Component {

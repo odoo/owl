@@ -1,10 +1,10 @@
-import { Component, props, t, useEffect } from "@odoo/owl";
+import { Component, useProps, t, useEffect } from "@odoo/owl";
 import { useDragAndDrop } from "../utils/drag_and_drop";
 
 export class Window extends Component {
     static template = "hibou.Window";
 
-    props = props({
+    props = useProps({
         title: t.string(),
         onClose: t.function().optional(),
         x: t.signal().optional(),

@@ -1,4 +1,4 @@
-import { Component, props, t, plugin } from "@odoo/owl";
+import { Component, useProps, t, usePlugin } from "@odoo/owl";
 import { Window } from "./window";
 import { WindowManagerPlugin } from "./window_manager_plugin";
 
@@ -6,9 +6,9 @@ export class ManagedWindow extends Component {
     static template = "hibou.ManagedWindow";
     static components = { Window };
 
-    props = props({
+    props = useProps({
         window: t.object(),
     });
 
-    wm = plugin(WindowManagerPlugin);
+    wm = usePlugin(WindowManagerPlugin);
 }

@@ -23,7 +23,7 @@ Here is what you need to do:
 To declare an optional function prop:
 
 ```js
-props = props({
+props = useProps({
     todo: t.object({ ... }),
     "onDelete?": t.function(),
 });

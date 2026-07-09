@@ -1,4 +1,4 @@
-import { Plugin, computed, plugin, signal } from "@odoo/owl";
+import { Plugin, computed, usePlugin, signal } from "@odoo/owl";
 import { generateId, getFileType, makeFileEntry } from "./file_utils.js";
 import { EXAMPLES, HELLO_WORLD_JS, TUTORIALS, WELCOME_STATE, loadFilesFromMapping } from "./samples.js";
 import { VERSIONS } from "./versions.js";
@@ -221,7 +221,7 @@ class VersionPlugin extends Plugin {
 class TemplatePlugin extends Plugin {
   static id = "templates";
 
-  version = plugin(VersionPlugin)
+  version = usePlugin(VersionPlugin)
 
   examples = computed(() => {
     const version = this.version.version();
@@ -306,9 +306,9 @@ class TemplatePlugin extends Plugin {
 class ProjectPlugin extends Plugin {
   static id = "project";
 
-  code = plugin(CodePlugin);
-  version = plugin(VersionPlugin);
-  templates = plugin(TemplatePlugin);
+  code = usePlugin(CodePlugin);
+  version = usePlugin(VersionPlugin);
+  templates = usePlugin(TemplatePlugin);
 
   projects = signal([]);
   activeProjectId = signal(null);
@@ -874,8 +874,8 @@ class ProjectPlugin extends Plugin {
 class LocalStoragePlugin extends Plugin {
   static id = "localStorage";
 
-  code = plugin(CodePlugin);
-  project = plugin(ProjectPlugin);
+  code = usePlugin(CodePlugin);
+  project = usePlugin(ProjectPlugin);
   version = signal(0);
 
   setup() { }

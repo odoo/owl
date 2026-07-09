@@ -21,9 +21,9 @@ Here is what you need to do:
 - Move the `todos` array, `nextId`, `addTodo`, and `deleteTodo` logic into
   the plugin
 - In `TodoList`, provide the plugin using `providePlugins` from `@odoo/owl`,
-  and access it using `plugin(TodoListPlugin)`
+  and access it using `usePlugin(TodoListPlugin)`
 - In `TodoItem`, instead of receiving an `onDelete` callback prop, import
-  the plugin directly using `plugin(TodoListPlugin)` and call
+  the plugin directly using `usePlugin(TodoListPlugin)` and call
   `deleteTodo` on it
 - Move the `useEffect` logging into the plugin's `setup` method — plugins
   can use hooks just like components
@@ -49,12 +49,12 @@ To provide a plugin from a component, use `providePlugins` in the `setup`
 method. This makes the plugin available to all descendant components:
 
 ```js
-import { providePlugins, plugin } from "@odoo/owl";
+import { providePlugins, usePlugin } from "@odoo/owl";
 
 class TodoList extends Component {
     setup() {
         providePlugins([TodoListPlugin]);
-        this.todoList = plugin(TodoListPlugin);
+        this.todoList = usePlugin(TodoListPlugin);
     }
 }
 ```
@@ -63,7 +63,7 @@ Any descendant component can then access the same plugin instance:
 
 ```js
 class TodoItem extends Component {
-    todoList = plugin(TodoListPlugin);
+    todoList = usePlugin(TodoListPlugin);
 }
 ```
 

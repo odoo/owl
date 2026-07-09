@@ -99,10 +99,10 @@ In `Hibou`, iterate over the windows:
 In the `Taskbar`, use the plugin directly to open windows:
 
 ```js
-import { plugin } from "@odoo/owl";
+import { usePlugin } from "@odoo/owl";
 import { WindowManagerPlugin } from "./window_manager_plugin";
 
-wm = plugin(WindowManagerPlugin);
+wm = usePlugin(WindowManagerPlugin);
 
 openApp() {
     this.wm.open("My App", SomePlaceholderComponent);

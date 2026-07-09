@@ -1,7 +1,7 @@
 import { Component, mount, xml } from "@odoo/owl";
 import { ProductCard } from "./product_card";
 
-// Props with validation: `props()` + `types`.
+// Props with validation: `useProps()` + `types`.
 // The parent passes typed props through `t-foreach`; ProductCard declares
 // what it expects. With `dev: true`, mismatched props throw at mount time.
 //

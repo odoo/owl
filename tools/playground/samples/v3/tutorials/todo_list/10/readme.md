@@ -16,7 +16,7 @@ Here is what you need to do:
   `StoragePlugin` that has two methods:
   - `save(key, data)` — saves a string to `localStorage`
   - `load(key)` — returns the stored string, or `null`
-- In `TodoListPlugin`, import the `StoragePlugin` using `plugin(StoragePlugin)`
+- In `TodoListPlugin`, import the `StoragePlugin` using `usePlugin(StoragePlugin)`
 - In `setup`, load the saved data and parse it to initialize the todos
 - In the existing `useEffect`, instead of logging, save the todos as a JSON
   string using the `StoragePlugin`
@@ -39,14 +39,14 @@ export class StoragePlugin extends Plugin {
 }
 ```
 
-In the `TodoListPlugin`, use `plugin()` to access it. Note that a plugin can
+In the `TodoListPlugin`, use `usePlugin()` to access it. Note that a plugin can
 use other plugins — this is how you compose logic:
 
 ```js
-import { plugin } from "@odoo/owl";
+import { usePlugin } from "@odoo/owl";
 import { StoragePlugin } from "../storage_plugin";
 
-storage = plugin(StoragePlugin);
+storage = usePlugin(StoragePlugin);
 ```
 
 To serialize todos for storage, you need to read the signal values:

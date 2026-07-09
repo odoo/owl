@@ -26,7 +26,7 @@ In this step, you will clean things up:
 The `WindowManager` component takes over the iteration logic:
 
 ```js
-import { Component, plugin } from "@odoo/owl";
+import { Component, usePlugin } from "@odoo/owl";
 import { ManagedWindow } from "./managed_window";
 import { WindowManagerPlugin } from "./window_manager_plugin";
 
@@ -34,7 +34,7 @@ export class WindowManager extends Component {
     static template = "hibou.WindowManager";
     static components = { ManagedWindow };
 
-    wm = plugin(WindowManagerPlugin);
+    wm = usePlugin(WindowManagerPlugin);
 }
 ```
 

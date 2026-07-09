@@ -1,4 +1,4 @@
-import { Component, xml, props, t } from "@odoo/owl";
+import { Component, xml, useProps, t } from "@odoo/owl";
 
 export class ProductCard extends Component {
     static template = xml`
@@ -11,7 +11,7 @@ export class ProductCard extends Component {
         </div>
       </div>`;
 
-    props = props({
+    props = useProps({
         name: t.string(),
         description: t.string(),
         price: t.number(),

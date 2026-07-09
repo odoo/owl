@@ -1,4 +1,4 @@
-import { Component, signal, providePlugins, plugin } from "@odoo/owl";
+import { Component, signal, providePlugins, usePlugin } from "@odoo/owl";
 import { TodoItem } from "./todo_item";
 import { TodoListPlugin } from "./todo_list_plugin";
 import { useAutofocus } from "./utils";
@@ -11,7 +11,7 @@ export class TodoList extends Component {
 
     setup() {
         providePlugins([TodoListPlugin]);
-        this.todoList = plugin(TodoListPlugin);
+        this.todoList = usePlugin(TodoListPlugin);
         useAutofocus(this.input);
     }
 

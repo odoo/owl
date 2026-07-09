@@ -1,4 +1,4 @@
-import { Component, mount, onWillDestroy, plugin, Plugin, signal, xml } from "@odoo/owl";
+import { Component, mount, onWillDestroy, usePlugin, Plugin, signal, xml } from "@odoo/owl";
 
 // Plugins: shared, scoped state with lifecycle.
 // `ClockPlugin` owns a single `setInterval` and a reactive `now` signal.
@@ -21,12 +21,12 @@ class ClockPlugin extends Plugin {
 
 class DigitalClock extends Component {
     static template = xml`<div>🕒 <t t-out="this.clock.now().toLocaleTimeString()"/></div>`;
-    clock = plugin(ClockPlugin);
+    clock = usePlugin(ClockPlugin);
 }
 
 class UTCClock extends Component {
     static template = xml`<div>🌍 UTC <t t-out="this.clock.now().toUTCString().slice(17, 25)"/></div>`;
-    clock = plugin(ClockPlugin);
+    clock = usePlugin(ClockPlugin);
 }
 
 class Root extends Component {

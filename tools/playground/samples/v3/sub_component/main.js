@@ -1,4 +1,4 @@
-import { Component, mount, signal, props, xml, t } from "@odoo/owl";
+import { Component, mount, signal, useProps, xml, t } from "@odoo/owl";
 
 class Counter extends Component {
     static template = xml`
@@ -7,7 +7,7 @@ class Counter extends Component {
         </button>`;
 
     // note that the prop is fixed: it cannot change!
-    label = props.static("label", t.string());
+    label = useProps.static("label", t.string());
     value = signal(0);
 
     increment() {

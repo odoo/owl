@@ -35,19 +35,19 @@ To iterate over a list in a template, use `t-foreach` with a `t-key`:
 </t>
 ```
 
-To define and validate props on `TodoItem`, use the `props` helper:
+To define and validate props on `TodoItem`, use the `useProps` helper:
 
 ```js
-import { Component, props, t } from "@odoo/owl";
+import { Component, useProps, t } from "@odoo/owl";
 
 class TodoItem extends Component {
-    props = props({
+    props = useProps({
         todo: t.object({ id: t.number(), text: t.string(), completed: t.boolean() }),
     });
 }
 ```
 
-Note that `props()` without arguments will accept all props blindly. It is
+Note that `useProps()` without arguments will accept all props blindly. It is
 always better to validate the shape and types of expected props.
 
 ### File naming and structure

@@ -1,14 +1,14 @@
-import { Component, mount, signal, props, t } from "@odoo/owl";
+import { Component, mount, signal, useProps, t } from "@odoo/owl";
 
 class KanbanCard extends Component {
   static template = "tutorial.KanbanCard";
-  props = props({ title: t.string(), onDelete: t.function() });
+  props = useProps({ title: t.string(), onDelete: t.function() });
 }
 
 class KanbanColumn extends Component {
   static template = "tutorial.KanbanColumn";
   static components = { KanbanCard };
-  props = props({ column: t.object(), onAddCard: t.function(), onDeleteCard: t.function() });
+  props = useProps({ column: t.object(), onAddCard: t.function(), onDeleteCard: t.function() });
 
   addCard() {
     const title = prompt("Card title:");

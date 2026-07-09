@@ -13,7 +13,7 @@ Here is what you need to do:
 
 - Create a `NotepadPlugin` (`notepad_plugin.js`) in `apps/notepad/` with a
   `text` signal to hold the notepad content
-- Update `NotepadApp` to use the plugin via `plugin(NotepadPlugin)` and bind
+- Update `NotepadApp` to use the plugin via `usePlugin(NotepadPlugin)` and bind
   its `text` signal with `t-model`
 - Add an optional `plugins` key to the app descriptor — an array of plugin
   classes that the app needs
@@ -43,10 +43,10 @@ export class NotepadPlugin extends Plugin {
 The `NotepadApp` uses it:
 
 ```js
-import { plugin } from "@odoo/owl";
+import { usePlugin } from "@odoo/owl";
 import { NotepadPlugin } from "./notepad_plugin";
 
-notepad = plugin(NotepadPlugin);
+notepad = usePlugin(NotepadPlugin);
 ```
 
 ```xml

@@ -45,7 +45,7 @@ automatically:
 To validate a signal prop, use `t.signal()`:
 
 ```js
-props = props({
+props = useProps({
     todo: t.object({ id: t.number(), text: t.string(), completed: t.signal() }),
 });
 ```

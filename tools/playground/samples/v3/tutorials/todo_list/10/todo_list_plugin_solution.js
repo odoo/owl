@@ -1,4 +1,4 @@
-import { Plugin, signal, computed, useEffect, plugin } from "@odoo/owl";
+import { Plugin, signal, computed, useEffect, usePlugin } from "@odoo/owl";
 import { StoragePlugin } from "../storage_plugin";
 
 export class TodoListPlugin extends Plugin {
@@ -14,7 +14,7 @@ export class TodoListPlugin extends Plugin {
         return this.todos().filter((todo) => !todo.completed()).length;
     });
 
-    storage = plugin(StoragePlugin);
+    storage = usePlugin(StoragePlugin);
 
     setup() {
         const saved = this.storage.load("todos");

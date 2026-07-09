@@ -58,12 +58,20 @@ export abstract class Scope {
    * the given arguments. Any code executed synchronously inside `fn` can reach
    * this scope via `useScope()`.
    *
+   * If the scope is already dead when `run` is called, it throws an
+   * `OwlError` (a programming error — nothing should schedule work in a
+   * destroyed scope). This is deliberately *not* an AbortError.
+   *
    * If `fn` returns a promise, `run` guards the await with the scope's
-   * lifetime: the returned promise rejects with an AbortError if the scope is
-   * dead before or after the await. This does not allocate an AbortController
-   * — status checks are sufficient for guarding between awaits.
+   * lifetime: the returned promise rejects with an AbortError if the scope
+   * dies during the await. AbortError is part of the normal async workflow,
+   * unlike the up-front OwlError above. This does not allocate an
+   * AbortController — status checks are sufficient for guarding between awaits.
    */
   run<Args extends any[], T>(fn: (...args: Args) => T, ...args: Args): T {
+    if (this.status > STATUS.MOUNTED) {
+      throw new OwlError("Cannot run a callback in a destroyed scope");
+    }
     scopeStack.push(this);
     let result: T;
     try {
@@ -78,9 +86,6 @@ export abstract class Scope {
   }
 
   private async _guard<T>(p: Promise<T>): Promise<T> {
-    if (this.status > STATUS.MOUNTED) {
-      throw makeAbortError();
-    }
     const result = await p;
     if (this.status > STATUS.MOUNTED) {
       throw makeAbortError();

@@ -288,6 +288,17 @@ exports[`providePlugins respects plugin sequence 2`] = `
 }"
 `;
 
+exports[`scoped plugin methods are guarded by the consumer's lifetime 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
+  }
+}"
+`;
+
 exports[`shadow plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -325,6 +336,17 @@ exports[`shadow plugin 3`] = `
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].a.value);
+  }
+}"
+`;
+
+exports[`usePlugin returns the scoped view when the plugin defines one 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
   }
 }"
 `;

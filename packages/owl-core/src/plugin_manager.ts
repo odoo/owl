@@ -9,6 +9,30 @@ export interface PluginConstructor {
   new (...args: any[]): Plugin;
   id: string;
   sequence: number;
+  /**
+   * Optional factory producing a specialized view of the plugin for a
+   * consumer scope. When defined, `usePlugin` returns
+   * `scoped(plugin, scope)` instead of the plugin itself, where `scope` is
+   * the caller's scope (a component node or a plugin manager). Typical use:
+   * wrap async methods with `scope.run` so their results are guarded by the
+   * consumer's lifetime, and expose the raw instance as an escape hatch:
+   *
+   * ```ts
+   * class ORM extends Plugin {
+   *   static scoped = (self: ORM, scope: Scope) =>
+   *     Object.assign(Object.create(self), {
+   *       read: scope.run.bind(scope, self.read),
+   *     }) as ORM;
+   *   unscoped = this;
+   *   read = async (...) => { ... };
+   * }
+   * ```
+   *
+   * Called once per `usePlugin` call — the returned view is not cached.
+   * It is a static (not an instance method) so the scoped view, usually
+   * created with `Object.create(plugin)`, does not inherit it.
+   */
+  scoped?: (plugin: any, scope: Scope) => object;
 }
 
 export class Plugin {

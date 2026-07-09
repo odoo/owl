@@ -12,6 +12,7 @@ import {
   PluginInstance,
   providePlugins,
   Resource,
+  Scope,
   signal,
   types as t,
   useApp,
@@ -436,6 +437,74 @@ test("components mounted by plugin", async () => {
 
   await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("defabc");
+});
+
+test("usePlugin returns the scoped view when the plugin defines one", async () => {
+  class ORM extends Plugin {
+    static scoped = function (self: ORM, scope: Scope): ORM {
+      return Object.assign(Object.create(self), {
+        read: scope.run.bind(scope, self.read),
+      });
+    };
+    unscoped = this;
+    read = async (id: number) => `record ${id}`;
+  }
+
+  let comp: Test;
+  class Test extends Component {
+    static template = xml``;
+    orm = plugin(ORM);
+    orm2 = plugin(ORM);
+    setup() {
+      comp = this;
+    }
+  }
+
+  const app = new App({ plugins: [ORM] });
+  await app.createRoot(Test).mount(fixture);
+
+  const rawOrm = app.pluginManager.getPlugin(ORM)!;
+  expect(comp!.orm).not.toBe(rawOrm);
+  expect(comp!.orm.unscoped).toBe(rawOrm);
+  expect(Object.getPrototypeOf(comp!.orm)).toBe(rawOrm);
+  // one view per usePlugin call
+  expect(comp!.orm2).not.toBe(comp!.orm);
+  expect(await comp!.orm.read(3)).toBe("record 3");
+  app.destroy();
+});
+
+test("scoped plugin methods are guarded by the consumer's lifetime", async () => {
+  const request = makeDeferred<string>();
+
+  class ORM extends Plugin {
+    static scoped = function (self: ORM, scope: Scope): ORM {
+      return Object.assign(Object.create(self), {
+        read: scope.run.bind(scope, self.read),
+      });
+    };
+    unscoped = this;
+    read = () => request;
+  }
+
+  let comp: Test;
+  class Test extends Component {
+    static template = xml``;
+    orm = plugin(ORM);
+    setup() {
+      comp = this;
+    }
+  }
+
+  const app = new App({ plugins: [ORM] });
+  await app.createRoot(Test).mount(fixture);
+
+  const guarded = comp!.orm.read();
+  const unguarded = comp!.orm.unscoped.read();
+  app.destroy();
+  request.resolve("data");
+
+  await expect(guarded).rejects.toThrow("The operation was aborted");
+  await expect(unguarded).resolves.toBe("data");
 });
 
 test("providePlugins respects plugin sequence", async () => {

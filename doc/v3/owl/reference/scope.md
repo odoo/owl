@@ -9,7 +9,7 @@ instantiated and destroyed when it dies.
 Scopes serve three purposes:
 
 - **Attachment point for hooks.** When you call `onWillStart`, `onWillDestroy`,
-  `plugin()`, etc., they find their owner by looking at the currently active
+  `usePlugin()`, etc., they find their owner by looking at the currently active
   scope on the scope stack.
 - **Single source of truth for liveness.** `scope.status` is the authoritative
   answer to "is this component/plugin still alive?" (`NEW`, `MOUNTED`,
@@ -197,7 +197,7 @@ class Form extends Component {
     const scope = useScope();
     window.debugAttach = () => {
       scope.run(() => {
-        // code executed here can call hooks, plugin(), etc.,
+        // code executed here can call hooks, usePlugin(), etc.,
         // just like during the original setup
       });
     };

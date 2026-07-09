@@ -62,7 +62,7 @@ component or plugin is destroyed. Returns the resource for chaining.
 
 ```js
 class ClockComponent extends Component {
-  systray = plugin(SystrayPlugin);
+  systray = usePlugin(SystrayPlugin);
 
   setup() {
     this.systray.items.use({ label: "Clock", render: () => this.renderClock() });
@@ -123,7 +123,7 @@ class CommandPalette extends Component {
       </li>
     </ul>`;
 
-  commands = plugin(CommandPlugin);
+  commands = usePlugin(CommandPlugin);
 }
 ```
 

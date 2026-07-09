@@ -19,10 +19,11 @@ export interface PluginConstructor {
    *
    * ```ts
    * class ORM extends Plugin {
-   *   static scoped = (self: ORM, scope: Scope) =>
-   *     Object.assign(Object.create(self), {
+   *   static scoped(self: ORM, scope: Scope): ORM {
+   *     return Object.assign(Object.create(self), {
    *       read: scope.run.bind(scope, self.read),
-   *     }) as ORM;
+   *     });
+   *   }
    *   unscoped = this;
    *   read = async (...) => { ... };
    * }
@@ -32,7 +33,7 @@ export interface PluginConstructor {
    * It is a static (not an instance method) so the scoped view, usually
    * created with `Object.create(plugin)`, does not inherit it.
    */
-  scoped?: (plugin: any, scope: Scope) => object;
+  scoped?(plugin: any, scope: Scope): object;
 }
 
 export class Plugin {

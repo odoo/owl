@@ -132,7 +132,7 @@ describe("async cancellation via signal", () => {
     expect(() => signal.throwIfAborted()).toThrow();
   });
 
-  test("scope.run() rejects with AbortError after component destroy", async () => {
+  test("scope.run() throws (not AbortError) when called on a destroyed scope", async () => {
     const steps: string[] = [];
     let scope: any;
 
@@ -154,10 +154,15 @@ describe("async cancellation via signal", () => {
     app.destroy();
     expect(steps.splice(0)).toEqual(["destroy"]);
 
-    const deferred = makeDeferred();
-    await expect(scope!.run(() => deferred as Promise<unknown>)).rejects.toMatchObject({
-      name: "AbortError",
-    });
+    let error: any;
+    try {
+      scope!.run(() => makeDeferred());
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.name).not.toBe("AbortError");
+    expect(error.message).toContain("destroyed scope");
   });
 
   test("scope.run() resolves normally if scope is alive", async () => {

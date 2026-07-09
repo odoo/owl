@@ -93,11 +93,11 @@ if the component is destroyed while the call is in flight:
 
 ```ts
 class ORM extends Plugin {
-  static scoped = function (self: ORM, scope: Scope): ORM {
+  static scoped(self: ORM, scope: Scope): ORM {
     return Object.assign(Object.create(self), {
       read: scope.run.bind(scope, self.read),
     });
-  };
+  }
 
   // escape hatch: the shared, unguarded instance
   unscoped = this;

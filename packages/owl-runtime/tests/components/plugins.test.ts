@@ -441,11 +441,11 @@ test("components mounted by plugin", async () => {
 
 test("usePlugin returns the scoped view when the plugin defines one", async () => {
   class ORM extends Plugin {
-    static scoped = function (self: ORM, scope: Scope): ORM {
+    static scoped(self: ORM, scope: Scope): ORM {
       return Object.assign(Object.create(self), {
         read: scope.run.bind(scope, self.read),
       });
-    };
+    }
     unscoped = this;
     read = async (id: number) => `record ${id}`;
   }
@@ -477,11 +477,11 @@ test("scoped plugin methods are guarded by the consumer's lifetime", async () =>
   const request = makeDeferred<string>();
 
   class ORM extends Plugin {
-    static scoped = function (self: ORM, scope: Scope): ORM {
+    static scoped(self: ORM, scope: Scope): ORM {
       return Object.assign(Object.create(self), {
         read: scope.run.bind(scope, self.read),
       });
-    };
+    }
     unscoped = this;
     read = () => request;
   }

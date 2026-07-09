@@ -78,6 +78,59 @@ tracked automatically when read during a component render.
 
 > `usePlugin` was previously named `plugin`; `plugin` remains available as a deprecated alias.
 
+### Scoped plugin views
+
+A plugin is a single shared instance, but each consumer has its own lifetime.
+A plugin can define a static `scoped` factory to hand each consumer a
+specialized view of itself, bound to that consumer's scope. When it is
+defined, `usePlugin` returns `scoped(plugin, scope)` instead of the shared
+instance, where `scope` is the caller's scope (the component node, or the
+plugin manager when called from another plugin).
+
+The typical use is to wrap async methods with `scope.run`, so that a call
+made by a component is automatically cancelled (rejects with an `AbortError`)
+if the component is destroyed while the call is in flight:
+
+```ts
+class ORM extends Plugin {
+  static scoped = function (self: ORM, scope: Scope): ORM {
+    return Object.assign(Object.create(self), {
+      read: scope.run.bind(scope, self.read),
+    });
+  };
+
+  // escape hatch: the shared, unguarded instance
+  unscoped = this;
+
+  read = async (model, ids) => { /* ... rpc ... */ };
+}
+
+class Customer extends Component {
+  orm = usePlugin(ORM);
+
+  async someMethod() {
+    // guarded: rejects with an AbortError if this component is
+    // destroyed before the call resolves
+    const data = await this.orm.read("res.partner", [3]);
+  }
+
+  async someOtherMethod() {
+    // unguarded: resolves regardless of this component's lifetime
+    const data = await this.orm.unscoped.read("res.partner", [3]);
+  }
+}
+```
+
+Building the view with `Object.create(plugin)` keeps it cheap: it only
+carries the overridden members and inherits everything else (including any
+reactive state) from the shared instance. The factory runs once per
+`usePlugin` call, so each consumer gets a view bound to its own scope.
+
+`scoped` is a static rather than an instance method so that the view does
+not itself inherit it. The return type of `usePlugin` follows the factory's
+return type. See [Scope](./scope.md) for the cancellation model of
+`scope.run`.
+
 ## Providing Plugins
 
 ### App-level plugins

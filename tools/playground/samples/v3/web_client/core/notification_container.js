@@ -1,4 +1,4 @@
-import { Component, plugin, xml } from "@odoo/owl";
+import { Component, usePlugin, xml } from "@odoo/owl";
 import { NotificationPlugin } from "./notification_plugin";
 
 export class NotificationContainer extends Component {
@@ -14,5 +14,5 @@ export class NotificationContainer extends Component {
             </div>
         </t>
     `;
-  notificationPlugin = plugin(NotificationPlugin);
+  notificationPlugin = usePlugin(NotificationPlugin);
 }

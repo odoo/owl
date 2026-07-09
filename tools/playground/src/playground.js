@@ -5,7 +5,7 @@ import {
   mount,
   onWillDestroy,
   onWillStart,
-  plugin,
+  usePlugin,
   providePlugins,
   signal,
   useEffect,
@@ -49,14 +49,14 @@ class Playground extends Component {
       ViewPlugin,
     ]);
 
-    this.code = plugin(CodePlugin);
-    this.owlVersion = plugin(VersionPlugin);
-    this.project = plugin(ProjectPlugin);
-    this.templatePlugin = plugin(TemplatePlugin);
-    this.localStorage = plugin(LocalStoragePlugin);
-    this.settings = plugin(SettingsPlugin);
-    this.dialog = plugin(DialogPlugin);
-    this.view = plugin(ViewPlugin);
+    this.code = usePlugin(CodePlugin);
+    this.owlVersion = usePlugin(VersionPlugin);
+    this.project = usePlugin(ProjectPlugin);
+    this.templatePlugin = usePlugin(TemplatePlugin);
+    this.localStorage = usePlugin(LocalStoragePlugin);
+    this.settings = usePlugin(SettingsPlugin);
+    this.dialog = usePlugin(DialogPlugin);
+    this.view = usePlugin(ViewPlugin);
 
     this.templates = this.templatePlugin.list();
     this.categories = this.templatePlugin.categories();

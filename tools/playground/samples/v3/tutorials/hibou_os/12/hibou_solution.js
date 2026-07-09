@@ -1,4 +1,4 @@
-import { Component, Plugin, providePlugins, props, t, assertType } from "@odoo/owl";
+import { Component, Plugin, providePlugins, useProps, t, assertType } from "@odoo/owl";
 import { Taskbar } from "./taskbar";
 import { WindowManager } from "./window/window_manager";
 import { WindowManagerPlugin } from "./window/window_manager_plugin";
@@ -15,7 +15,7 @@ export class Hibou extends Component {
     static template = "hibou.Hibou";
     static components = { Taskbar, WindowManager };
 
-    props = props({
+    props = useProps({
         apps: t.array(),
     });
 

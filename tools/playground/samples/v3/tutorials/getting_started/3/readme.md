@@ -11,21 +11,21 @@ Here is what you need to do:
   template and a CSS file (`product_card.css`)
 - It should accept the following props: `name` (string), `description` (string),
   `price` (number), and `image` (optional string — a unicode emoji)
-- Define and validate these props using the `props` and `types` helpers
+- Define and validate these props using the `useProps` and `types` helpers
 - Define a **default value** for the `image` prop (e.g. `"📦"`) so that
   products without an image still display something
 - Import `ProductCard` in `main.js` and use it to display the hardcoded products
 
 ### Hints
 
-To define and validate props, use the `props` function together with `types`.
+To define and validate props, use the `useProps` function together with `types`.
 The property name you assign it to is how you access it in the template:
 
 ```js
-import { Component, props, t } from "@odoo/owl";
+import { Component, useProps, t } from "@odoo/owl";
 
 class ProductCard extends Component {
-  props = props({
+  props = useProps({
     name: t.string(),
     price: t.number(),
     "image?": t.string(),
@@ -51,10 +51,10 @@ The `types` helper supports many other types:
 - `t.signal()`
 - `t.array(t.string())`
 
-The `props` function accepts a second argument for **default values**:
+The `useProps` function accepts a second argument for **default values**:
 
 ```js
-props = props({
+props = useProps({
     name: t.string(),
     "image?": t.string(),
 }, {

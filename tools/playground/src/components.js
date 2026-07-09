@@ -7,8 +7,8 @@ import {
   onWillPatch,
   onWillStart,
   onWillUnmount,
-  plugin,
-  props,
+  usePlugin,
+  useProps,
   signal,
   t,
   untrack,
@@ -34,11 +34,11 @@ import { initiateMonaco } from "./monaco/initialize_monaco.js";
 class CodeEditor extends Component {
   static template = "CodeEditor";
 
-  code = plugin(CodePlugin);
-  owlVersion = plugin(VersionPlugin);
-  settings = plugin(SettingsPlugin);
-  project = plugin(ProjectPlugin);
-  view = plugin(ViewPlugin);
+  code = usePlugin(CodePlugin);
+  owlVersion = usePlugin(VersionPlugin);
+  settings = usePlugin(SettingsPlugin);
+  project = usePlugin(ProjectPlugin);
+  view = usePlugin(ViewPlugin);
 
   setup() {
     this.primaryEditorNode = signal(null);
@@ -482,13 +482,13 @@ class CodeEditor extends Component {
 
 class ConfirmDialog extends Component {
   static template = "ConfirmDialog";
-  props = props({
+  props = useProps({
     message: t.any(),
     confirmLabel: t.string().optional("Confirm"),
     confirmClass: t.string().optional("primary"),
     onConfirm: t.function(),
   });
-  dialog = plugin(DialogPlugin);
+  dialog = usePlugin(DialogPlugin);
 
   confirm() {
     this.props.onConfirm();
@@ -501,8 +501,8 @@ class ConfirmDialog extends Component {
 
 class ProjectDialog extends Component {
   static template = "ProjectDialog";
-  props = props(["name", "canDelete", "onRename", "onDelete"]);
-  dialog = plugin(DialogPlugin);
+  props = useProps(["name", "canDelete", "onRename", "onDelete"]);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.nameRef = signal(null);
@@ -538,8 +538,8 @@ class ProjectDialog extends Component {
 
 class NewProjectDialog extends Component {
   static template = "NewProjectDialog";
-  props = props(["templates", "onConfirm"]);
-  dialog = plugin(DialogPlugin);
+  props = useProps(["templates", "onConfirm"]);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.nameRef = signal(null);
@@ -573,8 +573,8 @@ class NewProjectDialog extends Component {
 
 class SettingsDialog extends Component {
   static template = "SettingsDialog";
-  dialog = plugin(DialogPlugin);
-  settings = plugin(SettingsPlugin);
+  dialog = usePlugin(DialogPlugin);
+  settings = usePlugin(SettingsPlugin);
 
   onFontSizeChange(ev) {
     this.settings.setFontSize(parseInt(ev.target.value));
@@ -589,14 +589,14 @@ class SettingsDialog extends Component {
 
 class ProjectManager extends Component {
   static template = "ProjectManager";
-  project = plugin(ProjectPlugin);
-  code = plugin(CodePlugin);
-  localStorage = plugin(LocalStoragePlugin);
-  dialog = plugin(DialogPlugin);
-  view = plugin(ViewPlugin);
+  project = usePlugin(ProjectPlugin);
+  code = usePlugin(CodePlugin);
+  localStorage = usePlugin(LocalStoragePlugin);
+  dialog = usePlugin(DialogPlugin);
+  view = usePlugin(ViewPlugin);
 
   setup() {
-    this.templatePlugin = plugin(TemplatePlugin);
+    this.templatePlugin = usePlugin(TemplatePlugin);
   }
 
   storedProjects = computed(() => {
@@ -770,12 +770,12 @@ class ProjectManager extends Component {
 
 class NewFileDialog extends Component {
   static template = "NewFileDialog";
-  props = props({
+  props = useProps({
     existingFiles: t.any(),
     onConfirm: t.function(),
     folder: t.string().optional(""),
   });
-  dialog = plugin(DialogPlugin);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.fileName = signal("");
@@ -818,8 +818,8 @@ class NewFileDialog extends Component {
 
 class NewFolderDialog extends Component {
   static template = "NewFolderDialog";
-  props = props(["existingFiles", "onConfirm"]);
-  dialog = plugin(DialogPlugin);
+  props = useProps(["existingFiles", "onConfirm"]);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.nameRef = signal(null);
@@ -865,12 +865,12 @@ class NewFolderDialog extends Component {
 
 class NewComponentDialog extends Component {
   static template = "NewComponentDialog";
-  props = props({
+  props = useProps({
     existingFiles: t.any(),
     onConfirm: t.function(),
     folder: t.string().optional(),
   });
-  dialog = plugin(DialogPlugin);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.nameRef = signal(null);
@@ -942,8 +942,8 @@ class NewComponentDialog extends Component {
 
 class FileDialog extends Component {
   static template = "FileDialog";
-  props = props(["fileName", "existingFiles", "canDelete", "onRename", "onDelete"]);
-  dialog = plugin(DialogPlugin);
+  props = useProps(["fileName", "existingFiles", "canDelete", "onRename", "onDelete"]);
+  dialog = usePlugin(DialogPlugin);
 
   setup() {
     this.nameRef = signal(null);
@@ -997,12 +997,12 @@ class FileDialog extends Component {
 class Explorer extends Component {
   static template = "Explorer";
 
-  code = plugin(CodePlugin);
-  project = plugin(ProjectPlugin);
-  dialog = plugin(DialogPlugin);
-  localStorage = plugin(LocalStoragePlugin);
-  templatePlugin = plugin(TemplatePlugin);
-  view = plugin(ViewPlugin);
+  code = usePlugin(CodePlugin);
+  project = usePlugin(ProjectPlugin);
+  dialog = usePlugin(DialogPlugin);
+  localStorage = usePlugin(LocalStoragePlugin);
+  templatePlugin = usePlugin(TemplatePlugin);
+  view = usePlugin(ViewPlugin);
 
   setup() {
     this.expandedFolders = signal(new Set());
@@ -1618,13 +1618,13 @@ function useAutoscroll() {
 class ContentView extends Component {
   static template = "ContentView";
 
-  code = plugin(CodePlugin);
-  owlVersion = plugin(VersionPlugin);
-  settings = plugin(SettingsPlugin);
-  project = plugin(ProjectPlugin);
-  dialog = plugin(DialogPlugin);
-  view = plugin(ViewPlugin);
-  templatePlugin = plugin(TemplatePlugin);
+  code = usePlugin(CodePlugin);
+  owlVersion = usePlugin(VersionPlugin);
+  settings = usePlugin(SettingsPlugin);
+  project = usePlugin(ProjectPlugin);
+  dialog = usePlugin(DialogPlugin);
+  view = usePlugin(ViewPlugin);
+  templatePlugin = usePlugin(TemplatePlugin);
 
   messageList = useAutoscroll();
 
@@ -1900,8 +1900,8 @@ class ContentView extends Component {
 class TutorialBar extends Component {
   static template = "TutorialBar";
 
-  project = plugin(ProjectPlugin);
-  dialog = plugin(DialogPlugin);
+  project = usePlugin(ProjectPlugin);
+  dialog = usePlugin(DialogPlugin);
 
   get steps() {
     return this.project.tutorialSteps();

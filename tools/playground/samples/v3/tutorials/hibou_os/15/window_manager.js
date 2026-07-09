@@ -1,4 +1,4 @@
-import { Component, plugin, computed } from "@odoo/owl";
+import { Component, usePlugin, computed } from "@odoo/owl";
 import { Window } from "./window";
 import { WindowManagerPlugin } from "./window_manager_plugin";
 
@@ -6,7 +6,7 @@ export class WindowManager extends Component {
     static template = "hibou.WindowManager";
     static components = { Window };
 
-    wm = plugin(WindowManagerPlugin);
+    wm = usePlugin(WindowManagerPlugin);
 
     cubeStyle = computed(() => {
         const angle = (this.wm.currentWorkspace() - 1) * -90;

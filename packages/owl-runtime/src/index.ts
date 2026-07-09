@@ -40,7 +40,7 @@ export type { ComponentConstructor } from "./component";
 export { ErrorBoundary } from "./error_boundary";
 export { Portal } from "./portal";
 export { Suspense } from "./suspense";
-export { props } from "./props";
+export { useProps, props } from "./props";
 // `isProps` is a phantom (declare const) brand symbol referenced by the public
 // `Props`/`PropsWithDefaults`/`GetProps` types. It must be exported from the
 // package's type surface so downstream projects can name it when emitting their
@@ -91,7 +91,7 @@ export type {
   WithDefault,
 } from "@odoo/owl-core";
 export { OwlError } from "@odoo/owl-core";
-export { config, plugin, providePlugins } from "./plugin_hooks";
+export { config, usePlugin, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "@odoo/owl-core";
 export type { PluginConstructor } from "@odoo/owl-core";

@@ -155,4 +155,7 @@ function makeProps(type?: any): Props<{}> {
   return result;
 }
 
-export const props = Object.assign(makeProps, { static: staticProp }) as PropsFunction;
+export const useProps = Object.assign(makeProps, { static: staticProp }) as PropsFunction;
+
+/** @deprecated alias for {@link useProps} */
+export const props = useProps;

@@ -6,7 +6,7 @@ import { assertType } from "./validation";
 
 export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
 
-export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
+export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
   const scope = useScope();
 
   let plugin = scope.pluginManager.getPluginById<InstanceType<T>>(pluginType.id);
@@ -20,6 +20,9 @@ export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstan
 
   return plugin;
 }
+
+/** @deprecated alias for {@link usePlugin} */
+export const plugin = usePlugin;
 
 export function config<T = any>(key: string): T;
 export function config<T>(key: string, type: WithDefault<T>): T;

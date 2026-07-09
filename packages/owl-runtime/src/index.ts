@@ -91,7 +91,7 @@ export type {
   WithDefault,
 } from "@odoo/owl-core";
 export { OwlError } from "@odoo/owl-core";
-export { config, usePlugin, plugin, providePlugins } from "./plugin_hooks";
+export { useConfig, config, usePlugin, plugin, providePlugins } from "./plugin_hooks";
 export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "@odoo/owl-core";
 export type { PluginConstructor } from "@odoo/owl-core";

@@ -117,6 +117,7 @@ export {
 } from "./lifecycle_hooks";
 
 export {
+  useConfig,
   config,
   usePlugin,
   plugin,

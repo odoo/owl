@@ -250,6 +250,8 @@ function markDownstream(computation: ComputationAtom) {
       observer.state = ComputationState.PENDING;
       if (observer.isDerived) {
         stack.push(observer);
+      } else if (observer.immediate) {
+        immediateObservers.push(observer);
       } else {
         observers.push(observer);
       }

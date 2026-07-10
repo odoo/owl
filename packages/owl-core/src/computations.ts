@@ -15,7 +15,8 @@ export interface ReactiveValue<TRead, TWrite = TRead> {
  * used to decide whether a new value should notify observers. Defaults to
  * `Object.is`. Pass `false` to disable the check entirely (every write or
  * recompute notifies, even with an identical value — useful for values that
- * are mutated in place).
+ * are mutated in place). The function receives (previous, next) and runs
+ * untracked: it can safely read reactive values without subscribing to them.
  */
 export type Equals<T> = false | ((a: T, b: T) => boolean);
 
@@ -24,7 +25,25 @@ function neverEqual() {
 }
 
 export function toEqualsFn<T>(equals: Equals<T> | undefined): (a: T, b: T) => boolean {
-  return equals === false ? neverEqual : equals || Object.is;
+  if (equals === false) {
+    return neverEqual;
+  }
+  if (!equals) {
+    return Object.is;
+  }
+  // A custom equals runs while tracking may be active (inside a computed's
+  // recompute, or a signal set() issued from an effect): run it untracked so
+  // reading through reactive proxies does not register spurious dependencies
+  // on the active computation.
+  return (a, b) => {
+    const previousComputation = currentComputation;
+    currentComputation = undefined;
+    try {
+      return equals(a, b);
+    } finally {
+      currentComputation = previousComputation;
+    }
+  };
 }
 
 export enum ComputationState {

@@ -106,7 +106,10 @@ interface MapSignalOptions<K, V> {
 }
 
 function signalMap<K, V>(): Signal<Map<K, V>>;
-function signalMap<K, V>(initialValue: Map<K, V>, options?: { name?: string; equals?: Equals<Map<K, V>> }): Signal<Map<K, V>>;
+function signalMap<K, V>(
+  initialValue: Map<K, V>,
+  options?: { name?: string; equals?: Equals<Map<K, V>> }
+): Signal<Map<K, V>>;
 function signalMap<K, V>(
   initialValue: NoInfer<Map<K, V>>,
   options: MapSignalOptions<K, V>

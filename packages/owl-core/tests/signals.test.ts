@@ -615,4 +615,23 @@ describe("equals option", () => {
     await waitScheduler();
     expectSpy(e.spy, 2, { result: 2 });
   });
+
+  test("reads made by a custom equals are not tracked", async () => {
+    const other = signal(0);
+    const s = signal(1, { equals: (a, b) => (other(), Object.is(a, b)) });
+    const trigger = signal(0);
+
+    // set() from inside an effect: equals runs while tracking is active, and
+    // its read of `other` must not subscribe the effect
+    const e = spyEffect(() => {
+      trigger();
+      s.set(1);
+    });
+    e();
+    expectSpy(e.spy, 1);
+
+    other.set(5);
+    await waitScheduler();
+    expectSpy(e.spy, 1);
+  });
 });

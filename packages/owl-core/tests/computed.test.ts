@@ -722,4 +722,24 @@ describe("equals option", () => {
     expect(equals).toHaveBeenCalledTimes(1);
     expect(equals).toHaveBeenLastCalledWith(10, 20);
   });
+
+  test("reads made by a custom equals are not tracked", async () => {
+    const other = signal(1);
+    const n = signal(1);
+    // an equals reading a reactive value (e.g. comparing through a proxy) must
+    // not subscribe the computed to it
+    const c = computed(() => n() * 10, { equals: (a, b) => (other(), Object.is(a, b)) });
+
+    const e = spyEffect(() => c());
+    e();
+    expectSpy(e.spy, 1, { result: 10 });
+
+    n.set(2); // runs equals, which reads `other`
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 20 });
+
+    other.set(5); // must not invalidate the computed
+    await waitScheduler();
+    expectSpy(e.spy, 2);
+  });
 });

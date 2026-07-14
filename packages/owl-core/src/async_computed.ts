@@ -128,6 +128,7 @@ export function asyncComputed<T>(
   });
 
   function dispose() {
+    runId++;
     stopEffect();
     runController?.abort();
     runController = null;

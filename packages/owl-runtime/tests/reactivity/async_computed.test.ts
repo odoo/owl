@@ -468,6 +468,31 @@ test("currentPromise() resolves on dispose so awaiters do not hang", async () =>
   expect(resolved).toBe(true);
 });
 
+test("dispose prevents a late resolution from mutating the asyncComputed state", async () => {
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def, { initial: 0 });
+
+  a.dispose();
+  def.resolve(42);
+  await flush();
+
+  expect(a()).toBe(0);
+  expect(a.error()).toBeNull();
+});
+
+test("dispose prevents a late rejection from mutating the asyncComputed state", async () => {
+    const def = makeDeferred<number>();
+    const a = asyncComputed(() => def, { initial: 0 });
+
+    a.dispose();
+
+    def.reject(new Error("boom"));
+    await flush();
+
+    expect(a()).toBe(0);
+    expect(a.error()).toBeNull();
+});
+
 test("onWillStart can await currentPromise() before mounting", async () => {
   const def = makeDeferred<string>();
 

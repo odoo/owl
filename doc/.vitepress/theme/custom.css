@@ -108,6 +108,8 @@
 /* Hide VitePress's navbar entirely — our static navbar replaces it */
 :root {
   --vp-nav-height: 44px;
+  /* Keep the sidebar aligned below the injected static navbar. */
+  --vp-layout-top-height: 44px;
 }
 
 .VPNav {

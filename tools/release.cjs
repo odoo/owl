@@ -50,20 +50,8 @@ async function startRelease() {
   let isAlpha = await ask("Is this an alpha release? [y/n] (n): ");
   isAlpha = isAlpha.toLowerCase() === "y";
 
-  const STEPS = 12;
+  const STEPS = 11;
   let step = 1;
-  // ---------------------------------------------------------------------------
-  // Authenticate first: handles 2FA in the browser, so the publish at step 12
-  // doesn't blow up after everything else has already landed. Requires npm
-  // account 2FA mode to be "Authorization only" — if it's "Authorization and
-  // writes", publish will still prompt for an OTP on the CLI.
-  log(`Step ${step++}/${STEPS}: logging in to npm via browser...`);
-  const loginResult = await execCommand("npm login --auth-type=web");
-  if (loginResult !== 0) {
-    logError("npm login failed. Aborting.");
-    return;
-  }
-
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Checking if code formatting is right...`)
   const checkFormatting = await execCommand("npm run check-formatting");

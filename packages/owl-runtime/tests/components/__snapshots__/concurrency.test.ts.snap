@@ -164,6 +164,50 @@ exports[`calling render in destroy 3`] = `
 }"
 `;
 
+exports[`cancelled components are destroyed immediately 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    b2 = text(\`A\`);
+    if (ctx['this'].state.flag) {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`cancelled components are destroyed immediately 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = text(\`B\`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`cancelled components are destroyed immediately 5`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`C\`);
+  }
+}"
+`;
+
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -251,50 +295,6 @@ exports[`component destroyed just after render 2`] = `
     const b2 = text(\`B\`);
     const b3 = safeOutput(ctx['this'].state.value);
     return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`components are not destroyed between animation frame 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    b2 = text(\`A\`);
-    if (ctx['this'].state.flag) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`components are not destroyed between animation frame 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`B\`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`components are not destroyed between animation frame 5`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`C\`);
   }
 }"
 `;

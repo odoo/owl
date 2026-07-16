@@ -229,7 +229,6 @@ export class App extends TemplateSet {
       destroy: () => {
         this.roots.delete(root);
         node?.destroy();
-        this.scheduler.processCancelledNodes();
       },
     };
     this.roots.add(root);
@@ -241,7 +240,6 @@ export class App extends TemplateSet {
       root.destroy();
     }
     this.pluginManager.destroy();
-    this.scheduler.processCancelledNodes();
     this.scheduler.tasks.clear();
     this.scheduler.delayedRenders = [];
     apps.delete(this);

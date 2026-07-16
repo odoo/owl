@@ -3,14 +3,12 @@ import { Plugin, STATUS } from "@odoo/owl-core";
 
 export { STATUS } from "@odoo/owl-core";
 
-type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
+type STATUS_DESCR = "new" | "started" | "mounted" | "destroyed";
 
 export function status(entity: Component | Plugin): STATUS_DESCR {
   switch (entity.__owl__.status) {
     case STATUS.NEW:
       return "new";
-    case STATUS.CANCELLED:
-      return "cancelled";
     case STATUS.MOUNTED:
       return entity instanceof Plugin ? "started" : "mounted";
     case STATUS.DESTROYED:

@@ -1652,12 +1652,6 @@ describe("can catch errors", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:willDestroy",
-      ]
-    `);
-    expect(fixture.innerHTML).toBe("1");
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
         "Parent:willPatch",
         "Parent:patched",
       ]

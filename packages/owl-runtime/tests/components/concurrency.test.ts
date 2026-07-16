@@ -137,6 +137,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "Child:willDestroy",
       "Child:setup",
       "Child:willStart",
     ]
@@ -148,7 +149,6 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect(Object.values(w.__owl__.children).length).toBe(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Child:willDestroy",
       "W:willPatch",
       "Child:mounted",
       "W:patched",
@@ -197,9 +197,9 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
     [
       "Child:setup",
       "Child:willStart",
+      "Child:willDestroy",
       "Child:setup",
       "Child:willStart",
-      "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
@@ -273,11 +273,11 @@ test("creating two async components, scenario 1", async () => {
   expect(fixture.innerHTML).toBe("");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "ChildA:willDestroy",
       "ChildA:setup",
       "ChildA:willStart",
       "ChildB:setup",
       "ChildB:willStart",
-      "ChildA:willDestroy",
     ]
   `);
 
@@ -745,9 +745,9 @@ test("rendering component again in next microtick", async () => {
     [
       "Child:setup",
       "Child:willStart",
+      "Child:willDestroy",
       "Child:setup",
       "Child:willStart",
-      "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
@@ -1735,8 +1735,8 @@ test("concurrent renderings scenario 10", async () => {
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willUpdateProps",
       "ComponentC:willDestroy",
+      "ComponentB:willUpdateProps",
     ]
   `);
 
@@ -2268,10 +2268,10 @@ test("concurrent renderings scenario 16", async () => {
     [
       "D:setup",
       "D:willStart",
+      "D:willDestroy",
       "C:willUpdateProps",
       "D:setup",
       "D:willStart",
-      "D:willDestroy",
     ]
   `);
 
@@ -2982,9 +2982,9 @@ test("t-key on dom node having a component", async () => {
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "Child (2):willDestroy",
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
       "Child (3):mounted",
@@ -3041,9 +3041,9 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "Child (2):willDestroy",
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
       "Child (3):mounted",
@@ -3101,9 +3101,9 @@ test("t-foreach with dynamic async component", async () => {
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "Child (2):willDestroy",
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
       "Child (3):mounted",
@@ -3824,12 +3824,12 @@ test("destroyed component causes other soon to be destroyed component to rerende
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
+      "B:willDestroy",
+      "C:willDestroy",
       "B:setup",
       "B:willStart",
       "C:setup",
       "C:willStart",
-      "B:willDestroy",
-      "C:willDestroy",
       "A:willPatch",
       "C:mounted",
       "B:mounted",
@@ -4175,7 +4175,7 @@ test.skip("delayed render is not cancelled by upcoming render", async () => {
   `);
 });
 
-test("components are not destroyed between animation frame", async () => {
+test("cancelled components are destroyed immediately", async () => {
   const def = makeDeferred();
   class C extends Component {
     static template = xml`C`;
@@ -4224,14 +4224,10 @@ test("components are not destroyed between animation frame", async () => {
 
   // force a render of A
   //  => owl will need to create a new B component
-  //  => initial B component will be cancelled
+  //  => initial B component will be cancelled, and destroyed on the spot
   render(a);
   await nextMicroTick();
-  expect([
-    // note that B is not destroyed here. It is cancelled instead
-    "B:setup",
-    "B:willStart",
-  ]).toBeLogged();
+  expect(["B:willDestroy", "B:setup", "B:willStart"]).toBeLogged();
 
   // resolve def, so B render is unblocked
   def.resolve();
@@ -4240,7 +4236,6 @@ test("components are not destroyed between animation frame", async () => {
     [
       "C:setup",
       "C:willStart",
-      "B:willDestroy",
       "A:willPatch",
       "C:mounted",
       "B:mounted",

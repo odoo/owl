@@ -131,7 +131,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   async render(deep: boolean) {
-    if (this.status >= STATUS.CANCELLED) {
+    if (this.status >= STATUS.DESTROYED) {
       return;
     }
     let current = this.fiber;
@@ -160,7 +160,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
 
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
-    if (this.status >= STATUS.CANCELLED) {
+    if (this.status >= STATUS.DESTROYED) {
       return;
     }
     // We only want to actually render the component if the following two
@@ -180,17 +180,8 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   cancel() {
-    this._cancel();
     delete this.parent!.children[this.parentKey!];
-    this.app.scheduler.scheduleDestroy(this);
-  }
-
-  _cancel() {
-    super.cancel();
-    const children = this.children;
-    for (let childKey in children) {
-      children[childKey]._cancel();
-    }
+    this._destroy();
   }
 
   destroy() {

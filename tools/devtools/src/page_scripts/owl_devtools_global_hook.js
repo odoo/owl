@@ -51,6 +51,9 @@
       this.requestedFrame = false;
       this.enabledSelector = false;
       this.eventsBatch = [];
+      // ComponentNode of each OWL 3 root, cached as its mount promise resolves
+      // (roots do not expose their node synchronously anymore). null = pending.
+      this.rootNodes = new WeakMap();
       this.breakpointsClassMap = new Map();
       this.breakpointsHookMap = new Map();
       // Object which defines how different types of data should be displayed when passed to the devtools
@@ -204,7 +207,31 @@
     getRoots(app) {
       const version = this.getAppVersion(app);
       if (version.startsWith("3")) {
-        return [...app.roots].map((root) => root.node);
+        const nodes = [];
+        for (const root of app.roots) {
+          // TODO: Early OWL 3 versions exposed the ComponentNode directly on the root, remove when stable
+          if (root.node) {
+            nodes.push(root.node);
+            continue;
+          }
+          if (this.rootNodes.has(root)) {
+            const node = this.rootNodes.get(root);
+            if (node) {
+              nodes.push(node);
+            }
+          } else {
+            this.rootNodes.set(root, null);
+            root.promise.then(
+              (component) => {
+                this.rootNodes.set(root, component.__owl__);
+                window.top.postMessage({ source: "owl-devtools", type: "RefreshApps" });
+              },
+              // Root failed to mount: there is no component tree to inspect
+              () => {}
+            );
+          }
+        }
+        return nodes;
       }
       // OWL 2: main root at index 0, subRoots at index 1+
       const roots = [];

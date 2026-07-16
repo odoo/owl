@@ -110,11 +110,9 @@ export abstract class Scope {
   }
 
   /**
-   * Returns true once the scope has been fully destroyed, i.e. `finalize` has
-   * run: the abort signal is aborted, onDestroy callbacks have executed and
-   * computations are disposed. Note that a CANCELLED scope (abandoned before
-   * mount, but not yet finalized) is dead but not destroyed — to ask "is this
-   * scope dead?", check `status > STATUS.MOUNTED` instead.
+   * Returns true once the scope has been destroyed, i.e. `finalize` has run:
+   * the abort signal is aborted, onDestroy callbacks have executed and
+   * computations are disposed.
    */
   isDestroyed(): boolean {
     return this.status >= STATUS.DESTROYED;
@@ -130,19 +128,6 @@ export abstract class Scope {
       return;
     }
     (this._destroyCbs ??= []).push(cb);
-  }
-
-  /**
-   * Marks the scope as cancelled and aborts its signal. Used when an entity is
-   * abandoned before it reaches the MOUNTED state. Subclasses may override to
-   * extend the behavior (e.g. ComponentNode recurses to children).
-   */
-  cancel(): void {
-    if (this.status > STATUS.MOUNTED) {
-      return;
-    }
-    this.status = STATUS.CANCELLED;
-    this._controller?.abort();
   }
 
   /**

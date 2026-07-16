@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
+exports[`app > app: clear scheduler tasks on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -18,7 +18,7 @@ exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediatel
 }"
 `;
 
-exports[`app > app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 3`] = `
+exports[`app > app: clear scheduler tasks on destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

@@ -66,7 +66,7 @@ describe("app", () => {
     expect(status(comp)).toBe("destroyed");
   });
 
-  test("app: clear scheduler tasks and destroy cancelled nodes immediately on destroy", async () => {
+  test("app: clear scheduler tasks on destroy", async () => {
     let def = makeDeferred();
     class B extends Component {
       static template = xml`B`;
@@ -103,11 +103,12 @@ describe("app", () => {
       ]
     `);
 
-    // rerender to force the instantiation of a new B component (and cancelling the first)
+    // rerender to force the instantiation of a new B component (destroying the first)
     render(comp);
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
+        "B:willDestroy",
         "B:setup",
         "B:willStart",
       ]
@@ -119,7 +120,6 @@ describe("app", () => {
         "A:willUnmount",
         "B:willDestroy",
         "A:willDestroy",
-        "B:willDestroy",
       ]
     `);
   });

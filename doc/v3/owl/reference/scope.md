@@ -12,8 +12,8 @@ Scopes serve three purposes:
   `usePlugin()`, etc., they find their owner by looking at the currently active
   scope on the scope stack.
 - **Single source of truth for liveness.** `scope.status` is the authoritative
-  answer to "is this component/plugin still alive?" (`NEW`, `MOUNTED`,
-  `CANCELLED`, or `DESTROYED`).
+  answer to "is this component/plugin still alive?" (`NEW`, `MOUNTED`, or
+  `DESTROYED`).
 - **Async cancellation.** Every scope exposes an `AbortSignal` that is
   automatically aborted when the scope dies. Async work keyed to that signal
   stops naturally when the component is destroyed.
@@ -55,25 +55,22 @@ if you need to tolerate that case — it returns `Scope | null`.
 
 ## Lifetime and Status
 
-A scope's `status` transitions through four values, defined by the `STATUS`
+A scope's `status` transitions through three values, defined by the `STATUS`
 enum:
 
-| Status      | Meaning                                                             |
-| ----------- | ------------------------------------------------------------------- |
-| `NEW`       | just created, not yet mounted                                       |
-| `MOUNTED`   | fully alive (for a component: attached to the DOM)                  |
-| `CANCELLED` | abandoned before being mounted (e.g. replaced by a newer rendering) |
-| `DESTROYED` | fully destroyed, all cleanup has run                                |
+| Status      | Meaning                                            |
+| ----------- | -------------------------------------------------- |
+| `NEW`       | just created, not yet mounted                      |
+| `MOUNTED`   | fully alive (for a component: attached to the DOM) |
+| `DESTROYED` | fully destroyed, all cleanup has run               |
 
-The transitions `NEW → CANCELLED` and any transition into `DESTROYED` will
-abort the scope's abort signal (see below). Code that looks at `scope.status`
-should usually ask "is it greater than `MOUNTED`?" to mean "this is dead."
+A component that is abandoned before being mounted (e.g. replaced by a newer
+rendering) transitions directly from `NEW` to `DESTROYED`. Any transition into
+`DESTROYED` aborts the scope's abort signal (see below).
 
-The `scope.isDestroyed()` method answers the stricter question "has this scope
-been fully destroyed?" — it returns `true` only once all cleanup (destroy
-callbacks, computation disposal) has run. A `CANCELLED` scope is dead but not
-yet destroyed, so `isDestroyed()` still returns `false` for it until the
-scheduler finalizes it.
+The `scope.isDestroyed()` method answers the question "is this scope dead?" —
+it returns `true` once all cleanup (destroy callbacks, computation disposal)
+has run.
 
 The `status()` helper function (which takes a `Component` or `Plugin` instance
 directly) is a more convenient frontend for reading a scope's status:
@@ -272,18 +269,15 @@ active. Reach for this only when the absence of a scope is meaningful.
 
 ### `Scope`
 
-- `status: STATUS` — current status (`NEW` / `MOUNTED` / `CANCELLED` / `DESTROYED`).
+- `status: STATUS` — current status (`NEW` / `MOUNTED` / `DESTROYED`).
 - `app: App` — the owning application.
 - `parent: Scope | null` — parent scope in the tree.
 - `abortSignal: AbortSignal` — an `AbortSignal` aborted when the scope dies.
   Lazily allocates an `AbortController` on first access.
-- `isDestroyed(): boolean` — true once the scope is fully destroyed (all
-  cleanup has run). A `CANCELLED` scope is not yet destroyed — to ask "is this
-  scope dead?", check `status > MOUNTED` instead.
+- `isDestroyed(): boolean` — true once the scope is destroyed (all cleanup
+  has run).
 - `onDestroy(cb: () => void): void` — registers a destroy callback. If the
   scope is already destroyed, calls the callback immediately.
-- `cancel(): void` — marks the scope as `CANCELLED` and aborts its abort
-  signal. Used internally when a component is abandoned before mount.
 - `run<Args, T>(fn: (...args: Args) => T, ...args: Args): T` — pushes the
   scope for the duration of `fn`, forwarding any extra arguments to it.
   Throws an `OwlError` up front if the scope is already dead. If `fn` returns

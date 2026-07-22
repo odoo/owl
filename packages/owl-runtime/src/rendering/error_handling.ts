@@ -1,19 +1,45 @@
+import type { PluginManager } from "@odoo/owl-core";
 import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
 
 // Maps fibers to thrown errors
 export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<
-  ComponentNode,
+  ComponentNode | PluginManager,
   ((error: any, finalize: Function) => void)[]
 > = new WeakMap();
 
+// Invokes a single scope's error handlers, latest registered first. Returns
+// whether one of them caught, along with the final (possibly rethrown) error.
+function invokeScopeHandlers(
+  scope: ComponentNode | PluginManager,
+  error: any,
+  finalize: Function
+): { handled: boolean; error: any } {
+  const handlers = nodeErrorHandlers.get(scope);
+  if (handlers) {
+    for (let i = handlers.length - 1; i >= 0; i--) {
+      try {
+        handlers[i](error, finalize);
+        return { handled: true, error };
+      } catch (e) {
+        error = e;
+      }
+    }
+  }
+  return { handled: false, error };
+}
+
 // Walks up from `node` (inclusive), invoking the latest error handler at each
-// level. Returns whether a handler caught and the final (possibly rethrown)
-// error. When `markFibers` is true, each visited fiber is recorded in
-// `fibersInError` so re-renders can detect and clear in-error state — this is
-// what `handleError` wants, but sub-root forwarders (Suspense, Portal) want
-// to leave the outer tree's fibers alone.
+// level. Plugin managers sit between the node they are provided at and its
+// parent: after a node's own handlers, the managers introduced at that node
+// (from `node.pluginManager` up to, but excluding, the parent's manager) get
+// a chance, so plugin `onError` handlers guard the subtree the plugins are
+// visible in — the whole app for app-level plugins. Returns whether a handler
+// caught and the final (possibly rethrown) error. When `markFibers` is true,
+// each visited fiber is recorded in `fibersInError` so re-renders can detect
+// and clear in-error state — this is what `handleError` wants, but sub-root
+// forwarders (Suspense, Portal) want to leave the outer tree's fibers alone.
 function invokeErrorHandlers(
   node: ComponentNode | null,
   error: any,
@@ -24,16 +50,19 @@ function invokeErrorHandlers(
     if (markFibers && node.fiber) {
       fibersInError.set(node.fiber, error);
     }
-    const handlers = nodeErrorHandlers.get(node);
-    if (handlers) {
-      for (let i = handlers.length - 1; i >= 0; i--) {
-        try {
-          handlers[i](error, finalize);
-          return { handled: true, error };
-        } catch (e) {
-          error = e;
-        }
+    let result = invokeScopeHandlers(node, error, finalize);
+    if (result.handled) {
+      return result;
+    }
+    error = result.error;
+    const stop = node.parent ? node.parent.pluginManager : null;
+    let manager: PluginManager | null = node.pluginManager;
+    for (; manager && manager !== stop; manager = manager.parent) {
+      result = invokeScopeHandlers(manager, error, finalize);
+      if (result.handled) {
+        return result;
       }
+      error = result.error;
     }
     node = node.parent;
   }

@@ -4,6 +4,7 @@ import {
   computed,
   config,
   mount,
+  onError,
   onWillDestroy,
   onWillStart,
   plugin,
@@ -17,6 +18,7 @@ import {
   types as t,
   useApp,
   useEffect,
+  usePlugin,
   xml,
 } from "../../src";
 import {
@@ -552,4 +554,109 @@ test("providePlugins respects plugin sequence", async () => {
   expect(steps.splice(0)).toEqual(["feature:setup (data=hello)"]);
   expect(fixture.innerHTML).toBe("<span>child</span>");
   app.destroy();
+});
+
+test("a plugin can handle errors coming from the subtree it is provided in", async () => {
+  class ErrorPlugin extends Plugin {
+    error = signal(null);
+    setup() {
+      onError((e) => this.error.set(e));
+    }
+  }
+
+  class Boom extends Component {
+    static template = xml`<div t-out="this.a.b.c"/>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`<t t-if="this.errors.error()">Error</t><t t-else=""><Boom/></t>`;
+    static components = { Boom };
+    errors: any;
+    setup() {
+      providePlugins([ErrorPlugin]);
+      this.errors = usePlugin(ErrorPlugin);
+    }
+  }
+
+  class Root extends Component {
+    static template = xml`<Parent/>`;
+    static components = { Parent };
+  }
+
+  await mount(Root, fixture);
+  expect(fixture.innerHTML).toBe("Error");
+  expect(getConsoleOutput()).toEqual([]);
+});
+
+test("app-level plugins can handle errors escaping the root component", async () => {
+  const flag = signal(false);
+  let caught: any = null;
+
+  class ErrorPlugin extends Plugin {
+    setup() {
+      onError((e) => {
+        caught = e;
+        flag.set(false);
+      });
+    }
+  }
+
+  class Root extends Component {
+    static template = xml`<t t-if="this.flag()" t-out="this.a.b.c"/><t t-else="">ok</t>`;
+    flag = flag;
+  }
+
+  await mount(Root, fixture, { plugins: [ErrorPlugin] });
+  expect(fixture.innerHTML).toBe("ok");
+
+  flag.set(true);
+  await nextTick();
+  expect(caught).toBeInstanceOf(TypeError);
+  expect(fixture.innerHTML).toBe("ok");
+  expect(getConsoleOutput()).toEqual([]);
+});
+
+test("plugin onError handlers can rethrow, after the host's own handlers", async () => {
+  const steps: string[] = [];
+
+  class ErrorPlugin extends Plugin {
+    setup() {
+      onError((e) => {
+        steps.push("plugin");
+        throw e;
+      });
+    }
+  }
+
+  class Boom extends Component {
+    static template = xml`<div t-out="this.a.b.c"/>`;
+  }
+
+  class Provider extends Component {
+    static template = xml`<Boom/>`;
+    static components = { Boom };
+    setup() {
+      providePlugins([ErrorPlugin]);
+      onError((e) => {
+        steps.push("provider");
+        throw e;
+      });
+    }
+  }
+
+  class Root extends Component {
+    static template = xml`<t t-if="this.error()">Error</t><t t-else=""><Provider/></t>`;
+    static components = { Provider };
+    error = signal(false);
+    setup() {
+      onError(() => {
+        steps.push("root");
+        this.error.set(true);
+      });
+    }
+  }
+
+  await mount(Root, fixture);
+  expect(fixture.innerHTML).toBe("Error");
+  expect(steps).toEqual(["provider", "plugin", "root"]);
 });

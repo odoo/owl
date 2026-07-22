@@ -70,6 +70,10 @@ interface PluginManagerOptions {
 export class PluginManager extends Scope {
   config: Record<string, any>;
   plugins: Record<string, Plugin>;
+  // The manager this one shadows: set for `providePlugins` managers, null for
+  // the app-level manager. Error handling walks this chain to give plugin
+  // `onError` handlers a chance at each providing level.
+  parent: PluginManager | null;
 
   // Resolves once all batches of plugins have started and their willStart
   // callbacks have settled. The scope transitions to MOUNTED as the last step
@@ -86,9 +90,11 @@ export class PluginManager extends Scope {
 
     if (options.parent) {
       const parent = options.parent;
+      this.parent = parent;
       parent.onDestroy(() => this.destroy());
       this.plugins = Object.create(parent.plugins);
     } else {
+      this.parent = null;
       this.plugins = {};
     }
   }

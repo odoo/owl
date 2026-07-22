@@ -389,3 +389,33 @@ class KeyboardPlugin extends Plugin {
   }
 }
 ```
+
+## Error Handling
+
+Plugins can use the [`onError`](error_handling.md) hook, just like components.
+A handler registered in a plugin's `setup()` catches rendering and lifecycle
+errors coming from the subtree the plugin is provided in: the providing
+component's subtree for `providePlugins()`, or the whole application for
+app-level plugins.
+
+```js
+class ErrorService extends Plugin {
+  lastError = signal(null);
+
+  setup() {
+    onError((error) => {
+      this.lastError.set(error);
+    });
+  }
+}
+```
+
+Handlers closest to the error run first: an error bubbles up the component
+tree, and at each level the component's own handlers run before those of the
+plugins it provides. A handler can rethrow to pass the error further up —
+app-level plugin handlers are the last stop before Owl destroys the
+application.
+
+Note that during the initial mount, an error that reaches the root component
+unhandled rejects the `mount()` promise instead of reaching the app-level
+plugin handlers.

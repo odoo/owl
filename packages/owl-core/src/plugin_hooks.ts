@@ -1,14 +1,10 @@
 import { OwlError } from "./owl_error";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
-import { Scope, useScope } from "./scope";
+import { useScope } from "./scope";
 import { getDefault, types, type Optional, type StripBrands, type WithDefault } from "./types";
 import { assertType } from "./validation";
 
-export type PluginInstance<T extends PluginConstructor> = T extends {
-  scoped: (plugin: any, scope: Scope) => infer R;
-}
-  ? R
-  : Omit<InstanceType<T>, "setup">;
+export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
 
 export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
   const scope = useScope();

@@ -213,7 +213,7 @@ exports[`basics > render from above on error -- handler is not a Root or MountFi
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Boom\`, true, false, false, [], ["onError"]);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1156,7 +1156,7 @@ exports[`can catch errors > catching error, rethrow, render parent  -- a main co
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, markRaw, withKey } = helpers;
   const comp1 = createComponent(app, null, false, false, false, []);
-  const comp2 = createComponent(app, \`ErrorHandler\`, true, true, false, ["onError.cp"]);
+  const comp2 = createComponent(app, \`ErrorHandler\`, true, true, false, ["onError.cp"], ["onError"]);
   
   function slot1(ctx, node, key = "") {
     const Comp1 = ctx['cp'].Comp;
@@ -1234,7 +1234,7 @@ exports[`can catch errors > catching in child makes parent render 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, markRaw, withKey } = helpers;
   const comp1 = createComponent(app, null, false, false, false, ["id"]);
-  const comp2 = createComponent(app, \`Catch\`, true, true, false, ["onError.elem"]);
+  const comp2 = createComponent(app, \`Catch\`, true, true, false, ["onError.elem"], ["onError"]);
   
   function slot1(ctx, node, key = "") {
     const Comp1 = ctx['elem'][1];

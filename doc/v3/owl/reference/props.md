@@ -377,6 +377,29 @@ wrong to use `.alike`.
 </t>
 ```
 
+### Alike props and effects
+
+Props coming from `useProps` are reactive, so reading `this.props.someProp` in an
+[effect](effects.md) or a [computed value](computed_values.md) subscribes to it.
+Alike props are left out of that too, and do not notify when the parent renders
+again with a new function.
+
+```js
+class Child extends Component {
+  props = useProps(["value", "onClick"]);
+  setup() {
+    // runs again when `value` changes, but not because the parent rebuilt `onClick`
+    useEffect(() => {
+      console.log(this.props.value, this.props.onClick);
+    });
+  }
+}
+```
+
+An anonymous function still notifies if one of the values it captures changes,
+since that is also what makes Owl re-render the child. A `.alike` or `.bind` prop
+captures nothing, so it never notifies.
+
 ## Binding function props
 
 It is common to have the need to pass a callback as a prop. Since Owl components

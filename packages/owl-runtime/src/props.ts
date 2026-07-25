@@ -44,6 +44,24 @@ export interface PropsFunction {
   static: typeof staticProp;
 }
 
+type Captures = Record<string, Record<string, any>>;
+
+// for each variable captured by an inline arrow function, the compiler emits a
+// companion `\x01<prop>.<var>` prop holding its value. Group them by prop name.
+function collectCaptures(props: Record<string, any>): Captures | null {
+  let captures: Captures | null = null;
+  for (const key in props) {
+    if (key.charCodeAt(0) !== 1) {
+      continue;
+    }
+    captures ||= Object.create(null) as Captures;
+    const name = key.slice(1, key.indexOf("."));
+    const propCaptures = (captures[name] ||= Object.create(null));
+    propCaptures[key] = props[key];
+  }
+  return captures;
+}
+
 function makeProps(type?: any): Props<{}> {
   const node = getComponentScope();
   const { app, componentName } = node;
@@ -71,6 +89,28 @@ function makeProps(type?: any): Props<{}> {
     return props[key];
   }
 
+  // node.props is replaced as a whole before the propsUpdated hooks run, so by
+  // the time we get to compare, the previous captures are already gone.
+  const alikeProps = node.alikeProps;
+  let captures = alikeProps ? collectCaptures(node.props) : null;
+
+  // an alike prop is a new function on every render, but it does the same thing
+  // unless one of the values it captured changed. `.alike` and `.bind` capture
+  // nothing, so they always compare equal.
+  function hasSameCaptures(key: string, nextCaptures: Captures | null) {
+    const previous = captures?.[key];
+    const next = nextCaptures?.[key];
+    if (!previous || !next) {
+      return !previous && !next;
+    }
+    for (const capture in next) {
+      if (previous[capture] !== next[capture]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   const signals: Record<string, Signal<any>> = Object.create(null);
   const result = Object.create(null);
   function defineProp(key: string) {
@@ -89,9 +129,14 @@ function makeProps(type?: any): Props<{}> {
   }
 
   function updateSignals(keys: string[]) {
+    const nextCaptures = alikeProps ? collectCaptures(node.props) : null;
     for (const key of keys) {
+      if (alikeProps?.has(key) && hasSameCaptures(key, nextCaptures)) {
+        continue;
+      }
       signals[key].set(resolveValue(node.props, key));
     }
+    captures = nextCaptures;
   }
 
   if (type) {

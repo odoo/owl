@@ -118,6 +118,58 @@ class SomeComponent extends Component {
 }
 ```
 
+### `useOnChange`
+
+The `useOnChange` hook runs a callback whenever one of the values returned by a
+dependency function changes. Contrary to [`useEffect`](#useeffect), only the
+dependency function is tracked: reactive values read (or written) inside the
+callback do not become dependencies, so the callback cannot retrigger itself.
+
+```js
+useOnChange(dependencies, callback, options);
+```
+
+- `dependencies` is a function returning an array of values. It is the tracked
+  part of the hook: the callback runs again whenever a reactive value read here
+  changes.
+- `callback` receives the dependencies as its arguments. Like an effect
+  callback, it may return a cleanup function, which is then called before the
+  next run and when the component is destroyed.
+- `options.initialRun` (default: `true`): if `false`, the callback does not run
+  on the initial execution, only on subsequent changes.
+
+```js
+class RecordViewer extends Component {
+  static template = xml`<div t-out="this.record().name"/>`;
+
+  props = props({ recordId: t.number() });
+  record = signal(null);
+
+  setup() {
+    useOnChange(
+      () => [this.props.recordId],
+      (recordId) => {
+        // reading/writing this.record here does not make it a dependency
+        this.record.set(null);
+        loadRecord(recordId).then((record) => this.record.set(record));
+      }
+    );
+  }
+}
+```
+
+This is mostly useful when the callback also needs to read reactive values that
+should _not_ trigger it. Otherwise, a plain `useEffect` is simpler:
+
+```js
+// these are equivalent
+useOnChange(
+  () => [this.value()],
+  (value) => console.log(value)
+);
+useEffect(() => console.log(this.value()));
+```
+
 ### `useListener`
 
 The `useListener` hook adds an event listener to a target and automatically

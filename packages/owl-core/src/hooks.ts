@@ -1,3 +1,4 @@
+import { untrack } from "./computations";
 import { effect } from "./effect";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { useScope } from "./scope";
@@ -17,6 +18,62 @@ import { Signal } from "./signal";
  */
 export function useEffect(fn: Parameters<typeof effect>[0]): void {
   onWillDestroy(effect(fn));
+}
+
+// -----------------------------------------------------------------------------
+// useOnChange
+// -----------------------------------------------------------------------------
+
+type Cleanup = (() => void) | void;
+
+/**
+ * Identity mapped type over a tuple. It keeps the type of each position when
+ * `callback` is contextually typed, while preventing typescript from inferring
+ * the dependency tuple from `callback`'s own (possibly shorter) parameter list.
+ */
+type Args<T extends unknown[]> = { [K in keyof T]: T[K] };
+
+/**
+ * Runs `callback` whenever one of the reactive values read by `dependencies`
+ * changes. Contrary to `useEffect`, only the `dependencies` function is
+ * tracked: reactive values read inside `callback` do not become dependencies,
+ * so the callback cannot retrigger itself.
+ *
+ * `dependencies` must return an array of values, which are spread as the
+ * arguments of `callback`. As with `useEffect`, if `callback` returns a
+ * function, that function is called as cleanup before the next run and when
+ * the owning scope is destroyed.
+ *
+ * By default the callback also runs on the initial execution. Pass
+ * `{ initialRun: false }` to only react to subsequent changes.
+ *
+ * Example — refetch a record whenever its id changes, without subscribing to
+ * everything `loadRecord` happens to read:
+ *   useOnChange(
+ *     () => [this.props.recordId],
+ *     (recordId) => {
+ *       this.loadRecord(recordId);
+ *     }
+ *   );
+ */
+export function useOnChange<T extends unknown[]>(
+  // the variadic tuple `[...T]` (instead of a plain `T`) makes typescript infer
+  // a tuple from the returned array literal, so each argument of `callback`
+  // keeps its own type
+  dependencies: () => [...T],
+  callback: (...args: Args<T>) => Cleanup,
+  { initialRun = true }: { initialRun?: boolean } = {}
+): void {
+  let skipRun = !initialRun;
+  useEffect(() => {
+    // Reading the dependencies is the only tracked part of this effect.
+    const deps = dependencies();
+    if (skipRun) {
+      skipRun = false;
+      return;
+    }
+    return untrack(() => callback(...deps));
+  });
 }
 
 // -----------------------------------------------------------------------------

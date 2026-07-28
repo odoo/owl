@@ -14,6 +14,7 @@ import {
   signal,
   useEffect,
   useListener,
+  useOnChange,
   xml,
 } from "../../src";
 import {
@@ -536,6 +537,115 @@ describe("hooks", () => {
       }
       expect(error!.message).toBe("Intentional error");
       expect(getConsoleOutput()).toEqual([]);
+    });
+  });
+
+  describe("useOnChange hook", () => {
+    test("callback runs on mount, on dependency change and is cleaned up", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        state = proxy({ value: 0 });
+        setup() {
+          useOnChange(
+            () => [this.state.value],
+            (value) => {
+              logStep(`value is ${value}`);
+              return () => logStep(`cleaning up for ${value}`);
+            }
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(["value is 0"]).toBeLogged();
+
+      component.state.value++;
+      await nextTick();
+      expect(["cleaning up for 0", "value is 1"]).toBeLogged();
+
+      await component.__owl__.destroy();
+      expect(["cleaning up for 1"]).toBeLogged();
+    });
+
+    test("does not run the callback on mount with initialRun=false", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        value = signal(0);
+        setup() {
+          useOnChange(
+            () => [this.value()],
+            (value) => {
+              logStep(`value is ${value}`);
+              return () => logStep(`cleaning up for ${value}`);
+            },
+            { initialRun: false }
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect([]).toBeLogged();
+
+      component.value.set(1);
+      await nextTick();
+      expect(["value is 1"]).toBeLogged();
+
+      component.value.set(2);
+      await nextTick();
+      expect(["cleaning up for 1", "value is 2"]).toBeLogged();
+
+      await component.__owl__.destroy();
+      expect(["cleaning up for 2"]).toBeLogged();
+    });
+
+    test("reactive values read in the callback are not dependencies", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        a = signal(0);
+        b = signal(0);
+        setup() {
+          useOnChange(
+            () => [this.a()],
+            (a) => {
+              // reading b here should not subscribe the callback to it
+              logStep(`a=${a}, b=${this.b()}`);
+              // ... and writing to b should not retrigger it either
+              this.b.set(this.b() + 1);
+            }
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(["a=0, b=0"]).toBeLogged();
+
+      component.b.set(10);
+      await nextTick();
+      expect([]).toBeLogged();
+
+      component.a.set(1);
+      await nextTick();
+      expect(["a=1, b=10"]).toBeLogged();
+    });
+
+    test("callback receives each dependency as an argument", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        state = proxy({ a: 1, b: "x" });
+        setup() {
+          useOnChange(
+            () => [this.state.a, this.state.b],
+            (a, b) => logStep(`${a.toFixed(1)}/${b.toUpperCase()}`)
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(["1.0/X"]).toBeLogged();
+
+      component.state.b = "y";
+      await nextTick();
+      expect(["1.0/Y"]).toBeLogged();
     });
   });
 });

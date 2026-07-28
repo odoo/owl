@@ -110,6 +110,7 @@ export {
   useApp,
   useEffect,
   useListener,
+  useOnChange,
 } from "./hooks";
 
 export {

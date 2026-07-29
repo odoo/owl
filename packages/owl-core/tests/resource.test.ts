@@ -33,6 +33,30 @@ test("can remove values", () => {
   expect(resource.items()).toEqual(["c"]);
 });
 
+test("can remove every value", () => {
+  const resource = new Resource();
+  resource.add("a").add("b");
+  resource.clear();
+  expect(resource.items()).toEqual([]);
+  expect(resource.has("a")).toBe(false);
+  resource.add("c");
+  expect(resource.items()).toEqual(["c"]);
+});
+
+test("clear notifies effects", async () => {
+  const resource: Resource<string> = new Resource();
+  resource.add("a");
+  const steps: string[][] = [];
+
+  effect(() => {
+    steps.push(resource.items());
+  });
+  expect(steps).toEqual([["a"]]);
+  resource.clear();
+  await waitScheduler();
+  expect(steps).toEqual([["a"], []]);
+});
+
 test("sequence", async () => {
   const resource = new Resource<string>({ name: "r" });
 

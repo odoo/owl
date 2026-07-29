@@ -117,11 +117,22 @@ setup() {
 
 ### `delete(key)`
 
-Removes an entry by key. Returns `void` (not chainable — unlike
-`Resource.delete`).
+Removes an entry by key. Returns the registry for chaining.
 
 ```js
 views.delete("form");
+views.delete("list").delete("kanban");
+```
+
+### `clear()`
+
+Removes every entry. Returns `void` (not chainable, since there is nothing left
+to operate on). Entries added with `use()` are removed as well: their scope
+cleanup becomes a no-op, so nothing comes back when the component or plugin is
+destroyed.
+
+```js
+views.clear();
 ```
 
 ### `has(key)`
@@ -200,7 +211,8 @@ See [Types & Validation](types_validation.md) for the full schema syntax.
 | `use(key, value, { sequence?, force? })` | Add for the lifetime of the current component/plugin. Chainable. Throws outside a context, or on duplicate key unless `force: true`. |
 | `useById(item, { sequence?, force? })`   | Scoped variant of `addById`. Chainable.                                                                                              |
 | `get(key, defaultValue?)`                | Look up by key. Throws `OwlError` if missing and no default.                                                                         |
-| `delete(key)`                            | Remove. Returns `void`.                                                                                                              |
+| `delete(key)`                            | Remove. Chainable.                                                                                                                   |
+| `clear()`                                | Remove every entry. Returns `void`.                                                                                                  |
 | `has(key)`                               | Test key presence.                                                                                                                   |
 | `items()`                                | Reactive computed returning values sorted by sequence.                                                                               |
 | `entries()`                              | Reactive computed returning `[key, value]` tuples sorted by sequence.                                                                |

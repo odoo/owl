@@ -86,6 +86,17 @@ commands.delete(item);
 commands.delete(a).delete(b);
 ```
 
+### `clear()`
+
+Removes every item. Returns `void` (not chainable, since there is nothing left
+to operate on). Items added with `use()` are removed as well: their scope
+cleanup becomes a no-op, so nothing comes back when the component or plugin is
+destroyed.
+
+```js
+commands.clear();
+```
+
 ### `has(item)`
 
 Returns `true` if the resource contains the given item (reference equality).
@@ -155,5 +166,6 @@ See [Types & Validation](types_validation.md) for the full schema syntax.
 | `add(item, { sequence? })`             | Add permanently. Chainable.                                                                |
 | `use(item, { sequence? })`             | Add for the lifetime of the current component/plugin. Chainable. Throws outside a context. |
 | `delete(item)`                         | Remove by reference equality. Chainable.                                                   |
+| `clear()`                              | Remove every item. Returns `void`.                                                         |
 | `has(item)`                            | Test membership by reference equality.                                                     |
 | `items()`                              | Reactive computed returning items sorted by sequence.                                      |

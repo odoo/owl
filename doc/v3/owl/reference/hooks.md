@@ -130,8 +130,9 @@ useOnChange(dependencies, callback, options);
 ```
 
 - `dependencies` is a function returning an array of values. It is the tracked
-  part of the hook: the callback runs again whenever a reactive value read here
-  changes.
+  part of the hook: it runs again whenever a reactive value read here changes.
+  The resulting array is compared with the previous one (element by element),
+  and the callback only runs if it actually changed.
 - `callback` receives the dependencies as its arguments. Like an effect
   callback, it may return a cleanup function, which is then called before the
   next run and when the component is destroyed.
@@ -158,8 +159,24 @@ class RecordViewer extends Component {
 }
 ```
 
-This is mostly useful when the callback also needs to read reactive values that
-should _not_ trigger it. Otherwise, a plain `useEffect` is simpler:
+Because the dependency array is compared by value, a dependency computed from
+reactive values only triggers the callback when its own result changes:
+
+```js
+useOnChange(
+  () => [this.count() > 10],
+  (isBig) => console.log("isBig", isBig)
+);
+```
+
+Here `this.count()` going from 2 to 3 does not run the callback: the dependency
+is still `false`. A `useEffect` reading `this.count() > 10` would re-run on
+every change of `count`.
+
+So `useOnChange` is useful when the callback needs to read reactive values that
+should _not_ trigger it, and when the dependencies are derived values. When the
+dependencies are read directly and the callback needs nothing else, a plain
+`useEffect` is simpler:
 
 ```js
 // these are equivalent

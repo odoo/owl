@@ -628,6 +628,43 @@ describe("hooks", () => {
       expect(["a=1, b=10"]).toBeLogged();
     });
 
+    test("callback does not run if the dependency values are unchanged", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        count = signal(0);
+        setup() {
+          useOnChange(
+            () => [this.count() > 10],
+            (isBig) => {
+              logStep(`isBig=${isBig}`);
+              return () => logStep(`cleaning up for isBig=${isBig}`);
+            }
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(["isBig=false"]).toBeLogged();
+
+      // count changed, but the dependency value did not
+      component.count.set(2);
+      await nextTick();
+      expect([]).toBeLogged();
+
+      component.count.set(3);
+      await nextTick();
+      expect([]).toBeLogged();
+
+      // the dependency value now changes
+      component.count.set(11);
+      await nextTick();
+      expect(["cleaning up for isBig=false", "isBig=true"]).toBeLogged();
+
+      component.count.set(12);
+      await nextTick();
+      expect([]).toBeLogged();
+    });
+
     test("callback receives each dependency as an argument", async () => {
       class MyComponent extends Component {
         static template = xml`<div/>`;

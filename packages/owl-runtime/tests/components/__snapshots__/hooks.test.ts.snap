@@ -271,6 +271,19 @@ exports[`hooks > useListener work with references 1`] = `
 }"
 `;
 
+exports[`hooks > useOnChange hook > callback does not run if the dependency values are unchanged 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`hooks > useOnChange hook > callback receives each dependency as an argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

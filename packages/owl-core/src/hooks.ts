@@ -1,8 +1,10 @@
+import { computed } from "./computed";
 import { untrack } from "./computations";
 import { effect } from "./effect";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { useScope } from "./scope";
 import { Signal } from "./signal";
+import { shallowEqual } from "./utils";
 
 // -----------------------------------------------------------------------------
 // useEffect
@@ -34,10 +36,14 @@ type Cleanup = (() => void) | void;
 type Args<T extends unknown[]> = { [K in keyof T]: T[K] };
 
 /**
- * Runs `callback` whenever one of the reactive values read by `dependencies`
- * changes. Contrary to `useEffect`, only the `dependencies` function is
- * tracked: reactive values read inside `callback` do not become dependencies,
- * so the callback cannot retrigger itself.
+ * Runs `callback` whenever the array returned by `dependencies` changes.
+ * Contrary to `useEffect`, only the `dependencies` function is tracked:
+ * reactive values read inside `callback` do not become dependencies, so the
+ * callback cannot retrigger itself.
+ *
+ * The dependency array is compared with `shallowEqual`, so `callback` only
+ * runs when one of the values it receives actually changed: with
+ * `() => [count() > 10]`, `count` going from 2 to 3 does not run it.
  *
  * `dependencies` must return an array of values, which are spread as the
  * arguments of `callback`. As with `useEffect`, if `callback` returns a
@@ -64,15 +70,19 @@ export function useOnChange<T extends unknown[]>(
   callback: (...args: Args<T>) => Cleanup,
   { initialRun = true }: { initialRun?: boolean } = {}
 ): void {
+  // `dependencies` re-runs whenever any reactive value it reads changes, but
+  // the structural equality discards a result equal to the previous one, so the
+  // effect below is not notified when the dependency values are unchanged.
+  const deps = computed(dependencies, { equals: shallowEqual });
   let skipRun = !initialRun;
   useEffect(() => {
     // Reading the dependencies is the only tracked part of this effect.
-    const deps = dependencies();
+    const args = deps();
     if (skipRun) {
       skipRun = false;
       return;
     }
-    return untrack(() => callback(...deps));
+    return untrack(() => callback(...args));
   });
 }
 

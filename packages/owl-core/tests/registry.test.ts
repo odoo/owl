@@ -25,6 +25,41 @@ describe("registry", () => {
     registry.add("key", "some value");
     expect(registry.get("key")).toBe("some value");
     registry.delete("key");
+    expect(registry.has("key")).toBe(false);
+  });
+
+  test("delete method returns the registry, so it is chainable", () => {
+    const registry = new Registry();
+
+    registry.add("a", 1).add("b", 2).add("c", 3);
+    registry.delete("a").delete("b");
+    expect(registry.items()).toEqual([3]);
+  });
+
+  test("can remove every value", () => {
+    const registry = new Registry();
+
+    registry.add("key", "some value").add("other", "value");
+    registry.clear();
+    expect(registry.has("key")).toBe(false);
+    expect(registry.has("other")).toBe(false);
+    expect(registry.items()).toEqual([]);
+    registry.add("key", "again");
+    expect(registry.get("key")).toBe("again");
+  });
+
+  test("clear notifies effects", async () => {
+    const registry: Registry<string> = new Registry();
+    registry.add("key", "a");
+    const steps: string[][] = [];
+
+    effect(() => {
+      steps.push(registry.items());
+    });
+    expect(steps).toEqual([["a"]]);
+    registry.clear();
+    await waitScheduler();
+    expect(steps).toEqual([["a"], []]);
   });
 
   test("set method returns the registry, so it is chainable", () => {

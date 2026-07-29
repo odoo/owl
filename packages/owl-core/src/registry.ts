@@ -70,8 +70,13 @@ export class Registry<T> {
     return hasKey ? this._map()[key][1] : defaultValue!;
   }
 
-  delete(key: string) {
+  delete(key: string): Registry<T> {
     delete this._map()[key];
+    return this;
+  }
+
+  clear() {
+    this._map.set(Object.create(null));
   }
 
   has(key: string): boolean {

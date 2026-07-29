@@ -48,6 +48,10 @@ export class Resource<T> {
     return this;
   }
 
+  clear() {
+    this._items.set([]);
+  }
+
   has(item: Item<T>): boolean {
     return this._items().some(([s, value]) => value === item);
   }

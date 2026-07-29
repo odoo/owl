@@ -11,6 +11,71 @@ exports[`a global plugin can import the current app 1`] = `
 }"
 `;
 
+exports[`a plugin can handle errors coming from the subtree it is provided in 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Parent\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`a plugin can handle errors coming from the subtree it is provided in 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    if (ctx['this'].errors.error()) {
+      b2 = text(\`Error\`);
+    } else {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`a plugin can handle errors coming from the subtree it is provided in 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].a.b.c);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`app-level plugins can handle errors escaping the root component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    if (ctx['this'].flag()) {
+      b2 = safeOutput(ctx['this'].a.b.c);
+    } else {
+      b3 = text(\`ok\`);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`basic use (setup) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -247,6 +312,53 @@ exports[`plugin config are validated 1`] = `
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].a.inputA);
+  }
+}"
+`;
+
+exports[`plugin onError handlers can rethrow, after the host's own handlers 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Provider\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    if (ctx['this'].error()) {
+      b2 = text(\`Error\`);
+    } else {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`plugin onError handlers can rethrow, after the host's own handlers 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`plugin onError handlers can rethrow, after the host's own handlers 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].a.b.c);
+    return block1([], [b2]);
   }
 }"
 `;

@@ -37,6 +37,11 @@ There are important things to know:
   an error, and Owl will try looking for another error handler up the component
   tree.
 
+- `onError` also works inside a plugin's `setup()`: the handler then catches
+  errors coming from the subtree the plugin is provided in (the whole
+  application for app-level plugins). See
+  [Plugins](plugins.md#error-handling).
+
 ## Example
 
 For example, here is how we could implement a generic component `ErrorBoundary`

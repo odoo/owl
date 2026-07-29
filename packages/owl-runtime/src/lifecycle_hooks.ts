@@ -1,3 +1,4 @@
+import { useScope, type PluginManager } from "@odoo/owl-core";
 import { ComponentNode, getComponentScope } from "./component_node";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 
@@ -41,11 +42,16 @@ export function onWillUnmount(fn: (scope: ComponentNode) => void | any) {
 
 type OnErrorCallback = (error: any) => void | any;
 export function onError(callback: OnErrorCallback) {
-  const scope = getComponentScope();
+  // the only concrete scopes are ComponentNode and PluginManager
+  const scope = useScope() as ComponentNode | PluginManager;
+  if (scope instanceof ComponentNode) {
+    // matching the other lifecycle hooks, bind the handler to the component
+    callback = callback.bind(scope.component);
+  }
   let handlers = nodeErrorHandlers.get(scope);
   if (!handlers) {
     handlers = [];
     nodeErrorHandlers.set(scope, handlers);
   }
-  handlers.push(callback.bind(scope.component));
+  handlers.push(callback);
 }

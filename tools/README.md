@@ -1,5 +1,6 @@
 # Tools
 
+- **benchmark/**: Performance benchmarking suite for measuring and comparing Owl's rendering performance. Supports running benchmarks in a browser UI or via a Node.js CLI runner, and can compare Owl against other frameworks (React, Vue, Solid).
 - **devtools/**: Browser extension (Chrome/Firefox) for debugging Owl components. Provides a devtools panel to inspect component tree, state, and lifecycle.
 - **build_codemirror.mjs**: Bundles CodeMirror editor packages into a single JS file (`docs/playground/libs/codemirror.bundle.js`) for use in the playground.
 - **compile_owl_templates.mjs**: CLI tool that compiles Owl XML templates into JavaScript. Reads template files from provided paths and writes compiled output to a file.

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Benchmark</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="d-flex flex-column vh-100">
+      <nav class="navbar navbar-dark bg-dark px-3 d-flex justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <span class="navbar-brand mb-0 h1">Owl Benchmark</span>
+          <button id="mode-benchmark" class="btn btn-sm btn-warning" type="button">Benchmarking</button>
+          <button id="mode-preview" class="btn btn-sm btn-outline-warning" type="button">Preview</button>
+        </div>
+        <span id="status" class="text-light small position-absolute start-50 translate-middle-x"></span>
+        <div></div>
+      </nav>
+      <div class="d-flex flex-grow-1 overflow-hidden">
+        <aside class="border-end p-3 overflow-y-auto bg-light flex-shrink-0" style="width: 280px">
+          <div id="sidebar-benchmark">
+            <div class="d-flex gap-2 align-items-center mb-3">
+              <select id="bench-select" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: auto"></select>
+              <a id="start" href="#autorun" target="_blank" class="btn btn-sm btn-warning flex-shrink-0" autofocus>Run</a>
+            </div>
+            <h6 class="text-muted text-uppercase small">Parameters</h6>
+            <form action="#">
+              <div class="mb-2">
+                <label for="duration" class="form-label small mb-1">Duration</label>
+                <input
+                  class="form-control form-control-sm"
+                  type="text"
+                  name="duration"
+                  id="duration"
+                  value="10"
+                />
+              </div>
+            </form>
+            <h6 class="text-muted text-uppercase small">Frameworks</h6>
+            <div id="framework-checkboxes" class="mb-3"></div>
+            <h6 class="text-muted text-uppercase small">
+              Snapshots
+              <button id="snapshot-btn" class="btn btn-sm btn-outline-secondary ms-2" type="button">Snapshot</button>
+            </h6>
+            <div id="snapshot-checkboxes" class="mb-3"></div>
+          </div>
+          <div id="sidebar-preview" class="d-none">
+            <h6 class="text-muted text-uppercase small">Preview</h6>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="preview-css" checked>
+              <label class="form-check-label small" for="preview-css">Load CSS</label>
+            </div>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="preview-visible" checked>
+              <label class="form-check-label small" for="preview-visible">Visible iframe</label>
+            </div>
+            <div id="render-buttons" class="d-grid gap-1"></div>
+          </div>
+        </aside>
+        <div class="flex-grow-1 overflow-auto d-flex flex-column" style="min-width: 0">
+          <div id="controls" class="d-none border-bottom bg-body-tertiary px-3 py-2 d-flex flex-wrap gap-1 align-items-center"></div>
+          <div id="fixture" class="flex-grow-1 overflow-auto"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./frameworks/owl2_reactive.ts" defer></script>
+    <script type="module" src="./frameworks/owl3_state.ts" defer></script>
+    <script type="module" src="./frameworks/owl3_signal.ts" defer></script>
+    <script type="module" src="./frameworks/react.tsx" defer></script>
+    <script type="module" src="./frameworks/vue.ts" defer></script>
+    <script type="module" src="./frameworks/solid.tsx" defer></script>
+    <script type="module" src="./frameworks/vanilla.ts" defer></script>
+    <script type="module" src="./src/setup.ts" defer></script>
+  </body>
+</html>

@@ -11,6 +11,30 @@ exports[`a global plugin can import the current app 1`] = `
 }"
 `;
 
+exports[`a manager alive at parent destruction is still destroyed 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`a manager alive at parent destruction is still destroyed 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`child\`);
+  }
+}"
+`;
+
 exports[`basic use (setup) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -258,6 +282,34 @@ exports[`plugins added to resource starts automatically 1`] = `
   
   return function template(ctx, node, key = "") {
     return text(\`\`);
+  }
+}"
+`;
+
+exports[`providePlugins does not retain destroyed managers in its parent 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (ctx['this'].showChild()) {
+      b2 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`providePlugins does not retain destroyed managers in its parent 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`child\`);
   }
 }"
 `;

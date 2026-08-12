@@ -290,3 +290,17 @@ describe("plugin scope", () => {
     expect(pluginSignal!.aborted).toBe(true);
   });
 });
+
+test("onDestroy returns an unregister function", () => {
+  const calls: string[] = [];
+  const app = new App({ plugins: [] });
+  const scope = app.pluginManager;
+
+  const unregisterA = scope.onDestroy(() => calls.push("a"));
+  scope.onDestroy(() => calls.push("b"));
+  unregisterA();
+  unregisterA(); // idempotent
+
+  app.destroy();
+  expect(calls).toEqual(["b"]);
+});

@@ -43,13 +43,20 @@ export class PluginManager extends Scope {
   // ready. `willStart` itself is inherited from Scope.
   ready: Promise<void> = Promise.resolve();
 
+  // Unregisters the parent's cascade callback. A manager is usually shorter
+  // lived than its parent (one per `providePlugins` call, i.e. per component
+  // instance), so the link has to be dropped on death: otherwise the parent
+  // keeps the callback, the callback keeps this manager, and this manager
+  // keeps its `config` — the sub-env and everything the sub-env references.
+  private _detachFromParent: (() => void) | null = null;
+
   constructor(app: any, options: PluginManagerOptions = {}) {
     super(app);
     this.config = options.config ?? {};
 
     if (options.parent) {
       const parent = options.parent;
-      parent.onDestroy(() => this.destroy());
+      this._detachFromParent = parent.onDestroy(() => this.destroy());
       this.plugins = Object.create(parent.plugins);
     } else {
       this.plugins = {};
@@ -58,6 +65,17 @@ export class PluginManager extends Scope {
 
   destroy() {
     this.finalize((e) => console.error(e));
+  }
+
+  // Detach here rather than in `destroy`: `finalize` is the single choke point
+  // every death path goes through.
+  finalize(reportError: (e: unknown) => void): void {
+    if (this.status >= STATUS.DESTROYED) {
+      return;
+    }
+    this._detachFromParent?.();
+    this._detachFromParent = null;
+    super.finalize(reportError);
   }
 
   getPluginById<T extends Plugin>(id: string): T | null {

@@ -435,3 +435,64 @@ test("components mounted by plugin", async () => {
   await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("defabc");
 });
+
+test("providePlugins does not retain destroyed managers in its parent", async () => {
+  class ScopedPlugin extends Plugin {}
+
+  class Child extends Component {
+    static template = xml`child`;
+    setup() {
+      providePlugins([ScopedPlugin], { env: { heavy: new Array(1000) } });
+    }
+  }
+
+  class Root extends Component {
+    static template = xml`<Child t-if="this.showChild()"/>`;
+    static components = { Child };
+    showChild = signal(false);
+  }
+
+  const app = new App({ plugins: [] });
+  const root = await app.createRoot(Root).mount(fixture);
+  const destroyCbs = () => (app.pluginManager as any)._destroyCbs?.length ?? 0;
+  const baseline = destroyCbs();
+
+  for (let i = 0; i < 10; i++) {
+    root.showChild.set(true);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("child");
+    root.showChild.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+  }
+
+  expect(destroyCbs()).toBe(baseline);
+  app.destroy();
+});
+
+test("a manager alive at parent destruction is still destroyed", async () => {
+  const destroyed: string[] = [];
+
+  class ScopedPlugin extends Plugin {
+    setup() {
+      onWillDestroy(() => destroyed.push("scoped"));
+    }
+  }
+
+  class Child extends Component {
+    static template = xml`child`;
+    setup() {
+      providePlugins([ScopedPlugin]);
+    }
+  }
+
+  class Root extends Component {
+    static template = xml`<Child/>`;
+    static components = { Child };
+  }
+
+  const app = new App({ plugins: [] });
+  await app.createRoot(Root).mount(fixture);
+  app.destroy();
+  expect(destroyed).toEqual(["scoped"]);
+});

@@ -99,13 +99,25 @@ export abstract class Scope {
   /**
    * Registers a callback to run when the scope is destroyed. If the scope is
    * already destroyed, the callback is invoked immediately.
+   *
+   * Returns a function that unregisters `cb`. Callers whose own lifetime is
+   * shorter than the scope's must use it: without an unregister path, every
+   * registration stays reachable from a longer-lived scope for as long as that
+   * scope is alive, pinning everything the callback closes over.
    */
-  onDestroy(cb: () => void): void {
+  onDestroy(cb: () => void): () => void {
     if (this.status >= STATUS.DESTROYED) {
       cb();
-      return;
+      return () => {};
     }
-    (this._destroyCbs ??= []).push(cb);
+    const cbs = (this._destroyCbs ??= []);
+    cbs.push(cb);
+    return () => {
+      const index = cbs.indexOf(cb);
+      if (index > -1) {
+        cbs.splice(index, 1);
+      }
+    };
   }
 
   /**
@@ -139,9 +151,13 @@ export abstract class Scope {
     const cbs = this._destroyCbs;
     if (cbs) {
       this._destroyCbs = null;
-      for (let i = cbs.length - 1; i >= 0; i--) {
+      // Iterate over a copy: a callback may cascade into a child scope that
+      // unregisters itself from `cbs` while we walk it (see onDestroy), and
+      // splicing the array under the loop would skip an entry.
+      const pending = cbs.slice();
+      for (let i = pending.length - 1; i >= 0; i--) {
         try {
-          cbs[i]();
+          pending[i]();
         } catch (e) {
           reportError(e);
         }

@@ -10,10 +10,14 @@ import type { ComponentNode } from "../component_node";
 import { STATUS } from "../status";
 import { fibersInError, handleError } from "./error_handling";
 
-// Max times a root fiber may be re-rendered before being committed to the DOM
+// Max times a given fiber may be recycled before being committed to the DOM
 // before we treat it as an infinite render loop. A healthy render commits after
 // ~1 pass; only a self-retriggering loop ever approaches this. See issue #1968.
 const MAX_RENDER_ITERATIONS = 1000;
+
+// Bit 0 of Fiber.renderState: whether the fiber's result was applied to the
+// DOM (the other bits hold the recycle count, see the renderState declaration).
+export const APPLIED_TO_DOM = 1;
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -31,7 +35,10 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     // This fiber is being re-rendered before it was ever committed to the DOM.
     // In a healthy app a fiber is committed (and node.fiber nulled) before the
     // next render, so this only climbs without bound in a render loop (#1968).
-    root.renderCount++;
+    // The count is per fiber, NOT on the root: under a long-lived uncommitted
+    // root, many sibling subtrees may legitimately re-render once each, and a
+    // shared counter would add those up and flag a loop where there is none.
+    current.renderState += 2; // bump the recycle count held in bits 1+
     // lock root fiber because canceling children fibers may destroy components,
     // which means any arbitrary code can be run in onWillDestroy, which may
     // trigger new renderings
@@ -44,7 +51,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
-      current.appliedToDom = false;
+      current.renderState &= ~APPLIED_TO_DOM;
       if (current instanceof RootFiber) {
         // it is possible that this fiber is a fiber that crashed while being
         // mounted, so the mounted list is possibly corrupted. We restore it to
@@ -112,7 +119,12 @@ export class Fiber {
   root: RootFiber | null; // A Fiber that has been replaced by another has no root
   parent: Fiber | null;
   children: Fiber[] = [];
-  appliedToDom = false;
+  // Packs the "applied to DOM" flag (bit 0, see APPLIED_TO_DOM) together with
+  // the number of times this uncommitted fiber has been recycled by
+  // makeRootFiber (bits 1 and up). The recycle count climbs without bound only
+  // in a render loop (#1968); it shares a slot with the flag so the many
+  // fibers that are never recycled don't pay for a dedicated field.
+  renderState = 0;
   deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
 
@@ -160,10 +172,10 @@ export class Fiber {
     if (root) {
       // Bail before touching the computation tracking pointer (below) so a
       // detected loop never leaves currentComputation pinned to a signalComputation
-      // that app.destroy is about to dispose. The root's own render runs right
-      // after makeRootFiber bumped renderCount and before any child render, so
-      // the reported component is always the looping root.
-      if (root.renderCount > MAX_RENDER_ITERATIONS) {
+      // that app.destroy is about to dispose. The looping node's own fiber is
+      // the one makeRootFiber keeps recycling, so the reported component is
+      // the one actually stuck in the loop.
+      if (this.renderState >> 1 > MAX_RENDER_ITERATIONS) {
         handleError({
           node,
           error: new OwlError(
@@ -199,9 +211,6 @@ export class Fiber {
 
 export class RootFiber extends Fiber {
   counter: number = 1;
-  // Number of times this (uncommitted) fiber has been recycled by makeRootFiber.
-  // Climbs without bound only in a render loop; see issue #1968.
-  renderCount = 0;
 
   // only add stuff in this if they have registered some hooks
   willPatch: Fiber[] = [];
@@ -239,7 +248,7 @@ export class RootFiber extends Fiber {
       // Step 4: calling all mounted lifecycle hooks
       while ((current = mountedFibers.pop())) {
         current = current;
-        if (current.appliedToDom) {
+        if (current.renderState & APPLIED_TO_DOM) {
           for (let cb of current.node.mounted) {
             cb();
           }
@@ -250,7 +259,7 @@ export class RootFiber extends Fiber {
       let patchedFibers = this.patched;
       while ((current = patchedFibers.pop())) {
         current = current;
-        if (current.appliedToDom) {
+        if (current.renderState & APPLIED_TO_DOM) {
           for (let cb of current.node.patched) {
             cb();
           }
@@ -314,7 +323,7 @@ export class MountFiber extends RootFiber {
       // Prepare-only: the render phase is done, but no target has been
       // supplied yet. Signal readiness and let the scheduler drop this
       // fiber from its tasks — commit() will run _mount() when called.
-      this.appliedToDom = true;
+      this.renderState |= APPLIED_TO_DOM;
       this.onPrepared?.();
     }
   }
@@ -359,10 +368,10 @@ export class MountFiber extends RootFiber {
       node.fiber = null;
 
       node.status = STATUS.MOUNTED;
-      this.appliedToDom = true;
+      this.renderState |= APPLIED_TO_DOM;
       let mountedFibers = this.mounted;
       while ((current = mountedFibers.pop())) {
-        if (current.appliedToDom) {
+        if (current.renderState & APPLIED_TO_DOM) {
           for (let cb of current.node.mounted) {
             cb();
           }

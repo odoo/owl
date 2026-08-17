@@ -85,9 +85,13 @@ export class PluginManager extends Scope {
     this.pluginManager = this;
 
     if (options.parent) {
-      const parent = options.parent;
-      parent.onDestroy(() => this.destroy());
-      this.plugins = Object.create(parent.plugins);
+      // The parent deliberately keeps NO reference to this sub manager: an
+      // onDestroy callback on the parent is never removed, so a long-lived
+      // parent would retain every destroyed sub manager (and all its plugin
+      // instances). Whoever creates a sub manager is responsible for
+      // destroying it — providePlugins ties it to its host component's
+      // lifetime, and the app destroys its own manager.
+      this.plugins = Object.create(options.parent.plugins);
     } else {
       this.plugins = {};
     }

@@ -466,7 +466,9 @@ describe("sub plugin managers", () => {
     expect(steps.splice(0)).toEqual(["destroy A"]);
   });
 
-  test("destroying parent plugin manager destroys everything", () => {
+  test("destroying parent plugin manager does not destroy sub managers", () => {
+    // The parent keeps no reference to its sub managers (it would retain
+    // destroyed ones forever): whoever creates a sub manager destroys it.
     const steps: string[] = [];
 
     class A extends Plugin {
@@ -490,11 +492,63 @@ describe("sub plugin managers", () => {
     const app = new App();
     const manager = new PluginManager(app);
     manager.startPlugins([A]);
-    new PluginManager(app, { parent: manager }).startPlugins([B]);
+    const subManager = new PluginManager(app, { parent: manager });
+    subManager.startPlugins([B]);
     expect(steps.splice(0)).toEqual(["setup A", "setup B"]);
 
     manager.destroy();
-    expect(steps.splice(0)).toEqual(["destroy B", "destroy A"]);
+    expect(steps.splice(0)).toEqual(["destroy A"]);
+
+    subManager.destroy();
+    expect(steps.splice(0)).toEqual(["destroy B"]);
+  });
+
+  test("destroyed sub plugin manager is not retained by its parent", async () => {
+    const steps: string[] = [];
+
+    class P extends Plugin {
+      setup() {
+        steps.push("setup P");
+        onWillDestroy(() => {
+          steps.push("destroy P");
+        });
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`child`;
+      setup() {
+        providePlugins([P]);
+      }
+    }
+
+    class Root extends Component {
+      static components = { Child };
+      static template = xml`<Child t-if="this.show()"/>`;
+      show = signal(true);
+    }
+
+    const fixture = makeTestFixture();
+    const app = new App();
+    const root = app.createRoot(Root);
+    const component = (await root.mount(fixture)) as Root;
+    expect(steps.splice(0)).toEqual(["setup P"]);
+
+    for (let i = 0; i < 3; i++) {
+      component.show.set(false);
+      await nextTick();
+      expect(steps.splice(0)).toEqual(["destroy P"]);
+
+      component.show.set(true);
+      await nextTick();
+      expect(steps.splice(0)).toEqual(["setup P"]);
+    }
+
+    // The app-level manager must not accumulate references to the destroyed
+    // sub managers (and through them, all their plugin instances).
+    expect((app.pluginManager as any)._destroyCbs ?? []).toHaveLength(0);
+    app.destroy();
+    expect(steps.splice(0)).toEqual(["destroy P"]);
   });
 
   test("can access plugin in parent manager", () => {

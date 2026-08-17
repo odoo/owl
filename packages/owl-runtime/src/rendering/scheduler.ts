@@ -1,5 +1,5 @@
 import { fibersInError } from "./error_handling";
-import { Fiber, RootFiber } from "./fibers";
+import { APPLIED_TO_DOM, Fiber, RootFiber } from "./fibers";
 import { STATUS } from "../status";
 
 // -----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ export class Scheduler {
         // was an error and an error handler triggered a new rendering that recycled
         // the fiber, so in that case, we actually want to keep the fiber around,
         // otherwise it will just be ignored.
-        if (fiber.appliedToDom) {
+        if (fiber.renderState & APPLIED_TO_DOM) {
           this.tasks.delete(fiber);
         }
       }

@@ -91,6 +91,58 @@ exports[`render loop detection > throws a clear error instead of freezing on a r
 }"
 `;
 
+exports[`render loop detection > wide re-render under an uncommitted root is not a render loop 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, OwlError, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`AsyncChild\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].ids);;
+    const keys2 = new Set();
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`i\`] = k_block2[i1];
+      const key1 = ctx['i'];
+      if (keys2.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
+      keys2.add(String(key1));
+      const props1 = {};
+      c_block2[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    const b2 = list(c_block2);
+    const props2 = {};
+    const b4 = comp2(props2, key + \`__2\`, node, this, null);
+    return multi([b2, b4]);
+  }
+}"
+`;
+
+exports[`render loop detection > wide re-render under an uncommitted root is not a render loop 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].shared());
+  }
+}"
+`;
+
+exports[`render loop detection > wide re-render under an uncommitted root is not a render loop 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`async\`);
+  }
+}"
+`;
+
 exports[`rendering semantics > can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

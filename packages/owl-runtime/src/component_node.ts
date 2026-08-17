@@ -15,7 +15,7 @@ import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./rendering/error_handling";
-import { Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       }
       this.sweepRefs();
       sweepRemovedRefs();
-      this.fiber!.appliedToDom = true;
+      this.fiber!.renderState |= APPLIED_TO_DOM;
       this.fiber = null;
     }
   }
@@ -294,7 +294,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.bdom = bdom;
     bdom.mount(parent, anchor);
     this.status = STATUS.MOUNTED;
-    this.fiber!.appliedToDom = true;
+    this.fiber!.renderState |= APPLIED_TO_DOM;
     this.children = this.fiber!.childrenMap;
     this.fiber = null;
   }
@@ -341,7 +341,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     }
     this.sweepRefs();
     sweepRemovedRefs();
-    fiber.appliedToDom = true;
+    fiber.renderState |= APPLIED_TO_DOM;
     this.fiber = null;
   }
 

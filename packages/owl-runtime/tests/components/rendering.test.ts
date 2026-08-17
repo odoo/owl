@@ -1,6 +1,7 @@
 import {
   Component,
   mount,
+  onWillStart,
   onWillUpdateProps,
   OwlError,
   props,
@@ -527,6 +528,43 @@ describe("render loop detection", () => {
     expect(error).toBeInstanceOf(OwlError);
     expect(error.message).toMatch(/render loop/);
     expect(error.message).toContain("Root");
+    expect(getConsoleOutput()).toEqual([]);
+  });
+
+  test("wide re-render under an uncommitted root is not a render loop", async () => {
+    // 1001 children each re-rendering once while the root fiber is held open
+    // by an async sibling. Each child renders only twice: no loop. A counter
+    // shared at the root level would add up all sibling re-renders and reach
+    // the limit anyway (false positive), so the count must stay per fiber.
+    const shared = signal(0);
+    const def = makeDeferred();
+
+    class Child extends Component {
+      static template = xml`<t t-out="this.shared()"/>`;
+      shared = shared;
+    }
+    class AsyncChild extends Component {
+      static template = xml`async`;
+      setup() {
+        onWillStart(() => def);
+      }
+    }
+    class Root extends Component {
+      static components = { Child, AsyncChild };
+      static template = xml`
+        <t t-foreach="this.ids" t-as="i" t-key="i"><Child/></t>
+        <AsyncChild/>`;
+      ids = [...Array(1001).keys()];
+    }
+
+    const promise = mount(Root, fixture, { test: true });
+    await nextTick(); // all Child fibers rendered; root fiber waits on AsyncChild
+    shared.set(1); // every Child re-renders exactly once
+    await nextTick();
+
+    def.resolve();
+    await promise;
+    expect(fixture.textContent).toContain("async");
     expect(getConsoleOutput()).toEqual([]);
   });
 });

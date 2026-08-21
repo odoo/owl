@@ -516,6 +516,52 @@ function recordType(valueType?: any): any {
   });
 }
 
+function setType(): Type<Set<any>>;
+function setType<V>(): Type<Set<V>>;
+function setType<V>(valueType: V): Type<Set<StripBrands<V>>>;
+function setType(valueType?: any): any {
+  return makeType(function validateSet(context: ValidationContext) {
+    if (!(context.value instanceof Set)) {
+      context.addIssue({ message: "value is not a set" });
+      return;
+    }
+    if (!valueType) {
+      return;
+    }
+    let index = 0;
+    for (const value of context.value) {
+      context.withEntry(index++, value).validate(valueType);
+    }
+  });
+}
+
+function mapType(): Type<Map<any, any>>;
+function mapType<K, V>(): Type<Map<K, V>>;
+function mapType<K>(keyType: K): Type<Map<StripBrands<K>, any>>;
+function mapType<K, V>(keyType: K, valueType: V): Type<Map<StripBrands<K>, StripBrands<V>>>;
+function mapType(keyType?: any, valueType?: any): any {
+  return makeType(function validateMap(context: ValidationContext) {
+    if (!(context.value instanceof Map)) {
+      context.addIssue({ message: "value is not a map" });
+      return;
+    }
+    if (!keyType && !valueType) {
+      return;
+    }
+    // A map key can be any value, so an entry is located by its iteration index.
+    let index = 0;
+    for (const [key, value] of context.value) {
+      if (keyType) {
+        context.withEntry([index, "key"], key).validate(keyType);
+      }
+      if (valueType) {
+        context.withEntry([index, "value"], value).validate(valueType);
+      }
+      index++;
+    }
+  });
+}
+
 function tuple<const T extends unknown[]>(types: T): Type<StripBrandsAll<T>> {
   const validate = makeType(function validateTuple(context: ValidationContext) {
     if (!Array.isArray(context.value)) {
@@ -584,6 +630,7 @@ export const types = {
   function: functionType,
   instanceOf: instanceType,
   literal: literalType,
+  map: mapType,
   number: numberType,
   object: objectType,
   or: union,
@@ -591,6 +638,7 @@ export const types = {
   record: recordType,
   ref,
   selection: literalSelection,
+  set: setType,
   signal: reactiveValueType,
   strictObject: strictObjectType,
   string: stringType,

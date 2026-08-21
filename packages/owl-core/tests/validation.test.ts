@@ -505,6 +505,49 @@ test("signal", () => {
   ).toEqual([]);
 });
 
+test("settable signal", () => {
+  const s = signal(1);
+  expect(validateType(s, t.signal(t.number(), { settable: true }))).toEqual([]);
+  const readOnly = computed(s);
+  expect(validateType(readOnly, t.signal(t.number(), { settable: true }))).toEqual([
+    { message: "value is not a settable reactive value", path: "", received: readOnly },
+  ]);
+  const writable = computed(s, { set: (v: number) => s.set(v) });
+  expect(validateType(writable, t.signal(t.number(), { settable: true }))).toEqual([]);
+  expect(validateType(1, t.signal(t.number(), { settable: true }))).toEqual([
+    { message: "value is not a reactive value", path: "", received: 1 },
+  ]);
+});
+
+describe(".static()", () => {
+  test("validates like the wrapped type at the top of an object", () => {
+    expect(validateType({ n: 1 }, t.object({ n: t.number().static() }))).toEqual([]);
+    expect(validateType({ n: "a" }, t.object({ n: t.number().static() }))).toEqual([
+      { message: "value is not a number", path: "n", received: "a" },
+    ]);
+  });
+
+  test("composes with optional in both orders", () => {
+    expect(validateType({}, t.object({ n: t.number().optional().static() }))).toEqual([]);
+    expect(validateType({}, t.object({ n: t.number().static().optional() }))).toEqual([]);
+    expect(validateType({ n: 1 }, t.object({ n: t.number().optional().static() }))).toEqual([]);
+    expect(validateType({ n: 1 }, t.object({ n: t.number().static().optional() }))).toEqual([]);
+  });
+
+  test("keeps the default reachable in both orders", () => {
+    expect(getDefault(t.number().optional(5).static())!()).toBe(5);
+    expect(getDefault(t.number().static().optional(5))!()).toBe(5);
+  });
+
+  test("is invalid on a nested type", () => {
+    expect(
+      validateType({ o: { n: 1 } }, t.object({ o: t.object({ n: t.number().static() }) }))
+    ).toEqual([
+      { message: "a static type is only valid on a prop", path: "o > n", received: 1 },
+    ]);
+  });
+});
+
 test("record", () => {
   expect(validateType("abc", t.record(t.string()))).toEqual([
     { message: "value is not an object", path: "", received: "abc" },

@@ -311,14 +311,16 @@ t.constructor(Error);
 // rejects:   new Error(), "Error"
 ```
 
-### `t.signal(type?)`
+### `t.signal(type?, options?)`
 
 Validates that the value is a reactive value (signal). The optional `type`
-argument is used for type inference only.
+argument is used for type inference only. With `{ settable: true }`, the value
+must also have a `set` method: a read-only computed is rejected.
 
 ```js
 t.signal(); // any signal
 t.signal(t.number()); // Signal<number> (for TS inference)
+t.signal(t.number(), { settable: true }); // a signal with a `set` method
 ```
 
 ### `t.ref(type?)`

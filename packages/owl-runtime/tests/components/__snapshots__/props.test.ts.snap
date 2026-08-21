@@ -1003,3 +1003,314 @@ exports[`schema defaults and signal-driven props 2`] = `
   }
 }"
 `;
+
+exports[`signal props declared in the schema > a plain value is promoted: the child reads a reactive value 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: ctx['this'].state.val};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a plain value is promoted: the child reads a reactive value 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a promoted prop keeps the same reactive value across updates 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: ctx['this'].state.val}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a promoted prop keeps the same reactive value across updates 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a received read-only computed is exposed as is 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: ctx['this'].view}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a received read-only computed is exposed as is 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a received signal reads through and its content updates the child 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: ctx['this'].count}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a received signal reads through and its content updates the child 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > an absent optional signal prop reads undefined 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > an absent optional signal prop reads undefined 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > read-only by default: set is hidden on a received writable signal 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: ctx['this'].count}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > read-only by default: set is hidden on a received writable signal 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > settable exposes the original signal and the child writes it 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({count: ctx['this'].count}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > settable exposes the original signal and the child writes it 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > swapping the signal for another one throws in dev 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: ctx['this'].state.count};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > swapping the signal for another one throws in dev 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > switching a promoted prop to a signal throws in dev 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: ctx['this'].state.count};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > switching a promoted prop to a signal throws in dev 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`static props declared in the schema > changing the value throws in dev 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["label"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {label: ctx['this'].state.label};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`static props declared in the schema > changing the value throws in dev 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`static props declared in the schema > composes with optional and a default 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`static props declared in the schema > composes with optional and a default 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`static props declared in the schema > the value is pinned and exposed unwrapped 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {onClick: ctx['this'].onClick};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`static props declared in the schema > the value is pinned and exposed unwrapped 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;

@@ -71,6 +71,8 @@ export {
   constructorType,
   applyDefaults,
   getDefault,
+  getSignalType,
+  isStaticType,
   type Constructor,
   type GetDefaultedKeys,
   type GetOptionalEntries,
@@ -82,6 +84,8 @@ export {
   type ResolveOptionalEntries,
   type ResolveReaderObjectType,
   type ShapeType,
+  type SignalTypeMeta,
+  type Static,
   type StripBrands,
   type Type,
   type UnionToIntersection,
@@ -91,6 +95,7 @@ export {
   // emitting declaration files, mirroring `isProps` (see owl#1958).
   type hasDefault,
   type isOptional,
+  type isStatic,
   type typeBrand,
 } from "./types";
 

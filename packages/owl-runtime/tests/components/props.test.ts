@@ -834,16 +834,12 @@ test(".signal suffix accepts a signal-typed prop without validation error", asyn
 });
 
 test(".signal suffix: child receives a read-only reactive value", async () => {
-  let childError: any;
+  let childSet: any = null;
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
     props = props({ count: t.signal(t.number()) });
     setup() {
-      try {
-        (this.props.count as any).set(99);
-      } catch (e) {
-        childError = e;
-      }
+      childSet = (this.props.count as any).set;
     }
   }
 
@@ -854,8 +850,7 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   }
 
   await mount(Parent, fixture);
-  expect(childError).toBeDefined();
-  expect(childError.message).toMatch(/read-only/);
+  expect(childSet).toBeUndefined();
   expect(fixture.innerHTML).toBe("3");
 });
 

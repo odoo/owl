@@ -1,4 +1,4 @@
-import { Signal } from "@odoo/owl-core";
+import { ReactiveValue } from "@odoo/owl-core";
 import { Component } from "./component";
 import { useEffect } from "./hooks";
 import { onWillDestroy } from "./lifecycle_hooks";
@@ -13,7 +13,12 @@ class PortalContent extends Component {
   static template = xml`<t t-call-slot="default"/>`;
 }
 
-export type PortalTarget = string | HTMLElement | Signal<HTMLElement | null> | null | undefined;
+export type PortalTarget =
+  | string
+  | HTMLElement
+  | ReactiveValue<HTMLElement | null>
+  | null
+  | undefined;
 
 export class Portal extends Component {
   static template = xml``;

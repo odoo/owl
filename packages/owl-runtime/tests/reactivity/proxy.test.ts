@@ -417,6 +417,18 @@ describe("Reactivity", () => {
     expect(state).toEqual([3]);
     expect(state.length).toBe(1);
   });
+  test("truncating an array through length is observed", async () => {
+    const spy = vi.fn();
+    const state: any = createProxy([0, 1, 2]);
+    effect(() => spy(state[2]));
+    expectSpy(spy, 1, [2]);
+
+    state.length = 1;
+    await waitScheduler();
+    expectSpy(spy, 2, [undefined]);
+    expect(state).toEqual([0]);
+  });
+
   test("object pushed into arrays are observed", async () => {
     const spy = vi.fn();
     const arr: any = createProxy([]);

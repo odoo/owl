@@ -115,6 +115,26 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
   onWriteAtom(keyToAtomItem.get(key)!);
 }
 
+/**
+ * Notify Reactives that are observing the indices an array dropped when its
+ * length was written: such a write does not go through the deleteProperty trap.
+ *
+ * @param target the array whose length was written
+ * @param newLength the length after the write
+ */
+function onWriteDroppedIndices(target: Target, newLength: number): void {
+  const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
+  if (!keyToAtomItem) {
+    return;
+  }
+  const droppedKeys = [...keyToAtomItem.keys()].filter(
+    (key) => typeof key === "string" && Number(key) >= newLength && String(Number(key)) === key
+  );
+  for (const key of droppedKeys) {
+    onWriteTargetKey(target, key);
+  }
+}
+
 // Maps proxy objects to the underlying target
 const targets = new WeakMap<Reactive<Target>, Target>();
 const proxyCache = new WeakMap<Target, Reactive<Target>>();
@@ -211,10 +231,16 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       if (keyCreated) {
         onWriteTargetKey(target, KEYCHANGES);
       }
-      // While Array length may trigger the set trap, it's not actually set by this
-      // method but is updated behind the scenes, and the trap is not called with the
-      // new value. We disable the "same-value-optimization" for it because of that.
-      if (valueChanged || (key === "length" && Array.isArray(target))) {
+      if (key === "length" && Array.isArray(target)) {
+        // While Array length may trigger the set trap, it's not actually set by this
+        // method but is updated behind the scenes, and the trap is not called with the
+        // new value. We disable the "same-value-optimization" for it because of that.
+        onWriteTargetKey(target, key);
+        if (target.length < (originalValue as number)) {
+          onWriteTargetKey(target, KEYCHANGES);
+          onWriteDroppedIndices(target, target.length);
+        }
+      } else if (valueChanged) {
         onWriteTargetKey(target, key);
       }
       return ret;

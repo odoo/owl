@@ -44,6 +44,24 @@ export interface PropsFunction {
   static: typeof staticProp;
 }
 
+function collectCaptureKeys(props: Record<string, any>): Map<string, string[]> | null {
+  let byProp: Map<string, string[]> | null = null;
+  for (const key in props) {
+    if (key.charCodeAt(0) !== 1) {
+      continue;
+    }
+    byProp ||= new Map();
+    const name = key.slice(1, key.indexOf("."));
+    const keys = byProp.get(name);
+    if (keys) {
+      keys.push(key);
+    } else {
+      byProp.set(name, [key]);
+    }
+  }
+  return byProp;
+}
+
 function makeProps(type?: any): Props<{}> {
   const node = getComponentScope();
   const { app, componentName } = node;
@@ -71,6 +89,26 @@ function makeProps(type?: any): Props<{}> {
     return props[key];
   }
 
+  const alikeProps = node.alikeProps;
+  const captureKeys = alikeProps ? collectCaptureKeys(node.props) : null;
+  let lastProps = node.props;
+
+  // an alike prop is a new function on every render, but it does the same thing
+  // unless one of the values it captured changed. `.alike` and `.bind` capture
+  // nothing, so they never change.
+  function capturesChanged(key: string, props: Record<string, any>) {
+    const keys = captureKeys?.get(key);
+    if (!keys) {
+      return false;
+    }
+    for (const capture of keys) {
+      if (lastProps[capture] !== props[capture]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   const signals: Record<string, Signal<any>> = Object.create(null);
   const result = Object.create(null);
   function defineProp(key: string) {
@@ -89,9 +127,14 @@ function makeProps(type?: any): Props<{}> {
   }
 
   function updateSignals(keys: string[]) {
+    const props = node.props;
     for (const key of keys) {
-      signals[key].set(resolveValue(node.props, key));
+      if (alikeProps !== null && alikeProps.has(key) && !capturesChanged(key, props)) {
+        continue;
+      }
+      signals[key].set(resolveValue(props, key));
     }
+    lastProps = props;
   }
 
   if (type) {

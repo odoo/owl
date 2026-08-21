@@ -1169,11 +1169,22 @@ export class CodeGenerator {
       let [name, suffix] = p.split(".");
 
       if (suffix === "signal") {
-        const compiledValue = compileExpr(ast.props![p]);
+        const { expr: compiledValue, freeVariables } = processExpr(
+          ast.props![p],
+          undefined,
+          true
+        );
         const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
-        this.helpers.add("toSignal");
+        this.helpers.add("toComputed");
         const cacheKey = this.generateSignalCacheKey();
-        props.push(`${propName}: toSignal(node, ${cacheKey}, ${compiledValue})`);
+        if (freeVariables?.length) {
+          const captures = freeVariables.map((v) => `ctx['${v}']`).join(",");
+          props.push(
+            `${propName}: toComputed(node, ${cacheKey}, (__caps) => ${compiledValue}, [${captures}])`
+          );
+        } else {
+          props.push(`${propName}: toComputed(node, ${cacheKey}, () => ${compiledValue})`);
+        }
         continue;
       }
 

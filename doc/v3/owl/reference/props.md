@@ -498,15 +498,27 @@ value at the call site:
 <Counter count.signal="this.state.count"/>
 ```
 
-Owl creates the signal once per call site (per loop iteration inside a
-`t-foreach`), keeps it across renders, and updates its value on each parent
-render. The signal reference is stable, so `effect` and `computed` subscriptions
-inside the child remain valid across parent updates.
+Owl creates a computed once per call site (per `t-key` inside a `t-foreach`,
+the same key that identifies the child component), keeps it across renders,
+and evaluates the expression inside that computed, not during the parent's
+render. The reference is stable and follows the child through list reorders,
+so `effect` and `computed` subscriptions inside the child remain valid across
+parent updates, a signal-prop static contract holds, and the child receives a
+read-only reactive value.
 
-`.signal` is an adapter, not a parent-side performance optimization: the parent
-still re-renders when its own state changes, and that re-render is what updates
-the wrapper's value. The suffix simply lets you use a signal-API component from
-a context where the data is not yet a signal.
+Because the expression runs inside the computed, the parent never subscribes
+to what it reads: when `this.state.count` changes above, the child updates and
+the parent does not re-render. This makes `.signal` a real parent-side
+optimization, in addition to being an adapter for signal-API components.
+
+Two consequences of the deferred evaluation:
+
+- render-scope variables (a `t-foreach` item, a `t-set` value) are captured
+  per parent render: when one of them changes, the computed re-evaluates with
+  the new capture,
+- an expression reading only non-reactive state evaluates once and never
+  refreshes. A constant is fine (`count.signal="7"`); a plain mutable field is
+  not, wrap it in a signal or a proxy instead.
 
 ## Good Practices
 

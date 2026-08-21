@@ -3,6 +3,7 @@ import {
   computed,
   effect,
   mount,
+  onPatched,
   onWillUpdateProps,
   props,
   proxy,
@@ -1249,5 +1250,129 @@ describe("static props declared in the schema", () => {
     render(parent);
     const error = await nextAppError(parent.__owl__.app);
     expect(error.message).toMatch("Prop 'label' in component 'Child' changed");
+  });
+});
+
+describe(".signal suffix lazy evaluation", () => {
+  test("the parent does not re-render when the read value changes", async () => {
+    let parentPatches = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child count.signal="this.state.val"/></div>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+      setup() {
+        onPatched(() => parentPatches++);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(parentPatches).toBe(0);
+  });
+
+  test("a replaced t-foreach item reaches the child through the captures", async () => {
+    class Item extends Component {
+      static template = xml`<span><t t-out="this.props.value()"/></span>`;
+      props = useProps({ value: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.state.items" t-as="item" t-key="item.id">
+          <Item value.signal="item.n"/>
+        </t>`;
+      static components = { Item };
+      state = proxy({ items: [{ id: "a", n: 1 }] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+
+    parent.state.items = [{ id: "a", n: 5 }];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>5</span>");
+  });
+
+  test("the wrapper follows the t-key across a reorder", async () => {
+    const wrappers: Record<string, any[]> = { a: [], b: [] };
+    class Item extends Component {
+      static template = xml`<span><t t-out="this.props.value()"/></span>`;
+      props = useProps({ value: t.signal(t.number()), id: t.string() });
+      setup() {
+        wrappers[this.props.id].push(this.props.value);
+        onWillUpdateProps(() => wrappers[this.props.id].push(this.props.value));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.state.items" t-as="item" t-key="item.id">
+          <Item value.signal="item.n" id="item.id"/>
+        </t>`;
+      static components = { Item };
+      state = proxy({
+        items: [
+          { id: "a", n: 1 },
+          { id: "b", n: 2 },
+        ],
+      });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
+
+    parent.state.items = [
+      { id: "b", n: 2 },
+      { id: "a", n: 1 },
+    ];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span><span>1</span>");
+    expect(new Set(wrappers.a).size).toBe(1);
+    expect(new Set(wrappers.b).size).toBe(1);
+  });
+
+  test("a template string interpolation reaches the captures", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-out="this.props.label()"/></span>`;
+      props = useProps({ label: t.signal(t.string()) });
+    }
+    class Parent extends Component {
+      static template = xml({
+        raw: [
+          '<t t-foreach="this.state.items" t-as="item" t-key="item.id">' +
+            '<Child label.signal="`item ${item.n}`"/>' +
+            "</t>",
+        ],
+      });
+      static components = { Child };
+      state = proxy({ items: [{ id: "a", n: 1 }] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>item 1</span>");
+
+    parent.state.items = [{ id: "a", n: 5 }];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>item 5</span>");
+  });
+
+  test("a constant satisfies a signal-typed prop", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count.signal="7"/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("7");
   });
 });

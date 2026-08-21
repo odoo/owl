@@ -40,6 +40,47 @@ exports[`t-key > t-foreach with t-key switch component position 2`] = `
 }"
 `;
 
+exports[`t-key > t-key change on a component rendering an empty list 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`List\`, true, false, false, ["items"]);
+  
+  let block2 = createBlock(\`<button>b</button>\`);
+  let block4 = createBlock(\`<span>end</span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = block2();
+    const tKey_1 = ctx['this'].key;
+    const b3 = toggler(tKey_1, comp1({items: ctx['this'].items}, tKey_1 + key + \`__1\`, node, this, null));
+    const b4 = block4();
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`t-key > t-key change on a component rendering an empty list 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, safeOutput, withKey } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.items);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`item\`] = k_block1[i1];
+      ctx[\`item_index\`] = i1;
+      const key1 = ctx['item_index'];
+      c_block1[i1] = withKey(safeOutput(ctx['item']), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`t-key > t-key on Component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

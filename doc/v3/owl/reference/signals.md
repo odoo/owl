@@ -132,20 +132,28 @@ list.set([10, 20]); // whole-value replacement, detected
 
 ### Tracking granularity
 
-`signal.Array` and `signal.Object` invalidate the **whole signal** on any
-mutation. Reading the proxy — whether `obj()` itself or a single property like
-`obj().a` — subscribes the caller to the entire collection, and _any_ write
-re-runs every observer. This is the right model when the collection is small
-or consumers usually look at all of it.
-
-`signal.Set` and `signal.Map` track **per-key**, just like `proxy`.
-Subscribing to `set().has(1)` only re-runs when key `1` is added or removed;
+The four variants track **per-key**, just like `proxy`. Reading one entry only
+subscribes to that entry: an effect reading `list()[0]` or `obj().a` does not
+re-run when another index or another key is written. Subscribing to
+`set().has(1)` only re-runs when key `1` is added or removed, and
 `set().add(2)` leaves observers of `has(1)` (or `map.get(otherKey)`) alone.
-Iteration (`[...set()]`, `forEach`, `keys`, `values`, `entries`, `size`)
-subscribes to every key, so an effect that iterates still re-runs on any
-add/delete.
+
+Reading the collection as a whole subscribes to all of it: iteration
+(`[...list()]`, `forEach`, `keys`, `values`, `entries`, `size`), a spread, or
+`list().length`. Such an observer re-runs on any add or delete.
+
+Reading the signal without reading anything in it, `list()` alone, subscribes
+to replacement only: `list.set(...)` re-runs the observer, an in-place mutation
+does not.
 
 ```js
+const list = signal.Array([1, 2, 3]);
+
+effect(() => console.log("first =", list()[0]));
+list()[2] = 30; // logged once at setup, NOT re-run (index 2 is unrelated)
+list()[0] = 10; // re-run: index 0 changed
+list.set([1, 2, 3]); // re-run: whole signal was replaced
+
 const set = signal.Set(new Set());
 
 effect(() => console.log("has(1) =", set().has(1)));

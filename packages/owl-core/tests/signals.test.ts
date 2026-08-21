@@ -132,21 +132,42 @@ describe("signal.Array", () => {
   test("push an element invalidates the signal", async () => {
     const reactiveArray = signal.Array<number>([]);
 
-    const e = spyEffect(() => reactiveArray());
+    const e = spyEffect(() => [...reactiveArray()]);
     e();
     expectSpy(e.spy, 1);
 
     reactiveArray().push(1);
-    expectSpy(e.spy, 1, { result: [1] }); // array is changed inplace
+    expectSpy(e.spy, 1, { result: [] });
 
     await waitScheduler();
-    expectSpy(e.spy, 2, { result: [1] }); // reactive has been invalidated
+    expectSpy(e.spy, 2, { result: [1] });
 
     reactiveArray.set([2]);
     expectSpy(e.spy, 2, { result: [1] });
 
     await waitScheduler();
     expectSpy(e.spy, 3, { result: [2] });
+  });
+
+  test("writing an index only subscribes to that index", async () => {
+    const reactiveArray = signal.Array<number>([0, 1, 2]);
+
+    const e = spyEffect(() => reactiveArray()[0]);
+    e();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    reactiveArray()[0] = 0;
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    // writing an unobserved index must not trigger the effect
+    reactiveArray()[2] = 42;
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    reactiveArray()[0] = 1;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
   });
 });
 
@@ -155,11 +176,11 @@ describe("signal.Object", () => {
     const reactiveObject = signal.Object<Record<string, number>>();
     expect(reactiveObject()).toEqual({});
 
-    const e = spyEffect(() => reactiveObject());
+    const e = spyEffect(() => reactiveObject().a);
     e();
     reactiveObject().a = 1;
     await waitScheduler();
-    expectSpy(e.spy, 2, { result: { a: 1 } });
+    expectSpy(e.spy, 2, { result: 1 });
   });
 
   test("simple use", async () => {
@@ -219,27 +240,44 @@ describe("signal.Object", () => {
   test("add or remove element on object", async () => {
     const reactiveObject = signal.Object<Record<string, any>>({});
 
-    const e = spyEffect(() => reactiveObject());
+    const e = spyEffect(() => ({ ...reactiveObject() }));
     e();
     expectSpy(e.spy, 1);
 
     reactiveObject().a = 1;
-    expectSpy(e.spy, 1, { result: { a: 1 } }); // array is changed inplace
+    expectSpy(e.spy, 1, { result: {} });
 
     await waitScheduler();
-    expectSpy(e.spy, 2, { result: { a: 1 } }); // reactive has been invalidated
+    expectSpy(e.spy, 2, { result: { a: 1 } });
 
     reactiveObject().b = 2;
-    expectSpy(e.spy, 2, { result: { a: 1, b: 2 } }); // array is changed inplace
+    expectSpy(e.spy, 2, { result: { a: 1 } });
 
     await waitScheduler();
-    expectSpy(e.spy, 3, { result: { a: 1, b: 2 } }); // reactive has been invalidated
+    expectSpy(e.spy, 3, { result: { a: 1, b: 2 } });
 
     delete reactiveObject().a;
-    expectSpy(e.spy, 3, { result: { b: 2 } }); // array is changed inplace
+    expectSpy(e.spy, 3, { result: { a: 1, b: 2 } });
 
     await waitScheduler();
-    expectSpy(e.spy, 4, { result: { b: 2 } }); // reactive has been invalidated
+    expectSpy(e.spy, 4, { result: { b: 2 } });
+  });
+
+  test("writing a key only subscribes to that key", async () => {
+    const reactiveObject = signal.Object<Record<string, number>>({ a: 0, b: 0 });
+
+    const e = spyEffect(() => reactiveObject().a);
+    e();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    // writing an unobserved key must not trigger the effect
+    reactiveObject().b = 42;
+    await waitScheduler();
+    expectSpy(e.spy, 1, { result: 0 });
+
+    reactiveObject().a = 1;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 1 });
   });
 });
 
@@ -473,7 +511,7 @@ describe("signal.Set", () => {
   });
 });
 
-describe("signal write notifications", () => {
+describe("signal atom notifications", () => {
   // Counts how many times onWriteAtom is called on the signal's atom by
   // counting iterations of its observers set (onWriteAtom iterates it once
   // per call).
@@ -489,52 +527,38 @@ describe("signal write notifications", () => {
     return () => count;
   }
 
-  test("adding an element to a signal.Array notifies its atom only once", () => {
+  test("writing in a signal.Array does not notify its atom", () => {
     const reactiveArray = signal.Array<number>([0, 1]);
     const notified = countAtomNotifications(reactiveArray);
 
     reactiveArray()[2] = 2;
-    expect(notified()).toBe(1);
-  });
-
-  test("push on a signal.Array notifies its atom only once", () => {
-    const reactiveArray = signal.Array<number>([0]);
-    const notified = countAtomNotifications(reactiveArray);
-
-    reactiveArray().push(1);
-    expect(notified()).toBe(1);
-  });
-
-  test("writing the same value to a signal.Array does not notify", () => {
-    const reactiveArray = signal.Array<number>([0]);
-    const notified = countAtomNotifications(reactiveArray);
-
-    reactiveArray()[0] = 0;
+    reactiveArray().push(3);
+    reactiveArray().length = 1;
     expect(notified()).toBe(0);
   });
 
-  test("truncating a signal.Array through length notifies its atom only once", () => {
-    const reactiveArray = signal.Array<number>([0, 1, 2]);
+  test("replacing a signal.Array notifies its atom once", () => {
+    const reactiveArray = signal.Array<number>([0]);
     const notified = countAtomNotifications(reactiveArray);
 
-    reactiveArray().length = 1;
+    reactiveArray.set([1]);
     expect(notified()).toBe(1);
-    expect(reactiveArray()).toEqual([0]);
   });
 
-  test("adding a key to a signal.Object notifies its atom only once", () => {
+  test("writing in a signal.Object does not notify its atom", () => {
     const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
     const notified = countAtomNotifications(reactiveObject);
 
     reactiveObject().b = 2;
-    expect(notified()).toBe(1);
+    delete reactiveObject().a;
+    expect(notified()).toBe(0);
   });
 
-  test("deleting a key from a signal.Object notifies its atom only once", () => {
+  test("replacing a signal.Object notifies its atom once", () => {
     const reactiveObject = signal.Object<Record<string, number>>({ a: 1 });
     const notified = countAtomNotifications(reactiveObject);
 
-    delete reactiveObject().a;
+    reactiveObject.set({ b: 2 });
     expect(notified()).toBe(1);
   });
 });

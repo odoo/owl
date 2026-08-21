@@ -313,9 +313,16 @@ t.constructor(Error);
 
 ### `t.signal(type?, options?)`
 
-Validates that the value is a reactive value (signal). The optional `type`
-argument is used for type inference only. With `{ settable: true }`, the value
-must also have a `set` method: a read-only computed is rejected.
+Validates that the value is a reactive value (signal). With
+`{ settable: true }`, the value must also have a `set` method: a read-only
+computed is rejected.
+
+In a schema of [`useProps()`](props.md#signal-props), a read-only signal key
+(without `settable`) also accepts a plain value, checked against `type`, which
+props promote to a signal. Anywhere else, the value must be a signal. The value
+inside a signal is not checked: there, `type` is used for type inference only.
+A read-only signal type has no `.static()`, as a signal prop is static by
+nature.
 
 ```js
 t.signal(); // any signal
@@ -412,6 +419,18 @@ t.object({ color: t.string().optional("red") });
 // validates: 42         with the first example
 // validates: undefined  with the first example (the default fills it)
 // rejects:   "42"       with the first example ("value is not a number")
+```
+
+### `.static()`
+
+Every type also exposes a `.static()` method, which marks a prop as static:
+[`useProps()`](props.md) reads it once and keeps it. It composes with
+`.optional()` in any order, and is only valid at the top level of a prop
+declaration: validation rejects it on a nested key.
+
+```js
+t.instanceOf(Todo).static();
+t.string().optional("untitled").static();
 ```
 
 ### `.toShape()`

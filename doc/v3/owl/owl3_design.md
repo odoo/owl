@@ -1664,7 +1664,7 @@ class Counter extends Component {
         Count: <t t-out="this.props.count()"/>
       </div>`;
 
-  props = useProps({ count: t.signal(t.number()) });
+  props = useProps({ count: t.signal(t.number(), { settable: true }) });
 
   increment() {
     this.props.count.set(this.props.count() + 1);

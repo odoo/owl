@@ -15,9 +15,11 @@ export class ErrorBoundary extends Component {
     </t>
   `;
 
-  props = useProps({ error: t.signal().optional(() => signal<any>(null)) });
+  props = useProps({
+    error: t.signal(t.any(), { settable: true }).optional(() => signal<any>(null)),
+  });
 
   setup() {
-    onError((e) => this.props.error.set!(e));
+    onError((e) => this.props.error.set(e));
   }
 }

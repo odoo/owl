@@ -574,6 +574,13 @@ test("signal", () => {
   ).toEqual([]);
 });
 
+test("signal nested in an object", () => {
+  expect(validateType({ ref: 1 }, t.object({ ref: t.signal() }))).toEqual([
+    { message: "value is not a reactive value", path: "ref", received: 1 },
+  ]);
+  expect(validateType({ ref: signal(1) }, t.object({ ref: t.signal() }))).toEqual([]);
+});
+
 test("settable signal", () => {
   const s = signal(1);
   expect(validateType(s, t.signal(t.number(), { settable: true }))).toEqual([]);

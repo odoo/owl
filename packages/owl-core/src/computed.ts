@@ -8,8 +8,8 @@ import {
   toEqualsFn,
   updateComputation,
   createComputation,
+  WritableReactiveValue,
 } from "./computations";
-import { OwlError } from "./owl_error";
 import { getScope } from "./scope";
 
 interface ComputedOptions<TRead, TWrite = TRead> {
@@ -23,12 +23,14 @@ interface ComputedOptions<TRead, TWrite = TRead> {
   equals?: Equals<TRead>;
 }
 
-function readonlySetter(): never {
-  throw new OwlError(
-    "Cannot write to a read-only computed value. Pass a `set` option to make it writable."
-  );
-}
-
+export function computed<TRead, TWrite = TRead>(
+  getter: () => TRead,
+  options: ComputedOptions<TRead, TWrite> & { set(value: TWrite): void }
+): WritableReactiveValue<TRead, TWrite>;
+export function computed<TRead>(
+  getter: () => TRead,
+  options?: ComputedOptions<TRead, never>
+): ReactiveValue<TRead, never>;
 export function computed<TRead, TWrite = TRead>(
   getter: () => TRead,
   options: ComputedOptions<TRead, TWrite> = {}
@@ -60,7 +62,9 @@ export function computed<TRead, TWrite = TRead>(
     return computation.value;
   }
   readComputed[atomSymbol] = computation;
-  readComputed.set = options.set ?? readonlySetter;
+  if (options.set) {
+    readComputed.set = options.set;
+  }
 
   getScope()?.computations.push(computation);
 

@@ -6,7 +6,14 @@ export interface ReactiveValue<TRead, TWrite = TRead> {
    * Update the value of the reactive with a new value. If the new value is different
    * from the previous values, all computations that depends on this reactive will
    * be invalidated, and effects will rerun.
+   *
+   * Absent on a read-only reactive value: read-only is checked by the absence of `set`.
    */
+  set?(nextValue: TWrite): void;
+}
+
+export interface WritableReactiveValue<TRead, TWrite = TRead>
+  extends ReactiveValue<TRead, TWrite> {
   set(nextValue: TWrite): void;
 }
 

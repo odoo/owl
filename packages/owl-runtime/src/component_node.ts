@@ -26,6 +26,12 @@ type LifecycleHook = Function;
 
 export class ComponentNode extends Scope implements VNode<ComponentNode> {
   fiber: Fiber | null = null;
+  // For sub-root nodes (Portal/Suspense content): the component node hosting
+  // the sub-root. Null for regular nodes and the app root. This is not a
+  // parent link (the sub-root renders independently); it lets the scheduler
+  // see through the boundary, so a render inside the sub-root still yields to
+  // an in-flight ancestor render that may be about to remove the host.
+  host: ComponentNode | null = null;
   component!: Component;
   bdom: BDom | null = null;
   componentName: string;

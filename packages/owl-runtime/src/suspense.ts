@@ -53,6 +53,10 @@ export class Suspense extends Component {
       // Route errors from the sub-root back into Suspense's parent chain so
       // consumer `onError` handlers still catch descendant failures.
       onError: forwardErrorToParent(suspenseNode),
+      // Let the scheduler see through the sub-root boundary, so renders of
+      // the default slot yield to in-flight ancestor renders (e.g. a t-if
+      // about to remove this Suspense).
+      host: suspenseNode,
     } as any);
 
     // Kick off the render phase now — descendants' onWillStart fires in

@@ -178,6 +178,36 @@ t.record(t.number()); // all values must be numbers
 // rejects:   { a: 1, b: "two" } with t.record(t.number())
 ```
 
+### `t.set(valueType?)`
+
+Validates that the value is a `Set`. When `valueType` is provided, every
+element is validated against it.
+
+```js
+t.set(); // any set, same as t.set(t.any())
+t.set(t.number()); // set of numbers
+
+// validates: new Set([1, 2])     with t.set(t.number())
+// rejects:   new Set([1, "two"]) with t.set(t.number())
+```
+
+### `t.map(keyType, valueType)`
+
+Validates that the value is a `Map`. The two types are given together, or not
+at all: every key is validated against `keyType`, and every value against
+`valueType`. A failing entry is reported by its iteration index (`0 > key`,
+`0 > value`), since a map key can be any value.
+
+```js
+t.map(); // any map, same as t.map(t.any(), t.any())
+t.map(t.string(), t.any()); // string keys, any value
+t.map(t.string(), t.number()); // string keys, number values
+t.map(t.any(), t.number()); // any key, number values
+
+// validates: new Map([["a", 1]])     with t.map(t.string(), t.number())
+// rejects:   new Map([["a", "one"]]) with t.map(t.string(), t.number())
+```
+
 ### `t.tuple(types)`
 
 Validates that the value is an array with a fixed length, where each element
@@ -452,7 +482,9 @@ applyDefaults(value, type);
 Returns `value` with the defaults declared in `type` filled in, at any depth:
 a default fires when the value at its schema position is `undefined`. The
 input is never mutated; objects are copied along the changed paths only, so
-if nothing is filled in, the value is returned as is.
+if nothing is filled in, the value is returned as is. Only objects, tuples,
+arrays and `t.and` are walked: defaults inside unions, records, sets, maps or
+custom validators are not filled in.
 
 ```js
 const optionsType = t.object({

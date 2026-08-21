@@ -15,6 +15,7 @@ export interface ValidationContext {
   path: PropertyKey[];
   validate(type: any): void;
   value: any;
+  withEntry(key: PropertyKey | PropertyKey[], value: any): ValidationContext;
   withIssues(issues: ValidationIssue[]): ValidationContext;
   withKey(key: PropertyKey): ValidationContext;
 }
@@ -85,11 +86,14 @@ function createContext(
         parent.issueDepth = this.issueDepth + depthOffset;
       }
     },
+    withEntry(key, value) {
+      return createContext(issues, value, this.path.concat(key), this);
+    },
     withIssues(issues) {
       return createContext(issues, this.value, this.path, this, 0);
     },
     withKey(key) {
-      return createContext(issues, this.value[key], this.path.concat(key), this);
+      return this.withEntry(key, this.value[key]);
     },
   };
 }

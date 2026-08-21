@@ -231,7 +231,12 @@ class VList {
 
   firstNode(): Node | undefined {
     const child = this.children[0];
-    return child ? child.firstNode() : undefined;
+    // An empty list still occupies a position in the DOM: its anchor. Callers
+    // use firstNode to locate a block (toggler key swaps, sibling mounts,
+    // moves), so hiding the anchor would lose the position — e.g. a t-key
+    // change on a component rendering an empty t-foreach used to crash here.
+    // VMulti does the same with its slot anchors.
+    return child ? child.firstNode() : this.anchor;
   }
 
   toString(): string {

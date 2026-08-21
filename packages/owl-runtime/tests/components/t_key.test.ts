@@ -39,6 +39,47 @@ describe("t-key", () => {
     expect(oldChild === childInstance).toBeFalsy();
   });
 
+  test("t-key change on a component rendering an empty list", async () => {
+    class List extends Component {
+      static template = xml`
+        <t t-foreach="this.props.items" t-as="item" t-key="item_index">
+          <t t-out="item"/>
+        </t>`;
+      props = props();
+    }
+
+    class Parent extends Component {
+      static components = { List };
+      static template = xml`<button>b</button><List t-key="this.key" items="this.items"/><span>end</span>`;
+
+      key = "a";
+      get items() {
+        return this.key === "a" ? [] : [1, 2];
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<button>b</button><span>end</span>");
+
+    // key change while the outgoing component rendered an empty list
+    parent.key = "b";
+    render(parent);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>b</button>12<span>end</span>");
+
+    // key change back: outgoing component has content, incoming one is empty
+    parent.key = "a";
+    render(parent);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>b</button><span>end</span>");
+
+    // and once more from an empty one, to check the anchor bookkeeping survives
+    parent.key = "b";
+    render(parent);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>b</button>12<span>end</span>");
+  });
+
   test("t-key on Component as a function", async () => {
     let childInstance = null;
     class Child extends Component {

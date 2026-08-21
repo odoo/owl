@@ -169,6 +169,18 @@ describe("signal.Array", () => {
     await waitScheduler();
     expectSpy(e.spy, 2, { result: 1 });
   });
+
+  test("truncating through length invalidates the dropped indices", async () => {
+    const reactiveArray = signal.Array<number>([0, 1, 2]);
+
+    const e = spyEffect(() => reactiveArray()[2]);
+    e();
+    expectSpy(e.spy, 1, { result: 2 });
+
+    reactiveArray().length = 1;
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: undefined });
+  });
 });
 
 describe("signal.Object", () => {

@@ -37,6 +37,9 @@ interface SubRootConfig<P> extends RootConfig<P> {
   // error handler seeded on the root node so descendant errors route back into
   // the host's parent chain instead of tearing down the whole app.
   onError?: (error: any, finalize: Function) => void;
+  // the component node hosting the sub-root, so the scheduler can delay
+  // renders inside the sub-root while an ancestor of the host is rendering.
+  host?: ComponentNode;
 }
 
 export interface AppConfig extends TemplateSetConfig {
@@ -139,6 +142,9 @@ export class App extends TemplateSet {
       }
       if (subConfig.onError) {
         nodeErrorHandlers.set(node, [subConfig.onError]);
+      }
+      if (subConfig.host) {
+        node.host = subConfig.host;
       }
     } catch (e) {
       error = e;

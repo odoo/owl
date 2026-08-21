@@ -54,6 +54,52 @@ test("renders nothing in place; mounts content into target Element", async () =>
   app.destroy();
 });
 
+test("slot content is not re-rendered when the guard removing it flips", async () => {
+  const target = makeOutside("portal-target-guard");
+  target.dataset.testPortal = "1";
+
+  const seen: boolean[] = [];
+
+  class Popover extends Component {
+    static components = { Portal };
+    static template = xml`
+      <Portal target="this.target">
+        <t t-call-slot="default"/>
+      </Portal>`;
+    target = target;
+  }
+
+  class Root extends Component {
+    static components = { Popover };
+    static template = xml`
+      <button>toggle</button>
+      <Popover t-if="this.open()">open<t t-out="this.probe()"/></Popover>`;
+    open = signal(false);
+    probe() {
+      seen.push(this.open());
+      return "";
+    }
+  }
+
+  const app = new App();
+  const root = (await app.createRoot(Root).mount(fixture)) as InstanceType<typeof Root>;
+  await nextTick();
+  expect(seen).toEqual([]);
+
+  root.open.set(true);
+  await nextTick();
+  expect(target.textContent).toBe("open");
+  expect(seen).toEqual([true]);
+
+  root.open.set(false);
+  await nextTick();
+  expect(target.textContent).toBe("");
+  // The slot must never have been evaluated with the guard value that
+  // removed it: the sub-root render has to yield to the ancestor's.
+  expect(seen).toEqual([true]);
+  app.destroy();
+});
+
 test("accepts a CSS selector string as target", async () => {
   const target = makeOutside("portal-target-2");
   target.dataset.testPortal = "1";

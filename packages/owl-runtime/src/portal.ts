@@ -53,6 +53,10 @@ export class Portal extends Component {
         // sub-root errors would propagate to app._handleError and tear down
         // the whole app.
         onError: forwardErrorToParent(portalNode),
+        // Let the scheduler see through the sub-root boundary, so renders of
+        // the portaled content yield to in-flight ancestor renders (e.g. a
+        // t-if about to remove this Portal).
+        host: portalNode,
       } as any);
 
       root.mount(target);

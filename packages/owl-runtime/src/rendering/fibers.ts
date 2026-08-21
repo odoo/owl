@@ -77,6 +77,19 @@ function throwOnRender() {
 }
 
 /**
+ * The node whose in-flight render this node's own render must yield to.
+ * Usually the parent; for a mounted sub-root node (Portal/Suspense content),
+ * its host, so renders inside the sub-root still yield to an ancestor render
+ * that may be about to remove the host. An unmounted sub-root deliberately
+ * stays unlinked: its initial render must proceed in parallel with the host's
+ * own mount (Suspense renders its default slot while the outer tree is still
+ * rendering).
+ */
+function above(node: ComponentNode): ComponentNode | null {
+  return node.parent || (node.status === STATUS.MOUNTED ? node.host : null);
+}
+
+/**
  * @returns number of not-yet rendered fibers cancelled
  */
 function cancelFibers(fibers: Fiber[]): number {
@@ -150,11 +163,18 @@ export class Fiber {
     // walk.
     if (scheduler.tasks.size > 1) {
       let prev = this.root!.node;
-      let current = prev.parent;
+      let current = above(prev);
       while (current) {
         if (current.fiber) {
           let root = current.fiber.root!;
-          if (root.counter === 0 && prev.parentKey! in current.fiber.childrenMap) {
+          // `!prev.parent` means we crossed a sub-root boundary: the content
+          // never appears in the host's childrenMap, but it is retained as
+          // long as the host node survives — and a node holding a fiber of a
+          // finished (counter 0) render pass survives that pass.
+          if (
+            root.counter === 0 &&
+            (!prev.parent || prev.parentKey! in current.fiber.childrenMap)
+          ) {
             current = root.node;
           } else {
             scheduler.delayedRenders.push(this);
@@ -162,7 +182,7 @@ export class Fiber {
           }
         }
         prev = current;
-        current = current.parent;
+        current = above(current);
       }
     }
 

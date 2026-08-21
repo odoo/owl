@@ -90,10 +90,9 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
  * @param target the target whose key should be observed
  * @param key the key to observe (or Symbol(KEYCHANGES) for key creation
  *  or deletion)
- * @param callback the function to call when the key changes
  */
-function onReadTargetKey(target: Target, key: PropertyKey, atom: Atom | null): void {
-  onReadAtom(atom ?? getTargetKeyAtom(target, key));
+function onReadTargetKey(target: Target, key: PropertyKey): void {
+  onReadAtom(getTargetKeyAtom(target, key));
 }
 
 /**
@@ -187,7 +186,7 @@ export function proxy<T extends Target>(target: T): T {
 function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
-      onReadTargetKey(target, key, atom);
+      onReadTargetKey(target, key);
       const value = Reflect.get(target, key, receiver);
       // Fast path: signal-based proxies and primitive values don't need wrapping
       if (atom || typeof value !== "object" || value === null) {
@@ -209,48 +208,33 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       const ret = Reflect.set(target, key, toRaw(value), receiver);
       const keyCreated = !hadKey && objectHasOwnProperty.call(target, key);
       const valueChanged = originalValue !== Reflect.get(target, key, receiver);
-      if (atom) {
-        // Signal-based proxies observe a single atom: notify it at most once
-        // per write, even when the write both creates a key and changes a
-        // value. Array "length" writes triggered by array methods (push, ...)
-        // don't need the special case below: the index write that caused them
-        // already notified the atom.
-        if (keyCreated || valueChanged) {
-          onWriteAtom(atom);
-        }
-      } else {
-        if (keyCreated) {
-          onWriteTargetKey(target, KEYCHANGES);
-        }
-        // While Array length may trigger the set trap, it's not actually set by this
-        // method but is updated behind the scenes, and the trap is not called with the
-        // new value. We disable the "same-value-optimization" for it because of that.
-        if (valueChanged || (key === "length" && Array.isArray(target))) {
-          onWriteTargetKey(target, key);
-        }
+      if (keyCreated) {
+        onWriteTargetKey(target, KEYCHANGES);
+      }
+      // While Array length may trigger the set trap, it's not actually set by this
+      // method but is updated behind the scenes, and the trap is not called with the
+      // new value. We disable the "same-value-optimization" for it because of that.
+      if (valueChanged || (key === "length" && Array.isArray(target))) {
+        onWriteTargetKey(target, key);
       }
       return ret;
     },
     deleteProperty(target, key) {
       const ret = Reflect.deleteProperty(target, key);
       // TODO: only notify when something was actually deleted
-      if (atom) {
-        onWriteAtom(atom);
-      } else {
-        onWriteTargetKey(target, KEYCHANGES);
-        onWriteTargetKey(target, key);
-      }
+      onWriteTargetKey(target, KEYCHANGES);
+      onWriteTargetKey(target, key);
       return ret;
     },
     ownKeys(target) {
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES);
       return Reflect.ownKeys(target);
     },
     has(target, key) {
       // TODO: this observes all key changes instead of only the presence of the argument key
       // observing the key itself would observe value changes instead of presence changes
       // so we may need a finer grained system to distinguish observing value vs presence.
-      onReadTargetKey(target, KEYCHANGES, atom);
+      onReadTargetKey(target, KEYCHANGES);
       return Reflect.has(target, key);
     },
   } as ProxyHandler<T>;
@@ -266,7 +250,7 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
 function makeKeyObserver(methodName: "has" | "get", target: any, atom: Atom | null) {
   return (key: any) => {
     key = toRaw(key);
-    onReadTargetKey(target, key, null);
+    onReadTargetKey(target, key);
     return possiblyReactive(target[methodName](key), atom);
   };
 }
@@ -284,11 +268,11 @@ function makeIteratorObserver(
   atom: Atom | null
 ) {
   return function* () {
-    onReadTargetKey(target, KEYCHANGES, null);
+    onReadTargetKey(target, KEYCHANGES);
     const keys = target.keys();
     for (const item of target[methodName]()) {
       const key = keys.next().value;
-      onReadTargetKey(target, key, null);
+      onReadTargetKey(target, key);
       yield possiblyReactive(item, atom);
     }
   };
@@ -303,9 +287,9 @@ function makeIteratorObserver(
  */
 function makeForEachObserver(target: any, atom: Atom | null) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
-    onReadTargetKey(target, KEYCHANGES, null);
+    onReadTargetKey(target, KEYCHANGES);
     target.forEach(function (val: any, key: any, targetObj: any) {
-      onReadTargetKey(target, key, null);
+      onReadTargetKey(target, key);
       forEachCb.call(
         thisArg,
         possiblyReactive(val, atom),
@@ -380,7 +364,7 @@ const rawTypeToFuncHandlers = {
     forEach: makeForEachObserver(target, atom),
     clear: makeClearNotifier(target),
     get size() {
-      onReadTargetKey(target, KEYCHANGES, null);
+      onReadTargetKey(target, KEYCHANGES);
       return target.size;
     },
   }),
@@ -396,7 +380,7 @@ const rawTypeToFuncHandlers = {
     forEach: makeForEachObserver(target, atom),
     clear: makeClearNotifier(target),
     get size() {
-      onReadTargetKey(target, KEYCHANGES, null);
+      onReadTargetKey(target, KEYCHANGES);
       return target.size;
     },
   }),
@@ -428,7 +412,7 @@ function collectionsProxyHandler<T extends Collection>(
       if (objectHasOwnProperty.call(specialHandlers, key)) {
         return (specialHandlers as any)[key];
       }
-      onReadTargetKey(target, key, atom);
+      onReadTargetKey(target, key);
       return possiblyReactive(target[key], atom);
     },
   }) as ProxyHandler<T>;

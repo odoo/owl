@@ -12,7 +12,7 @@ import {
   toRaw,
 } from "@odoo/owl-core";
 import { nodeErrorHandlers } from "./rendering/error_handling";
-import { Fiber, MountFiber, MountOptions, RootFiber } from "./rendering/fibers";
+import { Fiber, MountFiber, MountOptions, RootFiber, subRootHosts } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
@@ -144,7 +144,7 @@ export class App extends TemplateSet {
         nodeErrorHandlers.set(node, [subConfig.onError]);
       }
       if (subConfig.host) {
-        node.host = subConfig.host;
+        subRootHosts.set(node, subConfig.host);
       }
     } catch (e) {
       error = e;

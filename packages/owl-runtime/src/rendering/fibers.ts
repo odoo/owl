@@ -76,6 +76,12 @@ function throwOnRender() {
   throw new OwlError("Attempted to render cancelled fiber");
 }
 
+// Host component node of each sub-root node (Portal/Suspense content), seeded
+// by createRoot. Sparse metadata kept out of ComponentNode itself (same
+// pattern as nodeErrorHandlers): only sub-roots have entries, and they are
+// GC'd with their node.
+export const subRootHosts = new WeakMap<ComponentNode, ComponentNode>();
+
 /**
  * The node whose in-flight render this node's own render must yield to.
  * Usually the parent; for a mounted sub-root node (Portal/Suspense content),
@@ -86,7 +92,7 @@ function throwOnRender() {
  * rendering).
  */
 function above(node: ComponentNode): ComponentNode | null {
-  return node.parent || (node.status === STATUS.MOUNTED ? node.host : null);
+  return node.parent || (node.status === STATUS.MOUNTED ? subRootHosts.get(node) || null : null);
 }
 
 /**

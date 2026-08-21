@@ -643,7 +643,12 @@ function reactiveValueType(type?: any, options?: SignalTypeOptions): any {
   const settable = options?.settable ?? false;
   const validate = makeType(function validateReactiveValue(context: ValidationContext) {
     if (typeof context.value !== "function" || !context.value[atomSymbol]) {
-      context.addIssue({ message: "value is not a reactive value" });
+      if (settable) {
+        context.addIssue({ message: "value is not a reactive value" });
+      } else if (type) {
+        // A plain value is promoted to a signal by the consumer (props).
+        context.validate(type);
+      }
       return;
     }
     if (settable && typeof context.value.set !== "function") {

@@ -363,6 +363,23 @@ describe("map", () => {
       { message: "value is not a number", path: "0 > value", received: "abc" },
     ]);
   });
+
+  test("validating a reactive map does not observe it", () => {
+    const map = proxy(new Map([["a", 1]]));
+    let runs = 0;
+    const c = computed(() => {
+      runs++;
+      return validateType(map, t.map(t.string(), t.number()));
+    });
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
+    map.set("b", 2);
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
+    map.set("a", 3);
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
+  });
 });
 
 test("number", () => {
@@ -700,6 +717,23 @@ describe("set", () => {
     expect(validateType(proxy(new Set([123])), type)).toEqual([
       { message: "value is not a string", path: "0", received: 123 },
     ]);
+  });
+
+  test("validating a reactive set does not observe it", () => {
+    const set = proxy(new Set([1, 2, 3]));
+    let runs = 0;
+    const c = computed(() => {
+      runs++;
+      return validateType(set, t.set(t.number()));
+    });
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
+    set.add(4);
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
+    set.delete(1);
+    expect(c()).toEqual([]);
+    expect(runs).toBe(1);
   });
 });
 

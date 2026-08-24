@@ -1,4 +1,5 @@
 import { atomSymbol, type ReactiveValue } from "./computations";
+import { toRaw } from "./proxy";
 import { ValidationContext, ValidationIssue } from "./validation";
 
 export type Constructor<T = any> = { new (...args: any[]): T };
@@ -529,7 +530,10 @@ function setType(valueType?: any): any {
       return;
     }
     let index = 0;
-    for (const value of context.value) {
+    // Walk the raw set: iterating a reactive collection subscribes the current
+    // computation to every element, and allocates an atom per element even
+    // when there is no computation. Validating a value must observe nothing.
+    for (const value of toRaw(context.value) as Set<any>) {
       context.withEntry(index++, value).validate(valueType);
     }
   });
@@ -550,7 +554,9 @@ function mapType(keyType?: any, valueType?: any): any {
     }
     // A map key can be any value, so an entry is located by its iteration index.
     let index = 0;
-    for (const [key, value] of context.value) {
+    // Walk the raw map, for the same reason as `validateSet`. It also avoids
+    // the throwaway proxy the reactive iterator builds for each entry pair.
+    for (const [key, value] of toRaw(context.value) as Map<any, any>) {
       if (keyType) {
         context.withEntry([index, "key"], key).validate(keyType);
       }

@@ -49,7 +49,7 @@ class VHtml {
       return;
     }
     const html2 = other.html;
-    if (this.html !== html2) {
+    if (this.html !== html2 && String(this.html) !== String(html2)) {
       const parent = this.parentEl;
       // insert new html in front of current
       const afterNode = this.content[0];

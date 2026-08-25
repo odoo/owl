@@ -333,6 +333,134 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<span>1</span>");
   });
 
+  // jsdom dispatches with a non-empty JS stack, so no microtask checkpoint
+  // happens mid-dispatch and a component cannot really be created while its
+  // creating event still bubbles. The tests below recreate that by dispatching
+  // the same event object a second time, which is what the guard keys on.
+  test("useListener ignores the event that created its component", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+      setup() {
+        useListener(window, "click", () => steps.push("clicked"));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <button t-on-click="() => this.show.set(true)">open</button>
+        <Child t-if="this.show()"/>`;
+      static components = { Child };
+      show = signal(false);
+    }
+
+    await mount(Parent, fixture);
+    const button = fixture.getElementsByTagName("button")[0];
+
+    const ev = new MouseEvent("click", { bubbles: true });
+    button.dispatchEvent(ev);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>open</button><div>child</div>");
+
+    // the click that created Child is still propagating: Child must not see it
+    window.dispatchEvent(ev);
+    expect(steps).toEqual([]);
+
+    // any subsequent click is a normal one
+    window.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    expect(steps).toEqual(["clicked"]);
+  });
+
+  test("useListener ignores the event that created its component, from another useListener", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+      setup() {
+        useListener(window, "click", () => steps.push("clicked"));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-if="this.show()"/>`;
+      static components = { Child };
+      show = signal(false);
+      setup() {
+        useListener(window, "click", () => this.show.set(true));
+      }
+    }
+
+    await mount(Parent, fixture);
+
+    const ev = new MouseEvent("click", { bubbles: true });
+    window.dispatchEvent(ev);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>child</div>");
+
+    window.dispatchEvent(ev);
+    expect(steps).toEqual([]);
+
+    window.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    expect(steps).toEqual(["clicked"]);
+  });
+
+  test("useListener still receives an event dispatched while it is being attached", async () => {
+    // the guard only skips an event that was already in flight: an event
+    // dispatched by `setup()` itself is newer than the listener
+    let n = 0;
+
+    class MyComponent extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useListener(window, "click", () => n++);
+        window.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <button t-on-click="() => this.show.set(true)">open</button>
+        <MyComponent t-if="this.show()"/>`;
+      static components = { MyComponent };
+      show = signal(false);
+    }
+
+    await mount(Parent, fixture);
+    fixture
+      .getElementsByTagName("button")[0]
+      .dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    await nextTick();
+
+    expect(n).toBe(1);
+  });
+
+  test("useListener keeps the event target as `this`", async () => {
+    let receiver: any = null;
+    let reference: any = null;
+
+    class MyComponent extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        useListener(window, "click", function (this: EventTarget) {
+          receiver = this;
+        });
+      }
+    }
+
+    await mount(MyComponent, fixture);
+    // compare with what a plain listener receives, rather than with `window`
+    // itself: jsdom's global `window` is not the object handed to listeners
+    window.addEventListener(
+      "click",
+      function (this: EventTarget) {
+        reference = this;
+      },
+      { once: true }
+    );
+    window.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(reference).not.toBe(null);
+    expect(receiver).toBe(reference);
+  });
+
   describe("useEffect hook", () => {
     test("effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying", async () => {
       let cleanupRun = 0;

@@ -103,6 +103,9 @@ export function useOnChange<T extends unknown[]>(
  * it `this` is the event target, not the calling component. Wrap a method in an
  * arrow function (or bind it) if it relies on `this`.
  *
+ * An event already being dispatched when the listener is attached is never
+ * delivered to `handler` (see `currentEvent`).
+ *
  * Example — close a menu when the user clicks anywhere on `window`:
  *   useListener(window, "click", () => this.close());
  */
@@ -117,15 +120,42 @@ export function useListener(
     useEffect(() => {
       const el = target();
       if (el) {
-        el.addEventListener(eventName, handler, eventParams);
-        return () => el.removeEventListener(eventName, handler, eventParams);
+        const listener = makeListener(handler);
+        el.addEventListener(eventName, listener, eventParams);
+        return () => el.removeEventListener(eventName, listener, eventParams);
       }
       return;
     });
   } else {
-    target.addEventListener(eventName, handler, eventParams);
-    onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
+    const listener = makeListener(handler);
+    target.addEventListener(eventName, listener, eventParams);
+    onWillDestroy(() => target.removeEventListener(eventName, listener, eventParams));
   }
+}
+
+/**
+ * The last native event owl started dispatching. Kept past the end of its own
+ * handler, since a component created by that handler is set up a few microtasks
+ * later, while the event is still bubbling. Nothing clears it, and an `Event`
+ * keeps its `target` alive, hence the `WeakRef`.
+ */
+let currentEvent: WeakRef<Event> | null = null;
+
+export function setCurrentEvent(ev: Event): void {
+  if (currentEvent?.deref() !== ev) {
+    currentEvent = new WeakRef(ev);
+  }
+}
+
+function makeListener(handler: EventListener): EventListener {
+  const attachedDuring = currentEvent?.deref();
+  return function (this: EventTarget, ev: Event) {
+    if (ev === attachedDuring) {
+      return;
+    }
+    setCurrentEvent(ev);
+    handler.call(this, ev);
+  };
 }
 
 // -----------------------------------------------------------------------------

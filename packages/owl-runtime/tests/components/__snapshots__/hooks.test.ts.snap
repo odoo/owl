@@ -255,6 +255,119 @@ exports[`hooks > useListener 2`] = `
 }"
 `;
 
+exports[`hooks > useListener ignores the event that created its component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    let hdlr1 = [hdlr_fn1, ctx];
+    b2 = block2([hdlr1]);
+    if (ctx['this'].show()) {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`hooks > useListener ignores the event that created its component 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div>child</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`hooks > useListener ignores the event that created its component, from another useListener 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (ctx['this'].show()) {
+      b2 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`hooks > useListener ignores the event that created its component, from another useListener 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div>child</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`hooks > useListener keeps the event target as \`this\` 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`hooks > useListener still receives an event dispatched while it is being attached 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
+  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
+  
+  let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    let hdlr1 = [hdlr_fn1, ctx];
+    b2 = block2([hdlr1]);
+    if (ctx['this'].show()) {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`hooks > useListener still receives an event dispatched while it is being attached 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`hooks > useListener work with references 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -212,6 +212,11 @@ useListener(ref, "scroll", (ev) => this.onScroll(ev));
 > useListener(window, "click", this.closeMenu.bind(this), { capture: true });
 > ```
 
+> **Note:** an event already being dispatched when the listener is attached is
+> never delivered. A dialog displayed by a click handler is created while that
+> click still bubbles, so its `window` listener would otherwise fire for the
+> click that created it.
+
 ### `useApp`
 
 The `useApp` hook returns the current `App` instance:

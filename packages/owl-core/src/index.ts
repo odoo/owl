@@ -107,6 +107,8 @@ export {
 
 // Hooks
 export {
+  // not a hook, used by the runtime's `mainEventHandler`
+  setCurrentEvent,
   useApp,
   useEffect,
   useListener,

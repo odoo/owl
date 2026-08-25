@@ -368,7 +368,7 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
           idx: info.idx,
           refIdx: info.refIdx!,
           setData: setText,
-          updateData: setText,
+          updateData: updateText,
         });
         break;
       case "child":
@@ -678,4 +678,11 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
 
 function setText(this: Text, value: any) {
   characterDataSetData.call(this, toText(value));
+}
+
+function updateText(this: Text, value: any, oldValue: any) {
+  const data = toText(value);
+  if (data !== toText(oldValue)) {
+    characterDataSetData.call(this, data);
+  }
 }

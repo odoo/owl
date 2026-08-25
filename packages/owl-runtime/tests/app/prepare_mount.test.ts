@@ -1,4 +1,4 @@
-import { App, Component, onMounted, onWillStart, xml } from "../../src";
+import { App, Component, onMounted, onWillDestroy, onWillStart, status, xml } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
 
 let fixture: HTMLElement;
@@ -158,5 +158,135 @@ test("prepare-then-mount renders in parallel with another root", async () => {
   await nextTick();
   await nextTick();
   expect(order).toContain("a:end");
+  app.destroy();
+});
+
+test("mount() after destroy() is a no-op", async () => {
+  const steps: string[] = [];
+
+  class Root extends Component {
+    static template = xml`<span>ok</span>`;
+    setup() {
+      onMounted(() => steps.push("mounted"));
+      onWillDestroy(() => steps.push("willDestroy"));
+    }
+  }
+
+  const app = new App();
+  const root = app.createRoot(Root);
+  await root.prepare();
+  root.destroy();
+  expect(root.destroyed).toBe(true);
+
+  // The target is perfectly valid here: nothing but the destroyed flag stops
+  // the commit from resurrecting the finalized subtree.
+  let mounted = false;
+  root.mount(fixture).then(() => (mounted = true));
+  await nextTick();
+  expect(steps).toEqual(["willDestroy"]);
+  expect(fixture.innerHTML).toBe("");
+  // The mount was cancelled, not completed: its promise never settles.
+  expect(mounted).toBe(false);
+  app.destroy();
+});
+
+test("mount() after destroy() does not validate the target", async () => {
+  class Root extends Component {
+    static template = xml`<span>ok</span>`;
+  }
+
+  const app = new App();
+  const root = app.createRoot(Root);
+  await root.prepare();
+  root.destroy();
+  // A teardown often detaches the target before the root is destroyed: that
+  // must not turn into a mount-time crash.
+  const detached = document.createElement("div");
+  expect(() => root.mount(detached)).not.toThrow();
+  app.destroy();
+});
+
+test("destroy() while the render phase is pending resolves prepare()", async () => {
+  const steps: string[] = [];
+  const rpc = makeDeferred<string>();
+
+  class Root extends Component {
+    static template = xml`<span t-out="this.data"/>`;
+    data = "";
+    setup() {
+      onWillStart(async () => {
+        this.data = await rpc;
+        steps.push("willStart:end");
+      });
+      onMounted(() => steps.push("mounted"));
+    }
+  }
+
+  const app = new App();
+  const root = app.createRoot(Root);
+  const prepared = root.prepare();
+  await nextTick();
+
+  // Destroyed mid-render: the scheduler will drop the fiber, so complete()
+  // never runs and prepare() would otherwise hang forever.
+  root.destroy();
+  rpc.resolve("hello");
+  await prepared;
+
+  root.mount(fixture);
+  await nextTick();
+  expect(steps).toEqual(["willStart:end"]);
+  expect(fixture.innerHTML).toBe("");
+  app.destroy();
+});
+
+test("prepare() after destroy() does not start a render", async () => {
+  const steps: string[] = [];
+
+  class Root extends Component {
+    static template = xml`<span>ok</span>`;
+    setup() {
+      onWillStart(() => steps.push("willStart"));
+    }
+  }
+
+  const app = new App();
+  const root = app.createRoot(Root);
+  root.destroy();
+
+  const p1 = root.prepare();
+  const p2 = root.prepare();
+  expect(p1).toBe(p2);
+  await p1;
+  expect(steps).toEqual([]);
+  expect(root.prepared).toBe(false);
+  app.destroy();
+});
+
+test("destroy() is idempotent and keeps the component destroyed", async () => {
+  const steps: string[] = [];
+
+  class Root extends Component {
+    static template = xml`<span>ok</span>`;
+    setup() {
+      onWillDestroy(() => steps.push("willDestroy"));
+    }
+  }
+
+  const app = new App();
+  const root = app.createRoot(Root);
+  const component = await root.mount(fixture);
+  expect(fixture.innerHTML).toBe("<span>ok</span>");
+
+  root.destroy();
+  root.destroy();
+  expect(steps).toEqual(["willDestroy"]);
+  expect(fixture.innerHTML).toBe("");
+  expect(status(component)).toBe("destroyed");
+
+  root.mount(fixture);
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  expect(status(component)).toBe("destroyed");
   app.destroy();
 });

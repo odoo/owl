@@ -73,12 +73,19 @@ interface Root<T extends ComponentConstructor> {
   // prepare() to detect a fully-synchronous subtree (Suspense's no-flash fast
   // path). false while the render is still pending or not yet started.
   readonly prepared: boolean;
+  // true once destroy() has been called. A destroyed root is inert: prepare()
+  // and mount() become no-ops, so a teardown racing with an in-flight
+  // prepare-then-mount sequence needs no guard at the call site.
+  readonly destroyed: boolean;
   // Kick off rendering without a DOM target. Descendants' onWillStart fires
   // immediately and the bdom is built in memory. Idempotent — second call
-  // returns the same promise. Resolves when the render phase finishes.
+  // returns the same promise. Resolves when the render phase finishes, or as
+  // soon as the root is destroyed (the render phase will then never complete).
   prepare(): Promise<void>;
   // Mount the (possibly already-prepared) bdom into target, then fire
   // onMounted hooks. If prepare() was not called, mount() prepares first.
+  // On a destroyed root this does nothing and the returned promise stays
+  // pending: the mount was cancelled, not completed.
   mount(target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>>;
   destroy(): void;
 }
@@ -153,10 +160,17 @@ export class App extends TemplateSet {
 
     let fiber: MountFiber | null = null;
     let preparedPromise: Promise<void> | null = null;
+    let resolvePrepared: (() => void) | null = null;
+    let destroyed = false;
 
     const prepare = (): Promise<void> => {
       if (preparedPromise) {
         return preparedPromise;
+      }
+      if (destroyed) {
+        // Destroyed before the render phase started: no fiber, and no
+        // onWillStart on an already finalized component.
+        return (preparedPromise = Promise.resolve());
       }
       if (error) {
         return Promise.reject(error);
@@ -177,6 +191,7 @@ export class App extends TemplateSet {
       });
 
       const ready = new Promise<void>((res) => {
+        resolvePrepared = res;
         fiber!.onPrepared = () => res();
       });
       preparedPromise = ready;
@@ -213,6 +228,12 @@ export class App extends TemplateSet {
     };
 
     const mount = (target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>> => {
+      if (destroyed) {
+        // Inert: no target validation, no dom insertion. Committing here would
+        // insert a finalized subtree into the document and flip it back to
+        // MOUNTED, with nothing left to ever clean it up.
+        return promise;
+      }
       if (error) {
         return promise;
       }
@@ -229,12 +250,23 @@ export class App extends TemplateSet {
         // set later, when the scheduler runs complete() in the next frame.)
         return fiber ? fiber.counter === 0 : false;
       },
+      get destroyed() {
+        return destroyed;
+      },
       promise,
       prepare,
       mount,
       destroy: () => {
+        if (destroyed) {
+          return;
+        }
+        destroyed = true;
         this.roots.delete(root);
         node?.destroy();
+        // The scheduler drops fibers whose node is destroyed, so complete()
+        // (and with it onPrepared) will never run. Resolve here instead, so
+        // `await root.prepare()` does not hang forever.
+        resolvePrepared?.();
       },
     };
     this.roots.add(root);

@@ -162,6 +162,28 @@ the DOM. `destroy()` still cleans up the prepared subtree in either case.
 `validateTarget` runs at `mount` time, not at `prepare`, so a bad
 target surfaces synchronously when you actually try to mount.
 
+### Destroying a root
+
+`destroy()` is terminal: a destroyed root is inert. A teardown racing with
+an in-flight `prepare`-then-`mount` sequence therefore needs no guard at
+the call site.
+
+- `mount()` does nothing: no target validation, no DOM insertion. The
+  promise it returns stays pending — the mount was cancelled, not
+  completed.
+- `prepare()` starts no render and resolves immediately. A promise already
+  returned by an in-flight `prepare()` resolves at destroy time as well, so
+  `await root.prepare()` never hangs.
+- `root.destroyed` says which of the two happened, for code that needs to
+  branch after the await.
+
+```js
+const root = app.createRoot(MyComponent, { props });
+await root.prepare();
+// Safe even if something destroyed the root during the await.
+root.mount(targetElement);
+```
+
 ## Loading templates
 
 Most applications load their templates from the server at startup:

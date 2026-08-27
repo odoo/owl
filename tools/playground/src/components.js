@@ -45,6 +45,8 @@ class CodeEditor extends Component {
     this.secondaryEditorNode = signal(null);
     this.primaryMarkdownPreview = signal(null);
     this.secondaryMarkdownPreview = signal(null);
+    this.primaryVimStatusBar = signal(null);
+    this.secondaryVimStatusBar = signal(null);
 
     this.panes = {
       primary: {
@@ -52,12 +54,14 @@ class CodeEditor extends Component {
         models: {},
         scrolls: {},
         lastFile: null,
+        vimAdapter: null,
       },
       secondary: {
         editor: null,
         models: {},
         scrolls: {},
         lastFile: null,
+        vimAdapter: null,
       },
     };
 
@@ -91,6 +95,7 @@ class CodeEditor extends Component {
       pane.editor = this.createEditor(pane,this.primaryEditorNode(), model);
       pane.lastFile = fileName;
       lastVersion = this.code.contentVersion();
+      this._applyVimMode(pane, this.primaryVimStatusBar());
     });
 
     useEffect(() => {
@@ -154,10 +159,12 @@ class CodeEditor extends Component {
         pane.editor = this.createEditor(pane, node, model);
         pane.models[fileName] = model;
         pane.lastFile = fileName;
+        this._applyVimMode(pane, this.secondaryVimStatusBar());
       }
       if (!split && this.panes.secondary.editor) {
+        this.panes.secondary.vimAdapter?.dispose();
         this.panes.secondary.editor.dispose();
-        this.panes.secondary = { editor: null, models: {}, scrolls: {}, lastFile: null };
+        this.panes.secondary = { editor: null, models: {}, scrolls: {}, lastFile: null, vimAdapter: null };
       }
     });
 
@@ -192,6 +199,13 @@ class CodeEditor extends Component {
             fontSize: size,
           });
         }
+      }
+    });
+
+    useEffect(() => {
+      this._applyVimMode(this.panes.primary, this.primaryVimStatusBar());
+      if (this.panes.secondary.editor) {
+        this._applyVimMode(this.panes.secondary, this.secondaryVimStatusBar());
       }
     });
 
@@ -233,6 +247,7 @@ class CodeEditor extends Component {
 
     onWillUnmount(() => {
       for (const pane of Object.values(this.panes)) {
+        pane.vimAdapter?.dispose();
         if (pane.editor) pane.editor.dispose();
         for (const model of Object.values(pane.models)) {
           model.dispose();
@@ -438,6 +453,18 @@ class CodeEditor extends Component {
     return editor;
   }
 
+  _applyVimMode(pane, statusBarNode) {
+    if (!pane.editor) return;
+    if (this.settings.vimMode()) {
+      if (!pane.vimAdapter) {
+        pane.vimAdapter = monaco.initVimMode(pane.editor, statusBarNode);
+      }
+    } else if (pane.vimAdapter) {
+      pane.vimAdapter.dispose();
+      pane.vimAdapter = null;
+    }
+  }
+
   createModel(content, fileName) {
     const lang = getFileType(fileName);
     const activeProject = this.project.activeProject();
@@ -581,6 +608,9 @@ class SettingsDialog extends Component {
   }
   onDarkModeChange(ev) {
     this.settings.setDarkMode(ev.target.checked);
+  }
+  onVimModeChange(ev) {
+    this.settings.setVimMode(ev.target.checked);
   }
   close() {
     this.dialog.closeDialog();

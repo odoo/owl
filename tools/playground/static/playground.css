@@ -767,6 +767,20 @@ body {
   overflow: auto;
 }
 
+.vim-status-bar {
+  flex-shrink: 0;
+  height: 20px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: monospace;
+  background: #1e293b;
+  color: #abb2bf;
+  border-top: 1px solid #0f172a;
+}
+
 /* MARKDOWN TOGGLE BUTTON ****************************************/
 .markdown-toggle-btn {
   display: inline-flex;
@@ -2528,6 +2542,12 @@ body {
 
 .light-mode .editor-tab-bar {
   background: #f0f1f3;
+}
+
+.light-mode .vim-status-bar {
+  background: #f0f1f3;
+  color: #3d3d4e;
+  border-top-color: #e0e0e8;
 }
 
 .light-mode .editor-tab {

@@ -1026,6 +1026,7 @@ class SettingsPlugin extends Plugin {
   fontSize = signal(parseInt(localStorage.getItem("owl-playground-font-size")) || 13);
   autoRun = signal(localStorage.getItem("owl-playground-auto-run") === "true");
   darkMode = signal(localStorage.getItem("owl-playground-dark-mode") !== "false");
+  vimMode = signal(localStorage.getItem("owl-playground-vim-mode") === "true");
   fullscreen = signal(false);
   leftPaneWidth = signal(Math.ceil((window.innerWidth + 160) / 2));
   sidebarWidth = signal(180);
@@ -1055,6 +1056,11 @@ class SettingsPlugin extends Plugin {
   setAutoRun(value) {
     this.autoRun.set(value);
     localStorage.setItem("owl-playground-auto-run", String(value));
+  }
+
+  setVimMode(value) {
+    this.vimMode.set(value);
+    localStorage.setItem("owl-playground-vim-mode", String(value));
   }
 
   setLeftPaneWidth(width) {

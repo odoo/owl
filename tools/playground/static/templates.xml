@@ -12,6 +12,7 @@
       <div class="editor-pane-content">
         <div class="code-editor" t-ref="this.primaryEditorNode" t-att-hidden="this.isPrimaryMarkdownPreview()"/>
         <div class="markdown-preview" t-ref="this.primaryMarkdownPreview" t-att-hidden="!this.isPrimaryMarkdownPreview()" t-att-style="'font-size: ' + this.settings.fontSize() + 'px'"/>
+        <div class="vim-status-bar" t-ref="this.primaryVimStatusBar" t-att-hidden="!this.settings.vimMode() || this.isPrimaryMarkdownPreview()"/>
       </div>
     </div>
     <div class="editor-split-separator" t-if="this.code.splitMode()" t-on-mousedown="this.onSplitSeparatorMouseDown"/>
@@ -27,6 +28,7 @@
       <div class="editor-pane-content">
         <div class="code-editor" t-ref="this.secondaryEditorNode" t-att-hidden="this.isSecondaryMarkdownPreview()"/>
         <div class="markdown-preview" t-ref="this.secondaryMarkdownPreview" t-att-hidden="!this.isSecondaryMarkdownPreview()" t-att-style="'font-size: ' + this.settings.fontSize() + 'px'"/>
+        <div class="vim-status-bar" t-ref="this.secondaryVimStatusBar" t-att-hidden="!this.settings.vimMode() || this.isSecondaryMarkdownPreview()"/>
       </div>
     </div>
   </div>
@@ -101,6 +103,16 @@
           <input type="checkbox" t-att-checked="this.settings.darkMode()" t-on-change="this.onDarkModeChange"/>
           <span t-if="this.settings.darkMode()">Dark</span>
           <span t-else="">Light</span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-row">
+      <label>Vim mode</label>
+      <div class="settings-control">
+        <label class="theme-toggle-label">
+          <input type="checkbox" t-att-checked="this.settings.vimMode()" t-on-change="this.onVimModeChange"/>
+          <span t-if="this.settings.vimMode()">On</span>
+          <span t-else="">Off</span>
         </label>
       </div>
     </div>

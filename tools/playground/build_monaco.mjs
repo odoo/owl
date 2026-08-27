@@ -15,6 +15,24 @@ const outputFile = path.resolve(
   "libs/monaco/monaco.bundle.js"
 );
 
+// monaco-vim's ESM build imports monaco-editor submodules (e.g.
+// "monaco-editor/esm/vs/editor/editor.api") without a ".js" extension.
+// monaco-editor's package.json "exports" map ("./*": "./*") only matches
+// literal file paths, so esbuild can't resolve those on its own — add the
+// extension back ourselves.
+const monacoEsmExtensionPlugin = {
+  name: "monaco-editor-esm-js-extension",
+  setup(build) {
+    build.onResolve({ filter: /^monaco-editor\/esm\/vs\// }, (args) => {
+      if (args.path.endsWith(".js")) {
+        return null;
+      }
+      const rel = args.path.slice("monaco-editor/esm/vs/".length);
+      return { path: path.join(monacoRoot, rel + ".js") };
+    });
+  },
+};
+
 const tempEntry = path.resolve(
   rootDir,
   "temp_monaco_entry.mjs"
@@ -27,6 +45,7 @@ import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 import "monaco-editor/esm/vs/language/css/monaco.contribution.js";
 import "monaco-editor/esm/vs/language/html/monaco.contribution.js";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution.js";
+import { initVimMode } from "monaco-vim";
 
 export const {
   editor,
@@ -37,6 +56,8 @@ export const {
   KeyCode,
   typescript,
 } = monaco;
+
+export { initVimMode };
 `
 );
 
@@ -70,6 +91,17 @@ try {
     format: "esm",
     minify: true,
     target: "es2022",
+    // monaco-vim's "exports" map picks its standalone UMD build under the
+    // "browser" condition, which bundles its own separate copy of
+    // monaco-editor's internals. Alias straight to its ESM build instead,
+    // so it shares this bundle's single monaco-editor module graph.
+    alias: {
+      "monaco-vim": path.resolve(
+        rootDir,
+        "node_modules/monaco-vim/dist/index.mjs"
+      ),
+    },
+    plugins: [monacoEsmExtensionPlugin],
     loader: {
       ".ttf": "file",
       ".css": "css",

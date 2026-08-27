@@ -28,7 +28,7 @@ class ProductCard extends Component {
   props = useProps({
     name: t.string(),
     price: t.number(),
-    "image?": t.string(),
+    image: t.string().optional(),
   });
 }
 ```
@@ -40,8 +40,9 @@ Since we named the property `props`, we access values in the template with
 <span t-out="this.props.name"/>
 ```
 
-A `?` suffix marks a prop as optional. When `dev: true` is set in the app,
-Owl will check that required props are provided and that their types match.
+Calling `.optional()` on a type marks the prop as optional. When `dev: true`
+is set in the app, Owl will check that required props are provided and that
+their types match.
 
 The `types` helper supports many other types:
 
@@ -51,14 +52,12 @@ The `types` helper supports many other types:
 - `t.signal()`
 - `t.array(t.string())`
 
-The `useProps` function accepts a second argument for **default values**:
+Passing a value to `.optional(value)` also declares a **default value**:
 
 ```js
 props = useProps({
     name: t.string(),
-    "image?": t.string(),
-}, {
-    image: "📦",
+    image: t.string().optional("📦"),
 });
 ```
 

@@ -11,11 +11,27 @@ import {
   signal,
   computed,
   Resource,
+  useListener,
 } from "../../src";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
+
+// Browsers dispatch events synchronously from inside remove(): chrome fires
+// `change` when a focused input whose value is not committed yet gets detached.
+// jsdom does not, so an element opts in by carrying the event it should fire on
+// removal. Installed here rather than inside a test because blockdom captures
+// Element.prototype.remove when it builds a block class, and those classes are
+// cached across tests.
+const originalElementRemove = Element.prototype.remove;
+Element.prototype.remove = function (this: Element) {
+  const eventName = (this as any).fireOnRemove;
+  if (eventName) {
+    this.dispatchEvent(new Event(eventName));
+  }
+  originalElementRemove.call(this);
+};
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -459,5 +475,59 @@ describe("refs", () => {
     root.show.set(false);
     await nextTick();
     expect(root.myRef()).toBeNull();
+  });
+
+  test("ref is unset only once its element is detached", async () => {
+    const steps: string[] = [];
+    class Test extends Component {
+      static template = xml`<div><span t-if="this.show()" t-ref="this.myRef"/></div>`;
+      show = signal(true);
+      el: HTMLElement | null = null;
+      myRef = {
+        set: (el: HTMLElement | null) => {
+          if (el) {
+            this.el = el;
+          } else {
+            steps.push(`unset, element connected=${this.el!.isConnected}`);
+          }
+        },
+      };
+    }
+
+    const test = await mount(Test, fixture);
+    expect(test.el).toBe(fixture.querySelector("span"));
+
+    test.show.set(false);
+    await nextTick();
+    expect(steps).toEqual(["unset, element connected=false"]);
+  });
+
+  test("a listener firing during the removal still sees its ref", async () => {
+    // Reached in practice because owl patches on an animation frame: the frame
+    // can land between the keydown handler that hides the input and the key
+    // press that commits its value, so the input is still dirty when detached.
+    const steps: string[] = [];
+    class Test extends Component {
+      static template = xml`<div><input t-if="this.show()" t-ref="this.input"/></div>`;
+      show = signal(true);
+      input = signal.ref(HTMLInputElement);
+      setup() {
+        useListener(this.input, "change", () => {
+          const el = this.input();
+          steps.push(`change: ref=${el ? el.value : null}`);
+        });
+      }
+    }
+
+    const test = await mount(Test, fixture);
+    const input = fixture.querySelector("input")!;
+    input.value = "hello";
+    (input as any).fireOnRemove = "change";
+
+    test.show.set(false);
+    await nextTick();
+
+    expect(steps).toEqual(["change: ref=hello"]);
+    expect(test.input()).toBeNull();
   });
 });

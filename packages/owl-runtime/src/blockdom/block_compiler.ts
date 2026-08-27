@@ -655,6 +655,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
     };
 
     Block.prototype.remove = function remove() {
+      // Detach first, unbind the refs after. The removal is where the browser
+      // hands control back to user code: chrome dispatches `change` and `blur`
+      // synchronously from inside remove() on a focused input whose value is not
+      // committed yet, and both a t-on handler and a useListener one run there.
+      // Unbinding first would leave them reading a null ref while their element
+      // is still in the document.
+      elementRemove.call(this.el);
+
       if (cbRefs.length) {
         const data = this.data!;
         const refs = this.refs!;
@@ -663,8 +671,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
           fn(null, refs[locRefIdxs[cbRef]]);
         }
       }
-
-      elementRemove.call(this.el);
     };
   }
   return Block;

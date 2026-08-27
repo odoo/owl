@@ -948,7 +948,7 @@ describe("lifecycle hooks", () => {
     expect(created).toBe(true);
   });
 
-  // TODO: rename (corresponds to https://github.com/odoo/owl/blob/master/doc/reference/concurrency_model.md#semantics)
+  // TODO: rename (corresponds to https://github.com/odoo/owl/blob/master/doc/v3/owl/reference/concurrency_model.md#semantics)
   test("component semantics", async () => {
     class TestWidget extends Component {
       name: string = "test";

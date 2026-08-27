@@ -9,7 +9,7 @@ independently from any component. A plugin can hold reactive state (like our
 todo list), provide a service (like a notification system or a storage layer),
 or both. They allow you to separate business logic from UI code, and to share
 that logic across multiple components. See the
-[Plugins documentation](https://github.com/odoo/owl/blob/master/doc/reference/plugins.md)
+[Plugins documentation](https://github.com/odoo/owl/blob/master/doc/v3/owl/reference/plugins.md)
 for more details.
 
 In this step, you will extract the todo list management into a

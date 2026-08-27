@@ -30,8 +30,8 @@ A **signal** is a reactive container for a value. You create one with `signal(in
 read it by calling it as a function (`signal()`), and update it with `.set(newValue)`.
 Whenever a signal's value changes, Owl automatically re-renders every component
 that read that signal during its last render — you never have to manually
-trigger an update. See the [Signals](https://github.com/odoo/owl/blob/master/doc/reference/reactivity.md#signals)
-section for more details.
+trigger an update. See the [Signals](https://github.com/odoo/owl/blob/master/doc/v3/owl/reference/signals.md)
+documentation for more details.
 
 Import `signal` from `@odoo/owl` and create one as a class property:
 

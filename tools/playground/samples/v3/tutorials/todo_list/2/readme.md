@@ -13,7 +13,7 @@ Here is what you need to do:
 You will quickly notice that pushing into the array does not update the UI.
 This is because Owl needs a reactive data structure to know when to re-render.
 You will need to convert the `todos` array into a `signal.Array`. See the
-[Reactivity](https://github.com/odoo/owl/blob/master/doc/reference/reactivity.md)
+[Signals](https://github.com/odoo/owl/blob/master/doc/v3/owl/reference/signals.md#collection-signals)
 documentation for more details on signals and `signal.Array`.
 
 ### Hints

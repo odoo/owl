@@ -292,7 +292,10 @@ docs/playground/
 ├── libs/
 │   ├── codemirror.bundle.js  # CodeMirror 6 editor bundle
 │   ├── jszip.min.js          # ZIP creation for export
-│   └── FileSaver.min.js      # File download helper
+│   ├── FileSaver.min.js      # File download helper
+│   ├── marked.min.js         # Markdown parser (vendored, was CDN)
+│   ├── marked-highlight.min.js # marked <-> highlight.js bridge (vendored, was CDN)
+│   └── highlight.min.js      # Syntax highlighting (vendored, was CDN)
 ├── standalone_app/
 │   ├── app.py              # Python HTTP server (port 3600)
 │   └── index.html          # Standalone app template

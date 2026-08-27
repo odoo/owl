@@ -7,7 +7,7 @@ let markedConfigured = false;
 
 async function getMarked() {
   if (!markedLoaded) {
-    markedLoaded = loadJS("https://cdn.jsdelivr.net/npm/marked/marked.min.js").then(() => {
+    markedLoaded = loadJS("libs/marked.min.js").then(() => {
       return window.marked;
     });
   }
@@ -16,9 +16,7 @@ async function getMarked() {
 
 async function getHighlightJS() {
   if (!highlightJsLoaded) {
-    highlightJsLoaded = loadJS(
-      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
-    ).then(() => {
+    highlightJsLoaded = loadJS("libs/highlight.min.js").then(() => {
       return window.hljs;
     });
   }
@@ -27,9 +25,7 @@ async function getHighlightJS() {
 
 async function getMarkedHighlight() {
   if (!markedHighlightLoaded) {
-    markedHighlightLoaded = loadJS(
-      "https://cdn.jsdelivr.net/npm/marked-highlight@2.2.1/lib/index.umd.min.js"
-    ).then(() => {
+    markedHighlightLoaded = loadJS("libs/marked-highlight.min.js").then(() => {
       return window.markedHighlight;
     });
   }

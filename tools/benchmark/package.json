@@ -1,0 +1,30 @@
+{
+  "name": "@odoo/owl-benchmark",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@odoo/owl": "^2.8.1",
+    "@types/bun": "latest",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "playwright": "^1.59.1",
+    "vite": "^7.3.1",
+    "vite-plugin-solid": "^2.11.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "solid-js": "^1.9.11",
+    "vue": "^3.5.28"
+  }
+}

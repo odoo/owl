@@ -24,7 +24,8 @@ signal. When the user types, the signal is updated automatically:
 ```
 
 A `computed` value is derived from other signals. It updates automatically
-when its dependencies change:
+when its dependencies change. See the [Computed Values](https://odoo.github.io/owl/documentation/v3/owl/reference/computed_values.html)
+documentation for more details.
 
 ```js
 import { signal, computed } from "@odoo/owl";

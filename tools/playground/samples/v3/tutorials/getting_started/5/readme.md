@@ -1,9 +1,12 @@
 ## Lifecycle Hooks
 
-Components have a lifecycle: they are created, mounted into the DOM, and
-eventually removed. Owl provides **hooks** to run code at specific moments in
-this lifecycle. In this step, you will build a `Timer` component that starts
-counting when mounted and cleans up when removed.
+Components have a [lifecycle](https://odoo.github.io/owl/documentation/v3/owl/reference/component.html#lifecycle):
+they are created, mounted into the DOM, and eventually removed. Owl provides
+**hooks** to run code at specific moments in this lifecycle. In this step, you
+will build a `Timer` component that starts counting when mounted and cleans up
+when removed. See the
+[Lifecycle Hooks](https://odoo.github.io/owl/documentation/v3/owl/reference/hooks.html#lifecycle-hooks)
+documentation for more details.
 
 Here is what you need to do:
 

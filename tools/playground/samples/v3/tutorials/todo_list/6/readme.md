@@ -17,7 +17,9 @@ Here is what you need to do:
 
 ### Hints
 
-`useEffect` runs a function whenever any signal read inside it changes:
+`useEffect` runs a function whenever any signal read inside it changes. See the
+[useEffect](https://odoo.github.io/owl/documentation/v3/owl/reference/effects.html#useeffect)
+documentation for more details.
 
 ```js
 import { useEffect } from "@odoo/owl";

@@ -40,7 +40,9 @@ class Root extends Component {
 }
 ```
 
-Each `<Counter />` instance will have its own independent state.
+Each `<Counter />` instance will have its own independent state. See the
+[Sub Components](https://odoo.github.io/owl/documentation/v3/owl/reference/component.html#sub-components)
+documentation for more details.
 
 To move a template to its own XML file, create a `counter.xml` with a
 `t-name` attribute, and reference it by name in the component:

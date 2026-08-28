@@ -21,7 +21,9 @@ Here is what you need to do:
 ### Hints
 
 The `t-ref` directive links a DOM element to a signal. After the component is
-mounted, the signal contains the actual DOM element:
+mounted, the signal contains the actual DOM element. See the
+[References](https://odoo.github.io/owl/documentation/v3/owl/reference/refs.html)
+documentation for more details.
 
 ```js
 import { signal, onMounted } from "@odoo/owl";
@@ -43,3 +45,8 @@ In the template:
 
 Note that the signal is `null` before mounting — that is why we need
 `onMounted` to safely access the DOM element.
+
+A function that starts with `use` and calls other hooks, like `useAutofocus`,
+is called a **custom hook**. See the
+[Hook Rule](https://odoo.github.io/owl/documentation/v3/owl/reference/hooks.html#the-hook-rule)
+documentation for more details.

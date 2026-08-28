@@ -27,7 +27,9 @@ Here is what you need to do:
 
 ### Hints
 
-To iterate over a list in a template, use `t-foreach` with a `t-key`:
+To iterate over a list in a template, use `t-foreach` with a `t-key`. See the
+[Loops](https://odoo.github.io/owl/documentation/v3/owl/reference/template_syntax.html#loops)
+documentation for more details.
 
 ```xml
 <t t-foreach="this.todos" t-as="todo" t-key="todo.id">

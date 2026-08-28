@@ -42,7 +42,7 @@ automatically:
 <input type="checkbox" t-model="this.props.todo.completed"/>
 ```
 
-To validate a signal prop, use `t.signal()`:
+To validate a signal prop, use [`t.signal()`](https://odoo.github.io/owl/documentation/v3/owl/reference/types_validation.html#tsignaltype):
 
 ```js
 props = useProps({

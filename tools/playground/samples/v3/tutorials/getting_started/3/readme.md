@@ -19,7 +19,9 @@ Here is what you need to do:
 ### Hints
 
 To define and validate props, use the `useProps` function together with `types`.
-The property name you assign it to is how you access it in the template:
+The property name you assign it to is how you access it in the template. See the
+[useProps](https://odoo.github.io/owl/documentation/v3/owl/reference/props.html#the-useprops-function)
+documentation for more details.
 
 ```js
 import { Component, useProps, t } from "@odoo/owl";
@@ -44,7 +46,7 @@ Calling `.optional()` on a type marks the prop as optional. When `dev: true`
 is set in the app, Owl will check that required props are provided and that
 their types match.
 
-The `types` helper supports many other types:
+The `types` helper supports many other [validators](https://odoo.github.io/owl/documentation/v3/owl/reference/types_validation.html#validators):
 
 - `t.boolean()`, `t.number()`, `t.string()`
 - `t.function()`

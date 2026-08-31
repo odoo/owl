@@ -1,4 +1,4 @@
-import { useContext, computed, signal } from "@odoo/owl";
+import { useScope, computed, signal } from "@odoo/owl";
 export class Model {
   id;
   orm;
@@ -339,7 +339,7 @@ export class ORM {
       }
     } else {
       try {
-        this._ctx = useContext();
+        this._ctx = useScope();
       } catch {
         this._ctx = null;
       }

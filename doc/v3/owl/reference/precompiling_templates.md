@@ -15,15 +15,16 @@ process is the following:
 1. write your templates in xml files (with a `t-name` directive to declare the name
    of the template)
 2. Compile them in a `templates.js` file
-3. get the `owl.iife.runtime.js` file (which is a owl build without the compiler)
-4. bundle `owl.iife.runtime.js` and `template.js` with your assets (owl needs to
+3. get the `owl-runtime.es.js` file (an owl build without the compiler)
+4. bundle `owl-runtime.es.js` and `template.js` with your assets (owl needs to
    be positioned before the templates)
 
 Here is a more detailed explanation on how to compile xml files into a js file:
 
 1. clone the owl repository locally
 2. `npm install` to install all the required tooling
-3. `npm run build:runtime` to build the `owl.iife.runtime.js` file
+3. `npm run build:runtime` to build the `owl-runtime.es.js` file (in
+   `packages/owl-runtime/dist/`)
 4. `npm run build:compiler` to build the template compiler
 5. `npm run compile_templates -- path/to/your/templates` will scan your target
    folder, find all xml files, get all templates, compile them, and generate a

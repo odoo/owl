@@ -61,8 +61,8 @@ the fallback will reappear.
 
 If you don't pass an `error` prop, ErrorBoundary creates its own internal
 signal. The fallback still renders on errors, but your code has no handle
-on the error value or on clearing it (short of grabbing a `t-ref` to the
-component and reaching into `.error`).
+on the error value or on clearing it — pass your own `error` signal as
+shown above if you need one.
 
 ## How it works
 
@@ -89,9 +89,7 @@ Props:
 - `error?: Signal<any>` — optional external signal the boundary writes
   the caught error to. If omitted, ErrorBoundary creates its own.
 
-Exposed fields, for code that needs programmatic access via
-`t-ref`/`useRef`:
-
-- `error: Signal<any>` — the signal holding the currently caught error
-  (the prop if provided, otherwise the internal one). Read with
-  `error()`, reset with `error.set(null)`.
+`t-ref` is not supported on components in Owl 3, so there's no way to
+reach the internal signal programmatically when the `error` prop is
+omitted — pass your own signal as `error` if you need to read or clear
+it, as shown above.

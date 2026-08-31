@@ -77,7 +77,7 @@ Like event handling, the `t-model` directive accepts the following modifiers:
 | --------- | -------------------------------------------------------------------- |
 | `.lazy`   | update the value on the `change` event (default is on `input` event) |
 | `.number` | try to parse the value to a number (using `parseFloat`)              |
-| `.trim`   | trim the resulting value                                             |
+| `.trim`   | trim the resulting value; also implies `.lazy`                       |
 
 For example:
 
@@ -87,6 +87,10 @@ For example:
 
 These modifiers can be combined. For instance, `t-model.lazy.number` will only
 update a number whenever the change is done.
+
+Note that `.trim` silently switches the update event to `change` as well,
+even without `.lazy` — `t-model.trim` and `t-model.trim.lazy` behave
+identically.
 
 ## Using t-model with proxy objects
 

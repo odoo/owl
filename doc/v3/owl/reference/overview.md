@@ -54,7 +54,7 @@ Here is a list of everything exported by the Owl library.
 - [`Plugin`](plugins.md): base class for plugins
 - [`usePlugin`](plugins.md): import a plugin dependency
 - [`providePlugins`](plugins.md): make plugins available to a component subtree
-- [`config`](plugins.md#configuration): read a value from the plugin manager's config
+- [`useConfig`](plugins.md#configuration): read a value from the plugin manager's config
 
 ## Type Validation
 

@@ -113,8 +113,10 @@ class MyComponent extends Component {
 }
 ```
 
-`useEffect` can also be called inside a [plugin](plugins.md)'s `setup`, where it
-is bound to the plugin's lifetime and disposed when the plugin is destroyed.
+`useEffect` can also be called inside a [plugin](plugins.md)'s `setup`. Individual
+plugins don't have their own lifetime, though: the effect is bound to the
+lifetime of the shared plugin manager, and is disposed only when that manager
+is destroyed.
 
 ## untrack
 

@@ -468,8 +468,8 @@ The `t-key` directive is useful for lists (`t-foreach`). A key should be
 a unique number or string (objects will not work: they will be cast to the
 `"[object Object]"` string, which is obviously not unique).
 
-Also, the key can be set on a `t` tag or on its children. The following variations
-are all equivalent:
+Also, the key can be set on a `p` tag or on a wrapping `t` tag. The following
+variations are equivalent:
 
 ```xml
 <p t-foreach="this.items" t-as="item" t-key="item.id">
@@ -479,13 +479,11 @@ are all equivalent:
 <t t-foreach="this.items" t-as="item" t-key="item.id">
   <p t-out="item.text"/>
 </t>
-
-<t t-foreach="this.items" t-as="item">
-  <p t-key="item.id" t-out="item.text"/>
-</t>
 ```
 
-If there is no `t-key` directive, Owl will use the index as a default key.
+`t-key` must be set on the same element as `t-foreach`, not on one of its
+children. If it is missing, Owl throws `"Directive t-foreach should always
+be used with a t-key!"` — there is no fallback to the index.
 
 Note: the `t-foreach` directive only accepts arrays (lists) or objects. It does
 not work with other iterables, such as `Set`. However, it is only a matter of
@@ -617,13 +615,13 @@ modified by the function.
 This :
 
 ```xml
-<div t-custom-test_directive="click" />
+<div t-custom-test_directive="this.click" />
 ```
 
 will be replaced by :
 
 ```xml
-<div t-on-click="value"/>
+<div t-on-click="this.click"/>
 ```
 
 ## Fragments

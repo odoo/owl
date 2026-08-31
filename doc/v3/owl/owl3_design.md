@@ -214,16 +214,15 @@ So, with computed values, we have a dynamic graph of values (base values like
 signals and proxies, and derived values with compute functions). Owl will try
 to efficiently only recompute what it needs.
 
-A computed function can act like a signal, it has an empty `set` function. It is
-also possible to redefine the `.set` function, to make it writable, in some
-situations:
+A computed function can act like a signal, but by default it is read-only: its
+`set` function throws. It is also possible to redefine the `.set` function, to
+make it writable, in some situations:
 
 ```js
 const s = signal(3);
 const double = computed(() => 2*s());
 double();       // return 6
-double.set(5);  // nothing happens
-double();       // return 6
+double.set(5);  // throws: "Cannot write to a read-only computed value..."
 const triple = computed(() => 3*s(), {
   set: value => s.set(value/3);
 });
@@ -1571,8 +1570,8 @@ UI framework.
 
 ## Other ideas
 
-We discuss here some other ideas that we explored and decided not to include in
-Owl 3.
+We discuss here some other ideas that we explored during the design of Owl 3
+(most of which were decided against; one did ship — see below).
 
 ### Make it easy to output a simple reactive value
 
@@ -1609,6 +1608,9 @@ static tooling to work (in this case, the type of all signals is basically
 erased from the content of the template).
 
 ### Static prop helper
+
+This idea was explored here and, unlike the others in this section, ended up
+shipping as `useProps.static()`.
 
 It is often useful to only import a single component prop:
 

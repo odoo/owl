@@ -38,8 +38,9 @@ await root.mount(document.body);
 
 - **`app.createRoot(Component, options?)`**: registers a root component and
   returns a `Root` object exposing `prepare`, `mount`, `destroy`, plus
-  `promise` (resolves to the component instance once mounted) and the
-  underlying `node`. `options` accepts `{ props }`.
+  `promise` (resolves to the component instance once mounted), `prepared`
+  (true once the render phase has finished), and `destroyed` (true once
+  `destroy()` has been called). `options` accepts `{ props }`.
 
 - **`app.destroy()`**: destroys every root, the plugin manager, and the
   application itself.
@@ -207,5 +208,3 @@ Dev mode activates some additional checks and developer amenities:
 - [Props validation](./props.md#props-validation) is performed
 - [t-foreach](./template_syntax.md#loops) loops check for key unicity
 - Lifecycle hooks are wrapped to report their errors in a more developer-friendly way
-- onWillStart will emit a warning in the console when it takes longer than 3
-  seconds in an effort to ease debugging the presence of deadlocks

@@ -44,7 +44,8 @@ class MyComponent extends Component {
 
   setup() {
     const scope = useScope();
-    // scope.status === STATUS.NEW at this point
+    // scope.status === 0 at this point (freshly created; see "Lifetime and
+    // Status" below — STATUS itself isn't exported from @odoo/owl)
     // scope.abortSignal — lazily-allocated AbortSignal tied to this component
   }
 }
@@ -55,8 +56,10 @@ if you need to tolerate that case — it returns `Scope | null`.
 
 ## Lifetime and Status
 
-A scope's `status` transitions through three values, defined by the `STATUS`
-enum:
+A scope's `status` transitions through three numeric values, internally
+defined by a `STATUS` enum. `STATUS` itself is not exported from
+`@odoo/owl` — use the `status()` helper below for a readable check
+instead of importing it:
 
 | Status      | Meaning                                            |
 | ----------- | -------------------------------------------------- |
@@ -269,9 +272,10 @@ active. Reach for this only when the absence of a scope is meaningful.
 
 ### `Scope`
 
-- `status: STATUS` — current status (`NEW` / `MOUNTED` / `DESTROYED`).
+- `status: number` — current status (0 = `NEW`, 1 = `MOUNTED`, 2 =
+  `DESTROYED`; the `STATUS` enum itself isn't exported from `@odoo/owl` —
+  use the `status()` helper for a readable check).
 - `app: App` — the owning application.
-- `parent: Scope | null` — parent scope in the tree.
 - `abortSignal: AbortSignal` — an `AbortSignal` aborted when the scope dies.
   Lazily allocates an `AbortController` on first access.
 - `isDestroyed(): boolean` — true once the scope is destroyed (all cleanup

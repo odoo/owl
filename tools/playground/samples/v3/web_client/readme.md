@@ -6,12 +6,12 @@ This example demonstrates how to build a web client application using OWL's plug
 
 - `core/` - Core utilities and plugins
   - `orm.js` - A reactive ORM for managing data models
-  - `action_plugin.js` - Plugin for handling actions/navigation
   - `notification_plugin.js` - Plugin for displaying notifications
   - `notification_container.js` - Component that renders notifications
 - `web_client/` - Main web client components
   - `web_client.js` - Root component
   - `navbar.js` - Top navigation bar
+  - `action_plugin.js` - Plugin for handling actions/navigation
 - `views/` - View components
   - `list_view.js` - List view for displaying records
   - `form_view.js` - Form view for editing records

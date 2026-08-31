@@ -35,7 +35,8 @@ Once setup, all rendered templates will be translated using `translateFn`:
 
 - each text node will be replaced with its translation,
 - each of the following attribute values will be translated as well: `title`,
-  `placeholder`, `label` and `alt`,
+  `placeholder`, `label`, `alt`, `aria-label`, `aria-placeholder`,
+  `aria-roledescription` and `aria-valuetext`,
 - translating text nodes can be disabled with the special attribute `t-translation`,
   if its value is `off`.
 - the translate function receives as second parameter a context that can be used

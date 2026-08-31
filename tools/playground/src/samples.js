@@ -480,6 +480,27 @@ const TUTORIALS_V3 = [
           "storage_plugin.js": "tutorials/todo_list/10/storage_plugin.js",
         },
       },
+      {
+        title: "Proxies vs signals",
+        files: {
+          "readme.md": "tutorials/todo_list/11/readme.md",
+          "main.js": "tutorials/todo_list/10/main_solution.js",
+          "todo_list/todo_list.js": "tutorials/todo_list/8/todo_list_solution.js",
+          "todo_list/todo_list.xml": "tutorials/todo_list/9/todo_list_solution.xml",
+          "todo_list/todo_list.css": "tutorials/todo_list/9/todo_list.css",
+          "todo_list/todo_list_plugin.js": "tutorials/todo_list/10/todo_list_plugin_solution.js",
+          "todo_list/todo_item.js": "tutorials/todo_list/8/todo_item_solution.js",
+          "todo_list/todo_item.xml": "tutorials/todo_list/8/todo_item_solution.xml",
+          "todo_list/todo_item.css": "tutorials/todo_list/7/todo_item_solution.css",
+          "todo_list/utils.js": "tutorials/todo_list/4/utils.js",
+          "storage_plugin.js": "tutorials/todo_list/10/storage_plugin.js",
+        },
+        solution: {
+          "todo_list/todo_list.js": "tutorials/todo_list/11/todo_list_solution.js",
+          "todo_list/todo_list.xml": "tutorials/todo_list/11/todo_list_solution.xml",
+          "todo_list/todo_list.css": "tutorials/todo_list/11/todo_list_solution.css",
+        },
+      },
     ],
   },
   {

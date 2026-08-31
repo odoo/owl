@@ -1,0 +1,29 @@
+<templates>
+  <t t-name="tutorial.TodoList">
+    <div class="todo-app">
+      <div class="todo-header">
+        <input class="todo-input" t-ref="this.input" placeholder="What needs to be done?" t-on-keyup="this.addTodo"/>
+        <button class="todo-add-btn" t-on-click="this.addTodo">Add</button>
+      </div>
+      <div class="todo-toolbar">
+        <select t-model.proxy="this.viewPrefs.filter.status">
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+        <select t-model.proxy="this.viewPrefs.sort.by">
+          <option value="id">Sort: created</option>
+          <option value="text">Sort: name</option>
+        </select>
+        <button class="todo-sort-direction" t-on-click="this.toggleSortDirection"
+                title="Toggle sort direction" t-out="this.sortDirectionLabel()"/>
+      </div>
+      <ul class="todo-list">
+        <t t-foreach="this.visibleTodos()" t-as="todo" t-key="todo.id">
+          <TodoItem todo="todo"/>
+        </t>
+      </ul>
+      <div class="todo-footer"><t t-out="this.todoList.remaining()"/> remaining items</div>
+    </div>
+  </t>
+</templates>

@@ -366,7 +366,21 @@ export class ComponentsPlugin extends Plugin {
 
   onActiveComponentClick() {
     this.selectedElement()?.scrollIntoView({ block: "center", behavior: "smooth" });
-    copyToClipboard(this.activeComponent().name);
+    this.copyToClipboard(this.activeComponent().name);
+  }
+
+  copyToClipboard(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+    document.body.removeChild(textarea);
   }
 
   // -------------------------------------------------------------------------
@@ -538,18 +552,4 @@ function keepEnvLit(details) {
       }
     }
   }
-}
-
-function copyToClipboard(text) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.style.opacity = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-  try {
-    document.execCommand("copy");
-  } catch (err) {
-    console.error("Copy failed", err);
-  }
-  document.body.removeChild(textarea);
 }

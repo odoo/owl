@@ -189,6 +189,51 @@ describe("registry", () => {
     }).toThrow("Registry entry does not match the type");
   });
 
+  test("do not bind signals on add", async () => {
+    const steps: string[] = [];
+
+    const registry = new Registry<string>();
+    effect(() => {
+      registry.add("a", "a");
+      steps.push("a is added");
+    });
+    expect(steps.splice(0)).toEqual(["a is added"]);
+
+    registry.add("b", "b");
+    await waitScheduler();
+    expect(steps.splice(0)).toEqual([]);
+  });
+
+  test("do not bind signals on delete", async () => {
+    const steps: string[] = [];
+
+    const registry = new Registry<string>();
+    effect(() => {
+      registry.delete("a");
+      steps.push("a is deleted");
+    });
+    expect(steps.splice(0)).toEqual(["a is deleted"]);
+
+    registry.add("b", "b");
+    await waitScheduler();
+    expect(steps.splice(0)).toEqual([]);
+  });
+
+  test("do not bind signals on clear", async () => {
+    const steps: string[] = [];
+
+    const registry = new Registry<string>();
+    effect(() => {
+      registry.clear();
+      steps.push("registry is cleared");
+    });
+    expect(steps.splice(0)).toEqual(["registry is cleared"]);
+
+    registry.add("b", "b");
+    await waitScheduler();
+    expect(steps.splice(0)).toEqual([]);
+  });
+
   describe("use()", () => {
     test("throws when called outside a component/plugin context", () => {
       const registry = new Registry<string>();

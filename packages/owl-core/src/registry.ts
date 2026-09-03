@@ -1,5 +1,5 @@
 import { computed } from "./computed";
-import { type ReactiveValue } from "./computations";
+import { untrack, type ReactiveValue } from "./computations";
 import { OwlError } from "./owl_error";
 import { signal } from "./signal";
 import { ResourceAddOptions } from "./resource";
@@ -49,7 +49,7 @@ export class Registry<T> {
   }
 
   add(key: string, value: Item<T>, options: RegistryAddOptions = {}): Registry<T> {
-    if (!options.force && key in this._map()) {
+    if (!options.force && untrack(() => key in this._map())) {
       throw new OwlError(
         `Key "${key}" is already registered (registry '${this._name}'). Use { force: true } to overwrite.`
       );
@@ -58,7 +58,9 @@ export class Registry<T> {
       const info = this._name ? ` (registry '${this._name}', key: '${key}')` : ` (key: '${key}')`;
       assertType(value, this._validation, `Registry entry does not match the type${info}`);
     }
-    this._map()[key] = [options.sequence ?? 50, value];
+    untrack(() => {
+      this._map()[key] = [options.sequence ?? 50, value];
+    });
     return this;
   }
 
@@ -71,7 +73,9 @@ export class Registry<T> {
   }
 
   delete(key: string): Registry<T> {
-    delete this._map()[key];
+    untrack(() => {
+      delete this._map()[key];
+    });
     return this;
   }
 
@@ -87,7 +91,7 @@ export class Registry<T> {
     const scope = useScope();
     this.add(key, value, options);
     scope.onDestroy(() => {
-      if (this._map()[key]?.[1] === value) {
+      if (untrack(() => this._map()[key]?.[1]) === value) {
         this.delete(key);
       }
     });

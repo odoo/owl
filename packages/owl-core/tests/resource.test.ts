@@ -115,6 +115,51 @@ test("validation schema, with a class", async () => {
   }).toThrow("Resource item does not match the type");
 });
 
+test("do not bind signals on add", async () => {
+  const steps: string[] = [];
+
+  const resource = new Resource<string>();
+  effect(() => {
+    resource.add("a");
+    steps.push("a is added");
+  });
+  expect(steps.splice(0)).toEqual(["a is added"]);
+
+  resource.add("b");
+  await waitScheduler();
+  expect(steps.splice(0)).toEqual([]);
+});
+
+test("do not bind signals on delete", async () => {
+  const steps: string[] = [];
+
+  const resource = new Resource<string>();
+  effect(() => {
+    resource.delete("a");
+    steps.push("a is deleted");
+  });
+  expect(steps.splice(0)).toEqual(["a is deleted"]);
+
+  resource.add("b");
+  await waitScheduler();
+  expect(steps.splice(0)).toEqual([]);
+});
+
+test("do not bind signals on clear", async () => {
+  const steps: string[] = [];
+
+  const resource = new Resource<string>();
+  effect(() => {
+    resource.clear();
+    steps.push("resource is cleared");
+  });
+  expect(steps.splice(0)).toEqual(["resource is cleared"]);
+
+  resource.add("b");
+  await waitScheduler();
+  expect(steps.splice(0)).toEqual([]);
+});
+
 describe("use()", () => {
   test("throws when called outside a component/plugin context", () => {
     const resource = new Resource<string>();

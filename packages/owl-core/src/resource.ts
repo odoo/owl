@@ -1,5 +1,5 @@
 import { computed } from "./computed";
-import { type ReactiveValue } from "./computations";
+import { untrack, type ReactiveValue } from "./computations";
 import { signal } from "./signal";
 import { useScope } from "./scope";
 import { type StripBrands } from "./types";
@@ -38,12 +38,14 @@ export class Resource<T> {
       const info = this._name ? ` (resource '${this._name}')` : "";
       assertType(item, this._validation, `Resource item does not match the type${info}`);
     }
-    this._items().push([options.sequence ?? 50, item]);
+    untrack(() => {
+      this._items().push([options.sequence ?? 50, item]);
+    });
     return this;
   }
 
   delete(item: Item<T>): Resource<T> {
-    const items = this._items().filter(([seq, val]) => val !== item);
+    const items = untrack(this._items).filter(([seq, val]) => val !== item);
     this._items.set(items);
     return this;
   }

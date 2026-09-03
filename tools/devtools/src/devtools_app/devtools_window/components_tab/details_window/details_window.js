@@ -14,6 +14,11 @@ export class DetailsWindow extends Component {
   get contextMenuItems() {
     return [
       {
+        title: "Copy component name",
+        show: true,
+        action: () => this.components.copyToClipboard(this.components.activeComponent().name),
+      },
+      {
         title: "Inspect source code",
         show: true,
         action: () =>

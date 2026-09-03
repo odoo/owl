@@ -50,6 +50,11 @@ export class Event extends Component {
   get contextMenuItems() {
     return [
       {
+        title: "Copy component name",
+        show: true,
+        action: () => this.components.copyToClipboard(this.props.event.component),
+      },
+      {
         title: "Inspect source code",
         show: true,
         action: () => this.components.inspectComponent("source", this.props.event.path),

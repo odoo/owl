@@ -93,6 +93,11 @@ export class TreeElement extends Component {
         action: () => this.store.foldDirectChildren(this.props.component),
       },
       {
+        title: "Copy component name",
+        show: true,
+        action: () => this.components.copyToClipboard(this.props.component.name),
+      },
+      {
         title: "Inspect source code",
         show: true,
         action: () => this.components.inspectComponent("source", this.props.component.path),

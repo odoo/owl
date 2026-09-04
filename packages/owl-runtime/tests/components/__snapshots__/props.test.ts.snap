@@ -5,7 +5,7 @@ exports[`.alike suffix in a list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo"]);
+  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo"], ["toggle"]);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -47,7 +47,7 @@ exports[`.alike suffix in a simple case 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, [], ["fn"]);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
@@ -284,12 +284,139 @@ exports[`.translate props are translated 2`] = `
 }"
 `;
 
+exports[`alike props and reactivity > a .bind prop does not rerun effects when another prop changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"], ["fn"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({val: ctx['this'].state.val,fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > a .bind prop does not rerun effects when another prop changes 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.val);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > a plain function prop still reruns effects when it is reassigned 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val","fn"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({val: ctx['this'].state.val,fn: ctx['this'].state.fn}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > a plain function prop still reruns effects when it is reassigned 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.val);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an .alike prop does not rerun effects either 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"], ["fn"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({val: ctx['this'].state.val,fn: ()=>ctx['this'].state.val}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an .alike prop does not rerun effects either 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.val);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an arrow function prop reruns effects when a captured variable changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val","fn.factor"], ["fn"]);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["factor"] = ctx['this'].state.val;
+    return comp1({val: ctx['this'].state.val,fn: ()=>ctx['factor']*10,"fn.factor": ctx['factor']}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an arrow function prop reruns effects when a captured variable changes 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.val);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an effect reading an arrow function prop does not rerun on unrelated updates 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"], ["fn"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({val: ctx['this'].state.val,fn: ()=>ctx['this'].someFunction()}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`alike props and reactivity > an effect reading an arrow function prop does not rerun on unrelated updates 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.val);
+  }
+}"
+`;
+
 exports[`arrow function props auto-skip re-render when captured variables don't change 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, [], ["fn"]);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
@@ -316,7 +443,7 @@ exports[`arrow function props re-render when captured variable changes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo","toggle.elem"]);
+  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo","toggle.elem"], ["toggle"]);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -389,7 +516,7 @@ exports[`basics > arrow function props do not leak synthetic keys into props() 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"]);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"], ["onClick"]);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -425,7 +552,7 @@ exports[`basics > arrow functions as prop correctly capture their scope 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"]);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"], ["onClick"]);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -678,7 +805,7 @@ exports[`bound functions are considered 'alike' 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, [], ["fn"]);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.val);
@@ -704,7 +831,7 @@ exports[`bound functions is not referentially equal after update 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"], ["fn"]);
   
   return function template(ctx, node, key = "") {
     return comp1({val: ctx['this'].state.val,fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
@@ -729,7 +856,7 @@ exports[`can bind function prop with bind suffix 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, [], ["doSomething"]);
   
   return function template(ctx, node, key = "") {
     return comp1({doSomething: (ctx['this'].doSomething).bind(this)}, key + \`__1\`, node, this, null);
@@ -810,7 +937,7 @@ exports[`do not crash when binding anonymous function prop with bind suffix 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, [], ["doSomething"]);
   
   return function template(ctx, node, key = "") {
     return comp1({doSomething: ((_val)=>ctx['this'].doSomething(_val)).bind(this)}, key + \`__1\`, node, this, null);

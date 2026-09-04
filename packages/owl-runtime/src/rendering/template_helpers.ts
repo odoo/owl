@@ -240,9 +240,13 @@ function createComponent<P extends Record<string, any>>(
   isStatic: boolean,
   hasSlotsProp: boolean,
   hasDynamicPropList: boolean,
-  propList: string[]
+  propList: string[],
+  alikeProps?: string[]
 ) {
   const isDynamic = !isStatic;
+  // undefined for templates compiled before this list existed, and empty for
+  // components that have no such prop
+  const alikePropSet = alikeProps?.length ? new Set(alikeProps) : null;
   let arePropsDifferent: (p1: P, p2: P) => boolean;
   const hasNoProp = propList.length === 0;
   if (hasSlotsProp) {
@@ -351,7 +355,7 @@ function createComponent<P extends Record<string, any>>(
           );
         }
       }
-      node = new ComponentNode(C, props, app, ctx, key);
+      node = new ComponentNode(C, props, app, ctx, key, alikePropSet);
       children[key] = node;
       const fiber = new Fiber(node, parentFiber);
       if (node.willStart.length) {

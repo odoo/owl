@@ -1164,6 +1164,9 @@ export class CodeGenerator {
     const hasSlotsProp = "slots" in (ast.props || {});
     const props: string[] = [];
     const propList: string[] = [];
+    // the props left out of propList because they are always equivalent. The
+    // runtime needs that list too, to know which prop signals to leave alone.
+    const alikeProps: string[] = [];
 
     for (let p in ast.props || {}) {
       let [name, suffix] = p.split(".");
@@ -1178,8 +1181,11 @@ export class CodeGenerator {
       }
 
       if (suffix) {
-        // .alike, .bind, .translate — delegate to formatProp, no propList entry
         props.push(this.formatProp(p, ast.props![p], ast.propsTranslationCtx, ctx.translationCtx));
+        // a .translate prop is a constant string, so its signal never really changes
+        if (suffix !== "translate") {
+          alikeProps.push(`"${name}"`);
+        }
         continue;
       }
 
@@ -1189,6 +1195,7 @@ export class CodeGenerator {
       props.push(`${propName}: ${compiledValue || undefined}`);
 
       if (freeVariables) {
+        alikeProps.push(`"${name}"`);
         for (const varName of freeVariables) {
           const syntheticKey = `\x01${name}.${varName}`;
           propList.push(`"${syntheticKey}"`);
@@ -1268,11 +1275,12 @@ export class CodeGenerator {
     }
     let id = generateId("comp");
     this.helpers.add("createComponent");
+    const alikeArg = alikeProps.length ? `, [${alikeProps}]` : "";
     this.staticDefs.push({
       id,
       expr: `createComponent(app, ${
         ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
+      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}]${alikeArg})`,
     });
 
     if (ast.isDynamic) {

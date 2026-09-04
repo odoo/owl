@@ -7,6 +7,7 @@ import {
   proxy,
   signal,
   types as t,
+  useEffect,
   xml,
 } from "../../src";
 import {
@@ -605,6 +606,154 @@ test("arrow function props re-render when captured variable changes", async () =
      "Parent:patched",
    ]
   `);
+});
+
+describe("alike props and reactivity", () => {
+  test("an effect reading an arrow function prop does not rerun on unrelated updates", async () => {
+    let count = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.val"/>`;
+      props = props();
+      setup() {
+        useEffect(() => {
+          this.props.fn;
+          count++;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child val="this.state.val" fn="() => this.someFunction()"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+      someFunction() {}
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(count).toBe(1);
+
+    parent.state.val = 2;
+    await nextTick();
+    // the child did re-render (val changed), but fn is the same closure
+    expect(fixture.innerHTML).toBe("2");
+    expect(count).toBe(1);
+  });
+
+  test("a .bind prop does not rerun effects when another prop changes", async () => {
+    let count = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.val"/>`;
+      props = props();
+      setup() {
+        useEffect(() => {
+          this.props.fn;
+          count++;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child val="this.state.val" fn.bind="this.someFunction"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+      someFunction() {}
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(count).toBe(1);
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+    expect(count).toBe(1);
+  });
+
+  test("an .alike prop does not rerun effects either", async () => {
+    let count = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.val"/>`;
+      props = props();
+      setup() {
+        useEffect(() => {
+          this.props.fn;
+          count++;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child val="this.state.val" fn.alike="() => this.state.val"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(count).toBe(1);
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+    expect(count).toBe(1);
+  });
+
+  test("an arrow function prop reruns effects when a captured variable changes", async () => {
+    let count = 0;
+    let result = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.val"/>`;
+      props = props();
+      setup() {
+        useEffect(() => {
+          result = this.props.fn();
+          count++;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-set="factor" t-value="this.state.val"/>
+        <Child val="this.state.val" fn="() => factor * 10"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(count).toBe(1);
+    expect(result).toBe(10);
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(count).toBe(2);
+    expect(result).toBe(20);
+  });
+
+  test("a plain function prop still reruns effects when it is reassigned", async () => {
+    let count = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.val"/>`;
+      props = props();
+      setup() {
+        useEffect(() => {
+          this.props.fn;
+          count++;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child val="this.state.val" fn="this.state.fn"/>`;
+      static components = { Child };
+      state = proxy<{ val: number; fn: Function }>({ val: 1, fn: () => 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(count).toBe(1);
+
+    parent.state.fn = () => 2;
+    await nextTick();
+    expect(count).toBe(2);
+  });
 });
 
 test("schema defaults and signal-driven props", async () => {

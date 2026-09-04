@@ -33,6 +33,9 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   parentKey: string | null;
   props: Record<string, any>;
   defaultProps: Record<string, any> | null = null;
+  // set by createComponent, read by useProps. Only here to carry the list from
+  // the template down to the hook.
+  alikeProps: Set<string> | null;
   renderFn!: Function;
   parent: ComponentNode | null;
   children: { [key: string]: ComponentNode } = Object.create(null);
@@ -58,11 +61,13 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     props: Record<string, any>,
     app: App,
     parent: ComponentNode | null,
-    parentKey: string | null
+    parentKey: string | null,
+    alikeProps: Set<string> | null = null
   ) {
     super(app);
     this.parent = parent;
     this.parentKey = parentKey;
+    this.alikeProps = alikeProps;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.componentName = C.name;
     this.signalComputation = createComputation(

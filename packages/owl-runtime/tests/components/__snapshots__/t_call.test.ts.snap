@@ -635,7 +635,7 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, true, false, [], ["prop"]);
   
   let block2 = createBlock(\`<div block-ref="0">outside slot</div>\`);
   let block4 = createBlock(\`<div block-ref="0">I'm the default slot</div>\`);

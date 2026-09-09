@@ -63,6 +63,7 @@ export {
   type Equals,
   type ReactiveValue,
   type Signal,
+  type WritableReactiveValue,
 } from "@odoo/owl-core";
 export { useEffect, useListener, useOnChange, useApp } from "./hooks";
 export { batched, EventBus, htmlEscape, shallowEqual, whenReady, markup } from "./utils";

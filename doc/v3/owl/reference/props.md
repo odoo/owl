@@ -145,6 +145,62 @@ This only applies to props accessed through `useProps()`. The singular
 [`useProps.static()`](#the-usepropsstatic-method) helper keeps its static, reference-stable
 semantics.
 
+### Signal props
+
+A prop declared with `t.signal(...)` at the top level of the schema is a
+**signal prop**: the child reads it as a reactive value, and the prop itself
+is static (the parent must pass the same signal on every render; only its
+inner value changes).
+
+```js
+import { Component, useProps, t, xml } from "@odoo/owl";
+
+class Counter extends Component {
+  static template = xml`<span t-out="this.props.count()"/>`;
+  props = useProps({ count: t.signal(t.number()) });
+}
+```
+
+`this.props.count` is the reactive value itself, assigned once: reading it in
+the template, a computed or an effect subscribes to the signal, without any
+render of the parent involved.
+
+The child's view is **read-only by default**: when the parent passes a
+writable signal, the child receives a wrapping computed with no `set` method.
+A component that intends to write the received signal declares it:
+
+```js
+props = useProps({ value: t.signal(t.number(), { settable: true }) });
+```
+
+A settable prop exposes the original signal, and validation requires the
+received value to have a `set` method (a read-only computed is rejected).
+
+When the parent passes a **plain value** instead of a signal, the value is
+promoted: the child still reads a reactive value, updated when the parent
+re-renders with a new value. This keeps every caller working while they
+migrate to passing signals. A caller must not alternate between passing a
+plain value and a signal (dev mode throws).
+
+### Static props in the schema
+
+`.static()` marks a prop of the schema with the semantics of
+[`useProps.static`](#the-usepropsstatic-method), while keeping it declared
+with the other props:
+
+```js
+props = useProps({
+  todo: t.instanceOf(Todo).static(),
+  label: t.string().optional("untitled").static(),
+});
+```
+
+The value is read once and assigned directly to `this.props.todo` (no
+getter), and dev mode throws if the reference changes on a later render.
+`.static()` composes with `.optional()` in any order, and is only meaningful
+at the top level of a prop declaration: validation rejects it on a nested
+key. A signal prop does not need it: `t.signal(...)` is static by nature.
+
 ## The `useProps.static` method
 
 `useProps.static` is an alternative for components that only need to read a
@@ -442,15 +498,27 @@ value at the call site:
 <Counter count.signal="this.state.count"/>
 ```
 
-Owl creates the signal once per call site (per loop iteration inside a
-`t-foreach`), keeps it across renders, and updates its value on each parent
-render. The signal reference is stable, so `effect` and `computed` subscriptions
-inside the child remain valid across parent updates.
+Owl creates a computed once per call site (per `t-key` inside a `t-foreach`,
+the same key that identifies the child component), keeps it across renders,
+and evaluates the expression inside that computed, not during the parent's
+render. The reference is stable and follows the child through list reorders,
+so `effect` and `computed` subscriptions inside the child remain valid across
+parent updates, a signal-prop static contract holds, and the child receives a
+read-only reactive value.
 
-`.signal` is an adapter, not a parent-side performance optimization: the parent
-still re-renders when its own state changes, and that re-render is what updates
-the wrapper's value. The suffix simply lets you use a signal-API component from
-a context where the data is not yet a signal.
+Because the expression runs inside the computed, the parent never subscribes
+to what it reads: when `this.state.count` changes above, the child updates and
+the parent does not re-render. This makes `.signal` a real parent-side
+optimization, in addition to being an adapter for signal-API components.
+
+Two consequences of the deferred evaluation:
+
+- render-scope variables (a `t-foreach` item, a `t-set` value) are captured
+  per parent render: when one of them changes, the computed re-evaluates with
+  the new capture,
+- an expression reading only non-reactive state evaluates once and never
+  refreshes. A constant is fine (`count.signal="7"`); a plain mutable field is
+  not, wrap it in a signal or a proxy instead.
 
 ## Good Practices
 

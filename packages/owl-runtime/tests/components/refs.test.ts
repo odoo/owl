@@ -1,17 +1,17 @@
 import {
   App,
   Component,
+  computed,
   mount,
   onMounted,
   onPatched,
   onWillDestroy,
   proxy,
-  xml,
-  props,
-  signal,
-  computed,
   Resource,
+  signal,
   useListener,
+  useProps,
+  xml,
 } from "../../src";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
@@ -61,7 +61,7 @@ describe("refs", () => {
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-call-slot="footer"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -177,7 +177,7 @@ describe("refs", () => {
           <t t-out="this.props.tree.value"/>
           <t t-if="this.props.tree.child"><Test tree="this.props.tree.child"/></t>
         </p>`;
-      props = props();
+      props = useProps();
       root = signal<HTMLElement | null>(null);
 
       setup() {
@@ -225,7 +225,7 @@ describe("refs", () => {
   test("ref is set by child component", async () => {
     class Child extends Component {
       static template = xml`<div id="ref" t-ref="this.props.ref"/>`;
-      props = props({ ref: Function });
+      props = useProps({ ref: Function });
     }
 
     class Parent extends Component {

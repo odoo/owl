@@ -1,3 +1,4 @@
+import { Atom, atomSymbol } from "@odoo/owl-core";
 import {
   Component,
   computed,
@@ -5,13 +6,12 @@ import {
   onPatched,
   onWillPatch,
   onWillUnmount,
-  props,
+  proxy,
   shallowEqual,
   signal,
-  proxy,
+  useProps,
   xml,
 } from "../../src";
-import { atomSymbol, Atom } from "@odoo/owl-core";
 import {
   makeDeferred,
   makeTestFixture,
@@ -109,7 +109,7 @@ describe("reactivity in lifecycle", () => {
           <t t-set="noop" t-value="this.notify()"/>
           <span><t t-out="this.props.val"/><t t-out="this.state.n"/></span>
         `;
-      props = props();
+      props = useProps();
       state = proxy({ n: 2 });
       setup() {
         onWillPatch(() => {
@@ -202,7 +202,7 @@ describe("reactivity in lifecycle", () => {
   test("Child component doesn't render when state they depend on changes but their parent is about to unmount them", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.state.content.a"/>`;
-      props = props();
+      props = useProps();
       setup() {
         useLogLifecycle(this);
       }
@@ -249,7 +249,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
           <t t-out="this.props.obj.a"/><t t-out="this.props.proxyObj.b"/>`;
-      props = props();
+      props = useProps();
       notify() {
         childRenderCount++;
       }
@@ -294,7 +294,7 @@ describe("reactivity in lifecycle", () => {
 
     class Child extends Component {
       static template = xml`<t t-set="_" t-value="this.notify()"/>child:bv=<t t-out="this.props.bv"/>:a=<t t-out="this.a()"/>`;
-      props = props();
+      props = useProps();
       a = a;
       notify() {
         childRenderCount++;
@@ -406,7 +406,7 @@ describe("reactive cleanup on component destruction", () => {
 
     class Child extends Component {
       static template = xml`<span t-out="this.isSelected()"/>`;
-      p = props();
+      p = useProps();
       isSelected = computed(() => this.p.selected() === 1);
     }
 
@@ -439,7 +439,7 @@ describe("reactive cleanup on component destruction", () => {
 
     class Row extends Component {
       static template = xml`<span t-out="this.isSelected()"/>`;
-      p = props();
+      p = useProps();
       isSelected = computed(() => this.p.selected() === this.p.id);
     }
 
@@ -483,7 +483,7 @@ describe("reactive cleanup on component destruction", () => {
           <td t-out="this.p.row.id"/>
           <td><a t-out="this.p.row.label()"/></td>
         </tr>`;
-      p = props();
+      p = useProps();
       isSelected = computed(() => {
         return this.p.selected() === this.p.row.id;
       });

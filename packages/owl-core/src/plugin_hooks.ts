@@ -24,9 +24,6 @@ export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginIns
   return (scoped ? scoped(plugin, scope) : plugin) as PluginInstance<T>;
 }
 
-/** @deprecated alias for {@link usePlugin} */
-export const plugin = usePlugin;
-
 export function useConfig<T = any>(key: string): T;
 export function useConfig<T>(key: string, type: WithDefault<T>): T;
 export function useConfig<T>(key: string, type: Optional<T>): T | undefined;
@@ -42,6 +39,3 @@ export function useConfig(key: string, type?: any): any {
   const configValue = scope.config[key];
   return configValue === undefined ? getDefault(type)?.() : configValue;
 }
-
-/** @deprecated alias for {@link useConfig} */
-export const config = useConfig;

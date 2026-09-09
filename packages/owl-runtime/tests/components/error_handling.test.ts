@@ -1,17 +1,23 @@
-import { App, Component, mount, onWillDestroy, props, types } from "../../src";
+import { getCurrentComputation, useScope } from "@odoo/owl-core";
 import {
+  App,
+  Component,
+  mount,
   onError,
   onMounted,
   onPatched,
+  onWillDestroy,
   onWillPatch,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
   proxy,
+  types,
+  useProps,
   xml,
 } from "../../src";
-import { getCurrentComputation, useScope } from "@odoo/owl-core";
 import {
+  getConsoleOutput,
   logStep,
   makeTestFixture,
   nextAppError,
@@ -21,7 +27,6 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -36,7 +41,7 @@ describe("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -128,12 +133,12 @@ describe("basics", () => {
   test("a sync re-render error deep in the tree is only wrapped once", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static template = xml`<Child flag="this.props.flag"/>`;
       static components = { Child };
-      props = props();
+      props = useProps();
     }
     class GrandParent extends Component {
       static template = xml`<Parent flag="this.state.flag"/>`;
@@ -161,7 +166,7 @@ describe("basics", () => {
   test("currentComputation does not leak when an uncaught render error propagates", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static template = xml`<Child flag="this.state.flag"/>`;
@@ -309,7 +314,7 @@ function(app, bdom, helpers) {
   test("render from above on error -- handler is not a Root or MountFiber", async () => {
     class Boom extends Component {
       static template = xml`<div t-out="a.b.c"/>`;
-      props = props({ onError: types.function() });
+      props = useProps({ onError: types.function() });
       setup() {
         onError((err) => {
           this.props.onError(err);
@@ -587,7 +592,7 @@ describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
-      props = props();
+      props = useProps();
     }
     class ErrorBoundary extends Component {
       static template = xml`
@@ -595,7 +600,7 @@ describe("can catch errors", () => {
             <t t-if="this.state.error">Error handled</t>
             <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -840,7 +845,7 @@ describe("can catch errors", () => {
             <t t-if="this.state.error">Error handled</t>
             <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -871,7 +876,7 @@ describe("can catch errors", () => {
             <t t-if="this.state.error">Error handled</t>
             <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -905,7 +910,7 @@ describe("can catch errors", () => {
               <t t-if="this.state.error">Error handled</t>
               <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -939,7 +944,7 @@ describe("can catch errors", () => {
               <t t-if="this.state.error">Error handled</t>
               <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -974,7 +979,7 @@ describe("can catch errors", () => {
             <t t-if="this.state.error">Error handled</t>
             <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -1008,7 +1013,7 @@ describe("can catch errors", () => {
               <t t-if="this.state.error">Error handled</t>
               <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -1042,7 +1047,7 @@ describe("can catch errors", () => {
        <t t-if="this.state.error">Error handled</t>
        <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -1196,7 +1201,7 @@ describe("can catch errors", () => {
        <t t-if="this.state.error">Error handled</t>
        <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -1246,7 +1251,7 @@ describe("can catch errors", () => {
   test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div><t t-out="this.props.message"/></div>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillPatch(() => {
           throw new Error("NOOOOO");
@@ -1259,7 +1264,7 @@ describe("can catch errors", () => {
             <t t-if="this.state.error">Error handled</t>
             <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
-      props = props();
+      props = useProps();
       state = proxy({ error: false });
 
       setup() {
@@ -1444,7 +1449,7 @@ describe("can catch errors", () => {
 
     class ErrorHandler extends Component {
       static template = xml`<t t-call-slot="default" />`;
-      props = props();
+      props = useProps();
       setup() {
         onError(() => {
           this.props.onError();
@@ -1491,7 +1496,7 @@ describe("can catch errors", () => {
   test("catching in child makes parent render", async () => {
     class Child extends Component {
       static template = xml`<div t-out="'Child ' + this.props.id" />`;
-      props = props();
+      props = useProps();
     }
 
     class ErrorComp extends Component {
@@ -1503,7 +1508,7 @@ describe("can catch errors", () => {
 
     class Catch extends Component {
       static template = xml`<t t-call-slot="default" />`;
-      props = props();
+      props = useProps();
       setup() {
         onError((e) => {
           this.props.onError(e);
@@ -1833,7 +1838,7 @@ describe("errors in onWillUpdateProps", () => {
     let error: any;
     class Child extends Component {
       static template = xml`<div/>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillUpdateProps(() => {
           throw new Error("sync boom");
@@ -1861,7 +1866,7 @@ describe("errors in onWillUpdateProps", () => {
     let error: any;
     class Child extends Component {
       static template = xml`<div/>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillUpdateProps(async () => {
           await Promise.resolve();
@@ -1891,7 +1896,7 @@ describe("errors in onWillUpdateProps", () => {
     let error: any;
     class Child extends Component {
       static template = xml`<div/>`;
-      props = props();
+      props = useProps();
       setup() {
         onError((e) => (error = e));
         onWillUpdateProps(async () => {

@@ -2,30 +2,29 @@ import {
   App,
   Component,
   computed,
-  config,
   mount,
   onWillDestroy,
   onWillStart,
-  plugin,
   Plugin,
   PluginConstructor,
   PluginInstance,
   providePlugins,
   Resource,
-  Scope,
   signal,
   types as t,
   useApp,
+  useConfig,
   useEffect,
+  usePlugin,
   xml,
 } from "../../src";
 import {
+  getConsoleOutput,
   makeDeferred,
   makeTestFixture,
   nextMicroTick,
-  snapshotEverything,
   nextTick,
-  getConsoleOutput,
+  snapshotEverything,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -42,7 +41,7 @@ test("basic use", async () => {
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.value"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
 
   await mount(Test, fixture, { plugins: [PluginA] });
@@ -56,7 +55,7 @@ test("can be started with resource", async () => {
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.value"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
 
   const plugins = new Resource<PluginConstructor>().add(PluginA);
@@ -115,7 +114,7 @@ test("basic use (setup)", async () => {
     declare a: PluginInstance<typeof PluginA>;
 
     setup() {
-      this.a = plugin(PluginA);
+      this.a = usePlugin(PluginA);
     }
   }
 
@@ -137,7 +136,7 @@ test("get plugin which is not started", async () => {
 
     setup() {
       try {
-        this.a = plugin(PluginA);
+        this.a = usePlugin(PluginA);
       } catch (e) {
         steps.push((e as Error).message);
       }
@@ -163,11 +162,11 @@ test("components can start plugins", async () => {
     declare b: PluginInstance<typeof PluginB>;
 
     setup() {
-      this.a = plugin(PluginA); // PluginA is already started, we can get it
+      this.a = usePlugin(PluginA); // PluginA is already started, we can get it
       // PluginB is not started yet so we'll crash if we try to get it (tested in a previous test)
 
       providePlugins([PluginB]);
-      this.b = plugin(PluginB); // PluginB is now started, we can get it
+      this.b = usePlugin(PluginB); // PluginB is now started, we can get it
     }
   }
 
@@ -189,15 +188,15 @@ test("components start plugins at their level", async () => {
   class Level3 extends Component {
     static template = xml`3: <t t-out="this.a.value"/> - <t t-out="this.b.value"/>`;
 
-    a = plugin(PluginA);
-    b = plugin(PluginB);
+    a = usePlugin(PluginA);
+    b = usePlugin(PluginB);
   }
 
   class Level2 extends Component {
     static template = xml`2: <t t-out="this.a.value"/> | <Level3/>`;
     static components = { Level3 };
 
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
 
     setup() {
       providePlugins([PluginB]);
@@ -222,11 +221,11 @@ test("components start plugins at their level", async () => {
 
 test("components can give config to plugins", async () => {
   class PluginA extends Plugin {
-    inputA = config("inputAlias", t.string());
+    inputA = useConfig("inputAlias", t.string());
   }
 
   class PluginB extends Plugin {
-    inputB = config("otherInput", t.number());
+    inputB = useConfig("otherInput", t.number());
     other = 1;
   }
 
@@ -237,8 +236,8 @@ test("components can give config to plugins", async () => {
 
     setup() {
       providePlugins([PluginA, PluginB], { inputAlias: "hamburger", otherInput: 123 });
-      this.a = plugin(PluginA);
-      this.b = plugin(PluginB);
+      this.a = usePlugin(PluginA);
+      this.b = usePlugin(PluginB);
     }
   }
   await mount(Test, fixture);
@@ -247,7 +246,7 @@ test("components can give config to plugins", async () => {
 
 test("plugin config are validated", async () => {
   class PluginA extends Plugin {
-    inputA = config("input", t.string());
+    inputA = useConfig("input", t.string());
   }
 
   class Test extends Component {
@@ -256,7 +255,7 @@ test("plugin config are validated", async () => {
 
     setup() {
       providePlugins([PluginA], { input: 123 } as any);
-      this.a = plugin(PluginA);
+      this.a = usePlugin(PluginA);
     }
   }
   await expect(mount(Test, fixture, { dev: true })).rejects.toThrow(
@@ -267,12 +266,12 @@ test("plugin config are validated", async () => {
 
 test("optional plugin config work as expected (value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input", t.string().optional()) || "abc";
+    inputA = useConfig("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.inputA"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
   await mount(Test, fixture, { plugins: [PluginA], dev: true, config: { input: "def" } });
   expect(fixture.innerHTML).toBe("def");
@@ -280,12 +279,12 @@ test("optional plugin config work as expected (value given)", async () => {
 
 test("optional plugin config work as expected (no value given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input", t.string().optional()) || "abc";
+    inputA = useConfig("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.inputA"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
   await mount(Test, fixture, { plugins: [PluginA], dev: true, config: {} });
   expect(fixture.innerHTML).toBe("abc");
@@ -293,12 +292,12 @@ test("optional plugin config work as expected (no value given)", async () => {
 
 test("optional plugin config work as expected (no config given)", async () => {
   class PluginA extends Plugin {
-    inputA = config("input", t.string().optional()) || "abc";
+    inputA = useConfig("input", t.string().optional()) || "abc";
   }
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.inputA"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
   await mount(Test, fixture, { plugins: [PluginA], dev: true });
   expect(fixture.innerHTML).toBe("abc");
@@ -317,7 +316,7 @@ test("shadow plugin", async () => {
 
   class Level3 extends Component {
     static template = xml`<t t-out="this.a.value"/>`;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
 
   class Level2 extends Component {
@@ -333,7 +332,7 @@ test("shadow plugin", async () => {
     static template = xml`<t t-out="this.a.value"/> | <Level2/>`;
     static components = { Level2 };
 
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
 
   await mount(Level1, fixture, { plugins: [PluginA] });
@@ -352,7 +351,7 @@ test("components can register resources", async () => {
   class Level2 extends Component {
     static template = xml`2: <t t-out="this.a.value()"/> `;
 
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
     setup() {
       this.a.colors.use("from lvl 2");
       expect(this.a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
@@ -364,7 +363,7 @@ test("components can register resources", async () => {
     static components = { Level2 };
 
     setup() {
-      const a = plugin(PluginA);
+      const a = usePlugin(PluginA);
       a.colors.use("from lvl 1");
       expect(a.colors.items()).toEqual(["from lvl 1"]);
     }
@@ -416,7 +415,7 @@ test("components, plugins, useEffect", async () => {
 test("components mounted by plugin", async () => {
   class R2 extends Component {
     static template = xml`<t t-out="this.p.value"/>`;
-    p = plugin(P);
+    p = usePlugin(P);
   }
 
   class P extends Plugin {
@@ -453,8 +452,8 @@ test("usePlugin returns the scoped view when the plugin defines one", async () =
   let comp: Test;
   class Test extends Component {
     static template = xml``;
-    orm = plugin(ORM);
-    orm2 = plugin(ORM);
+    orm = usePlugin(ORM);
+    orm2 = usePlugin(ORM);
     setup() {
       comp = this;
     }
@@ -489,7 +488,7 @@ test("scoped plugin methods are guarded by the consumer's lifetime", async () =>
   let comp: Test;
   class Test extends Component {
     static template = xml``;
-    orm = plugin(ORM);
+    orm = usePlugin(ORM);
     setup() {
       comp = this;
     }
@@ -522,7 +521,7 @@ test("providePlugins respects plugin sequence", async () => {
   }
 
   class Feature extends Plugin {
-    foundation = plugin(Foundation);
+    foundation = usePlugin(Foundation);
     setup() {
       steps.push(`feature:setup (data=${this.foundation.data})`);
     }

@@ -1,6 +1,5 @@
 import { vi, type Mock } from "vitest";
-import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
-import { effect, markRaw, props, proxy, toRaw } from "../../src";
+import { Component, effect, markRaw, mount, onWillStart, onWillUpdateProps, proxy, toRaw, useProps, xml } from "../../src";
 
 import {
   makeDeferred,
@@ -2180,7 +2179,7 @@ describe("Reactivity: proxy", () => {
 
     class Quantity extends Component {
       static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="this.state.quantity"/></div>`;
-      props = props();
+      props = useProps();
       state = proxy(testContext[this.props.id]);
 
       notify() {
@@ -2261,7 +2260,7 @@ describe("Reactivity: proxy", () => {
     let stateC: any;
     class ComponentC extends Component {
       static template = xml`<span><t t-out="context[this.props.key].n"/><t t-out="state.x"/></span>`;
-      props = props();
+      props = useProps();
       context = proxy(testContext);
       state = proxy({ x: "a" });
       setup() {
@@ -2271,7 +2270,7 @@ describe("Reactivity: proxy", () => {
     class ComponentB extends Component {
       static components = { ComponentC };
       static template = xml`<p><ComponentC key="this.props.key"/></p>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillUpdateProps(() => def);
       }

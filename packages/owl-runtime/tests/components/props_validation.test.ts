@@ -1,10 +1,10 @@
-import { applyDefaults, Component, mount, onError, props, types as t, xml } from "../../src";
+import { applyDefaults, Component, mount, onError, types as t, useProps, xml } from "../../src";
 import {
+  getConsoleOutput,
   makeTestFixture,
   nextTick,
   render,
   snapshotEverything,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -23,7 +23,7 @@ describe("props validation", () => {
   test("validation is only done in dev mode", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
     class Parent extends Component {
       static components = { SubComp };
@@ -51,7 +51,7 @@ describe("props validation", () => {
   test("props: list of strings", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
     class Parent extends Component {
       static components = { SubComp };
@@ -71,7 +71,7 @@ describe("props validation", () => {
   test("validate props for root component", async () => {
     class Root extends Component {
       static template = xml`<div t-out="this.props.message"/>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
 
     let error: Error;
@@ -104,7 +104,7 @@ describe("props validation", () => {
     for (const test of Tests) {
       const SubComp = class extends Component {
         static template = xml`<div>hey</div>`;
-        props = props({ p: test.type });
+        props = useProps({ p: test.type });
       };
       (Parent as any).components = { SubComp };
 
@@ -143,7 +143,7 @@ describe("props validation", () => {
   test("can validate a prop with multiple types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.or([t.string(), t.boolean()]) });
+      props = useProps({ p: t.or([t.string(), t.boolean()]) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -181,7 +181,7 @@ describe("props validation", () => {
   test("can validate an optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.string().optional() });
+      props = useProps({ p: t.string().optional() });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -219,7 +219,7 @@ describe("props validation", () => {
   test("can validate an array with given primitive type", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.array(t.string()) });
+      props = useProps({ p: t.array(t.string()) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -263,7 +263,7 @@ describe("props validation", () => {
   test("can validate an array with multiple sub element types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.array(t.or([t.string(), t.boolean()])) });
+      props = useProps({ p: t.array(t.or([t.string(), t.boolean()])) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -308,7 +308,7 @@ describe("props validation", () => {
   test("can validate an object with simple shape", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({
+      props = useProps({
         p: t.object({ id: t.number(), url: t.string() }),
       });
     }
@@ -355,7 +355,7 @@ describe("props validation", () => {
   test("can validate recursively complicated prop def", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({
+      props = useProps({
         p: t.object({
           id: t.number(),
           url: t.or([t.boolean(), t.array(t.number())]),
@@ -397,7 +397,7 @@ describe("props validation", () => {
   test("can validate optional attributes in nested sub props", async () => {
     class TestComponent extends Component {
       static template = xml``;
-      props = props({
+      props = useProps({
         myprop: t.array(t.object({ num: t.number().optional() })),
       });
     }
@@ -425,7 +425,7 @@ describe("props validation", () => {
   test("can validate with a custom validator", async () => {
     class TestComponent extends Component {
       static template = xml``;
-      props = props({
+      props = useProps({
         size: t.customValidator(t.string(), (e: string) =>
           ["small", "medium", "large"].includes(e)
         ),
@@ -457,7 +457,7 @@ describe("props validation", () => {
     const validator = vi.fn((n) => 0 <= n && n <= 10);
     class TestComponent extends Component {
       static template = xml``;
-      props = props({
+      props = useProps({
         n: t.customValidator(t.number(), validator),
       });
     }
@@ -500,7 +500,7 @@ describe("props validation", () => {
   test("props are validated in dev mode (code snapshot)", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.message"/></div>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
     class Parent extends Component {
       static components = { Child };
@@ -513,7 +513,7 @@ describe("props validation", () => {
   test("props: shape with optional props", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any(), someProp: t.any().optional() });
+      props = useProps({ message: t.any(), someProp: t.any().optional() });
     }
 
     await expect(
@@ -534,7 +534,7 @@ describe("props validation", () => {
   test("props: can be defined with a type any", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any() });
+      props = useProps({ message: t.any() });
     }
     await expect(
       mount(SubComp, fixture, {
@@ -547,7 +547,7 @@ describe("props validation", () => {
   test("props with type array, and no element", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ myprop: t.array() });
+      props = useProps({ myprop: t.array() });
     }
 
     await expect(
@@ -568,7 +568,7 @@ describe("props validation", () => {
   test("props with type object, and no shape", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ myprop: t.object() });
+      props = useProps({ myprop: t.object() });
     }
 
     await expect(
@@ -589,7 +589,7 @@ describe("props validation", () => {
   test.skip("props: extra props cause an error", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
 
     await expect(
@@ -603,7 +603,7 @@ describe("props validation", () => {
   test.skip("props: extra props cause an error, part 2", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any() });
+      props = useProps({ message: t.any() });
     }
 
     await expect(
@@ -617,7 +617,7 @@ describe("props validation", () => {
   test("props: optional prop do not cause an error", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.any().optional() });
+      props = useProps({ message: t.any().optional() });
     }
 
     await expect(
@@ -631,7 +631,7 @@ describe("props validation", () => {
   test("optional prop do not cause an error if value is undefined", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: t.string().optional() });
+      props = useProps({ message: t.string().optional() });
     }
 
     await expect(
@@ -652,7 +652,7 @@ describe("props validation", () => {
   test("missing required boolean prop causes an error", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t></span>`;
-      props = props(["p"]);
+      props = useProps(["p"]);
     }
     class Parent extends Component {
       static template = xml`<div><SubComp/></div>`;
@@ -672,7 +672,7 @@ describe("props validation", () => {
     let error: Error;
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number() });
+      props = useProps({ p: t.number() });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -695,7 +695,7 @@ describe("props validation", () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().optional(4) });
+      props = useProps({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -714,7 +714,7 @@ describe("props validation", () => {
   test("mix of optional and mandatory", async () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
-      props = props({
+      props = useProps({
         optional: t.string().optional(),
         mandatory: t.number(),
       });
@@ -735,7 +735,7 @@ describe("props validation", () => {
   test("additional props are allowed (array)", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
     class Parent extends Component {
       static template = xml`<Child message="'m'" otherProp="'o'"/>`;
@@ -748,7 +748,7 @@ describe("props validation", () => {
   test("additional props are allowed (object)", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({
+      props = useProps({
         message: t.string(),
       });
     }
@@ -764,7 +764,7 @@ describe("props validation", () => {
   test("can validate through slots", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
-      props = props(["message"]);
+      props = useProps(["message"]);
     }
 
     class Wrapper extends Component {
@@ -791,7 +791,7 @@ describe("props validation", () => {
     }
     class Child extends Component {
       static template = xml`<t t-out="this.props.customObj.val"/>`;
-      props = props({ customObj: t.instanceOf(CustomClass) });
+      props = useProps({ customObj: t.instanceOf(CustomClass) });
     }
 
     class Parent extends Component {
@@ -808,7 +808,7 @@ describe("props validation", () => {
     class CustomClass {}
     class Child extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ customObj: t.instanceOf(CustomClass) });
+      props = useProps({ customObj: t.instanceOf(CustomClass) });
     }
 
     class Parent extends Component {
@@ -835,7 +835,7 @@ describe("schema defaults", () => {
   test("default values can be declared in the schema", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().optional(4) });
+      props = useProps({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp /></div>`;
@@ -848,7 +848,7 @@ describe("schema defaults", () => {
   test("a key with a schema default may be omitted", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().optional(4) });
+      props = useProps({ p: t.number().optional(4) });
     }
     // no error in dev mode even though p is not given
     await mount(SubComp, fixture, { dev: true });
@@ -858,7 +858,7 @@ describe("schema defaults", () => {
   test("schema defaults work next to optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/>|<t t-out="this.props.q"/></div>`;
-      props = props({ p: t.number().optional(4), q: t.string().optional() });
+      props = useProps({ p: t.number().optional(4), q: t.string().optional() });
     }
     await mount(SubComp, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div>4|</div>");
@@ -867,7 +867,7 @@ describe("schema defaults", () => {
   test("schema defaults are applied whenever component is updated", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().optional(4) });
+      props = useProps({ p: t.number().optional(4) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -885,7 +885,7 @@ describe("schema defaults", () => {
   test("falsy default values are applied", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t><t t-if="!this.props.q">hey</t></span>`;
-      props = props({
+      props = useProps({
         p: t.boolean().optional(true),
         q: t.boolean().optional(false),
       });
@@ -902,7 +902,7 @@ describe("schema defaults", () => {
     const values: number[][] = [];
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p.length"/></div>`;
-      props: any = props({ p: t.array(t.number()).optional(() => []) });
+      props: any = useProps({ p: t.array(t.number()).optional(() => []) });
       setup() {
         values.push(this.props.p);
       }
@@ -922,7 +922,7 @@ describe("schema defaults", () => {
     const values: number[][] = [];
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p.length"/></div>`;
-      props: any = props({ p: t.array(t.number()).optional(defaultValue) });
+      props: any = useProps({ p: t.array(t.number()).optional(defaultValue) });
       setup() {
         values.push(this.props.p);
       }
@@ -941,7 +941,7 @@ describe("schema defaults", () => {
   test("schema defaults are validated in dev mode", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: t.number().optional("4" as any) });
+      props = useProps({ p: t.number().optional("4" as any) });
     }
     let error: any;
     try {
@@ -985,7 +985,7 @@ describe("schema.toShape()", () => {
     let captured: any;
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.title"/></div>`;
-      props = props(t.object({ title: t.string(), color: t.string().optional("red") }).toShape());
+      props = useProps(t.object({ title: t.string(), color: t.string().optional("red") }).toShape());
       setup() {
         captured = this.props;
       }
@@ -1013,7 +1013,7 @@ describe("schema.toShape()", () => {
     let captured: any;
     class Notification extends Component {
       static template = xml`<h1/>`;
-      props = props(Schema.toShape());
+      props = useProps(Schema.toShape());
       setup() {
         captured = this.props;
       }
@@ -1033,7 +1033,7 @@ describe("schema.toShape()", () => {
   test("a schema's props still rejects invalid values", async () => {
     class SubComp extends Component {
       static template = xml`<div/>`;
-      props = props(t.object({ count: t.number() }).toShape());
+      props = useProps(t.object({ count: t.number() }).toShape());
     }
     class Parent extends Component {
       static template = xml`<div><SubComp count="'not a number'"/></div>`;
@@ -1053,7 +1053,7 @@ describe("schema.toShape()", () => {
   test("a schema's props reports genuinely missing required keys", async () => {
     class SubComp extends Component {
       static template = xml`<div/>`;
-      props = props(t.and([t.object({ a: t.string() }), t.object({ b: t.string() })]).toShape());
+      props = useProps(t.and([t.object({ a: t.string() }), t.object({ b: t.string() })]).toShape());
     }
     class Parent extends Component {
       static template = xml`<div><SubComp a="'x'"/></div>`;
@@ -1087,7 +1087,7 @@ describe("schema.toShape()", () => {
     let captured: any;
     class Notification extends Component {
       static template = xml`<h1/>`;
-      props = applyDefaults(props(Schema.toShape()), Schema);
+      props = applyDefaults(useProps(Schema.toShape()), Schema);
       setup() {
         captured = this.props;
       }

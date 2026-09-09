@@ -1,13 +1,13 @@
 // Compile-time checks for schema defaults (.optional(value)). This file is
 // only typechecked (npm run test:types); it is not executed.
-import { config, props, Registry, Resource, t, type GetProps } from "../src";
+import { Registry, Resource, t, useConfig, useProps, type GetProps } from "../src";
 
 // A call to assertEq<A, B>() only typechecks if A and B are mutually assignable
 type Eq<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 declare function assertEq<A, B>(...args: Eq<A, B> extends true ? [] : [never]): void;
 
 class Comp {
-  props = props({
+  props = useProps({
     p: t.number().optional(4),
     q: t.string().optional("a"),
     r: t.string(),
@@ -38,7 +38,7 @@ const ko3: ParentProps = { r: "x", s: 1 };
 // without defaults, the reader and parent views coincide (and the props type
 // displays as a plain flat object)
 class OnlyOptionals {
-  props = props({
+  props = useProps({
     className: t.string().optional(),
     close: t.function().optional(),
   });
@@ -53,33 +53,33 @@ const ok4: OptParentProps = { className: "a" };
 const ko4: OptParentProps = { className: 4 };
 
 // defaults must match the declared type, as a plain value or a factory
-props({ p: t.number().optional(4) });
-props({ p: t.number().optional(() => 4) });
+useProps({ p: t.number().optional(4) });
+useProps({ p: t.number().optional(() => 4) });
 // @ts-expect-error default must be a number
-props({ p: t.number().optional("4") });
+useProps({ p: t.number().optional("4") });
 // a default for a function type must use the factory form
-props({ cb: t.function().optional(() => () => {}) });
+useProps({ cb: t.function().optional(() => () => {}) });
 // @ts-expect-error a plain function default is rejected (factory form only)
-props({ cb: t.function().optional(() => {}) });
+useProps({ cb: t.function().optional(() => {}) });
 
-// props.static: schema default strips to the value type, optional adds undefined
+// useProps.static: schema default strips to the value type, optional adds undefined
 function _staticPropCheck() {
-  const label = props.static("label", t.string().optional("fallback"));
+  const label = useProps.static("label", t.string().optional("fallback"));
   assertEq<typeof label, string>();
-  const plain = props.static("plain", t.string());
+  const plain = useProps.static("plain", t.string());
   assertEq<typeof plain, string>();
-  const opt = props.static("opt", t.string().optional());
+  const opt = useProps.static("opt", t.string().optional());
   assertEq<typeof opt, string | undefined>();
   void [label, plain, opt];
 }
 
-// config: schema default strips to the value type, optional adds undefined
+// useConfig: schema default strips to the value type, optional adds undefined
 function _configCheck() {
-  const delay = config("delay", t.number().optional(500));
+  const delay = useConfig("delay", t.number().optional(500));
   assertEq<typeof delay, number>();
-  const plain = config("plain", t.number());
+  const plain = useConfig("plain", t.number());
   assertEq<typeof plain, number>();
-  const opt = config("opt", t.number().optional());
+  const opt = useConfig("opt", t.number().optional());
   assertEq<typeof opt, number | undefined>();
   void [delay, plain, opt];
 }
@@ -111,7 +111,7 @@ const NotificationShape = {
   sticky: t.boolean().optional(),
 };
 class FromObjectSchema {
-  props = props(t.object(NotificationShape).toShape());
+  props = useProps(t.object(NotificationShape).toShape());
 }
 declare const fromObjectSchema: FromObjectSchema;
 assertEq<typeof fromObjectSchema.props.message, string>();
@@ -124,7 +124,7 @@ const ComposedSchema = t.and([
   t.object({ autocloseDelay: t.number().optional(4000), sticky: t.boolean().optional() }),
 ]);
 class FromComposedSchema {
-  props = props(ComposedSchema.toShape());
+  props = useProps(ComposedSchema.toShape());
 }
 declare const fromComposedSchema: FromComposedSchema;
 assertEq<typeof fromComposedSchema.props.message, string>();

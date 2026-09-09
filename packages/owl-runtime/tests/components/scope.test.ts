@@ -3,8 +3,8 @@ import {
   Component,
   onWillDestroy,
   onWillStart,
-  plugin,
   Plugin,
+  usePlugin,
   useScope,
   xml,
 } from "../../src";
@@ -23,7 +23,7 @@ test("component scope is set during setup", async () => {
 
   class Root extends Component {
     static template = xml``;
-    a = plugin(PluginA);
+    a = usePlugin(PluginA);
   }
 
   const app = new App({ plugins: [PluginA] });
@@ -47,11 +47,11 @@ describe("useScope", () => {
     }
 
     const app = new App({ plugins: [PluginA] });
-    expect(() => plugin(PluginB)).toThrow("No active scope");
+    expect(() => usePlugin(PluginB)).toThrow("No active scope");
 
     let value = 0;
     captured!.run(() => {
-      const b = plugin(PluginB);
+      const b = usePlugin(PluginB);
       value = b.value;
     });
     expect(value).toBe(123);
@@ -76,11 +76,11 @@ describe("useScope", () => {
 
     const app = new App({ plugins: [PluginA] });
     await app.createRoot(Root).mount(fixture);
-    expect(() => plugin(PluginA)).toThrow("No active scope");
+    expect(() => usePlugin(PluginA)).toThrow("No active scope");
 
     let value = 0;
     captured!.run(() => {
-      const a = plugin(PluginA);
+      const a = usePlugin(PluginA);
       value = a.value;
     });
     expect(value).toBe(123);

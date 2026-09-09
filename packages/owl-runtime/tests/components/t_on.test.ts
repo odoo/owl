@@ -1,6 +1,6 @@
-import { Component, mount, onMounted, props, proxy, xml } from "../../src";
-import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, onMounted, proxy, useProps, xml } from "../../src";
 import { status } from "../../src/status";
+import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -46,7 +46,7 @@ describe("t-on", () => {
       static template = xml`
         <span t-foreach="this.props.list" t-as="c" t-key="c_index" t-out="c"/>
       `;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static template = xml`
@@ -171,7 +171,7 @@ describe("t-on", () => {
   test("t-on on components", async () => {
     class Child extends Component {
       static template = xml`<button t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -192,7 +192,7 @@ describe("t-on", () => {
   test("t-on on components, variation", async () => {
     class Child extends Component {
       static template = xml`<button t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -227,7 +227,7 @@ describe("t-on", () => {
   test("t-on on component next to t-on on div", async () => {
     class Child extends Component {
       static template = xml`<button t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -260,7 +260,7 @@ describe("t-on", () => {
       static template = xml`
         [<t t-out="this.state.count"/>]
         <t t-call-slot="default" t-on-click="() => this.state.count++"/>`;
-      props = props();
+      props = useProps();
       state = proxy({ count: 0 });
     }
 
@@ -282,7 +282,7 @@ describe("t-on", () => {
   test("t-on on t-set-slots", async () => {
     class Child extends Component {
       static template = xml`<t t-call-slot="myslot"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -309,7 +309,7 @@ describe("t-on", () => {
     expect.assertions(4); // 2 snaps and 2 expects
     class Child extends Component {
       static template = xml`<button t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -330,7 +330,7 @@ describe("t-on", () => {
   test("t-on on slot, with 'prevent' modifier", async () => {
     class Child extends Component {
       static template = xml`<t t-call-slot="default" t-on-click.prevent="this.doSomething"/>`;
-      props = props();
+      props = useProps();
       doSomething(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
         logStep("hey");
@@ -354,7 +354,7 @@ describe("t-on", () => {
   test("t-on on components and t-foreach", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -386,7 +386,7 @@ describe("t-on", () => {
   test("t-on on components, with a handler update", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {

@@ -1,4 +1,4 @@
-import { Component, mount, props, xml } from "../../src";
+import { Component, mount, useProps, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -255,7 +255,7 @@ describe("translation context", () => {
   test("props with modifier .translate are translated in context", async () => {
     class ChildComponent extends Component {
       static template = xml`<span t-out="this.props.text"/>`;
-      props = props(["text"]);
+      props = useProps(["text"]);
     }
 
     class SomeComponent extends Component {
@@ -278,7 +278,7 @@ describe("translation context", () => {
         <div t-translation-context="ja">
           <t t-call-slot="a"/>
         </div>`;
-      props = props();
+      props = useProps();
     }
 
     class SomeComponent extends Component {
@@ -313,7 +313,7 @@ describe("translation context", () => {
             foo
           </t>
         </div>`;
-      props = props();
+      props = useProps();
     }
 
     const translateFn = vi.fn((expr: string, translationCtx: string) =>

@@ -1,12 +1,12 @@
-import { Component, mount, onMounted, props, proxy, xml } from "../../src";
+import { Component, mount, onMounted, proxy, useProps, xml } from "../../src";
 import {
+  getConsoleOutput,
   makeTestFixture,
   nextTick,
   render,
   snapshotEverything,
   steps,
   useLogLifecycle,
-  getConsoleOutput,
 } from "../helpers";
 
 snapshotEverything();
@@ -21,7 +21,7 @@ describe("list of components", () => {
   test("simple list", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -54,7 +54,7 @@ describe("list of components", () => {
   test("components in a node in a t-foreach ", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.item"/></div>`;
-      props = props();
+      props = useProps();
       setup() {
         useLogLifecycle(this);
       }
@@ -104,7 +104,7 @@ describe("list of components", () => {
   test("reconciliation alg works for t-foreach in t-foreach", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.blip"/></div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -127,7 +127,7 @@ describe("list of components", () => {
   test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.row + '_' + this.props.col"/></div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -157,7 +157,7 @@ describe("list of components", () => {
   test("sub components rendered in a loop", async () => {
     class Child extends Component {
       static template = xml`<p><t t-out="this.props.n"/></p>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -247,7 +247,7 @@ describe("list of components", () => {
             <t t-out="this.state.val"/>
             <t t-out="this.props.val"/>
           </span>`;
-      props = props();
+      props = useProps();
       state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
@@ -276,7 +276,7 @@ describe("list of components", () => {
     const childInstances = [];
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
       setup() {
         childInstances.push(this);
       }
@@ -354,7 +354,7 @@ describe("list of components", () => {
       static template = xml`
           <t t-foreach="this.slotNames" t-as="slotName" t-key="slotName" t-call-slot="{{ slotName }}"/>
       `;
-      props = props();
+      props = useProps();
       get slotNames() {
         return Object.entries(this.props.slots)
           .filter((entry: any) => entry[1].active)

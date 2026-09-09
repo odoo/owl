@@ -122,9 +122,7 @@ export {
 
 export {
   useConfig,
-  config,
   usePlugin,
-  plugin,
   type PluginInstance,
 } from "./plugin_hooks";
 

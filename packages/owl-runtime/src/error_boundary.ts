@@ -1,7 +1,7 @@
 import { signal } from "@odoo/owl-core";
 import { Component } from "./component";
 import { onError } from "./lifecycle_hooks";
-import { props } from "./props";
+import { useProps } from "./props";
 import { xml } from "./template_set";
 import { types as t } from "./types";
 
@@ -15,7 +15,7 @@ export class ErrorBoundary extends Component {
     </t>
   `;
 
-  props = props({ error: t.signal().optional(() => signal<any>(null)) });
+  props = useProps({ error: t.signal().optional(() => signal<any>(null)) });
 
   setup() {
     onError((e) => this.props.error.set(e));

@@ -1,4 +1,4 @@
-import { App, Component, mount, props, proxy, signal, xml } from "../../src";
+import { App, Component, mount, proxy, signal, useProps, xml } from "../../src";
 import { isDirectChildOf, makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -36,7 +36,7 @@ describe("t-call", () => {
   test("sub components in two t-calls", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.val"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -128,7 +128,7 @@ describe("t-call", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.val"/></span>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static components = { Child };
@@ -265,7 +265,7 @@ describe("t-call", () => {
   test("t-call with t-call-context and subcomponent", async () => {
     class Child extends Component {
       static template = xml`child<t t-out="this.props.name"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Root extends Component {
@@ -292,7 +292,7 @@ describe("t-call", () => {
   test("t-call with t-call-context and subcomponent, in dev mode", async () => {
     class Child extends Component {
       static template = xml`child<t t-out="this.props.name"/>`;
-      props = props(["name"]);
+      props = useProps(["name"]);
     }
 
     class Root extends Component {
@@ -321,7 +321,7 @@ describe("t-call", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<t t-call-slot="default"/>`;
-      props = props();
+      props = useProps();
       myRef = signal<any>(null);
       myRef2 = signal<any>(null);
       setup() {
@@ -365,7 +365,7 @@ describe("t-call", () => {
   test("t-call-context: slots don't make component available again when context is captured", async () => {
     class Child extends Component {
       static template = xml`<t t-call-slot="default"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Root extends Component {

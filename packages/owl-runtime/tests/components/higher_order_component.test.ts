@@ -1,5 +1,5 @@
-import { Component, mount, props, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, render } from "../helpers";
+import { Component, mount, proxy, useProps, xml } from "../../src";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -13,7 +13,7 @@ describe("basics", () => {
   test("basic use", async () => {
     class Child extends Component {
       static template = xml`<span>child<t t-out="this.props.p"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {

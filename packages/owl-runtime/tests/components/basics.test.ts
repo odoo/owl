@@ -1,14 +1,14 @@
-import { App, Component, mount, props, proxy, status, types as t, toRaw, xml } from "../../src";
+import { App, Component, mount, proxy, status, types as t, toRaw, useProps, xml } from "../../src";
 import { markup } from "../../src/utils";
 import {
   elem,
+  getConsoleOutput,
   makeTestFixture,
   nextTick,
   render,
   snapshotEverything,
   steps,
   useLogLifecycle,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -48,7 +48,7 @@ describe("basics", () => {
   test("can mount a simple component with props", async () => {
     class Test extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     const component = await mount(Test, fixture, { props: { value: 3 } });
@@ -129,7 +129,7 @@ describe("basics", () => {
     const p = {};
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      props = props();
+      props = useProps();
       setup() {
         expect(toRaw(this.props)).not.toBe(p);
       }
@@ -144,7 +144,7 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      props = props();
+      props = useProps();
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
       }
@@ -158,7 +158,7 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      props = props({
+      props = useProps({
         a: t.any(),
         b: t.number().optional(1),
       });
@@ -341,7 +341,7 @@ describe("basics", () => {
   test("class parent, class child component with props", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.value" /></div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -459,7 +459,7 @@ describe("basics", () => {
   test("can handle empty props", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.val"/></span>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static template = xml`<div><Child val=""/></div>`;
@@ -473,7 +473,7 @@ describe("basics", () => {
   test("child can be updated", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -502,7 +502,7 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`<ChildA t-if="this.props.child==='a'"/><ChildB t-else=""/>`;
       static components = { ChildA, ChildB };
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -588,7 +588,7 @@ describe("basics", () => {
   test("same t-keys in two different places", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.blip"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -786,7 +786,7 @@ describe("basics", () => {
     // twice.
     class Child extends Component {
       static template = xml`<span>abc<t t-if="this.props.flag">def</t></span>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static template = xml`<Child flag="this.state.flag"/>`;
@@ -819,7 +819,7 @@ describe("basics", () => {
         <div class="widget-subkey">
           <t t-out="this.props.key"/>__<t t-out="this.props.subKey"/>
         </div>`;
-      props = props();
+      props = useProps();
     }
     class Child extends Component {
       static components = { Custom };
@@ -828,7 +828,7 @@ describe("basics", () => {
           t-key="this.props.subKey"
           key="this.props.key"
           subKey="this.props.subKey"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -948,7 +948,7 @@ describe("basics", () => {
     class Child extends Component {
       static components = { GrandChild };
       static template = xml`<GrandChild t-if="this.props.displayGrandChild" />`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {

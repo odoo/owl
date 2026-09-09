@@ -2,7 +2,7 @@ import { Signal } from "@odoo/owl-core";
 import { Component } from "./component";
 import { useEffect } from "./hooks";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { props } from "./props";
+import { useProps } from "./props";
 import { forwardErrorToParent } from "./rendering/error_handling";
 import { xml } from "./template_set";
 import { types as t } from "./types";
@@ -18,7 +18,7 @@ export type PortalTarget = string | HTMLElement | Signal<HTMLElement | null> | n
 export class Portal extends Component {
   static template = xml``;
 
-  props = props({
+  props = useProps({
     slots: t.object(["default"]),
     target: t.or([t.string(), t.signal(t.instanceOf(HTMLElement)), t.instanceOf(HTMLElement)]),
   });

@@ -3,19 +3,19 @@ import {
   effect,
   mount,
   onWillUpdateProps,
-  props,
   proxy,
   signal,
   types as t,
+  useProps,
   xml,
 } from "../../src";
 import {
+  getConsoleOutput,
   makeTestFixture,
   nextTick,
   snapshotEverything,
   steps,
   useLogLifecycle,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -30,7 +30,7 @@ describe("basics", () => {
   test("explicit object prop", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.state.someval"/></span>`;
-      props = props();
+      props = useProps();
       state: any;
       setup() {
         this.state = proxy({ someval: this.props.value });
@@ -50,7 +50,7 @@ describe("basics", () => {
   test("prop names can contain -", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props['prop-name']"/></div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -65,7 +65,7 @@ describe("basics", () => {
   test("accept ES6-like syntax for props (with getters)", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.greetings"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -84,7 +84,7 @@ describe("basics", () => {
   test("t-set works ", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.val"/></span>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -102,7 +102,7 @@ describe("basics", () => {
   test("t-set with a body expression can be used as textual prop", async () => {
     class Child extends Component {
       static template = xml`<span t-out="this.props.val"/>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static components = { Child };
@@ -123,7 +123,7 @@ describe("basics", () => {
         <span>
           <t t-out="this.props.val"/>
         </span>`;
-      props = props();
+      props = useProps();
     }
     class Parent extends Component {
       static components = { Child };
@@ -141,7 +141,7 @@ describe("basics", () => {
   test("arrow functions as prop correctly capture their scope", async () => {
     class Child extends Component {
       static template = xml`<button t-on-click="this.props.onClick"/>`;
-      props = props();
+      props = useProps();
     }
 
     let onClickArgs: [number, MouseEvent] | null = null;
@@ -168,7 +168,7 @@ describe("basics", () => {
     let childProps: any;
     class Child extends Component {
       static template = xml`<span><t t-esc="this.props.onClick"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         childProps = this.props;
       }
@@ -195,7 +195,7 @@ describe("basics", () => {
     expect.assertions(3);
     class Child extends Component {
       static template = xml`<button t-on-click="this.props.onClick"/>`;
-      props = props();
+      props = useProps();
       setup() {
         expect(this.props["some-dashed-prop"]).toBe(5);
       }
@@ -212,7 +212,7 @@ describe("basics", () => {
     expect.assertions(3);
     class Child extends Component {
       static template = xml``;
-      props = props();
+      props = useProps();
       setup() {
         expect(this.props.propName).toBe("123");
       }
@@ -230,7 +230,7 @@ describe("basics", () => {
 test("can bind function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
-    props = props();
+    props = useProps();
     setup() {
       this.props.doSomething(123);
     }
@@ -256,7 +256,7 @@ test("can bind function prop with bind suffix", async () => {
 test("do not crash when binding anonymous function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
-    props = props();
+    props = useProps();
     setup() {
       this.props.doSomething(123);
     }
@@ -283,7 +283,7 @@ test("bound functions is not referentially equal after update", async () => {
   let isEqual = false;
   class Child extends Component {
     static template = xml`<t t-out="this.props.val"/>`;
-    props = props();
+    props = useProps();
     setup() {
       onWillUpdateProps((nextProps: any) => {
         isEqual = nextProps.fn === this.props.fn;
@@ -351,7 +351,7 @@ test("bound functions are considered 'alike'", async () => {
 test("can use .translate suffix", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.message"/>`;
-    props = props();
+    props = useProps();
   }
 
   class Parent extends Component {
@@ -366,7 +366,7 @@ test("can use .translate suffix", async () => {
 test(".translate props are translated", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.message"/>`;
-    props = props();
+    props = useProps();
   }
 
   class Parent extends Component {
@@ -381,7 +381,7 @@ test(".translate props are translated", async () => {
 test("throw if prop uses an unknown suffix", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.val"/>`;
-    props = props();
+    props = useProps();
   }
 
   class Parent extends Component {
@@ -397,7 +397,7 @@ test("throw if prop uses an unknown suffix", async () => {
 test(".alike suffix in a simple case", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.fn()"/>`;
-    props = props();
+    props = useProps();
     setup() {
       useLogLifecycle(this);
     }
@@ -444,7 +444,7 @@ test(".alike suffix in a list", async () => {
       <button t-on-click="this.props.toggle">
         <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
       </button>`;
-    props = props();
+    props = useProps();
     setup() {
       useLogLifecycle(this);
     }
@@ -501,7 +501,7 @@ test(".alike suffix in a list", async () => {
 test("arrow function props auto-skip re-render when captured variables don't change", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.fn()"/>`;
-    props = props();
+    props = useProps();
     setup() {
       useLogLifecycle(this);
     }
@@ -548,7 +548,7 @@ test("arrow function props re-render when captured variable changes", async () =
       <button t-on-click="this.props.toggle">
         <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
       </button>`;
-    props = props();
+    props = useProps();
     setup() {
       useLogLifecycle(this);
     }
@@ -610,7 +610,7 @@ test("arrow function props re-render when captured variable changes", async () =
 test("schema defaults and signal-driven props", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.width"/> / <t t-out="this.props.height"/>`;
-    props = props({
+    props = useProps({
       width: t.number().optional(1),
       height: t.number().optional(1),
     });
@@ -647,7 +647,7 @@ test("default props don't cause spurious updates with t-props", async () => {
   const updates: number[] = [];
   class Child extends Component {
     static template = xml`<t t-out="this.props.b"/>`;
-    props = props({ a: t.string().optional("default value"), b: t.number() });
+    props = useProps({ a: t.string().optional("default value"), b: t.number() });
     setup() {
       onWillUpdateProps(() => {
         updates.push(this.props.b);
@@ -694,7 +694,7 @@ test("default props don't cause spurious updates with t-props", async () => {
 test(".signal suffix promotes a plain value to a signal", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
-    props = props({ count: t.signal(t.number()) });
+    props = useProps({ count: t.signal(t.number()) });
   }
 
   class Parent extends Component {
@@ -710,7 +710,7 @@ test(".signal suffix promotes a plain value to a signal", async () => {
 test(".signal suffix: child re-reads updated value when parent state changes", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
-    props = props({ count: t.signal(t.number()) });
+    props = useProps({ count: t.signal(t.number()) });
   }
 
   class Parent extends Component {
@@ -731,7 +731,7 @@ test(".signal suffix: signal reference is stable across updates", async () => {
   let sameRef: boolean | null = null;
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/><t t-out="this.props.tick"/>`;
-    props = props();
+    props = useProps();
     setup() {
       onWillUpdateProps((nextProps: any) => {
         sameRef = nextProps.count === this.props.count;
@@ -757,7 +757,7 @@ test(".signal suffix: effects in child react to parent value changes", async () 
   const observed: number[] = [];
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
-    props = props({ count: t.signal(t.number()) });
+    props = useProps({ count: t.signal(t.number()) });
     setup() {
       effect(() => {
         observed.push(this.props.count());
@@ -786,7 +786,7 @@ test(".signal suffix: effects in child react to parent value changes", async () 
 test(".signal suffix works in a t-foreach loop", async () => {
   class Item extends Component {
     static template = xml`<span><t t-out="this.props.value()"/></span>`;
-    props = props({ value: t.signal(t.number()) });
+    props = useProps({ value: t.signal(t.number()) });
   }
 
   class Parent extends Component {
@@ -814,7 +814,7 @@ test(".signal suffix works in a t-foreach loop", async () => {
 test(".signal suffix accepts a signal-typed prop without validation error", async () => {
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
-    props = props({ count: t.signal(t.number()) });
+    props = useProps({ count: t.signal(t.number()) });
   }
 
   class Parent extends Component {
@@ -837,7 +837,7 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   let childError: any;
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
-    props = props({ count: t.signal(t.number()) });
+    props = useProps({ count: t.signal(t.number()) });
     setup() {
       try {
         (this.props.count as any).set(99);
@@ -864,7 +864,7 @@ describe("reactive props (issue #1908)", () => {
     const observed: number[] = [];
     class Test extends Component {
       static template = xml`<span t-out="this.props.o.val"/>`;
-      props = props(["o"]);
+      props = useProps(["o"]);
       setup() {
         effect(() => observed.push(this.props.o.val));
       }
@@ -896,7 +896,7 @@ describe("reactive props (issue #1908)", () => {
     const observed: number[] = [];
     class Test extends Component {
       static template = xml`<span>hi</span>`;
-      props = props(["o"]);
+      props = useProps(["o"]);
       setup() {
         effect(() => observed.push(this.props.o.val));
       }
@@ -924,7 +924,7 @@ describe("reactive props (issue #1908)", () => {
     const observed: number[] = [];
     class Test extends Component {
       static template = xml`<span t-out="this.tick()"/>`;
-      props = props(["o"]);
+      props = useProps(["o"]);
       setup() {
         effect(() => observed.push(this.props.o.val));
       }
@@ -956,7 +956,7 @@ describe("reactive props (issue #1908)", () => {
   test("props() tracks new and deleted keys from t-props", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label()"/></span>`;
-      props = props();
+      props = useProps();
       label() {
         return `${Object.keys(this.props).join(",")}:${this.props.a || ""}${this.props.b || ""}`;
       }
@@ -979,7 +979,7 @@ describe("reactive props (issue #1908)", () => {
     const seen: { next: number; current: number }[] = [];
     class Child extends Component {
       static template = xml`<span t-out="this.props.value"/>`;
-      props = props(["value"]);
+      props = useProps(["value"]);
       setup() {
         onWillUpdateProps((nextProps) => {
           seen.push({ next: nextProps.value, current: this.props.value });

@@ -1,14 +1,13 @@
+import { Atom, atomSymbol, PluginManager, types, usePlugin } from "@odoo/owl-core";
 import { describe, expect, test } from "vitest";
 import {
   App,
   Component,
   computed,
-  config,
   effect,
   mount,
   onWillDestroy,
   onWillStart,
-  plugin,
   Plugin,
   PluginInstance,
   providePlugins,
@@ -16,10 +15,10 @@ import {
   signal,
   status,
   types as t,
+  useConfig,
   useListener,
-  xml,
+  xml
 } from "../src";
-import { atomSymbol, Atom, PluginManager, types } from "@odoo/owl-core";
 import { STATUS } from "../src/status";
 import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 
@@ -114,7 +113,7 @@ describe("basic features", () => {
     }
 
     class A extends Plugin {
-      p = plugin(P);
+      p = usePlugin(P);
     }
 
     const manager = new PluginManager(new App());
@@ -138,7 +137,7 @@ describe("basic features", () => {
   test("plugin depending on another plugin with the same id (start only A, B is started implicitly)", () => {
     class A extends Plugin {
       static id = "plugin";
-      b = plugin(B);
+      b = usePlugin(B);
     }
     class B extends Plugin {
       static id = "plugin";
@@ -149,7 +148,7 @@ describe("basic features", () => {
   test("plugin depending on another plugin with the same id (start A and B)", () => {
     class A extends Plugin {
       static id = "plugin";
-      b = plugin(B);
+      b = usePlugin(B);
     }
     class B extends Plugin {
       static id = "plugin";
@@ -162,7 +161,7 @@ describe("basic features", () => {
   test("plugin depending on another plugin with the same id (start B then A)", () => {
     class A extends Plugin {
       static id = "plugin";
-      b = plugin(B);
+      b = usePlugin(B);
     }
     class B extends Plugin {
       static id = "plugin";
@@ -234,7 +233,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "b";
 
-      a = plugin(A);
+      a = usePlugin(A);
       setup() {
         b = this;
         steps.push("setup B");
@@ -244,8 +243,8 @@ describe("basic features", () => {
     class C extends Plugin {
       static id = "c";
 
-      a = plugin(A);
-      b = plugin(B);
+      a = usePlugin(A);
+      b = usePlugin(B);
       setup() {
         steps.push("setup C");
       }
@@ -294,7 +293,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "b";
 
-      a = plugin(A);
+      a = usePlugin(A);
       setup() {
         b = this;
         steps.push("setup B");
@@ -304,8 +303,8 @@ describe("basic features", () => {
     class C extends Plugin {
       static id = "c";
 
-      b = plugin(B);
-      a = plugin(A);
+      b = usePlugin(B);
+      a = usePlugin(A);
       setup() {
         steps.push("setup C");
       }
@@ -335,7 +334,7 @@ describe("basic features", () => {
 
       declare a: PluginInstance<typeof A>;
       setup() {
-        this.a = plugin(A);
+        this.a = usePlugin(A);
       }
     }
 
@@ -346,7 +345,7 @@ describe("basic features", () => {
 
   test("plugin fn cannot be called outside Plugin and Component", () => {
     class A extends Plugin {}
-    expect(() => plugin(A)).toThrow(`No active scope`);
+    expect(() => usePlugin(A)).toThrow(`No active scope`);
   });
 
   test("plugin lifecycle", () => {
@@ -393,8 +392,8 @@ describe("basic features", () => {
     const steps: string[] = [];
 
     class PluginA extends Plugin {
-      input = config("input");
-      defaulted = config("defaulted", types.string().optional("default"));
+      input = useConfig("input");
+      defaulted = useConfig("defaulted", types.string().optional("default"));
 
       setup(): void {
         steps.push(`PluginA - ${this.input} - ${this.defaulted}`);
@@ -412,8 +411,8 @@ describe("basic features", () => {
     const steps: string[] = [];
 
     class PluginA extends Plugin {
-      defaulted = config("defaulted", types.string().optional("default"));
-      given = config("given", types.string().optional("unused"));
+      defaulted = useConfig("defaulted", types.string().optional("default"));
+      given = useConfig("given", types.string().optional("unused"));
 
       setup(): void {
         steps.push(`PluginA - ${this.defaulted} - ${this.given}`);
@@ -564,7 +563,7 @@ describe("sub plugin managers", () => {
     }
 
     class B extends Plugin {
-      a = plugin(A);
+      a = usePlugin(A);
       setup() {
         steps.push("setup B");
         steps.push("value " + this.a.someFunction());
@@ -612,7 +611,7 @@ describe("plugins and resources", () => {
       colors = new Resource({ name: "colors", validation: t.string() });
     }
     class B extends Plugin {
-      a = plugin(A);
+      a = usePlugin(A);
 
       setup() {
         this.a.colors.add("red");
@@ -620,7 +619,7 @@ describe("plugins and resources", () => {
     }
     class C extends Plugin {
       setup() {
-        plugin(A).colors.use("green").use("blue");
+        usePlugin(A).colors.use("green").use("blue");
       }
     }
 
@@ -636,12 +635,12 @@ describe("plugins and resources", () => {
     }
     class B extends Plugin {
       setup() {
-        plugin(A).colors.use("red");
+        usePlugin(A).colors.use("red");
       }
     }
     class C extends Plugin {
       setup() {
-        plugin(A).colors.use("green").use("blue");
+        usePlugin(A).colors.use("green").use("blue");
       }
     }
 
@@ -666,12 +665,12 @@ describe("plugins and resources", () => {
 
     class B extends Plugin {
       setup() {
-        plugin(A).colors.use("red");
+        usePlugin(A).colors.use("red");
       }
     }
     class C extends Plugin {
       setup() {
-        plugin(A).colors.use("green").use("blue");
+        usePlugin(A).colors.use("green").use("blue");
       }
     }
 
@@ -739,7 +738,7 @@ describe("onWillStart in plugins", () => {
 
     class Root extends Component {
       static template = xml`<span>ok</span>`;
-      p = plugin(AsyncPlugin);
+      p = usePlugin(AsyncPlugin);
     }
 
     const fixture = makeTestFixture();
@@ -759,7 +758,7 @@ describe("onWillStart in plugins", () => {
     // The root reads state from a plugin (OtherPlugin) that only starts after
     // an async foundational plugin (DataPlugin, lower sequence). mount() must
     // wait for every configured plugin before building the root, otherwise
-    // `plugin(OtherPlugin)` in the root's field initializer throws.
+    // `usePlugin(OtherPlugin)` in the root's field initializer throws.
     const rpc = makeDeferred<void>();
 
     class DataPlugin extends Plugin {
@@ -771,12 +770,12 @@ describe("onWillStart in plugins", () => {
     }
 
     class OtherPlugin extends Plugin {
-      data = plugin(DataPlugin);
+      data = usePlugin(DataPlugin);
     }
 
     class Root extends Component {
       static template = xml`<t t-out="this.other.data.state().length"/>`;
-      other = plugin(OtherPlugin);
+      other = usePlugin(OtherPlugin);
     }
 
     const fixture = makeTestFixture();
@@ -883,7 +882,7 @@ describe("onWillStart in plugins", () => {
 
     class Child extends Component {
       static template = xml`<span>child</span>`;
-      p = plugin(AsyncPlugin);
+      p = usePlugin(AsyncPlugin);
       setup() {
         valueAtChildSetup = this.p.value;
       }
@@ -993,7 +992,7 @@ describe("plugin sequence", () => {
     }
 
     class Feature extends Plugin {
-      foundation = plugin(Foundation);
+      foundation = usePlugin(Foundation);
       setup() {
         steps.push(`feature:setup (data=${this.foundation.data})`);
       }
@@ -1045,7 +1044,7 @@ describe("plugin sequence", () => {
     manager.destroy();
   });
 
-  test("explicit plugin() dependency starts immediately regardless of sequence", () => {
+  test("explicit usePlugin() dependency starts immediately regardless of sequence", () => {
     const steps: string[] = [];
 
     class Z extends Plugin {
@@ -1056,7 +1055,7 @@ describe("plugin sequence", () => {
     }
     class A extends Plugin {
       static sequence = 10;
-      z = plugin(Z);
+      z = usePlugin(Z);
       setup() {
         steps.push("A");
       }

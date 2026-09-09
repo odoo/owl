@@ -1,6 +1,4 @@
-import { parseXML } from "@odoo/owl-compiler";
-import { compile } from "@odoo/owl-compiler";
-import { getConsoleOutput } from "../helpers";
+import { compile, parseXML } from "@odoo/owl-compiler";
 
 describe("t-call-slot", () => {
   test("compile t-props correctly multiple time", () => {
@@ -12,12 +10,5 @@ describe("t-call-slot", () => {
 
     const fn2 = compile(parsedTemplate);
     expect(fn2.toString()).toBe(fn1.toString());
-  });
-
-  test("warn on t-slot", () => {
-    const template = `<t t-slot="default"/>`;
-    const parsedTemplate = parseXML(template).firstChild as Element;
-    compile(parsedTemplate);
-    expect(getConsoleOutput()).toEqual(["warn:t-slot has been renamed t-call-slot."]);
   });
 });

@@ -1,5 +1,5 @@
-import { snapshotEverything, makeTestFixture, render, nextTick, elem } from "../helpers";
-import { Component, mount, props, xml } from "../../src";
+import { Component, mount, useProps, xml } from "../../src";
+import { elem, makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -14,7 +14,7 @@ describe("t-key", () => {
     let childInstance = null;
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
 
       setup() {
         childInstance = this;
@@ -45,7 +45,7 @@ describe("t-key", () => {
         <t t-foreach="this.props.items" t-as="item" t-key="item_index">
           <t t-out="item"/>
         </t>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -84,7 +84,7 @@ describe("t-key", () => {
     let childInstance = null;
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
 
       setup() {
         childInstance = this;
@@ -120,7 +120,7 @@ describe("t-key", () => {
     const childInstances = [];
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
 
       setup() {
         childInstances.push(this);
@@ -153,7 +153,7 @@ describe("t-key", () => {
     const childInstances = [];
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
 
       setup() {
         childInstances.push(this);
@@ -193,7 +193,7 @@ describe("t-key", () => {
     const childInstances = [];
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
 
       setup() {
         childInstances.push(this);
@@ -232,7 +232,7 @@ describe("t-key", () => {
     const childInstances = [];
     class Child extends Component {
       static template = xml`<div t-out="this.props.key"></div>`;
-      props = props();
+      props = useProps();
       setup() {
         childInstances.push(this);
       }

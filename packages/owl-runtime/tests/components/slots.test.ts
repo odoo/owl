@@ -1,10 +1,10 @@
-import { App, Component, mount, onMounted, props, proxy, signal, xml } from "../../src";
+import { App, Component, mount, onMounted, proxy, signal, useProps, xml } from "../../src";
 import {
   children,
+  getConsoleOutput,
   makeTestFixture,
   nextTick,
   snapshotEverything,
-  getConsoleOutput,
 } from "../helpers";
 
 snapshotEverything();
@@ -143,7 +143,7 @@ describe("slots", () => {
   test("simple named and empty slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-call-slot="default" /><t t-call-slot="myEmptySlot"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         expect(this.props.slots["myEmptySlot"]).toBeTruthy();
       }
@@ -161,7 +161,7 @@ describe("slots", () => {
   test("simple named and empty slot -- 2", async () => {
     class Child extends Component {
       static template = xml`<span><t t-call-slot="myEmptySlot">default empty</t></span>`;
-      props = props();
+      props = useProps();
 
       setup() {
         expect(this.props.slots["myEmptySlot"]).toBeTruthy();
@@ -181,7 +181,7 @@ describe("slots", () => {
   test("can use .translate suffix on slot props", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.slots.default.message"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -196,7 +196,7 @@ describe("slots", () => {
   test(".translate slot props are translated", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.slots.default.message"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -391,7 +391,7 @@ describe("slots", () => {
           <t t-out="this.props.slots['footer'].param"/>
           <div><t t-call-slot="footer"/></div>
         </div>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -417,7 +417,7 @@ describe("slots", () => {
       static template = xml`
         <t t-call-slot="abc"/>
         <t t-out="this.props.slots['abc'].getValue()"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -592,7 +592,7 @@ describe("slots", () => {
             <a t-att-href="this.props.to">
               <t t-call-slot="default"/>
             </a>`;
-      props = props();
+      props = useProps();
     }
 
     class App extends Component {
@@ -632,7 +632,7 @@ describe("slots", () => {
             <a t-att-href="this.props.to">
               <t t-call-slot="default"/>
             </a>`;
-      props = props();
+      props = useProps();
     }
 
     class App extends Component {
@@ -672,7 +672,7 @@ describe("slots", () => {
             <a t-att-href="this.props.to">
               <t t-call-slot="default"/>
             </a>`;
-      props = props();
+      props = useProps();
     }
 
     class App extends Component {
@@ -1223,7 +1223,7 @@ describe("slots", () => {
         <div>
           SC:<t t-out="this.props.val"/>
         </div>`;
-      props = props();
+      props = useProps();
     }
     class GenericComponent extends Component {
       static template = xml`<div><t t-call-slot="default"/></div>`;
@@ -1273,7 +1273,7 @@ describe("slots", () => {
   test("template can just return a slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
     }
     class SlotComponent extends Component {
       static template = xml`<t t-call-slot="default"/>`;
@@ -1299,7 +1299,7 @@ describe("slots", () => {
   test("multiple slots containing components", async () => {
     class C extends Component {
       static template = xml`<span><t t-out="this.props.val"/></span>`;
-      props = props();
+      props = useProps();
     }
     class B extends Component {
       static template = xml`<div><t t-call-slot="s1"/><t t-call-slot="s2"/></div>`;
@@ -1567,7 +1567,7 @@ describe("slots", () => {
 
     class Slot extends Component {
       static template = xml`<span t-out="this.props.val"/>`;
-      props = props();
+      props = useProps();
       setup() {
         slot = this;
       }
@@ -1783,7 +1783,7 @@ describe("slots", () => {
   test("slot content has different key from other content -- static slot", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.props.parent" />`;
-      props = props();
+      props = useProps();
     }
 
     class SlotDisplay extends Component {
@@ -1806,7 +1806,7 @@ describe("slots", () => {
   test("slot content has different key from other content -- dynamic slot", async () => {
     class Child extends Component {
       static template = xml`<div t-out="this.props.parent" />`;
-      props = props();
+      props = useProps();
     }
 
     class SlotDisplay extends Component {
@@ -1836,7 +1836,7 @@ describe("slots", () => {
     class B extends Component {
       static template = xml`[B]<C slots="this.props.slots" />`;
       static components = { C };
-      props = props();
+      props = useProps();
     }
 
     const subTemplate2 = xml`[sub2<t t-out="v"/>]`;
@@ -1849,7 +1849,7 @@ describe("slots", () => {
     class A extends Component {
       static components = { B };
       static template = xml`<B>[A]<t t-call="${subTemplate1}"/></B>`;
-      props = props();
+      props = useProps();
       setup() {
         a = this;
       }
@@ -1899,7 +1899,7 @@ describe("slots", () => {
             <t t-call-slot="default"/>
           </t>
       `;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -1933,7 +1933,7 @@ describe("slots", () => {
             <t t-call-slot="{{'coffee'}}"/>
           </t>
       `;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -1964,7 +1964,7 @@ describe("slots", () => {
             <p><t t-out="elem"/><t t-call-slot="default"/></p>
           </t>
       `;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {

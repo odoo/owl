@@ -2,7 +2,7 @@ import { signal } from "@odoo/owl-core";
 import { Component } from "./component";
 import { useEffect } from "./hooks";
 import { onMounted, onWillDestroy } from "./lifecycle_hooks";
-import { props } from "./props";
+import { useProps } from "./props";
 import { forwardErrorToParent } from "./rendering/error_handling";
 import { xml } from "./template_set";
 import { types as t } from "./types";
@@ -33,7 +33,7 @@ export class Suspense extends Component {
     </t>
   `;
 
-  props = props({ slots: t.object({ default: t.any(), fallback: t.any().optional() }) });
+  props = useProps({ slots: t.object({ default: t.any(), fallback: t.any().optional() }) });
 
   private prepared = signal(false);
   private mounted = signal(false);

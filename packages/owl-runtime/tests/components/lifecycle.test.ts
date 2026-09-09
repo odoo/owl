@@ -2,30 +2,30 @@ import {
   App,
   Component,
   mount,
-  proxy,
-  xml,
-  onWillPatch,
-  onWillUnmount,
-  onPatched,
-  onWillUpdateProps,
-  onWillDestroy,
   onMounted,
+  onPatched,
+  onWillDestroy,
+  onWillPatch,
   onWillStart,
-  props,
+  onWillUnmount,
+  onWillUpdateProps,
+  proxy,
+  useProps,
+  xml,
 } from "../../src";
 import { status } from "../../src/status";
 import {
   elem,
+  getConsoleOutput,
   logStep,
   makeDeferred,
   makeTestFixture,
   nextMicroTick,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
-  render,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -304,7 +304,7 @@ describe("lifecycle hooks", () => {
       static template = xml`
         <div><t t-out="this.props.n"/></div>
       `;
-      props = props();
+      props = useProps();
 
       setup() {
         onWillPatch(() => {
@@ -321,7 +321,7 @@ describe("lifecycle hooks", () => {
         <div><ChildChild n="this.props.n"/></div>
       `;
       static components = { ChildChild };
-      props = props();
+      props = useProps();
 
       setup() {
         onWillPatch(() => {
@@ -445,7 +445,7 @@ describe("lifecycle hooks", () => {
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.n"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         useLogLifecycle(this);
       }
@@ -554,7 +554,7 @@ describe("lifecycle hooks", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.n"/></span>`;
-      props = props();
+      props = useProps();
 
       setup() {
         onWillUpdateProps((nextProps) => {
@@ -1218,7 +1218,7 @@ describe("lifecycle hooks", () => {
 
     class Test extends Component {
       static template = xml`<t t-out="this.props.rev" />`;
-      props = props();
+      props = useProps();
       setup() {
         instance = this;
         onWillStart(this.logger("onWillStart"));

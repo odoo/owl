@@ -8,22 +8,21 @@ import {
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
-  OwlError,
-  props,
   proxy,
   signal,
   useEffect,
   useListener,
   useOnChange,
+  useProps,
   xml,
 } from "../../src";
 import {
   elem,
+  getConsoleOutput,
   logStep,
   makeTestFixture,
   nextTick,
   snapshotEverything,
-  getConsoleOutput,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -182,7 +181,7 @@ describe("hooks", () => {
     }
     class MyComponent extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         useMyHook();
         use2ndHook();
@@ -222,7 +221,7 @@ describe("hooks", () => {
     let received: any = undefined;
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillUpdateProps((nextProps) => {
           received = nextProps;
@@ -249,7 +248,7 @@ describe("hooks", () => {
     let received: any = undefined;
     class Child extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         onWillUpdateProps((nextProps) => {
           received = nextProps;
@@ -280,7 +279,7 @@ describe("hooks", () => {
 
     class MyComponent extends Component {
       static template = xml`<span><t t-out="this.props.value"/></span>`;
-      props = props();
+      props = useProps();
       setup() {
         useListener(window, "click", this.increment);
         window.dispatchEvent(new Event("click"));

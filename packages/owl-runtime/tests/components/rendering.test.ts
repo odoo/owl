@@ -4,22 +4,22 @@ import {
   onWillStart,
   onWillUpdateProps,
   OwlError,
-  props,
   proxy,
   signal,
   t,
+  useProps,
   xml,
 } from "../../src";
 import {
-  makeTestFixture,
-  snapshotEverything,
-  nextTick,
-  useLogLifecycle,
-  makeDeferred,
-  nextMicroTick,
-  render,
-  steps,
   getConsoleOutput,
+  makeDeferred,
+  makeTestFixture,
+  nextMicroTick,
+  nextTick,
+  render,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -187,7 +187,7 @@ describe("rendering semantics", () => {
   test("props are proxy", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.a.b"/>`;
-      props = props();
+      props = useProps();
       setup() {
         useLogLifecycle(this);
       }
@@ -232,7 +232,7 @@ describe("rendering semantics", () => {
   test("props are proxy (nested prop)", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.a.b.c"/>`;
-      props = props();
+      props = useProps();
 
       setup() {
         useLogLifecycle(this);
@@ -289,7 +289,7 @@ describe("rendering semantics", () => {
   test("works as expected for dynamic number of props", async () => {
     class Child extends Component {
       static template = xml`<t t-out="Object.keys(this.props).length"/>`;
-      props = props();
+      props = useProps();
     }
 
     class Parent extends Component {
@@ -313,7 +313,7 @@ describe("rendering semantics", () => {
 
     class C extends Component {
       static template = xml`<t t-out="this.props.obj.val"/>`;
-      props = props();
+      props = useProps();
 
       setup() {
         useLogLifecycle(this);
@@ -323,7 +323,7 @@ describe("rendering semantics", () => {
     class B extends Component {
       static template = xml`<C obj="this.props.obj"/>`;
       static components = { C };
-      props = props();
+      props = useProps();
 
       setup() {
         useLogLifecycle(this);
@@ -388,7 +388,7 @@ test("force render in case of existing render", async () => {
   class B extends Component {
     static template = xml`<C/><t t-out="this.props.val"/>`;
     static components = { C };
-    props = props();
+    props = useProps();
     setup() {
       useLogLifecycle(this);
       onWillUpdateProps(() => def);
@@ -456,7 +456,7 @@ test("force render in case of existing render", async () => {
 test("children, default props and renderings", async () => {
   class Child extends Component {
     static template = xml`child`;
-    props = props({
+    props = useProps({
       value: { optional: true, defaultValue: 1 },
     });
     setup() {
@@ -506,7 +506,7 @@ describe("render loop detection", () => {
   test("throws a clear error instead of freezing on a render loop (#1968)", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.value"/>`;
-      props = props({ value: t.number(), inc: t.function() });
+      props = useProps({ value: t.number(), inc: t.function() });
       setup() {
         // Updating parent state during setup retriggers the parent render, which
         // recreates this child, whose setup runs again: an infinite render loop.

@@ -1,17 +1,17 @@
 import { compile } from "@odoo/owl-compiler";
-import { App, Component, onMounted, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { App, Component, onMounted, onWillPatch, onWillStart, proxy, useProps, xml } from "../../src";
 import { useApp } from "../../src/hooks";
 import { STATUS, status } from "../../src/status";
 import {
-  makeTestFixture,
-  snapshotEverything,
-  nextTick,
   elem,
-  useLogLifecycle,
   makeDeferred,
+  makeTestFixture,
   nextMicroTick,
-  steps,
+  nextTick,
   render,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -40,7 +40,7 @@ describe("app", () => {
   test("can configure an app with props", async () => {
     class SomeComponent extends Component {
       static template = xml`<div t-out="this.props.value"/>`;
-      props = props();
+      props = useProps();
     }
 
     const app = new App();

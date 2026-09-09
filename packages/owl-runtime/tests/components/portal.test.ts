@@ -5,10 +5,10 @@ import {
   onWillStart,
   Plugin,
   Portal,
-  plugin,
   providePlugins,
   signal,
-  xml,
+  usePlugin,
+  xml
 } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
 
@@ -185,7 +185,7 @@ test("forwards plugin chain: providePlugins ancestor is visible to portaled cont
   let inside: any = null;
   class Inside extends Component {
     static template = xml`<span class="payload" t-out="this.foo.value"/>`;
-    foo = plugin(FooPlugin);
+    foo = usePlugin(FooPlugin);
     setup() {
       inside = this;
     }

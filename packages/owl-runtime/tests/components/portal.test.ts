@@ -8,6 +8,7 @@ import {
   providePlugins,
   signal,
   usePlugin,
+  useProps,
   xml
 } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
@@ -402,5 +403,190 @@ test("waits for descendant onWillStart before mounting", async () => {
   await nextTick();
   expect(target.querySelector(".payload")!.textContent).toBe("ready");
 
+  app.destroy();
+});
+
+// -----------------------------------------------------------------------------
+// ordered portals
+// -----------------------------------------------------------------------------
+
+function orderIn(target: HTMLElement): string {
+  return [...target.querySelectorAll(".payload")].map((el) => el.textContent).join("");
+}
+
+test("ordered: content follows declaration order, not mount order", async () => {
+  const target = makeOutside("portal-ordered-1");
+  target.dataset.testPortal = "1";
+  const def = makeDeferred();
+
+  class Slow extends Component {
+    static template = xml`<span class="payload">A</span>`;
+    setup() {
+      onWillStart(() => def);
+    }
+  }
+
+  class Root extends Component {
+    static components = { Portal, Slow };
+    static template = xml`
+      <div class="src">
+        <Portal target="this.target" ordered="true"><Slow/></Portal>
+        <Portal target="this.target" ordered="true"><span class="payload">B</span></Portal>
+      </div>
+    `;
+    target = target;
+  }
+
+  const app = new App();
+  await app.createRoot(Root).mount(fixture);
+  await nextTick();
+
+  // "A" is still held back by its onWillStart, so only "B" has mounted.
+  expect(orderIn(target)).toBe("B");
+
+  def.resolve();
+  await nextTick();
+
+  // Plain appending would have produced "BA".
+  expect(orderIn(target)).toBe("AB");
+  app.destroy();
+});
+
+test("ordered: a portal appearing later lands in the middle, not last", async () => {
+  const target = makeOutside("portal-ordered-2");
+  target.dataset.testPortal = "1";
+
+  class Root extends Component {
+    static components = { Portal };
+    static template = xml`
+      <div class="src">
+        <Portal target="this.target" ordered="true"><span class="payload">A</span></Portal>
+        <t t-if="this.showB()">
+          <Portal target="this.target" ordered="true"><span class="payload">B</span></Portal>
+        </t>
+        <Portal target="this.target" ordered="true"><span class="payload">C</span></Portal>
+      </div>
+    `;
+    target = target;
+    showB = signal(false);
+  }
+
+  const app = new App();
+  const root = await app.createRoot(Root).mount(fixture);
+  await nextTick();
+  expect(orderIn(target)).toBe("AC");
+
+  root.showB.set(true);
+  await nextTick();
+
+  // Plain appending would have produced "ACB".
+  expect(orderIn(target)).toBe("ABC");
+  app.destroy();
+});
+
+test("ordered: a keyed t-foreach reorder re-sorts the target", async () => {
+  const target = makeOutside("portal-ordered-3");
+  target.dataset.testPortal = "1";
+
+  class Item extends Component {
+    static components = { Portal };
+    static template = xml`
+      <Portal target="this.props.target" ordered="true">
+        <span class="payload" t-out="this.props.name"/>
+      </Portal>
+    `;
+    props = useProps(["target", "name"]);
+  }
+
+  class Root extends Component {
+    static components = { Item };
+    static template = xml`
+      <div class="src">
+        <Item t-foreach="this.names()" t-as="name" t-key="name" name="name" target="this.target"/>
+      </div>
+    `;
+    target = target;
+    names = signal(["A", "B", "C"]);
+  }
+
+  const app = new App();
+  const root = await app.createRoot(Root).mount(fixture);
+  await nextTick();
+  expect(orderIn(target)).toBe("ABC");
+
+  // owl reorders a keyed list by moving nodes: no portal remounts, and no
+  // effect re-runs. Only the MutationObserver notices.
+  root.names.set(["C", "A", "B"]);
+  await nextTick();
+
+  expect(orderIn(target)).toBe("CAB");
+  app.destroy();
+});
+
+test("ordered: mixes with plain portals and leaves no trace once torn down", async () => {
+  const target = makeOutside("portal-ordered-4");
+  target.dataset.testPortal = "1";
+  target.innerHTML = `<span class="pre">pre</span>`;
+
+  class Root extends Component {
+    static components = { Portal };
+    static template = xml`
+      <div class="src">
+        <t t-if="this.show()">
+          <Portal target="this.target" ordered="true"><span class="payload">A</span></Portal>
+          <Portal target="this.target" ordered="true"><span class="payload">B</span></Portal>
+        </t>
+      </div>
+    `;
+    target = target;
+    show = signal(true);
+  }
+
+  const app = new App();
+  const root = await app.createRoot(Root).mount(fixture);
+  await nextTick();
+
+  // The group keeps to itself: content the target already had stays put.
+  expect(target.firstElementChild!.className).toBe("pre");
+  expect(orderIn(target)).toBe("AB");
+
+  root.show.set(false);
+  await nextTick();
+
+  expect(target.innerHTML).toBe(`<span class="pre">pre</span>`);
+  expect([...target.childNodes].some((n) => n.nodeType === Node.COMMENT_NODE)).toBe(false);
+  app.destroy();
+});
+
+test("unordered portals still append, in mount order", async () => {
+  const target = makeOutside("portal-ordered-5");
+  target.dataset.testPortal = "1";
+  const def = makeDeferred();
+
+  class Slow extends Component {
+    static template = xml`<span class="payload">A</span>`;
+    setup() {
+      onWillStart(() => def);
+    }
+  }
+
+  class Root extends Component {
+    static components = { Portal, Slow };
+    static template = xml`
+      <div class="src">
+        <Portal target="this.target"><Slow/></Portal>
+        <Portal target="this.target"><span class="payload">B</span></Portal>
+      </div>
+    `;
+    target = target;
+  }
+
+  const app = new App();
+  await app.createRoot(Root).mount(fixture);
+  await nextTick();
+  def.resolve();
+  await nextTick();
+
+  expect(orderIn(target)).toBe("BA");
   app.destroy();
 });

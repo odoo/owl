@@ -31,6 +31,10 @@ class UserCard extends Component {
 The validators can also be used standalone via `validateType` and `assertType`
 to validate any value at runtime, not just props.
 
+Validating never observes: the value is walked untracked and raw, so a call
+made inside a `computed` or an `effect` subscribes to nothing, even when the
+value is reactive.
+
 ## `validateType`
 
 Checks a value against a validator and returns a list of validation issues.
@@ -176,6 +180,35 @@ t.record(t.number()); // all values must be numbers
 
 // validates: { a: 1, b: 2 }     with t.record(t.number())
 // rejects:   { a: 1, b: "two" } with t.record(t.number())
+```
+
+### `t.set(valueType?)`
+
+Validates that the value is a `Set`. When `valueType` is provided, every
+element is validated against it.
+
+```js
+t.set(); // any set
+t.set(t.number()); // set of numbers
+
+// validates: new Set([1, 2])     with t.set(t.number())
+// rejects:   new Set([1, "two"]) with t.set(t.number())
+```
+
+### `t.map(keyType?, valueType?)`
+
+Validates that the value is a `Map`. When `keyType` is provided, every key is
+validated against it, and likewise for `valueType` and the values. A failing
+entry is reported by its iteration index (`0 > key`, `0 > value`), since a map
+key can be any value.
+
+```js
+t.map(); // any map
+t.map(t.string()); // string keys, any value
+t.map(t.string(), t.number()); // string keys, number values
+
+// validates: new Map([["a", 1]])     with t.map(t.string(), t.number())
+// rejects:   new Map([["a", "one"]]) with t.map(t.string(), t.number())
 ```
 
 ### `t.tuple(types)`

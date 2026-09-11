@@ -126,6 +126,49 @@ container:
 </t>
 ```
 
+Each portal appends to the target as it mounts, so the content ends up in
+**mount order**. For a stack of toasts or dialogs that is exactly right:
+they pile up in the order they opened.
+
+## The `position` prop
+
+Mount order is wrong when the target is an ordered list, because mounting
+is not ordered: a portal whose content has a pending `onWillStart` lands
+after a faster sibling, and one that appears later always lands last.
+
+Pass `position` — a number — to place a portal among the others sharing
+its target, in ascending order, whatever order they mounted in:
+
+```xml
+<Portal
+  t-foreach="this.tabs()"
+  t-as="tab"
+  t-key="tab.id"
+  target="this.navRoot"
+  position="tab_index">
+  <TabHeader t-props="tab"/>
+</Portal>
+```
+
+Because the rank arrives as a prop, reordering the source list is enough:
+the new `tab_index` reaches each Portal as a prop change and the target is
+re-sorted, with no re-render of the portaled content. Nothing inspects the
+source DOM, so it does not matter what markup sits between the `<Portal/>`
+and the list being reordered — a wrapping element, a `t-if` or a slot
+all behave the same.
+
+Details worth knowing:
+
+- **Positions are compared, not counted.** Any numbers in the right order
+  work; they need not be contiguous or start at zero.
+- **Ties keep mount order**, so use distinct positions when the order
+  matters.
+- **Portals without a `position` are left alone**, appended where they
+  landed. In a target that mixes both, the positioned ones are placed
+  after the rest.
+- **Placement is batched**: it happens once per microtick, after every
+  portal in the group has seen its new position, and before paint.
+
 ## How it works
 
 `<Portal>` uses `app.createRoot` plus the

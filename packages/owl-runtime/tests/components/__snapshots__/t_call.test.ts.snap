@@ -216,7 +216,7 @@ exports[`t-call > handlers are properly bound through a t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].update, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].update, ctx['this'], ev);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
@@ -356,7 +356,7 @@ exports[`t-call > recursive t-call binding this -- static t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput, callTemplate } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClicked.bind(ctx['this']), ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClicked.bind(ctx['this']), ctx['this'], ev);
   
   let block3 = createBlock(\`<div block-handler-0="click.stop"><block-child-0/></div>\`);
   

@@ -140,7 +140,7 @@ exports[`basics > sub widget is interactive 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx['this'], ev);
   
   let block1 = createBlock(\`<span><button block-handler-0="click">click</button>child<block-child-0/></span>\`);
   

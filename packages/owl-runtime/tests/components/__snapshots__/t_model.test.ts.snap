@@ -131,7 +131,7 @@ exports[`t-model directive > can also define t-on directive on same event, part 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { modelExpr, toNumber, callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onInput, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onInput, ctx['this'], ev);
   
   let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input" block-handler-2="input"/></div>\`);
   
@@ -150,9 +150,9 @@ exports[`t-model directive > can also define t-on directive on same event, part 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { modelExpr, toNumber, callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
-  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
-  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx['this'], ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx['this'], ev);
+  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx['this'], ev);
   
   let block1 = createBlock(\`<div><input type="radio" id="one" value="One" block-property-0="checked" block-handler-1="click" block-handler-2="click"/><input type="radio" id="two" value="Two" block-property-3="checked" block-handler-4="click" block-handler-5="click"/><input type="radio" id="three" value="Three" block-property-6="checked" block-handler-7="click" block-handler-8="click"/></div>\`);
   
@@ -416,7 +416,7 @@ exports[`t-model directive > t-model is applied before t-on-input 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { modelExpr, toNumber, callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onInput, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onInput, ctx['this'], ev);
   
   let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input" block-handler-2="input"/></div>\`);
   
@@ -600,7 +600,7 @@ exports[`t-model directive > t-model with radio button group in t-foreach 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, prepareList, modelExpr, toNumber, withKey } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].getData, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].getData, ctx['this'], ev);
   
   let block1 = createBlock(\`<div id="get_data" block-handler-0="click"><block-child-0/></div>\`);
   let block3 = createBlock(\`<input type="radio" name="radio_group" block-property-0="value" block-attribute-1="id" block-property-2="checked" block-handler-3="click"/>\`);

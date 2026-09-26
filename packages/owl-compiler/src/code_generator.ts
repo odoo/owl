@@ -525,7 +525,7 @@ export class CodeGenerator {
       modifiersCode = `${modifiers.join(",")}, `;
     }
 
-    const compiled = compileExpr(handler);
+    const {expr: compiled, receiver} = processExpr(handler);
     if (!compiled.trim()) {
       return `[${modifiersCode}, ctx]`;
     }
@@ -543,7 +543,7 @@ export class CodeGenerator {
       hoistedExpr = `(ctx,${bareArrowMatch[1]})=>${rest}`;
     } else {
       this.helpers.add("callHandler");
-      hoistedExpr = `(ctx, ev) => callHandler(${compiled}, ctx, ev)`;
+      hoistedExpr = `(ctx, ev) => callHandler(${compiled}, ${receiver ?? "ctx['this']"}, ev)`;
     }
 
     const id = generateId("hdlr_fn");

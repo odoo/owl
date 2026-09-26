@@ -5,7 +5,7 @@ exports[`event handling > Invalid handler throws an error 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].dosomething, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].dosomething, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">click</button>\`);
   
@@ -21,7 +21,7 @@ exports[`event handling > handler is not called if component is destroyed 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].click, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].click, ctx['this'], ev);
   
   let block1 = createBlock(\`<span block-handler-0="click"/>\`);
   
@@ -37,7 +37,7 @@ exports[`event handling > handler receive the event as argument 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, createComponent, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx['this'], ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-child-1/></span>\`);
@@ -64,12 +64,52 @@ exports[`event handling > handler receive the event as argument 2`] = `
 }"
 `;
 
+exports[`event handling > handler that is a method of a nested object is bound to that object 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { callHandler } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].obj.onInput, ctx['this'].obj, ev);
+  
+  let block1 = createBlock(\`<div><input type="text" block-handler-0="input"/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [hdlr_fn1, ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
+exports[`event handling > handler that is a method of a t-foreach variable is bound to that variable 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, callHandler, withKey } = helpers;
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['item'].onClick, ctx['item'], ev);
+  
+  let block2 = createBlock(\`<button block-handler-0="click">click</button>\`);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`item\`] = k_block1[i1];
+      const key1 = ctx['item'].id;
+      let hdlr1 = [hdlr_fn1, ctx];
+      c_block1[i1] = withKey(block2([hdlr1]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`event handling > handler works when app is mounted in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx['this'], ev);
   
   let block1 = createBlock(\`<span block-handler-0="click">click me</span>\`);
   
@@ -104,7 +144,7 @@ exports[`event handling > input blur event is not called if component is destroy
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].blur, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].blur, ctx['this'], ev);
   
   let block1 = createBlock(\`<input block-handler-0="blur"/>\`);
   
@@ -146,7 +186,7 @@ exports[`event handling > support for callable expression in event handler 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].obj.onInput, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].obj.onInput, ctx['this'].obj, ev);
   
   let block1 = createBlock(\`<div><block-child-0/><input type="text" block-handler-0="input"/></div>\`);
   
@@ -190,7 +230,7 @@ exports[`event handling > unnamed slot should call the event only once 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent, createCatcher, callHandler } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, true, false, []);
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   
   let block1 = createBlock(\`<div class="named"/>\`);

@@ -194,14 +194,14 @@ function createRef(ref: any, node: ComponentNode) {
   };
 }
 
-function callHandler(fn: any, ctx: any, ev: Event) {
+function callHandler(fn: any, receiver: any, ev: Event) {
   if (typeof fn !== "function") {
     throw new OwlError(
       `Invalid handler expression: the \`t-on\` expression should evaluate to a function, but got '${typeof fn}'. ` +
         `Did you mean to use an arrow function? (e.g. \`t-on-click="() => expr"\`)`
     );
   }
-  fn.call(ctx["this"], ev);
+  fn.call(receiver, ev);
 }
 
 type CachedSignal<T> = Signal<T> & { readonly: ReactiveValue<T> };

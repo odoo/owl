@@ -75,6 +75,50 @@ describe("event handling", () => {
     expect(fixture.innerHTML).toBe(`<div>test<input type="text"></div>`);
   });
 
+  test("handler that is a method of a nested object is bound to that object", async () => {
+    class Counter extends Component {
+      static template = xml`
+      <div><input type="text" t-on-input="this.obj.onInput"/></div>`;
+      obj = {
+        attr: '',
+        onInput(ev: any) { 
+          this.attr = 'obj';
+        }
+      };
+    }
+
+    const comp = await mount(Counter, fixture);
+    await nextTick();
+    expect(comp.obj.attr).toBe("");
+    const input = fixture.getElementsByTagName("input")[0];
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    expect(comp.obj.attr).toBe("obj");
+  });
+
+  test("handler that is a method of a t-foreach variable is bound to that variable", async () => {
+    class Comp extends Component {
+      static template = xml`
+        <t t-foreach="this.items" t-as="item" t-key="item.id">
+          <button t-on-click="item.onClick">click</button>
+        </t>`;
+      items = [1, 2, 3].map((id) => ({
+        id,
+        clicked: 0,
+        onClick() {
+          this.clicked++;
+        },
+      }));
+    }
+
+    const comp = await mount(Comp, fixture);
+    const buttons = fixture.querySelectorAll("button");
+    buttons[0].click();
+    buttons[2].click();
+    buttons[2].click();
+    expect(comp.items.map((item) => item.clicked)).toEqual([1, 0, 2]);
+  });
+
   test("t-on with handler bound to dynamic argument on a t-foreach", async () => {
     let onClickArgs: [number, MouseEvent] | null = null;
     class Parent extends Component {

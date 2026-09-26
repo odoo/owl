@@ -263,6 +263,7 @@ const paddedValues = new Map([["in ", " in "]]);
 interface ProcessedExpr {
   expr: string;
   freeVariables: string[] | null;
+  receiver: string | null;
 }
 
 /**
@@ -396,13 +397,42 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
       }
     }
   }
-
+  
   const compiled = tokens.map((t) => paddedValues.get(t.value) || t.value).join("");
-  return { expr: compiled, freeVariables };
+
+  // this currently runs for all processExpr calls, but is only
+  // used for t-on
+  const receiver = extractReceiver(tokens);
+  
+  return { expr: compiled, freeVariables, receiver };
 }
 
 export function compileExpr(expr: string,  seededLocals?: Set<string>): string {
   return processExpr(expr, seededLocals).expr;
+}
+
+// This implementation is currently more a placeholder than
+// the real thing. It allows for early testing but ignores 
+// a lot of edge cases, such as:
+// - brackets (this['foo'].bar)
+// - optional chaining (foo?.bar)
+// - function calls (foo(a.b).c)
+export function extractReceiver(tokens: Token[]): string | null {
+  // only plain paths are currently supported: SYMBOL (. SYMBOL)+
+  if (tokens.length < 3 || tokens.length % 2 === 0) {
+    return null;
+  }
+  const isPath = tokens.every((t, i) =>
+    i % 2 === 0 ? t.type === "SYMBOL" : t.type === "OPERATOR" && t.value === "."
+  );
+  if (!isPath) {
+    return null;
+  }
+  // the receiver is everything before the last dot
+  return tokens
+    .slice(0, -2)
+    .map((t) => t.value)
+    .join("");
 }
 
 export const INTERP_REGEXP = /\{\{.*?\}\}|\#\{.*?\}/g;

@@ -97,7 +97,7 @@ exports[`another scenario with delayed rendering 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1453,7 +1453,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1522,7 +1522,7 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block3 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1571,7 +1571,7 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1621,7 +1621,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1669,7 +1669,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -1869,7 +1869,7 @@ exports[`rendering component again in next microtick 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, createComponent } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx['this'], ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><button block-handler-0="click">Click</button><block-child-0/></div>\`);
@@ -1963,7 +1963,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
   
@@ -1982,7 +1982,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, safeOutput } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   
   let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
   

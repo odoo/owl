@@ -1,4 +1,4 @@
-import { compileExpr, processExpr, tokenize } from "../src/inline_expressions";
+import { compileExpr, extractReceiver, processExpr, tokenize } from "../src/inline_expressions";
 
 describe("tokenizer", () => {
   test("simple tokens", () => {
@@ -248,5 +248,17 @@ describe("expression evaluation", () => {
     expect(compileExpr("1 & 1")).toBe("1&1");
     expect(compileExpr("1 ^ 1")).toBe("1^1");
     expect(compileExpr("~1")).toBe("~1");
+  });
+});
+
+describe("extractReceiver", () => {
+  test("simple member", () => {
+    expect(extractReceiver(tokenize("a.b"))).toBe("a");
+  });
+  test("nested member", () => {
+    expect(extractReceiver(tokenize("a.b.c"))).toBe("a.b");
+  });
+  test("simple call", () => {
+    expect(extractReceiver(tokenize("a"))).toBe(null);
   });
 });

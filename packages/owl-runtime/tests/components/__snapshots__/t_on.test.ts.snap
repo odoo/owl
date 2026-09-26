@@ -125,9 +125,9 @@ exports[`t-on > t-on on component next to t-on on div 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, createCatcher, callHandler } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
-  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['this'].decrement, ctx, ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['this'].decrement, ctx['this'], ev);
   
   let block1 = createBlock(\`<div><block-child-0/><p block-handler-0="click">dec</p></div>\`);
   
@@ -161,7 +161,7 @@ exports[`t-on > t-on on components 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, createCatcher, callHandler } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   
   return function template(ctx, node, key = "") {
@@ -231,7 +231,7 @@ exports[`t-on > t-on on components, variation 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, createCatcher, callHandler } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   
   let block1 = createBlock(\`<div><span/><block-child-0/><p/></div>\`);
@@ -265,7 +265,7 @@ exports[`t-on > t-on on components, with 'prevent' modifier 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, createCatcher, callHandler } = helpers;
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx['this'], ev);
   const catcher1 = createCatcher({"click.prevent":0});
   
   return function template(ctx, node, key = "") {
@@ -347,7 +347,7 @@ exports[`t-on > t-on on destroyed components 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClick, ctx['this'], ev);
   
   let block1 = createBlock(\`<div block-handler-0="click"/>\`);
   
@@ -382,7 +382,7 @@ exports[`t-on > t-on on slot, with 'prevent' modifier 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot, createCatcher, callHandler } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx['this'], ev);
   const catcher1 = createCatcher({"click.prevent":0});
   
   return function template(ctx, node, key = "") {
@@ -476,7 +476,7 @@ exports[`t-on > t-on when first component child is an empty component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, createComponent, createCatcher } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].push, ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].push, ctx['this'], ev);
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["list"]);
   const hdlr_fn2 = (ctx)=>{};
   const catcher1 = createCatcher({"click":0});

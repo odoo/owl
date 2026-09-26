@@ -175,17 +175,17 @@ exports[`misc > other complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, prepareList, callHandler, withKey, createRef, callTemplate, createComponent } = helpers;
-  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['selectProject'](ctx['project']), ctx, ev);
-  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx, ev);
-  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['toggleMore'], ctx, ev);
-  const hdlr_fn4 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx, ev);
-  const hdlr_fn5 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx, ev);
-  const hdlr_fn6 = (ctx, ev) => callHandler(ctx['clearSearch'], ctx, ev);
-  const hdlr_fn7 = (ctx, ev) => callHandler(ctx['updateTriggerDisplay'], ctx, ev);
-  const hdlr_fn8 = (ctx, ev) => callHandler(ctx['triggerAll'], ctx, ev);
-  const hdlr_fn9 = (ctx, ev) => callHandler(ctx['triggerNone'], ctx, ev);
-  const hdlr_fn10 = (ctx, ev) => callHandler(ctx['triggerDefault'], ctx, ev);
-  const hdlr_fn11 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx, ev);
+  const hdlr_fn1 = (ctx, ev) => callHandler(ctx['selectProject'](ctx['project']), ctx['this'], ev);
+  const hdlr_fn2 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx['this'], ev);
+  const hdlr_fn3 = (ctx, ev) => callHandler(ctx['toggleMore'], ctx['this'], ev);
+  const hdlr_fn4 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx['this'], ev);
+  const hdlr_fn5 = (ctx, ev) => callHandler(ctx['updateFilter'], ctx['this'], ev);
+  const hdlr_fn6 = (ctx, ev) => callHandler(ctx['clearSearch'], ctx['this'], ev);
+  const hdlr_fn7 = (ctx, ev) => callHandler(ctx['updateTriggerDisplay'], ctx['this'], ev);
+  const hdlr_fn8 = (ctx, ev) => callHandler(ctx['triggerAll'], ctx['this'], ev);
+  const hdlr_fn9 = (ctx, ev) => callHandler(ctx['triggerNone'], ctx['this'], ev);
+  const hdlr_fn10 = (ctx, ev) => callHandler(ctx['triggerDefault'], ctx['this'], ev);
+  const hdlr_fn11 = (ctx, ev) => callHandler(ctx['toggleSettingsMenu'], ctx['this'], ev);
   const comp1 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","search"]);
   

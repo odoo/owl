@@ -1,5 +1,5 @@
 import { OwlError } from "./owl_error";
-import { onReadAtom, onWriteAtom, Atom } from "./computations";
+import { onReadAtom, onWriteAtom, Atom, AtomNode, getCurrentComputation } from "./computations";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -74,10 +74,7 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
   }
   let atom = keyToAtomItem.get(key)!;
   if (!atom) {
-    atom = {
-      value: undefined,
-      observers: new Set(),
-    };
+    atom = new AtomNode(undefined);
     keyToAtomItem.set(key, atom);
   }
   return atom;
@@ -92,7 +89,7 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
  *  or deletion)
  */
 function onReadTargetKey(target: Target, key: PropertyKey): void {
-  onReadAtom(getTargetKeyAtom(target, key));
+  if (getCurrentComputation()) onReadAtom(getTargetKeyAtom(target, key));
 }
 
 /**

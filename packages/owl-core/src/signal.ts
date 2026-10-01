@@ -1,6 +1,7 @@
 import { OwlError } from "./owl_error";
 import {
   Atom,
+  AtomNode,
   atomSymbol,
   Equals,
   onReadAtom,
@@ -29,30 +30,37 @@ interface SignalOptions<TValue, TElem = TValue> {
   equals?: Equals<TValue>;
 }
 
-function buildSignal<T>(value: T, set: (atom: Atom) => T, equals?: Equals<T>): Signal<T> {
-  const atom: Atom & { type: "signal" } = {
-    type: "signal",
-    value,
-    observers: new Set(),
-  };
-  const equalsFn = toEqualsFn(equals);
+function rawAtomValue<T>(atom: Atom<T>): T {
+  return atom.value;
+}
 
-  let readValue = set(atom);
+function proxifiedAtomValue<T extends object>(atom: Atom<T>): T {
+  return proxifyTarget(atom.value, atom);
+}
+
+class SignalAtom<T> extends AtomNode<T> {
+  type = "signal" as const;
+}
+
+// Reuse value transforms across signals; only the reads and setters need
+// per-signal closures.
+function buildSignal<T>(value: T, getValue: (atom: Atom<T>) => T, equals?: Equals<T>): Signal<T> {
+  const atom = new SignalAtom(value);
+  const equalsFn = toEqualsFn(equals);
+  let readValue = getValue(atom);
   const readSignal = () => {
     onReadAtom(atom);
     return readValue;
   };
   readSignal[atomSymbol] = atom;
-
   readSignal.set = function writeSignal(newValue: T) {
     if (equalsFn(atom.value, newValue)) {
       return;
     }
     atom.value = newValue;
-    readValue = set(atom);
+    readValue = getValue(atom);
     onWriteAtom(atom);
   };
-
   return readSignal;
 }
 
@@ -71,14 +79,14 @@ function triggerSignal(signal: Signal<any>): void {
 function signalRef(): Signal<HTMLElement | null>;
 function signalRef<T extends Constructor<HTMLElement>>(type: T): Signal<InstanceType<T> | null>;
 function signalRef(): Signal<any> {
-  return buildSignal<any>(null, (atom) => atom.value);
+  return buildSignal<any>(null, rawAtomValue);
 }
 
 function signalArray<T>(): Signal<T[]>;
 function signalArray<T>(initialValue: T[], options?: { equals?: Equals<T[]> }): Signal<T[]>;
 function signalArray<T>(initialValue: NoInfer<T>[], options: SignalOptions<T[], T>): Signal<T[]>;
 function signalArray<T>(initialValue: T[] = [], options: SignalOptions<T[], T> = {}): Signal<T[]> {
-  return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom), options.equals);
+  return buildSignal<T[]>(initialValue, proxifiedAtomValue, options.equals);
 }
 
 function signalObject<T extends Record<PropertyKey, any>>(): Signal<T>;
@@ -94,7 +102,7 @@ function signalObject<T extends Record<PropertyKey, any>>(
   initialValue: T = {} as T,
   options: SignalOptions<T> = {}
 ): Signal<T> {
-  return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom), options.equals);
+  return buildSignal<T>(initialValue, proxifiedAtomValue, options.equals);
 }
 
 interface MapSignalOptions<K, V> {
@@ -118,11 +126,7 @@ function signalMap<K, V>(
   initialValue: Map<K, V> = new Map(),
   options: MapSignalOptions<K, V> = {}
 ): Signal<Map<K, V>> {
-  return buildSignal<Map<K, V>>(
-    initialValue,
-    (atom) => proxifyTarget(atom.value, atom),
-    options.equals
-  );
+  return buildSignal<Map<K, V>>(initialValue, proxifiedAtomValue, options.equals);
 }
 
 function signalSet<T>(): Signal<Set<T>>;
@@ -135,17 +139,13 @@ function signalSet<T>(
   initialValue: Set<T> = new Set(),
   options: SignalOptions<Set<T>, T> = {}
 ): Signal<Set<T>> {
-  return buildSignal<Set<T>>(
-    initialValue,
-    (atom) => proxifyTarget(atom.value, atom),
-    options.equals
-  );
+  return buildSignal<Set<T>>(initialValue, proxifiedAtomValue, options.equals);
 }
 
 export function signal<T>(value: T, options?: { equals?: Equals<T> }): Signal<T>;
 export function signal<T>(value: NoInfer<T>, options: SignalOptions<T>): Signal<T>;
 export function signal<T>(value: T, options: SignalOptions<T> = {}): Signal<T> {
-  return buildSignal<T>(value, (atom) => atom.value, options.equals);
+  return buildSignal<T>(value, rawAtomValue, options.equals);
 }
 signal.trigger = triggerSignal;
 signal.ref = signalRef;

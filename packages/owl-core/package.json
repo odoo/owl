@@ -26,7 +26,9 @@
     "build:types": "node build.mjs types",
     "test": "vitest run",
     "test:watch": "vitest",
-    "bench": "vitest bench --run"
+    "bench": "vitest bench --run",
+    "bench:memory": "node --expose-gc bench/memory.mjs",
+    "bench:compare": "node --expose-gc bench/compare.mjs"
   },
   "repository": {
     "type": "git",

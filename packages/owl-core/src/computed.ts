@@ -1,13 +1,14 @@
 import {
   atomSymbol,
+  ComputationNode,
   ComputationState,
   Equals,
+  HAS_VALUE,
   onReadAtom,
   onWriteAtom,
   ReactiveValue,
   toEqualsFn,
   updateComputation,
-  createComputation,
 } from "./computations";
 import { OwlError } from "./owl_error";
 import { getScope } from "./scope";
@@ -29,28 +30,44 @@ function readonlySetter(): never {
   );
 }
 
+class ComputedAtom<T> extends ComputationNode<T> {
+  declare getter: () => T;
+  declare equals: (a: T, b: T) => boolean;
+
+  constructor(getter: () => T, equals: (a: T, b: T) => boolean) {
+    super(computeValue<T>, true);
+    this.getter = getter;
+    this.equals = equals;
+  }
+}
+
+// A shared compute body removes one closure per computed. Keep it as an own
+// property on each atom, just like createComputation's `compute`, so dependency
+// tracking and propagation continue to use ordinary data properties.
+function computeValue<T>(this: ComputedAtom<T>): T {
+  const getter = this.getter;
+  const newValue = getter();
+  // The first compute has no previous value to compare against (and nothing
+  // observes the computation until the first read returns): skip the equality
+  // check so a custom equals never receives the initial undefined.
+  if (this.flags & HAS_VALUE) {
+    const equals = this.equals;
+    if (equals(this.value, newValue)) {
+      // Discard the equal result: readers keep a stable identity, like a
+      // signal write that compares equal.
+      return this.value;
+    }
+    onWriteAtom(this);
+  }
+  this.flags |= HAS_VALUE;
+  return newValue;
+}
+
 export function computed<TRead, TWrite = TRead>(
   getter: () => TRead,
   options: ComputedOptions<TRead, TWrite> = {}
 ): ReactiveValue<TRead, TWrite> {
-  const equalsFn = toEqualsFn(options.equals);
-  // The first compute has no previous value to compare against (and nothing
-  // observes the computation until the first read returns): skip the equality
-  // check so a custom equals never receives the initial undefined.
-  let hasValue = false;
-  const computation = createComputation(() => {
-    const newValue = getter();
-    if (hasValue) {
-      if (equalsFn(computation.value, newValue)) {
-        // discard the equal result: readers keep a stable identity, like a
-        // signal write that compares equal
-        return computation.value;
-      }
-      onWriteAtom(computation);
-    }
-    hasValue = true;
-    return newValue;
-  }, true);
+  const computation = new ComputedAtom(getter, toEqualsFn(options.equals));
 
   function readComputed() {
     if (computation.state !== ComputationState.EXECUTED) {

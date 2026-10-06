@@ -31,6 +31,10 @@ class UserCard extends Component {
 The validators can also be used standalone via `validateType` and `assertType`
 to validate any value at runtime, not just props.
 
+Validating never observes: the value is walked untracked and raw, so a call
+made inside a `computed` or an `effect` subscribes to nothing, even when the
+value is reactive.
+
 ## `validateType`
 
 Checks a value against a validator and returns a list of validation issues.

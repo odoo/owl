@@ -4,6 +4,7 @@ import {
   assertType,
   computed,
   getDefault,
+  proxy,
   signal,
   t,
   types,
@@ -1157,5 +1158,75 @@ describe("toShape", () => {
     const second = t.object({ v: t.number() });
     const shape = t.and([first, second]).toShape();
     expect(shape.v).toBe(second.toShape().v);
+  });
+});
+
+describe("does not observe", () => {
+  test("a computation validating a reactive array does not subscribe to it", () => {
+    const array = proxy<any[]>([1, 2, 3]);
+    let runs = 0;
+    const issues = computed(() => {
+      runs++;
+      return validateType(array, t.array(t.number()));
+    });
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    array.push(4);
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    array[0] = "abc";
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    expect(validateType(array, t.array(t.number()))).toEqual([
+      { message: "value is not a number", path: "0", received: "abc" },
+    ]);
+  });
+
+  test("a computation validating a reactive object does not subscribe to it", () => {
+    const object = proxy<Record<string, number>>({ a: 1 });
+    let runs = 0;
+    const issues = computed(() => {
+      runs++;
+      return validateType(object, t.record(t.number()));
+    });
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    object.b = 2;
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    object.a = 3;
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+  });
+
+  test("a custom validator does not subscribe to a signal it reads", () => {
+    const limit = signal(10);
+    const type = t.customValidator(t.number(), (value) => value < limit());
+    let runs = 0;
+    const issues = computed(() => {
+      runs++;
+      return validateType(5, type);
+    });
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    limit.set(1);
+    expect(issues()).toEqual([]);
+    expect(runs).toBe(1);
+    expect(validateType(5, type)).toEqual([
+      { message: "value does not match custom validation", path: "", received: 5 },
+    ]);
+  });
+
+  test("an issue reports the raw value", () => {
+    const object = { a: 1 };
+    expect(validateType(proxy([object]), t.array(t.string()))[0].received).toBe(object);
+    expect(validateType(proxy({ k: object }), t.record(t.string()))[0].received).toBe(object);
+  });
+
+  test("a proxy held by a plain object is walked raw too", () => {
+    const object = { a: 1 };
+    const props = { items: proxy([object]) };
+    const type = t.object({ items: t.array(t.string()) });
+    expect(validateType(props, type)[0].received).toBe(object);
   });
 });

@@ -78,6 +78,11 @@ describe("markup", () => {
     const html = markup("<blink>Hello</blink>");
     expect(html).toBeInstanceOf(Markup);
   });
+  test("String object is flagged as safe, on its own value", () => {
+    const html = markup(new String("<blink>Hello</blink>"));
+    expect(html).toBeInstanceOf(Markup);
+    expect(html.toString()).toBe("<blink>Hello</blink>");
+  });
   describe("htmlEscape", () => {
     test("htmlEscape escapes text", () => {
       const res = htmlEscape("<p>test</p>");

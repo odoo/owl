@@ -39,6 +39,23 @@ describe("adding/patching blocks", () => {
     expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
   });
 
+  test("block text slot patched with an equal String object leaves the node alone", () => {
+    const block = createBlock("<div><p><block-text-0/></p></div>");
+    const tree = block([new String("foo")]);
+    mount(tree, fixture);
+    const observer = new MutationObserver(() => {});
+    observer.observe(fixture, { characterData: true, subtree: true });
+
+    patch(tree, block([new String("foo")]));
+    expect(observer.takeRecords()).toHaveLength(0);
+    expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
+
+    patch(tree, block([new String("bar")]));
+    expect(observer.takeRecords()).toHaveLength(1);
+    expect(fixture.innerHTML).toBe("<div><p>bar</p></div>");
+    observer.disconnect();
+  });
+
   test("block with 2 dynamic text nodes", async () => {
     const block = createBlock("<div><p><block-text-0/></p><span><block-text-1/></span></div>");
     const tree = block(["foo", "bar"]);

@@ -57,6 +57,20 @@ useProps({ p: t.number().optional(4) });
 useProps({ p: t.number().optional(() => 4) });
 // @ts-expect-error default must be a number
 useProps({ p: t.number().optional("4") });
+
+// a string default may be a String object, which the string type validates
+declare const stringObject: String;
+useProps({ p: t.string().optional(stringObject) });
+useProps({ p: t.string().optional(() => stringObject) });
+// @ts-expect-error a String object is not a number
+useProps({ p: t.number().optional(stringObject) });
+class StringObjectDefault {
+  props = useProps({ label: t.string().optional(stringObject) });
+}
+declare const stringObjectDefault: StringObjectDefault;
+void stringObjectDefault;
+// the reader still gets a string, as the default reads as one
+assertEq<typeof stringObjectDefault.props.label, string>();
 // a default for a function type must use the factory form
 useProps({ cb: t.function().optional(() => () => {}) });
 // @ts-expect-error a plain function default is rejected (factory form only)

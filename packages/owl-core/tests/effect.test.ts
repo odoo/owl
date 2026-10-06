@@ -67,9 +67,6 @@ describe("effect", () => {
 
   test("an effect that throws during flush is not re-run on a follow-up microtask", async () => {
     // The effect's body has no guard, so its only source is `uppercase`.
-    // When list goes to [], the eager source walk in updateComputation
-    // recomputes `uppercase` (its single source changed), which throws
-    // before the effect body runs — so `runs` stays at 1.
     //
     // The throw propagates through batched()'s .then() chain as an unhandled
     // rejection. We use a named error class so vitest.config.ts'
@@ -95,10 +92,31 @@ describe("effect", () => {
 
     list.set([]);
     for (let i = 0; i < 5; i++) await Promise.resolve();
-    // The eager source walk throws inside uppercase.compute(); the effect
-    // body never runs, so the counter stays at the initial 1. The earlier
-    // bug (queue not cleared on throw) would have produced 3.
-    expect(runs).toBe(1);
+    expect(runs).toBe(2);
+  });
+
+  test("an effect that throws does not stop the other effects", async () => {
+    class IntentionalTestError extends Error {
+      override name = "IntentionalTestError";
+    }
+    const s = signal(0);
+    const first: number[] = [];
+    const second: number[] = [];
+    effect(() => {
+      first.push(s());
+      if (s() === 1) {
+        throw new IntentionalTestError("one");
+      }
+    });
+    effect(() => {
+      second.push(s());
+    });
+    s.set(1);
+    await waitScheduler();
+    s.set(2);
+    await waitScheduler();
+    expect(first).toEqual([0, 1, 2]);
+    expect(second).toEqual([0, 1, 2]);
   });
 
   test("eager source walk short-circuits once we know we have to re-run", async () => {

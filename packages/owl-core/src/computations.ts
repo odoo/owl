@@ -122,8 +122,19 @@ const batchProcessEffects = batched(processEffects);
 function processEffects() {
   const pending = observers;
   observers = [];
+  let hasError = false;
+  let error: unknown;
   for (let i = 0; i < pending.length; i++) {
-    updateComputation(pending[i]);
+    try {
+      updateComputation(pending[i]);
+    } catch (e) {
+      // Mark the effect executed, as onWriteAtom only queues an executed effect
+      pending[i].state = ComputationState.EXECUTED;
+      if (!hasError) {
+        hasError = true;
+        error = e;
+      }
+    }
   }
   if (pendingDisposals.size !== 0) {
     const candidates = pendingDisposals;
@@ -137,6 +148,9 @@ function processEffects() {
         disposeComputation(computation);
       }
     }
+  }
+  if (hasError) {
+    throw error;
   }
 }
 

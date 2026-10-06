@@ -1,5 +1,5 @@
 import { vi, type Mock } from "vitest";
-import { proxy, computed, shallowEqual, signal } from "../src";
+import { proxy, computed, effect, shallowEqual, signal } from "../src";
 import {
   atomSymbol,
   ComputationAtom,
@@ -236,6 +236,32 @@ describe("throwing compute", () => {
     const witnessAtom = (witness as any)[atomSymbol] as ComputationAtom;
     expect(witnessAtom.observers.size).toBe(0);
     expect(brokenAtom.sources.size).toBe(0);
+  });
+
+  test("an observer of a computed that threw runs again when a source changes", async () => {
+    class TestError extends Error {
+      override name = "TestError";
+    }
+    const s = signal(0);
+    const c = computed(() => {
+      if (s() === 1) {
+        throw new TestError("one");
+      }
+      return s();
+    });
+    const reads: unknown[] = [];
+    effect(() => {
+      try {
+        reads.push(c());
+      } catch (error) {
+        reads.push((error as Error).message);
+      }
+    });
+    s.set(1);
+    await waitScheduler();
+    s.set(2);
+    await waitScheduler();
+    expect(reads).toEqual([0, "one", 2]);
   });
 });
 

@@ -3,20 +3,20 @@ import { StorePlugin } from "../../../store/store";
 import { ComponentsPlugin } from "../../../store/components_plugin";
 import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, signal, proxy, useEffect, onMounted, plugin, props, types: t } = owl;
+const { Component, signal, proxy, useEffect, onMounted, usePlugin, useProps, types: t } = owl;
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
   static components = { TreeElement, HighlightText };
 
-  props = props({ component: t.object() });
+  props = useProps({ component: t.object() });
 
   setup() {
     this.state = proxy({
       searched: false,
     });
-    this.store = plugin(StorePlugin);
-    this.components = plugin(ComponentsPlugin);
+    this.store = usePlugin(StorePlugin);
+    this.components = usePlugin(ComponentsPlugin);
     this.element = signal(null);
     this.stringifiedPath = JSON.stringify(this.props.component.path);
     // Scroll to the selected element when it changes

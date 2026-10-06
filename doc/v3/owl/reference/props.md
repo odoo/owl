@@ -50,8 +50,6 @@ In this example:
 
 ## The `useProps` function
 
-> `useProps` was previously named `props`; `props` remains available as a deprecated alias.
-
 To access props inside a component, call the `useProps` function. It returns an
 object with getters for each prop.
 

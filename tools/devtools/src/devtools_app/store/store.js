@@ -1,4 +1,4 @@
-const { Plugin, signal, proxy, plugin } = owl;
+const { Plugin, signal, proxy, usePlugin } = owl;
 import { IS_FIREFOX, getActiveTabURL, browserInstance } from "../../utils";
 import globalHook from "../../page_scripts/owl_devtools_global_hook";
 import { ComponentsPlugin } from "./components_plugin";
@@ -27,8 +27,8 @@ export class StorePlugin extends Plugin {
   isFirefox = IS_FIREFOX;
 
   setup() {
-    this._components = plugin(ComponentsPlugin);
-    this._profiler = plugin(ProfilerPlugin);
+    this._components = usePlugin(ComponentsPlugin);
+    this._profiler = usePlugin(ProfilerPlugin);
     this._init();
     this._setupPortListener();
   }

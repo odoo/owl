@@ -1,10 +1,10 @@
-const { Component, props, types: t } = owl;
+const { Component, useProps, types: t } = owl;
 
 export class HighlightText extends Component {
   static template = "utils.HighlightText";
   static highlightClass = "highlight-search";
 
-  props = props({ originalText: t.string, searchValue: t.string });
+  props = useProps({ originalText: t.string, searchValue: t.string });
 
   splitText() {
     const splitText = this.splitFuzzySearch(this.props.originalText, this.props.searchValue);

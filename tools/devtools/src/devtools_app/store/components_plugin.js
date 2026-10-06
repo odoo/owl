@@ -1,4 +1,4 @@
-const { Plugin, signal, proxy, toRaw, plugin } = owl;
+const { Plugin, signal, proxy, toRaw, usePlugin } = owl;
 import { fuzzySearch, IS_FIREFOX, browserInstance } from "../../utils";
 import { StorePlugin, evalFunctionInWindow, evalInWindow } from "./store";
 
@@ -34,7 +34,7 @@ export class ComponentsPlugin extends Plugin {
   observedVariables = signal(proxy([]));
 
   setup() {
-    this._store = plugin(StorePlugin);
+    this._store = usePlugin(StorePlugin);
   }
 
   // -------------------------------------------------------------------------

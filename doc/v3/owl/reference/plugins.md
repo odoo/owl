@@ -76,8 +76,6 @@ The return value is the plugin instance with full type information (minus the
 `setup` method). Any reactive values on the plugin (signals, computed) are
 tracked automatically when read during a component render.
 
-> `usePlugin` was previously named `plugin`; `plugin` remains available as a deprecated alias.
-
 ### Scoped plugin views
 
 A plugin is a single shared instance, but each consumer has its own lifetime.
@@ -208,8 +206,6 @@ class ApiPlugin extends Plugin {
   }
 }
 ```
-
-> `useConfig` was previously named `config`; `config` remains available as a deprecated alias.
 
 A config key is made optional with
 [`.optional()`](types_validation.md#optionalvalue) on its type. In dev mode,

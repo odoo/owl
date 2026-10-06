@@ -1,4 +1,4 @@
-const { Plugin, signal, proxy, toRaw, plugin } = owl;
+const { Plugin, signal, proxy, toRaw, usePlugin } = owl;
 import { browserInstance } from "../../utils";
 import { StorePlugin, evalFunctionInWindow } from "./store";
 
@@ -16,7 +16,7 @@ export class ProfilerPlugin extends Plugin {
   subscriptionTracingSupported = signal(true);
 
   setup() {
-    this._store = plugin(StorePlugin);
+    this._store = usePlugin(StorePlugin);
   }
 
   // -------------------------------------------------------------------------

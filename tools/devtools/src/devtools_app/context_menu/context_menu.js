@@ -1,14 +1,14 @@
 import { StorePlugin } from "../store/store";
 
-const { Component, useEffect, signal, plugin, props, types: t } = owl;
+const { Component, useEffect, signal, usePlugin, useProps, types: t } = owl;
 
 export class ContextMenu extends Component {
   static template = "devtools.ContextMenu";
 
-  props = props({ items: t.array() });
+  props = useProps({ items: t.array() });
 
   setup() {
-    this.store = plugin(StorePlugin);
+    this.store = usePlugin(StorePlugin);
     this.contextMenu = signal(null);
     useEffect(() => {
       const position = this.store.contextMenu()?.position;

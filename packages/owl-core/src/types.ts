@@ -58,7 +58,7 @@ export type Type<T> = T & {
  * through `toShape()`: `t.object`/`t.strictObject` return their own shape, and
  * `t.and` merges the shapes of the members that have one. The shape is the
  * `{ key: type }` map (with `.optional()` brands intact), so it can be reused —
- * most notably to drive component props: `props(schema.toShape())`.
+ * most notably to drive component props: `useProps(schema.toShape())`.
  */
 export type ShapeType<Shape, T> = Type<T> & {
   toShape(): Shape;
@@ -359,7 +359,7 @@ function intersection<T extends any[]>(
   });
   validate[intersectionSymbol] = types;
   // Merge the members that carry a keyed shape (`t.object`/`t.strictObject`/
-  // `t.and`), so the intersection exposes one shape usable by `props()`. Later
+  // `t.and`), so the intersection exposes one shape usable by `useProps()`. Later
   // members win, mirroring `applyDefaults` folding defaults in order. The
   // key-list form (`t.object(["a"])`) exposes its keys as an array, which has
   // no per-key types to merge, so it is skipped.

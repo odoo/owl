@@ -1001,7 +1001,7 @@ describe("schema.toShape()", () => {
   });
 
   test("a composed (t.and) schema drives props via toShape()", async () => {
-    // #1966: passing the composed schema itself to props() failed with a
+    // #1966: passing the composed schema itself to useProps() failed with a
     // spurious missingKeys: ["optional"]. Passing schema.toShape() works.
     const OptionSchema = t.object({
       type: t.selection(["warning", "danger"]).optional("warning"),

@@ -1,4 +1,4 @@
-const { Component, plugin } = owl;
+const { Component, usePlugin } = owl;
 import { ProfilerPlugin } from "../../store/profiler_plugin";
 import { Event } from "./event/event";
 import { EventNode } from "./event_node/event_node";
@@ -10,7 +10,7 @@ export class ProfilerTab extends Component {
   static components = { Event, EventNode, EventSearchBar };
 
   setup() {
-    this.profiler = plugin(ProfilerPlugin);
+    this.profiler = usePlugin(ProfilerPlugin);
   }
 
   showHelp() {

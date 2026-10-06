@@ -1,4 +1,4 @@
-const { Component, plugin } = owl;
+const { Component, usePlugin } = owl;
 import { StorePlugin } from "../../../store/store";
 import { ComponentsPlugin } from "../../../store/components_plugin";
 import { ObjectTreeElement } from "./object_tree_element/object_tree_element";
@@ -7,8 +7,8 @@ export class DetailsWindow extends Component {
   static template = "devtools.DetailsWindow";
   static components = { ObjectTreeElement };
   setup() {
-    this.store = plugin(StorePlugin);
-    this.components = plugin(ComponentsPlugin);
+    this.store = usePlugin(StorePlugin);
+    this.components = usePlugin(ComponentsPlugin);
   }
 
   get contextMenuItems() {

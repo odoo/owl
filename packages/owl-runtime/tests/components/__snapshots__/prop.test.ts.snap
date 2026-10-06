@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`basics > can be mixed with props() 1`] = `
+exports[`basics > can be mixed with useProps() 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
@@ -16,7 +16,7 @@ exports[`basics > can be mixed with props() 1`] = `
 }"
 `;
 
-exports[`basics > can be mixed with props() 2`] = `
+exports[`basics > can be mixed with useProps() 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

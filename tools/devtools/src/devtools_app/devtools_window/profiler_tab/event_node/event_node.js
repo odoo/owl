@@ -3,18 +3,18 @@ import { StorePlugin } from "../../../store/store";
 import { ComponentsPlugin } from "../../../store/components_plugin";
 import { ProfilerPlugin } from "../../../store/profiler_plugin";
 
-const { Component, plugin, props, types: t } = owl;
+const { Component, usePlugin, useProps, types: t } = owl;
 
 export class EventNode extends Component {
   static template = "devtools.EventNode";
   static components = { EventNode };
 
-  props = props({ event: t.object() });
+  props = useProps({ event: t.object() });
 
   setup() {
-    this.store = plugin(StorePlugin);
-    this.components = plugin(ComponentsPlugin);
-    this.profiler = plugin(ProfilerPlugin);
+    this.store = usePlugin(StorePlugin);
+    this.components = usePlugin(ComponentsPlugin);
+    this.profiler = usePlugin(ProfilerPlugin);
   }
 
   get eventPadding() {

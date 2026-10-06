@@ -1,13 +1,13 @@
 import { StorePlugin } from "../../../../store/store";
 import { ComponentsPlugin } from "../../../../store/components_plugin";
 
-const { Component, proxy, useEffect, signal, plugin, props, types: t } = owl;
+const { Component, proxy, useEffect, signal, usePlugin, useProps, types: t } = owl;
 
 export class ObjectTreeElement extends Component {
   static template = "devtools.ObjectTreeElement";
   static components = { ObjectTreeElement };
 
-  props = props({ object: t.object(), "class?": t.string, "index?": t.number });
+  props = useProps({ object: t.object(), "class?": t.string, "index?": t.number });
 
   setup() {
     this.state = proxy({
@@ -16,8 +16,8 @@ export class ObjectTreeElement extends Component {
       menuLeft: 0,
     });
     this.inputRef = signal(null);
-    this.store = plugin(StorePlugin);
-    this.components = plugin(ComponentsPlugin);
+    this.store = usePlugin(StorePlugin);
+    this.components = usePlugin(ComponentsPlugin);
     useEffect(() => {
       // Focus on the input when it is created
       if (this.state.editMode) {

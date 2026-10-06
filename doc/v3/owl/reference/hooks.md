@@ -143,7 +143,7 @@ useOnChange(dependencies, callback, options);
 class RecordViewer extends Component {
   static template = xml`<div t-out="this.record().name"/>`;
 
-  props = props({ recordId: t.number() });
+  props = useProps({ recordId: t.number() });
   record = signal(null);
 
   setup() {

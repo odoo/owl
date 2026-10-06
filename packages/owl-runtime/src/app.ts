@@ -297,7 +297,7 @@ export async function mount<T extends ComponentConstructor>(
   const app = new App(config);
   if (app.pluginManager.status < STATUS.MOUNTED) {
     // Plugins are still starting: wait for them before building the root, so
-    // the root's setup/field initializers can safely call plugin() — including
+    // the root's setup/field initializers can safely call usePlugin() — including
     // plugins that only start in a later sequence batch.
     await app.pluginManager.ready;
   }

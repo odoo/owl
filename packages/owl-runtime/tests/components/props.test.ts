@@ -164,7 +164,7 @@ describe("basics", () => {
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
 
-  test("arrow function props do not leak synthetic keys into props()", async () => {
+  test("arrow function props do not leak synthetic keys into useProps()", async () => {
     let childProps: any;
     class Child extends Component {
       static template = xml`<span><t t-esc="this.props.onClick"/></span>`;
@@ -953,7 +953,7 @@ describe("reactive props (issue #1908)", () => {
     expect(renderCount).toBe(3);
   });
 
-  test("props() tracks new and deleted keys from t-props", async () => {
+  test("useProps() tracks new and deleted keys from t-props", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.label()"/></span>`;
       props = useProps();

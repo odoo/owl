@@ -49,7 +49,7 @@ export class Plugin {
   // ascending (lower first), like Resource/Registry. Each batch's onWillStart
   // callbacks fully settle before the next batch is instantiated, so
   // foundational plugins (low sequence) are ready before later plugins even
-  // run their setup. Explicit `plugin(X)` dependencies bypass batching and
+  // run their setup. Explicit `usePlugin(X)` dependencies bypass batching and
   // start immediately.
   static sequence = 50;
 

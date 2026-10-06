@@ -1,4 +1,4 @@
-const { Component, onWillDestroy, useListener, plugin } = owl;
+const { Component, onWillDestroy, useListener, usePlugin } = owl;
 import { TreeElement } from "./tree_element/tree_element";
 import { DetailsWindow } from "./details_window/details_window";
 import { ComponentSearchBar } from "./component_search_bar/component_search_bar";
@@ -11,8 +11,8 @@ export class ComponentsTab extends Component {
   static components = { TreeElement, DetailsWindow, ComponentSearchBar };
 
   setup() {
-    this.store = plugin(StorePlugin);
-    this.components = plugin(ComponentsPlugin);
+    this.store = usePlugin(StorePlugin);
+    this.components = usePlugin(ComponentsPlugin);
     this.flushRendersTimeout = false;
     useListener(document, "keydown", this.onKeyboardEvent.bind(this));
     useListener(window, "resize", this.onWindowResize);

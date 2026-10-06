@@ -1,12 +1,12 @@
 import { ComponentsPlugin } from "../../../store/components_plugin";
 
-const { Component, plugin } = owl;
+const { Component, usePlugin } = owl;
 
 export class ComponentSearchBar extends Component {
   static template = "devtools.ComponentSearchBar";
 
   setup() {
-    this.components = plugin(ComponentsPlugin);
+    this.components = usePlugin(ComponentsPlugin);
   }
 
   updateSearch(event) {

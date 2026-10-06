@@ -78,7 +78,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span>x/2</span></div>");
   });
 
-  test("can be mixed with props()", async () => {
+  test("can be mixed with useProps()", async () => {
     class Child extends Component {
       static template = xml`<span><t t-out="this.all.extra"/>/<t t-out="this.main"/></span>`;
       all = useProps({ extra: t.string().optional() });

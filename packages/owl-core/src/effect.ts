@@ -43,8 +43,17 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
     },
     immediate ? ComputationFlags.IMMEDIATE | ComputationFlags.STALE : ComputationFlags.STALE
   );
-  getCurrentComputation()?.observers.add(computation);
-  updateComputation(computation);
+  const parent = getCurrentComputation();
+  parent?.observers.add(computation);
+  try {
+    updateComputation(computation);
+  } catch (error) {
+    // unsubscribe, as the caller never gets the cleanup that would stop this effect
+    if (!parent) {
+      unsubscribeEffect(computation);
+    }
+    throw error;
+  }
 
   // Remove sources and unsubscribe
   return function cleanupEffect() {

@@ -2,6 +2,28 @@ import { computed, immediateEffect, effect, proxy, signal } from "../src";
 import { expectSpy, waitScheduler } from "./helpers";
 
 describe("immediateEffect", () => {
+  test("an immediate effect that throws does not stop the other effects", () => {
+    class TestError extends Error {
+      override name = "TestError";
+    }
+    const s = signal(0);
+    const first: number[] = [];
+    const second: number[] = [];
+    immediateEffect(() => {
+      first.push(s());
+      if (s() === 1) {
+        throw new TestError("one");
+      }
+    });
+    immediateEffect(() => {
+      second.push(s());
+    });
+    expect(() => s.set(1)).toThrow("one");
+    s.set(2);
+    expect(first).toEqual([0, 1, 2]);
+    expect(second).toEqual([0, 1, 2]);
+  });
+
   test("immediateEffect runs directly", () => {
     const spy = vi.fn();
     immediateEffect(() => {

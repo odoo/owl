@@ -38,16 +38,25 @@ export function computed<TRead, TWrite = TRead>(
   // observes the computation until the first read returns): skip the equality
   // check so a custom equals never receives the initial undefined.
   let hasValue = false;
+  let hasError = false;
   const computation = createComputation(() => {
-    const newValue = getter();
-    if (hasValue) {
-      if (equalsFn(computation.value, newValue)) {
+    let newValue: TRead;
+    try {
+      newValue = getter();
+      if (!hasError && hasValue && equalsFn(computation.value, newValue)) {
         // discard the equal result: readers keep a stable identity, like a
         // signal write that compares equal
         return computation.value;
       }
+    } catch (error) {
+      hasError = true;
+      onWriteAtom(computation);
+      return error;
+    }
+    if (hasError || hasValue) {
       onWriteAtom(computation);
     }
+    hasError = false;
     hasValue = true;
     return newValue;
   }, ComputationFlags.DERIVED | ComputationFlags.STALE);
@@ -58,6 +67,9 @@ export function computed<TRead, TWrite = TRead>(
       updateComputation(computation);
     }
     onReadAtom(computation);
+    if (hasError) {
+      throw computation.value;
+    }
     return computation.value;
   }
   readComputed[atomSymbol] = computation;

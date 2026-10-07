@@ -13,6 +13,21 @@ test("signal can be updated ", () => {
   expect(s()).toBe(4);
 });
 
+test("signal reads and setters can be called detached", () => {
+  const value = signal(1);
+  const { set } = value;
+  const holder = { read: value, write: set };
+  set(2);
+  expect(holder.read()).toBe(2);
+  holder.write(3);
+  expect(value()).toBe(3);
+
+  const list = signal.Array([1]);
+  const writeList = list.set;
+  writeList([2]);
+  expect(list()).toEqual([2]);
+});
+
 test("updating a signal trigger an effect", async () => {
   const s = signal(1);
   const e = spyEffect(() => s());

@@ -1,27 +1,75 @@
 import { bench, describe } from "vitest";
-import { computed, effect, signal } from "../src";
+import {
+  computed,
+  createComputation,
+  effect,
+  getCurrentComputation,
+  setComputation,
+  signal,
+} from "../src";
 
 // Reactivity microbenchmark suite. Run with `npm run bench`.
 //
 // Each `bench` measures one focused operation. Setup (signal/effect creation)
 // happens outside the timed body where possible. For effect re-run paths the
 // timed body has to include the awaited microtask flush, since the work we
-// care about happens in the queueMicrotask callback.
+// care about happens in the scheduled Promise callback.
 
 async function flushMicrotasks() {
   await Promise.resolve();
   await Promise.resolve();
 }
 
-describe("signal read inside an effect", () => {
+const readResult = { value: 0 };
+
+describe("signal read outside a computation", () => {
   const s = signal(0);
-  // Keep an active effect so reads from `s` propagate through the tracking
-  // path; without it `onReadAtom` short-circuits on the early return.
-  effect(() => {
-    s();
-  });
   bench("signal()", () => {
     s();
+  });
+});
+
+describe("signal read with dependency tracking", () => {
+  const s = signal(0);
+  const computation = createComputation(() => {}, false);
+  bench("100 tracked reads", () => {
+    const previous = getCurrentComputation();
+    setComputation(computation);
+    try {
+      // Amortize the tracking context setup across a batch of reads. An
+      // existing effect observing s alone does not make an outside read tracked.
+      let total = 0;
+      for (let i = 0; i < 100; i++) {
+        total += s();
+      }
+      readResult.value = total;
+    } finally {
+      setComputation(previous);
+    }
+  });
+});
+
+describe("reads across many reactive values", () => {
+  const signals = Array.from({ length: 1024 }, (_, i) => signal(i));
+  const computeds = signals.map((s) => computed(() => s() + 1));
+  for (const value of computeds) {
+    value();
+  }
+
+  bench("read 1024 signals", () => {
+    let total = 0;
+    for (const value of signals) {
+      total += value();
+    }
+    readResult.value = total;
+  });
+
+  bench("read 1024 cached computeds", () => {
+    let total = 0;
+    for (const value of computeds) {
+      total += value();
+    }
+    readResult.value = total;
   });
 });
 

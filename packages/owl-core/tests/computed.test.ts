@@ -32,6 +32,43 @@ test("computed returns correct initial value", () => {
   expect(d()).toBe(3);
 });
 
+test("computed calls its getter without a receiver and can be read as a method", () => {
+  const value = computed(function (this: unknown) {
+    expect(this).toBeUndefined();
+    return 42;
+  });
+  const holder = { read: value };
+  expect(holder.read()).toBe(42);
+  expect(value()).toBe(42);
+});
+
+test("initial values and custom equality remain independent between computed values", () => {
+  const leftSource = signal<number | undefined>(undefined);
+  const rightSource = signal(10);
+  const leftEquals = vi.fn(Object.is);
+  const rightEquals = vi.fn(Object.is);
+  const left = computed(() => leftSource(), { equals: leftEquals });
+  const right = computed(() => rightSource(), { equals: rightEquals });
+
+  expect(left()).toBeUndefined();
+  expect(right()).toBe(10);
+  expect(leftEquals).not.toHaveBeenCalled();
+  expect(rightEquals).not.toHaveBeenCalled();
+
+  rightSource.set(11);
+  leftSource.set(1);
+  expect(right()).toBe(11);
+  expect(left()).toBe(1);
+  expect(rightEquals).toHaveBeenCalledExactlyOnceWith(10, 11);
+  expect(leftEquals).toHaveBeenCalledExactlyOnceWith(undefined, 1);
+
+  const leftAtom = (left as any)[atomSymbol] as ComputationAtom;
+  disposeComputation(leftAtom);
+  expect(left()).toBe(1);
+  expect(leftEquals).toHaveBeenLastCalledWith(1, 1);
+  expect(rightEquals).toHaveBeenCalledTimes(1);
+});
+
 test("computed should not run until being called", () => {
   const state = proxy({ a: 1 });
   const d = spyComputed(() => state.a + 100);

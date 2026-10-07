@@ -82,7 +82,10 @@ export function useOnChange<T extends unknown[]>(
       skipRun = false;
       return;
     }
-    return untrack(() => callback(...args));
+    const cleanup = untrack(() => callback(...args));
+    // Read again, as a computed left stale by a write of the callback never notifies again.
+    deps();
+    return cleanup;
   });
 }
 

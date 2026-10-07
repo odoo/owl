@@ -755,6 +755,39 @@ describe("hooks", () => {
       expect(["a=1, b=10"]).toBeLogged();
     });
 
+    test("callback writing one of its dependencies keeps running on the next changes", async () => {
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        value = signal(0);
+        setup() {
+          useOnChange(
+            () => [this.value()],
+            (value) => {
+              logStep(`value is ${value}`);
+              if (value === 1) {
+                this.value.set(10);
+              }
+            }
+          );
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(["value is 0"]).toBeLogged();
+
+      component.value.set(1);
+      await nextTick();
+      expect(["value is 1"]).toBeLogged();
+
+      component.value.set(2);
+      await nextTick();
+      expect(["value is 2"]).toBeLogged();
+
+      component.value.set(3);
+      await nextTick();
+      expect(["value is 3"]).toBeLogged();
+    });
+
     test("callback does not run if the dependency values are unchanged", async () => {
       class MyComponent extends Component {
         static template = xml`<div/>`;

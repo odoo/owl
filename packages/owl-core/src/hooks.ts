@@ -74,6 +74,7 @@ export function useOnChange<T extends unknown[]>(
   // the structural equality discards a result equal to the previous one, so the
   // effect below is not notified when the dependency values are unchanged.
   const deps = computed(dependencies, { equals: shallowEqual });
+  const scope = useScope();
   let skipRun = !initialRun;
   useEffect(() => {
     // Reading the dependencies is the only tracked part of this effect.
@@ -82,7 +83,12 @@ export function useOnChange<T extends unknown[]>(
       skipRun = false;
       return;
     }
-    return untrack(() => callback(...args));
+    const cleanup = untrack(() => callback(...args));
+    if (!scope.isDestroyed()) {
+      // Read again, as a computed left stale by a write of the callback never notifies again.
+      deps();
+    }
+    return cleanup;
   });
 }
 

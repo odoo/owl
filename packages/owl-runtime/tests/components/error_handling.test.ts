@@ -627,7 +627,7 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Error!!!</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           throw new Error("error");
         });
@@ -636,7 +636,7 @@ describe("can catch errors", () => {
     class PerfectComponent extends Component {
       static template = xml`<div>perfect</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     class Main extends Component {
@@ -645,7 +645,7 @@ describe("can catch errors", () => {
       state: any;
       setup() {
         this.state = proxy({ ok: false });
-        useLogLifecycle(this);
+        useLogLifecycle();
         this.component = ErrorComponent;
         onError(() => {
           this.component = PerfectComponent;
@@ -1035,7 +1035,7 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1051,7 +1051,7 @@ describe("can catch errors", () => {
       state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
@@ -1061,7 +1061,7 @@ describe("can catch errors", () => {
       </div>`;
       static components = { ErrorBoundary, ErrorComponent };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     await mount(Root, fixture);
@@ -1087,7 +1087,7 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1103,7 +1103,7 @@ describe("can catch errors", () => {
       state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
@@ -1127,7 +1127,7 @@ describe("can catch errors", () => {
     class Boom extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1144,7 +1144,7 @@ describe("can catch errors", () => {
       state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
@@ -1153,14 +1153,14 @@ describe("can catch errors", () => {
       static template = xml`<div><C/></div>`;
       static components = { C };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     class A extends Component {
       static template = xml`<B/>`;
       static components = { B };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     await mount(A, fixture);
@@ -1189,7 +1189,7 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           logStep("boom");
           throw new Error("NOOOOO");
@@ -1205,14 +1205,14 @@ describe("can catch errors", () => {
       state = proxy({ error: false });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
     class OK extends Component {
       static template = xml`OK`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -1223,7 +1223,7 @@ describe("can catch errors", () => {
       </div>`;
       static components = { ErrorBoundary, ErrorComponent, OK };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     await mount(Root, fixture);
@@ -1554,7 +1554,7 @@ describe("can catch errors", () => {
         onWillDestroy(() => {
           throw new Error("boom");
         });
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -1566,7 +1566,7 @@ describe("can catch errors", () => {
 
       state = proxy({ value: 1, hasChild: true });
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => {
           this.state.value++;
         });
@@ -1610,7 +1610,7 @@ describe("can catch errors", () => {
         onWillDestroy(() => {
           throw new Error("boom");
         });
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -1622,7 +1622,7 @@ describe("can catch errors", () => {
 
       state = proxy({ value: 1, hasChild: false });
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => {
           this.state.value++;
         });
@@ -1668,21 +1668,21 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`abc`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
     class OtherChild extends Component {
       static template = xml`def`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
     class Boom extends Component {
       static template = xml`boom`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           throw new Error("boom");
         });
@@ -1693,7 +1693,7 @@ describe("can catch errors", () => {
       static template = xml`parent<Child/><Boom/>`;
       static components = { Child, Boom };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -1702,7 +1702,7 @@ describe("can catch errors", () => {
 
       component: any = Parent;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => {
           logStep("error");
           this.component = OtherChild;
@@ -1738,21 +1738,21 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`abc`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
     class OtherChild extends Component {
       static template = xml`def`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
     class Boom extends Component {
       static template = xml`boom`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onMounted(() => {
           throw new Error("boom");
         });
@@ -1763,7 +1763,7 @@ describe("can catch errors", () => {
       static template = xml`parent<Child/><Boom/>`;
       static components = { Child, Boom };
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -1774,7 +1774,7 @@ describe("can catch errors", () => {
       state = proxy({ gogogo: false });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onError(() => {
           logStep("error");
           this.component = OtherChild;

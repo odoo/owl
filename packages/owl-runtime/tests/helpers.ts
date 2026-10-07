@@ -14,7 +14,6 @@ import {
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
-  status,
   xml,
   effect,
 } from "../src";
@@ -22,7 +21,7 @@ import { helpers } from "../src/rendering/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/template_set";
 import { BDom } from "../src/blockdom";
 import { compile } from "@odoo/owl-compiler";
-import { OwlError } from "@odoo/owl-core";
+import { OwlError, useScope } from "@odoo/owl-core";
 
 const mount = blockDom.mount;
 
@@ -160,54 +159,51 @@ export const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle(
-  component: Component,
-  key?: string,
-  skipAsyncHooks: boolean = false
-) {
-  let name = component.constructor.name;
+export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
+  const scope = useScope();
+  let name = scope.componentName;
   if (key) {
     name = `${name} (${key})`;
   }
   logStep(`${name}:setup`);
-  expect(name + ": " + status(component)).toBe(name + ": " + "new");
+  expect(name + ": " + scope.status).toBe(name + ": 0");
 
   if (!skipAsyncHooks) {
     onWillStart(() => {
-      expect(name + ": " + status(component)).toBe(name + ": " + "new");
+      expect(name + ": " + scope.status).toBe(name + ": 0");
       logStep(`${name}:willStart`);
     });
   }
 
   onMounted(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + scope.status).toBe(name + ": 1");
     logStep(`${name}:mounted`);
   });
 
   if (!skipAsyncHooks) {
     onWillUpdateProps(() => {
-      expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+      expect(name + ": " + scope.status).toBe(name + ": 1");
       logStep(`${name}:willUpdateProps`);
     });
   }
 
   onWillPatch(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + scope.status).toBe(name + ": 1");
     logStep(`${name}:willPatch`);
   });
 
   onPatched(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + scope.status).toBe(name + ": 1");
     logStep(`${name}:patched`);
   });
 
   onWillUnmount(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + scope.status).toBe(name + ": 1");
     logStep(`${name}:willUnmount`);
   });
 
   onWillDestroy(() => {
-    expect(status(component)).not.toBe("destroyed");
+    expect(scope.status).not.toBe(2);
     logStep(`${name}:willDestroy`);
   });
 }

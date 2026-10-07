@@ -309,7 +309,7 @@ test("bound functions are considered 'alike'", async () => {
   class Child extends Component {
     static template = xml`child`;
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -320,7 +320,7 @@ test("bound functions are considered 'alike'", async () => {
     static components = { Child };
     state = proxy({ val: 1 });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
     someFunction() {}
   }
@@ -399,7 +399,7 @@ test(".alike suffix in a simple case", async () => {
     static template = xml`<t t-out="this.props.fn()"/>`;
     props = useProps();
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -410,7 +410,7 @@ test(".alike suffix in a simple case", async () => {
     static components = { Child };
     state = proxy({ counter: 0 });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -446,7 +446,7 @@ test(".alike suffix in a list", async () => {
       </button>`;
     props = useProps();
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -463,7 +463,7 @@ test(".alike suffix in a list", async () => {
       ],
     });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
     toggle(id: number) {
       const todo = this.state.elems.find((el) => el.id === id)!;
@@ -503,7 +503,7 @@ test("arrow function props auto-skip re-render when captured variables don't cha
     static template = xml`<t t-out="this.props.fn()"/>`;
     props = useProps();
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -514,7 +514,7 @@ test("arrow function props auto-skip re-render when captured variables don't cha
     static components = { Child };
     state = proxy({ counter: 0 });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -550,7 +550,7 @@ test("arrow function props re-render when captured variable changes", async () =
       </button>`;
     props = useProps();
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -567,7 +567,7 @@ test("arrow function props re-render when captured variable changes", async () =
       ],
     });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
     toggle(id: number) {
       const index = this.state.elems.findIndex((el) => el.id === id)!;

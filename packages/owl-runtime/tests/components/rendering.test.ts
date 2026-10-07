@@ -35,7 +35,7 @@ describe("rendering semantics", () => {
     class Child extends Component {
       static template = xml`child`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -48,7 +48,7 @@ describe("rendering semantics", () => {
 
       state = proxy({ value: "A" });
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -120,7 +120,7 @@ describe("rendering semantics", () => {
       static template = xml`child<t t-out="this.state.getValue()"/>`;
       state = state;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -131,7 +131,7 @@ describe("rendering semantics", () => {
       state = proxy({ value: "A" });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
     let value = 3;
@@ -189,7 +189,7 @@ describe("rendering semantics", () => {
       static template = xml`<t t-out="this.props.a.b"/>`;
       props = useProps();
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -201,7 +201,7 @@ describe("rendering semantics", () => {
 
       state = proxy({ b: 1 });
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -235,7 +235,7 @@ describe("rendering semantics", () => {
       props = useProps();
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -248,7 +248,7 @@ describe("rendering semantics", () => {
       state = proxy({ b: { c: 1 } });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -316,7 +316,7 @@ describe("rendering semantics", () => {
       props = useProps();
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -326,7 +326,7 @@ describe("rendering semantics", () => {
       props = useProps();
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onWillUpdateProps(() => def);
       }
     }
@@ -338,7 +338,7 @@ describe("rendering semantics", () => {
       state = proxy({ obj: { val: 1 } });
 
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 
@@ -382,7 +382,7 @@ test("force render in case of existing render", async () => {
   class C extends Component {
     static template = xml`C`;
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
   class B extends Component {
@@ -390,7 +390,7 @@ test("force render in case of existing render", async () => {
     static components = { C };
     props = useProps();
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
       onWillUpdateProps(() => def);
     }
   }
@@ -399,7 +399,7 @@ test("force render in case of existing render", async () => {
     static components = { B };
     state = proxy({ val: 1 });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
   const parent = await mount(A, fixture);
@@ -460,7 +460,7 @@ test("children, default props and renderings", async () => {
       value: { optional: true, defaultValue: 1 },
     });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 
@@ -473,7 +473,7 @@ test("children, default props and renderings", async () => {
 
     state = proxy({ value: "A" });
     setup() {
-      useLogLifecycle(this);
+      useLogLifecycle();
     }
   }
 

@@ -71,7 +71,7 @@ describe("app", () => {
     class B extends Component {
       static template = xml`B`;
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
         onWillStart(() => def);
       }
     }
@@ -80,7 +80,7 @@ describe("app", () => {
       static components = { B };
       state = proxy({ value: false });
       setup() {
-        useLogLifecycle(this);
+        useLogLifecycle();
       }
     }
 

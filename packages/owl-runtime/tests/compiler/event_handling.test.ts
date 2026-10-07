@@ -1,8 +1,8 @@
-import { TemplateSet } from "../../src/template_set";
+import { STATUS } from "@odoo/owl-core";
 import { mount } from "../../src/blockdom";
-import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
+import { TemplateSet } from "../../src/template_set";
 import { markup } from "../../src/utils";
-import { STATUS } from "../../src/status";
+import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 // -----------------------------------------------------------------------------

@@ -9,13 +9,13 @@ import {
   onWillUnmount,
   onWillUpdateProps,
   proxy,
+  STATUS,
   useProps,
   useScope,
   xml,
 } from "../../src";
 import { Fiber } from "../../src/rendering/fibers";
 import { Scheduler } from "../../src/rendering/scheduler";
-import { STATUS } from "../../src/status";
 import {
   makeDeferred,
   makeTestFixture,

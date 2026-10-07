@@ -384,19 +384,3 @@ class Parent extends Component {
   }
 }
 ```
-
-## `status` helper
-
-It is sometimes convenient to have a way to find out in which state a component
-is currently. To do that, one can use the `status` helper:
-
-```js
-const { status } = owl;
-// assume component is an instance of a Component
-
-console.log(status(component));
-// logs either:
-// - 'new', if the component is new and has not been mounted yet
-// - 'mounted', if the component is currently mounted
-// - 'destroyed' if the component is currently destroyed
-```

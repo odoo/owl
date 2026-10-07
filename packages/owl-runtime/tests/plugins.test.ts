@@ -1,4 +1,4 @@
-import { Atom, atomSymbol, PluginManager, types, usePlugin } from "@odoo/owl-core";
+import { Atom, atomSymbol, PluginManager, STATUS, types, usePlugin } from "@odoo/owl-core";
 import { describe, expect, test } from "vitest";
 import {
   App,
@@ -18,7 +18,6 @@ import {
   useListener,
   xml
 } from "../src";
-import { STATUS } from "../src/status";
 import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 
 describe("basic features", () => {

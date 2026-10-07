@@ -1,4 +1,4 @@
-import { Atom, atomSymbol, PluginManager, types, usePlugin } from "@odoo/owl-core";
+import { Atom, atomSymbol, PluginManager, STATUS, types, usePlugin } from "@odoo/owl-core";
 import { describe, expect, test } from "vitest";
 import {
   App,
@@ -13,13 +13,11 @@ import {
   providePlugins,
   Resource,
   signal,
-  status,
   types as t,
   useConfig,
   useListener,
   xml
 } from "../src";
-import { STATUS } from "../src/status";
 import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -354,13 +352,10 @@ describe("basic features", () => {
     expect(manager.status).toBe(STATUS.NEW);
 
     manager.startPlugins([A]);
-    const a = manager.getPlugin(A)!;
     expect(manager.status).toBe(STATUS.MOUNTED);
-    expect(status(a)).toBe("started");
 
     manager.destroy();
     expect(manager.status).toBe(STATUS.DESTROYED);
-    expect(status(a)).toBe("destroyed");
   });
 
   test("resource can be used to start plugins", async () => {

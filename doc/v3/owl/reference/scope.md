@@ -57,9 +57,7 @@ if you need to tolerate that case — it returns `Scope | null`.
 ## Lifetime and Status
 
 A scope's `status` transitions through three numeric values, internally
-defined by a `STATUS` enum. `STATUS` itself is not exported from
-`@odoo/owl` — use the `status()` helper below for a readable check
-instead of importing it:
+defined by a `STATUS` enum:
 
 | Status      | Meaning                                            |
 | ----------- | -------------------------------------------------- |
@@ -74,22 +72,6 @@ rendering) transitions directly from `NEW` to `DESTROYED`. Any transition into
 The `scope.isDestroyed()` method answers the question "is this scope dead?" —
 it returns `true` once all cleanup (destroy callbacks, computation disposal)
 has run.
-
-The `status()` helper function (which takes a `Component` or `Plugin` instance
-directly) is a more convenient frontend for reading a scope's status:
-
-```js
-import { Component, status } from "@odoo/owl";
-
-class MyComponent extends Component {
-  // ...
-  someMethod() {
-    if (status(this) === "mounted") {
-      // do mounted-only work
-    }
-  }
-}
-```
 
 ## Async Cancellation
 
@@ -273,8 +255,7 @@ active. Reach for this only when the absence of a scope is meaningful.
 ### `Scope`
 
 - `status: number` — current status (0 = `NEW`, 1 = `MOUNTED`, 2 =
-  `DESTROYED`; the `STATUS` enum itself isn't exported from `@odoo/owl` —
-  use the `status()` helper for a readable check).
+  `DESTROYED`).
 - `app: App` — the owning application.
 - `abortSignal: AbortSignal` — an `AbortSignal` aborted when the scope dies.
   Lazily allocates an `AbortController` on first access.

@@ -10,11 +10,12 @@ import {
   onWillUpdateProps,
   proxy,
   useProps,
+  useScope,
   xml,
 } from "../../src";
 import { Fiber } from "../../src/rendering/fibers";
 import { Scheduler } from "../../src/rendering/scheduler";
-import { status } from "../../src/status";
+import { STATUS } from "../../src/status";
 import {
   makeDeferred,
   makeTestFixture,
@@ -56,21 +57,22 @@ describe("async rendering", () => {
     let w: any = null;
     class W extends Component {
       static template = xml`<div/>`;
+      scope = useScope();
       setup() {
         useLogLifecycle();
-        expect(status(this)).toBe("new");
+        expect(this.scope.status).toBe(STATUS.NEW);
         w = this;
         onWillStart(() => def);
       }
     }
     const app = new App();
     app.createRoot(W).mount(fixture);
-    expect(status(w)).toBe("new");
+    expect(w.scope.status).toBe(STATUS.NEW);
     app.destroy();
-    expect(status(w)).toBe("destroyed");
+    expect(w.scope.status).toBe(STATUS.DESTROYED);
     def.resolve();
     await nextTick();
-    expect(status(w)).toBe("destroyed");
+    expect(w.scope.status).toBe(STATUS.DESTROYED);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "W:setup",

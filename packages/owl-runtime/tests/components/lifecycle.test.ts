@@ -11,9 +11,10 @@ import {
   onWillUpdateProps,
   proxy,
   useProps,
+  useScope,
   xml,
 } from "../../src";
-import { status } from "../../src/status";
+import { STATUS } from "../../src/status";
 import {
   elem,
   getConsoleOutput,
@@ -40,9 +41,10 @@ describe("lifecycle hooks", () => {
     expect.assertions(6); // 1 for snapshots
     class Test extends Component {
       static template = xml`<span>test</span>`;
+      scope = useScope();
 
       setup() {
-        expect(status(this)).toBe("new");
+        expect(this.scope.status).toBe(STATUS.NEW);
       }
     }
 
@@ -51,12 +53,12 @@ describe("lifecycle hooks", () => {
     const component = await app.createRoot(Test).mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>test</span>");
-    expect(status(component)).toBe("mounted");
+    expect(component.scope.status).toBe(STATUS.MOUNTED);
 
     app.destroy();
 
     expect(fixture.innerHTML).toBe("");
-    expect(status(component)).toBe("destroyed");
+    expect(component.scope.status).toBe(STATUS.DESTROYED);
   });
 
   test("willStart is called", async () => {

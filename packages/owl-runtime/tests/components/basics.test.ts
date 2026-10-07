@@ -1,5 +1,6 @@
-import { PluginManager } from "@odoo/owl-core";
-import { App, Component, mount, Plugin, providePlugins, proxy, status, types as t, toRaw, usePlugin, useProps, xml } from "../../src";
+import { PluginManager, STATUS } from "@odoo/owl-core";
+import { describe, expect, test } from "vitest";
+import { App, Component, mount, Plugin, providePlugins, proxy, types as t, toRaw, usePlugin, useProps, useScope, xml } from "../../src";
 import { markup } from "../../src/utils";
 import {
   elem,
@@ -11,7 +12,6 @@ import {
   steps,
   useLogLifecycle,
 } from "../helpers";
-import { describe, expect, test } from "vitest";
 
 let fixture: HTMLElement;
 
@@ -177,13 +177,14 @@ describe("basics", () => {
     expect.assertions(3);
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
+      scope = useScope();
       setup() {
-        expect(status(this)).toBe("new");
+        expect(this.scope.status).toBe(STATUS.NEW);
       }
     }
 
     const test = await mount(Test, fixture);
-    expect(status(test)).toBe("mounted");
+    expect(test.scope.status).toBe(STATUS.MOUNTED);
   });
 
   test("throws if mounting on target=null", async () => {
@@ -737,6 +738,7 @@ describe("basics", () => {
     // this confuses the patching algorithm...
     class Child extends Component {
       static template = xml`<span>child</span>`;
+      scope = useScope();
     }
 
     class Parent extends Component {
@@ -757,7 +759,7 @@ describe("basics", () => {
     parent.state.flag = true;
     await nextTick();
     expect(Object.values(parent.__owl__.children)[0].component).toBe(child);
-    expect(status(child)).toBe("mounted");
+    expect(child.scope.status).toBe(STATUS.MOUNTED);
     expect(fixture.innerHTML).toBe(
       `<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`
     );

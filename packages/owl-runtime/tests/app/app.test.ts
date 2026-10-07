@@ -1,7 +1,7 @@
 import { compile } from "@odoo/owl-compiler";
 import { App, Component, onMounted, onWillPatch, onWillStart, proxy, useProps, xml } from "../../src";
 import { useApp } from "../../src/hooks";
-import { STATUS, status } from "../../src/status";
+import { STATUS } from "../../src/status";
 import {
   elem,
   makeDeferred,
@@ -29,12 +29,13 @@ describe("app", () => {
     }
 
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(fixture);
+    const root = app.createRoot(SomeComponent);
+    const comp = await root.mount(fixture);
     const el = elem(comp);
     expect(document.contains(el)).toBe(true);
     app.destroy();
     expect(document.contains(el)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 
   test("can configure an app with props", async () => {
@@ -57,13 +58,14 @@ describe("app", () => {
     fixture.appendChild(iframe);
     const app = new App();
     const iframeDoc = iframe.contentDocument!;
-    const comp = await app.createRoot(SomeComponent).mount(iframeDoc.body);
+    const root = app.createRoot(SomeComponent);
+    await root.mount(iframeDoc.body);
     const div = iframeDoc.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(iframeDoc.contains(div)).toBe(true);
     app.destroy();
     expect(iframeDoc.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 
   test("app: clear scheduler tasks on destroy", async () => {

@@ -1,5 +1,4 @@
 import { App, Component, mount, signal, xml } from "../../src";
-import { status } from "../../src/status";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -20,13 +19,14 @@ describe("shadow_dom", () => {
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "open" });
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(shadow);
+    const root = app.createRoot(SomeComponent);
+    await root.mount(shadow);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 
   test("can mount app in closed shadow dom", async () => {
@@ -38,13 +38,14 @@ describe("shadow_dom", () => {
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "closed" });
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(shadow);
+    const root = app.createRoot(SomeComponent);
+    await root.mount(shadow);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 
   test("can bind event handler", async () => {
@@ -91,13 +92,14 @@ describe("shadow_dom", () => {
     const shadowDiv = document.createElement("div");
     shadow.append(shadowDiv);
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(shadowDiv);
+    const root = app.createRoot(SomeComponent);
+    await root.mount(shadowDiv);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 
   test("can mount app inside a separate HTML document", async () => {
@@ -140,7 +142,8 @@ describe("shadow_dom", () => {
     shadow.appendChild(shadowTarget);
 
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(shadowTarget);
+    const root = app.createRoot(SomeComponent);
+    await root.mount(shadowTarget);
 
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
@@ -149,6 +152,6 @@ describe("shadow_dom", () => {
 
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(root.destroyed).toBe(true);
   });
 });

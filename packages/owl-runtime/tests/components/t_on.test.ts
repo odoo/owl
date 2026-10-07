@@ -1,5 +1,4 @@
-import { Component, mount, onMounted, proxy, useProps, xml } from "../../src";
-import { status } from "../../src/status";
+import { Component, mount, onMounted, proxy, useProps, useScope, xml } from "../../src";
 import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -16,6 +15,7 @@ describe("t-on", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<div t-on-click="this.onClick"/>`;
+      scope = useScope();
       setup() {
         onMounted(() => {
           child = this;
@@ -36,7 +36,7 @@ describe("t-on", () => {
     expect(steps).toEqual(["click"]);
     (parent as any).state.flag = false;
     await nextTick();
-    expect(status(child)).toBe("destroyed");
+    expect(child.scope.isDestroyed()).toBe(true);
     el.click();
     expect(steps).toEqual(["click"]);
   });

@@ -4,10 +4,10 @@ import {
   OwlError,
   removeSources,
   setComputation,
+  STATUS,
 } from "@odoo/owl-core";
 import { BDom, mount, type MountTarget } from "../blockdom";
 import type { ComponentNode } from "../component_node";
-import { STATUS } from "../status";
 import { fibersInError, handleError } from "./error_handling";
 
 // Max times a given fiber may be recycled before being committed to the DOM

@@ -53,12 +53,6 @@ export class Plugin {
   // start immediately.
   static sequence = 50;
 
-  __owl__: PluginManager;
-
-  constructor(manager: PluginManager) {
-    this.__owl__ = manager;
-  }
-
   setup() {}
 }
 
@@ -124,7 +118,7 @@ export class PluginManager extends Scope {
       return null;
     }
 
-    const plugin = new pluginConstructor(this);
+    const plugin = new pluginConstructor();
     this.plugins[pluginConstructor.id] = plugin;
     plugin.setup();
     return plugin as InstanceType<T>;

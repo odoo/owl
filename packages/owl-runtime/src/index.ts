@@ -47,7 +47,6 @@ export { useProps } from "./props";
 // own declaration files (see owl#1958). Type-only export: it has no runtime
 // value, so this adds nothing to the JS bundle.
 export type { GetProps, isProps } from "./props";
-export { status } from "./status";
 export {
   asyncComputed,
   computed,
@@ -97,6 +96,7 @@ export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "@odoo/owl-core";
 export type { PluginConstructor } from "@odoo/owl-core";
 export { getScope, Scope, useScope } from "@odoo/owl-core";
+export { STATUS } from "@odoo/owl-core";
 
 export const __info__: Record<string, string> = {
   version: App.version,

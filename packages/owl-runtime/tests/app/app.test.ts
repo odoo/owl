@@ -1,7 +1,6 @@
 import { compile } from "@odoo/owl-compiler";
-import { App, Component, onMounted, onWillPatch, onWillStart, proxy, useProps, xml } from "../../src";
+import { App, Component, onMounted, onWillPatch, onWillStart, proxy, STATUS, useProps, xml } from "../../src";
 import { useApp } from "../../src/hooks";
-import { STATUS } from "../../src/status";
 import {
   elem,
   makeDeferred,

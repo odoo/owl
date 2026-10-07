@@ -10,6 +10,7 @@ import {
   Scope,
   scopeStack,
   setComputation,
+  STATUS,
   useScope,
 } from "@odoo/owl-core";
 import type { App } from "./app";
@@ -17,7 +18,6 @@ import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
-import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
 //  Component VNode class

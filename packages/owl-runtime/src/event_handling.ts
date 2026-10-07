@@ -1,6 +1,5 @@
 import { filterOutModifiersFromData } from "./blockdom/config";
-import { STATUS } from "./status";
-import { OwlError, setCurrentEvent } from "@odoo/owl-core";
+import { OwlError, setCurrentEvent, STATUS } from "@odoo/owl-core";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   // lets `useListener` skip an event older than the listener

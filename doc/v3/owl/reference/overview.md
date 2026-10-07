@@ -13,7 +13,6 @@ Here is a list of everything exported by the Owl library.
 - [`xml`](template_syntax.md#inline-templates): define an inline template
 - [`useProps`](props.md): declare and validate component props
 - [`useProps.static`](props.md#the-usepropsstatic-method): declare a single static prop on a component
-- [`status`](component.md#status-helper): get the status of a component (new, mounted, destroyed)
 
 ## Reactivity
 

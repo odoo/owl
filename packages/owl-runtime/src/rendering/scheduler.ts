@@ -1,6 +1,6 @@
+import { STATUS } from "@odoo/owl-core";
 import { fibersInError } from "./error_handling";
 import { APPLIED_TO_DOM, Fiber, RootFiber } from "./fibers";
-import { STATUS } from "../status";
 
 // -----------------------------------------------------------------------------
 //  Scheduler

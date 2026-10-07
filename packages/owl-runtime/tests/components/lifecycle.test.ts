@@ -10,11 +10,11 @@ import {
   onWillUnmount,
   onWillUpdateProps,
   proxy,
+  STATUS,
   useProps,
   useScope,
   xml,
 } from "../../src";
-import { STATUS } from "../../src/status";
 import {
   elem,
   getConsoleOutput,

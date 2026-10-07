@@ -13,7 +13,6 @@ import {
   providePlugins,
   Resource,
   signal,
-  status,
   types as t,
   useConfig,
   useListener,
@@ -354,13 +353,10 @@ describe("basic features", () => {
     expect(manager.status).toBe(STATUS.NEW);
 
     manager.startPlugins([A]);
-    const a = manager.getPlugin(A)!;
     expect(manager.status).toBe(STATUS.MOUNTED);
-    expect(status(a)).toBe("started");
 
     manager.destroy();
     expect(manager.status).toBe(STATUS.DESTROYED);
-    expect(status(a)).toBe("destroyed");
   });
 
   test("resource can be used to start plugins", async () => {

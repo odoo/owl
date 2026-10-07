@@ -1,4 +1,4 @@
-import { App, Component, onMounted, onWillDestroy, onWillStart, status, xml } from "../../src";
+import { App, Component, onMounted, onWillDestroy, onWillStart, xml } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
 
 let fixture: HTMLElement;
@@ -275,18 +275,18 @@ test("destroy() is idempotent and keeps the component destroyed", async () => {
 
   const app = new App();
   const root = app.createRoot(Root);
-  const component = await root.mount(fixture);
+  await root.mount(fixture);
   expect(fixture.innerHTML).toBe("<span>ok</span>");
 
   root.destroy();
   root.destroy();
   expect(steps).toEqual(["willDestroy"]);
   expect(fixture.innerHTML).toBe("");
-  expect(status(component)).toBe("destroyed");
+  expect(root.destroyed).toBe(true);
 
   root.mount(fixture);
   await nextTick();
   expect(fixture.innerHTML).toBe("");
-  expect(status(component)).toBe("destroyed");
+  expect(root.destroyed).toBe(true);
   app.destroy();
 });

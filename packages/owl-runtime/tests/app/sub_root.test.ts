@@ -1,5 +1,4 @@
 import { App, Component, onMounted, onWillDestroy, proxy, signal, xml } from "../../src";
-import { status } from "../../src/status";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -21,44 +20,47 @@ class SubComponent extends Component {
 describe("subroot", () => {
   test("can mount subroot", async () => {
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(fixture);
+    const someRoot = app.createRoot(SomeComponent);
+    await someRoot.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const subRoot = app.createRoot(SubComponent);
-    const subcomp = await subRoot.mount(fixture);
+    await subRoot.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div><div>sub root</div>");
 
     app.destroy();
     expect(fixture.innerHTML).toBe("");
-    expect(status(comp)).toBe("destroyed");
-    expect(status(subcomp)).toBe("destroyed");
+    expect(someRoot.destroyed).toBe(true);
+    expect(subRoot.destroyed).toBe(true);
   });
 
   test("can mount subroot inside own dom", async () => {
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(fixture);
+    const someRoot = app.createRoot(SomeComponent);
+    await someRoot.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const subRoot = app.createRoot(SubComponent);
-    const subcomp = await subRoot.mount(fixture.querySelector("div")!);
+    await subRoot.mount(fixture.querySelector("div")!);
     expect(fixture.innerHTML).toBe("<div>main app<div>sub root</div></div>");
 
     app.destroy();
     expect(fixture.innerHTML).toBe("");
-    expect(status(comp)).toBe("destroyed");
-    expect(status(subcomp)).toBe("destroyed");
+    expect(someRoot.destroyed).toBe(true);
+    expect(subRoot.destroyed).toBe(true);
   });
 
   test("subcomponents can be destroyed, and it properly cleanup the subroots", async () => {
     const app = new App();
-    const comp = await app.createRoot(SomeComponent).mount(fixture);
+    const someRoot = app.createRoot(SomeComponent);
+    await someRoot.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const root = app.createRoot(SubComponent);
-    const subcomp = await root.mount(fixture.querySelector("div")!);
+    await root.mount(fixture.querySelector("div")!);
     expect(fixture.innerHTML).toBe("<div>main app<div>sub root</div></div>");
 
     root.destroy();
     expect(fixture.innerHTML).toBe("<div>main app</div>");
-    expect(status(comp)).not.toBe("destroyed");
-    expect(status(subcomp)).toBe("destroyed");
+    expect(someRoot.destroyed).toBe(false);
+    expect(root.destroyed).toBe(true);
   });
 
   test("can create a root in a setup function, then use a hook", async () => {

@@ -140,13 +140,14 @@ export class App extends TemplateSet {
     let node: ComponentNode;
     let error: any = null;
     try {
-      node = new ComponentNode(Root, props, this, null, null);
       // Sub-roots (Portal/Suspense) thread their host's scope and error routing
       // in through internal config, applied before the render phase begins.
       const subConfig = config as SubRootConfig<any>;
+      let pluginManager = this.pluginManager;
       if (subConfig.pluginManager) {
-        node.pluginManager = subConfig.pluginManager;
+        pluginManager = subConfig.pluginManager;
       }
+      node = new ComponentNode(Root, props, this, pluginManager, null, null);
       if (subConfig.onError) {
         nodeErrorHandlers.set(node, [subConfig.onError]);
       }

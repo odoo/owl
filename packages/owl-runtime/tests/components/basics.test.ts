@@ -1,4 +1,5 @@
-import { App, Component, mount, proxy, status, types as t, toRaw, useProps, xml } from "../../src";
+import { PluginManager } from "@odoo/owl-core";
+import { App, Component, mount, Plugin, providePlugins, proxy, status, types as t, toRaw, usePlugin, useProps, xml } from "../../src";
 import { markup } from "../../src/utils";
 import {
   elem,
@@ -10,6 +11,7 @@ import {
   steps,
   useLogLifecycle,
 } from "../helpers";
+import { describe, expect, test } from "vitest";
 
 let fixture: HTMLElement;
 
@@ -978,6 +980,41 @@ describe("basics", () => {
         "GrandChild:willDestroy",
       ]
     `);
+  });
+
+  test("providePlugins in a root with a custom plugin manager extends it", async () => {
+    class PluginA extends Plugin {
+      name = "A";
+    }
+    class PluginB extends Plugin {
+      name = "B";
+    }
+
+    class Child extends Component {
+      static template = xml`<t t-out="this.a.name"/> - <t t-out="this.b.name"/>`;
+      a = usePlugin(PluginA);
+      b = usePlugin(PluginB);
+    }
+
+    class Root extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+      setup() {
+        providePlugins([PluginB]);
+      }
+    }
+
+    const app = new App();
+    const subPluginManager = new PluginManager(app);
+    subPluginManager.startPlugins([PluginA]);
+
+    await app
+      .createRoot(Root, {
+        // @ts-ignore
+        pluginManager: subPluginManager,
+      })
+      .mount(fixture);
+    expect(fixture.textContent).toBe("A - B");
   });
 });
 

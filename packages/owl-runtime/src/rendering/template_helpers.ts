@@ -351,7 +351,7 @@ function createComponent<P extends Record<string, any>>(
           );
         }
       }
-      node = new ComponentNode(C, props, app, ctx, key);
+      node = new ComponentNode(C, props, app, ctx.pluginManager, ctx, key);
       children[key] = node;
       const fiber = new Fiber(node, parentFiber);
       if (node.willStart.length) {

@@ -6,6 +6,7 @@ import {
   getCurrentComputation,
   isAbortError,
   OwlError,
+  PluginManager,
   Scope,
   scopeStack,
   setComputation,
@@ -57,13 +58,14 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     C: ComponentConstructor,
     props: Record<string, any>,
     app: App,
+    pluginManager: PluginManager,
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
     super(app);
     this.parent = parent;
     this.parentKey = parentKey;
-    this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
+    this.pluginManager = pluginManager;
     this.componentName = C.name;
     this.signalComputation = createComputation(
       () => this.render(false),

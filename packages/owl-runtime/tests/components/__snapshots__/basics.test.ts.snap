@@ -642,6 +642,34 @@ exports[`basics > props value are own property of props object, even with defaul
 }"
 `;
 
+exports[`basics > providePlugins in a root with a custom plugin manager extends it 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`basics > providePlugins in a root with a custom plugin manager extends it 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].a.name);
+    const b3 = text(\` - \`);
+    const b4 = safeOutput(ctx['this'].b.name);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
 exports[`basics > reconciliation alg is not confused in some specific situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

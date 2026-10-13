@@ -161,6 +161,106 @@ describe("effect", () => {
     expect(result).toBe(2);
   });
 
+  describe("self-write", () => {
+    test("an effect that writes a signal it reads is not re-run for its own write", async () => {
+      const s = signal(0);
+      const log: number[] = [];
+      effect(() => {
+        const value = s();
+        log.push(value);
+        if (value === 1) {
+          s.set(10);
+        }
+      });
+      s.set(1);
+      await waitScheduler();
+      expect(log).toEqual([0, 1]);
+      s.set(2);
+      await waitScheduler();
+      expect(log).toEqual([0, 1, 2]);
+    });
+
+    test("an effect that writes a source of a computed it reads keeps running", async () => {
+      // The write makes `c` stale while the effect is still running, so the
+      // effect is not queued for it (only an EXECUTED observer is). Once it
+      // finishes, the effect is EXECUTED behind a stale computed: later
+      // writes must still reach it.
+      const s = signal(0);
+      const c = computed(() => s());
+      const log: number[] = [];
+      effect(() => {
+        const value = c();
+        log.push(value);
+        if (value === 1) {
+          s.set(10);
+        }
+      });
+      s.set(1);
+      await waitScheduler();
+      // not re-run for its own write
+      expect(log).toEqual([0, 1]);
+      // the computed is still compared against the value the effect last read
+      s.set(1);
+      await waitScheduler();
+      expect(log).toEqual([0, 1]);
+      s.set(10);
+      await waitScheduler();
+      expect(log).toEqual([0, 1, 10]);
+      s.set(2);
+      await waitScheduler();
+      expect(log).toEqual([0, 1, 10, 2]);
+    });
+
+    test("an effect that writes through a chain of computeds keeps running", async () => {
+      // Same with two deriveds between the effect and the signal: the write
+      // leaves `c1` STALE and `c2` PENDING, and a later write has to walk
+      // through both to reach the effect.
+      const s = signal(0);
+      const c1 = computed(() => s());
+      const c2 = computed(() => c1() * 2);
+      const log: number[] = [];
+      effect(() => {
+        const value = c2();
+        log.push(value);
+        if (value === 2) {
+          s.set(10);
+        }
+      });
+      s.set(1);
+      await waitScheduler();
+      expect(log).toEqual([0, 2]);
+      s.set(2);
+      await waitScheduler();
+      expect(log).toEqual([0, 2, 4]);
+      s.set(3);
+      await waitScheduler();
+      expect(log).toEqual([0, 2, 4, 6]);
+    });
+
+    test("an untracked write to a source of a computed the effect reads keeps running", async () => {
+      // useOnChange's shape: the dependencies are a computed, the callback
+      // runs untracked and writes one of them.
+      const s = signal(0);
+      const deps = computed(() => [s()], { equals: (a, b) => a[0] === b[0] });
+      const log: number[] = [];
+      effect(() => {
+        const [value] = deps();
+        untrack(() => {
+          log.push(value);
+          if (value === 1) {
+            s.set(10);
+          }
+        });
+      });
+      s.set(1);
+      await waitScheduler();
+      expect(log).toEqual([0, 1]);
+      s.set(2);
+      await waitScheduler();
+      expect(log).toEqual([0, 1, 2]);
+    });
+  });
+
   describe("nested effects", () => {
     test("should track correctly", async () => {
       const state = proxy({ a: 1, b: 10 });

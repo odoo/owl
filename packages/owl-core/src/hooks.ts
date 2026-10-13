@@ -39,7 +39,9 @@ type Args<T extends unknown[]> = { [K in keyof T]: T[K] };
  * Runs `callback` whenever the array returned by `dependencies` changes.
  * Contrary to `useEffect`, only the `dependencies` function is tracked:
  * reactive values read inside `callback` do not become dependencies, so the
- * callback cannot retrigger itself.
+ * callback cannot retrigger itself. If `callback` writes one of its own
+ * dependencies, it does not run again for that write: the next change is
+ * still compared against the values it last received.
  *
  * The dependency array is compared with `shallowEqual`, so `callback` only
  * runs when one of the values it receives actually changed: with

@@ -62,12 +62,18 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  // Set on a derived that is not EXECUTED but may still have an EXECUTED
+  // observer, so a write has to walk through it. See flagStaleSources.
+  hasExecutedObserver: boolean;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
+// Bumped by every write. updateComputation compares it before and after a
+// compute() to know whether the computation (or something it ran) wrote.
+let writeCount = 0;
 // Derived computations that were notified of a write while nothing observed
 // them. Left alone, they would stay subscribed to their sources forever (a
 // lazy computed with no observer never re-runs, so removeSources never fires
@@ -90,6 +96,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    hasExecutedObserver: false,
   };
 }
 
@@ -102,6 +109,7 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
+  writeCount++;
   for (const ctx of atom.observers) {
     if (ctx.state === ComputationState.EXECUTED) {
       if (ctx.isDerived) {
@@ -109,6 +117,11 @@ export function onWriteAtom(atom: Atom) {
       } else {
         observers.push(ctx);
       }
+    } else if (ctx.hasExecutedObserver) {
+      // Already stale, but an observer finished running after it went stale
+      // (see flagStaleSources): walk downstream again to queue that observer.
+      ctx.hasExecutedObserver = false;
+      markDownstream(ctx);
     }
     ctx.state = ComputationState.STALE;
     if (ctx.isDerived && ctx.observers.size === 0) {
@@ -181,9 +194,14 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
+  const writesBefore = writeCount;
   try {
     computation.value = computation.compute();
     computation.state = ComputationState.EXECUTED;
+    computation.hasExecutedObserver = false;
+    if (writeCount !== writesBefore) {
+      flagStaleSources(computation);
+    }
   } finally {
     // Restore the previous tracking pointer even if compute() threw, so a
     // subsequent atom read does not silently attach itself as a source of
@@ -232,6 +250,12 @@ function markDownstream(computation: ComputationAtom) {
         pendingDisposals.add(observer);
       }
       if (observer.state) {
+        // Everything downstream of a non-EXECUTED derived is normally marked
+        // already, except past one flagged by flagStaleSources.
+        if (observer.hasExecutedObserver) {
+          observer.hasExecutedObserver = false;
+          stack.push(observer);
+        }
         continue;
       }
       observer.state = ComputationState.PENDING;
@@ -240,6 +264,24 @@ function markDownstream(computation: ComputationAtom) {
       } else {
         observers.push(observer);
       }
+    }
+  }
+}
+
+// A computation that writes one of its own sources (directly or through a
+// derived it reads) invalidates that derived while it is still running. The
+// write skips the computation, as it is not EXECUTED yet, and once it finishes
+// it is EXECUTED again but only reachable through stale deriveds, which a
+// write never walks through: later writes would never reach it. Flag the
+// stale deriveds on the path so the next write walks through them. The
+// computation itself is not re-run for its own write, like an effect writing
+// a signal it reads directly.
+function flagStaleSources(computation: ComputationAtom) {
+  for (const source of computation.sources) {
+    const derived = source as ComputationAtom;
+    if (derived.isDerived && derived.state && !derived.hasExecutedObserver) {
+      derived.hasExecutedObserver = true;
+      flagStaleSources(derived);
     }
   }
 }

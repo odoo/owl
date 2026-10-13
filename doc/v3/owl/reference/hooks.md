@@ -124,6 +124,9 @@ The `useOnChange` hook runs a callback whenever one of the values returned by a
 dependency function changes. Contrary to [`useEffect`](#useeffect), only the
 dependency function is tracked: reactive values read (or written) inside the
 callback do not become dependencies, so the callback cannot retrigger itself.
+If the callback writes one of its own dependencies, it does not run again for
+that write: the next change is still compared against the values it last
+received.
 
 ```js
 useOnChange(dependencies, callback, options);

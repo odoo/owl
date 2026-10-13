@@ -423,6 +423,19 @@ exports[`hooks > useOnChange hook > callback runs on mount, on dependency change
 }"
 `;
 
+exports[`hooks > useOnChange hook > callback writing one of its dependencies keeps running on the next changes 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`hooks > useOnChange hook > does not run the callback on mount with initialRun=false 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

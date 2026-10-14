@@ -1,6 +1,6 @@
 import { computed } from "./computed";
 import { untrack } from "./computations";
-import { effect } from "./effect";
+import { effect, immediateEffect } from "./effect";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { useScope } from "./scope";
 import { Signal } from "./signal";
@@ -20,6 +20,19 @@ import { shallowEqual } from "./utils";
  */
 export function useEffect(fn: Parameters<typeof effect>[0]): void {
   onWillDestroy(effect(fn));
+}
+
+// -----------------------------------------------------------------------------
+// useImmediateEffect
+// -----------------------------------------------------------------------------
+
+/**
+ * Same as `useEffect`, but creates an immediate effect: it re-runs
+ * synchronously, as part of the write that invalidated it, instead of being
+ * batched in a microtask. Equivalent to `onWillDestroy(immediateEffect(fn))`.
+ */
+export function useImmediateEffect(fn: Parameters<typeof immediateEffect>[0]): void {
+  onWillDestroy(immediateEffect(fn));
 }
 
 // -----------------------------------------------------------------------------

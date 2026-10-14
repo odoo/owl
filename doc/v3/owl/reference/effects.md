@@ -94,6 +94,37 @@ being recreated, A is now dead and no longer reacts to `otherSignal` changes.
 If you need an inner effect with an independent lifetime, create it inside
 [`untrack`](#untrack) so it is not attached to the currently running effect.
 
+## Immediate effects
+
+`immediateEffect` is an effect whose re-runs are not batched: it re-runs
+synchronously, as part of the write that invalidated it, before `set()` (or
+the proxy assignment) returns.
+
+```js
+const s = signal(1);
+const double = computed(() => 2 * s());
+
+immediateEffect(() => {
+  console.log(double()); // logs 2
+});
+
+s.set(2); // logs 4, synchronously
+```
+
+Everything else works like `effect`: dependencies are tracked the same way,
+cleanup functions and [nesting](#nested-effects) behave the same, and the
+return value disposes the effect. A write that leaves the dependencies
+unchanged (including a computed that recomputes to an equal value) does not
+re-run it.
+
+Batching is the default for a reason. A regular effect reading two signals
+runs once after both are written, while an immediate effect runs once per write
+and sees the intermediate state. An error thrown by an immediate effect also
+surfaces from the write that triggered it. Reserve `immediateEffect` for cases
+where the synchronous timing is the point, such as keeping some non-reactive
+state in sync with a signal so it is already correct right after the write. In
+components, use the [`useImmediateEffect`](#useeffect) hook.
+
 ## useEffect
 
 In components, use the `useEffect` hook instead of raw `effect()`. It is
@@ -112,6 +143,9 @@ class MyComponent extends Component {
   }
 }
 ```
+
+`useImmediateEffect` is the same hook for an [immediate
+effect](#immediate-effects).
 
 `useEffect` can also be called inside a [plugin](plugins.md)'s `setup`. Individual
 plugins don't have their own lifetime, though: the effect is bound to the

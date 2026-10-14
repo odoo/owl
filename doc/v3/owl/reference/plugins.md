@@ -371,8 +371,8 @@ class WebSocketPlugin extends Plugin {
 }
 ```
 
-The `useListener()`, `useEffect()` and `useOnChange()` hooks also work inside
-plugins, with automatic cleanup on destroy:
+The `useListener()`, `useEffect()`, `useImmediateEffect()` and `useOnChange()`
+hooks also work inside plugins, with automatic cleanup on destroy:
 
 ```js
 class KeyboardPlugin extends Plugin {

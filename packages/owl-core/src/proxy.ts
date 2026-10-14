@@ -1,5 +1,5 @@
 import { OwlError } from "./owl_error";
-import { onReadAtom, onWriteAtom, Atom } from "./computations";
+import { Atom, invalidateAtom, onReadAtom, runWriteEffects } from "./computations";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -97,7 +97,8 @@ function onReadTargetKey(target: Target, key: PropertyKey): void {
 
 /**
  * Notify Reactives that are observing a given target that a key has changed on
- * the target.
+ * the target. Effects run on the `endTargetWrite` call that ends the write, so
+ * that an effect that throws does not stop the notification of the other keys.
  *
  * @param target target whose Reactives should be notified that the target was
  *  changed.
@@ -112,7 +113,17 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
   if (!keyToAtomItem.has(key)) {
     return;
   }
-  onWriteAtom(keyToAtomItem.get(key)!);
+  invalidateAtom(keyToAtomItem.get(key)!);
+  hasInvalidatedAtom = true;
+}
+
+let hasInvalidatedAtom = false;
+
+function endTargetWrite(): void {
+  if (hasInvalidatedAtom) {
+    hasInvalidatedAtom = false;
+    runWriteEffects();
+  }
 }
 
 /**
@@ -243,6 +254,7 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       } else if (valueChanged) {
         onWriteTargetKey(target, key);
       }
+      endTargetWrite();
       return ret;
     },
     deleteProperty(target, key) {
@@ -250,6 +262,7 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
       // TODO: only notify when something was actually deleted
       onWriteTargetKey(target, KEYCHANGES);
       onWriteTargetKey(target, key);
+      endTargetWrite();
       return ret;
     },
     ownKeys(target) {
@@ -352,6 +365,7 @@ function delegateAndNotify(
     if (originalValue !== target[getterName](key)) {
       onWriteTargetKey(target, key);
     }
+    endTargetWrite();
     return ret;
   };
 }
@@ -369,6 +383,7 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
     for (const key of allKeys) {
       onWriteTargetKey(target, key);
     }
+    endTargetWrite();
   };
 }
 /**

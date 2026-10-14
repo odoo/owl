@@ -221,7 +221,8 @@ class VersionPlugin extends Plugin {
 class TemplatePlugin extends Plugin {
   static id = "templates";
 
-  version = usePlugin(VersionPlugin)
+  version = usePlugin(VersionPlugin);
+  code = usePlugin(CodePlugin);
 
   examples = computed(() => {
     const version = this.version.version();
@@ -264,10 +265,12 @@ class TemplatePlugin extends Plugin {
     return WELCOME_STATE[version] ?? {pills: [], version: "unknown"};
   });
 
+  setup() {
+    this.project = usePlugin(ProjectPlugin);
+  }
+
   async openTutorial(tutorial) {
     const { steps, name, description, id: tutorialId } = tutorial;
-    const project = this.__owl__.plugins["project"];
-    const code = this.__owl__.plugins["code"];
 
     const stepsWithContent = await Promise.all(
       steps.map(async (step) => ({
@@ -280,13 +283,13 @@ class TemplatePlugin extends Plugin {
     const validSteps = stepsWithContent.filter((step) => Object.keys(step.files).length > 0);
     if (validSteps.length === 0) return;
 
-    const projects = project.projects();
-    const activeProject = project.activeProject();
-    if (projects.length === 1 && activeProject && !project.isProjectDirty(activeProject)) {
-      project.deleteProject(activeProject.id, true);
+    const projects = this.project.projects();
+    const activeProject = this.project.activeProject();
+    if (projects.length === 1 && activeProject && !this.project.isProjectDirty(activeProject)) {
+      this.project.deleteProject(activeProject.id, true);
     }
 
-    const projectId = project.createTutorialProject(
+    const projectId = this.project.createTutorialProject(
       name || description,
       validSteps,
       description,
@@ -295,9 +298,9 @@ class TemplatePlugin extends Plugin {
 
     if (projectId) {
       const readmeFile = "readme.md";
-      const proj = project.projects().find((p) => p.id === projectId);
+      const proj = this.project.projects().find((p) => p.id === projectId);
       if (proj && proj.fileNames.includes(readmeFile)) {
-        code.selectFile(readmeFile);
+        this.code.selectFile(readmeFile);
       }
     }
   }

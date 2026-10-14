@@ -113,6 +113,11 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
+  invalidateAtom(atom);
+  runWriteEffects();
+}
+
+export function invalidateAtom(atom: Atom) {
   for (const ctx of atom.observers) {
     const flags = ctx.flags;
     if (!(flags & ComputationFlags.STATE_MASK)) {
@@ -130,11 +135,14 @@ export function onWriteAtom(atom: Atom) {
       pendingDisposals.add(ctx);
     }
   }
+}
+
+export function runWriteEffects() {
   let hasError = false;
   let error: unknown;
   if (immediateObservers.length) {
     // Swap the queue out before running: an immediate effect may itself write
-    // an atom, and that nested onWriteAtom collects and flushes its own queue.
+    // an atom, and that nested write collects and flushes its own queue.
     const toRun = immediateObservers;
     immediateObservers = [];
     for (let i = 0; i < toRun.length; i++) {
@@ -232,7 +240,7 @@ export function updateComputation(computation: ComputationAtom) {
   try {
     computation.value = computation.compute();
   } finally {
-    // mark executed even after a throw, as onWriteAtom only notifies an executed computation
+    // mark executed even after a throw, as invalidateAtom only notifies an executed computation
     computation.flags &= ~ComputationFlags.STATE_MASK;
     // Restore the previous tracking pointer even if compute() threw, so a
     // subsequent atom read does not silently attach itself as a source of

@@ -62,11 +62,15 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   isDerived: boolean;
   sources: Set<Atom>;
   state: ComputationState;
+  // Effect that re-runs synchronously in the write that invalidated it,
+  // instead of being batched in the microtask flush (see `immediateEffect`).
+  immediate: boolean;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
+let immediateObservers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 // Derived computations that were notified of a write while nothing observed
 // them. Left alone, they would stay subscribed to their sources forever (a
@@ -81,7 +85,8 @@ let pendingDisposals = new Set<ComputationAtom>();
 export function createComputation(
   compute: () => any,
   isDerived: boolean,
-  state: ComputationState = ComputationState.STALE
+  state: ComputationState = ComputationState.STALE,
+  immediate: boolean = false
 ): ComputationAtom {
   return {
     state,
@@ -90,6 +95,7 @@ export function createComputation(
     sources: new Set(),
     observers: new Set(),
     isDerived,
+    immediate,
   };
 }
 
@@ -106,6 +112,8 @@ export function onWriteAtom(atom: Atom) {
     if (ctx.state === ComputationState.EXECUTED) {
       if (ctx.isDerived) {
         markDownstream(ctx);
+      } else if (ctx.immediate) {
+        immediateObservers.push(ctx);
       } else {
         observers.push(ctx);
       }
@@ -113,6 +121,15 @@ export function onWriteAtom(atom: Atom) {
     ctx.state = ComputationState.STALE;
     if (ctx.isDerived && ctx.observers.size === 0) {
       pendingDisposals.add(ctx);
+    }
+  }
+  if (immediateObservers.length) {
+    // Swap the queue out before running: an immediate effect may itself write
+    // an atom, and that nested onWriteAtom collects and flushes its own queue.
+    const toRun = immediateObservers;
+    immediateObservers = [];
+    for (let i = 0; i < toRun.length; i++) {
+      updateComputation(toRun[i]);
     }
   }
   batchProcessEffects();
@@ -237,6 +254,8 @@ function markDownstream(computation: ComputationAtom) {
       observer.state = ComputationState.PENDING;
       if (observer.isDerived) {
         stack.push(observer);
+      } else if (observer.immediate) {
+        immediateObservers.push(observer);
       } else {
         observers.push(observer);
       }

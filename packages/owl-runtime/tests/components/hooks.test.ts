@@ -11,6 +11,7 @@ import {
   proxy,
   signal,
   useEffect,
+  useImmediateEffect,
   useListener,
   useOnChange,
   useProps,
@@ -664,6 +665,40 @@ describe("hooks", () => {
       }
       expect(error!.message).toBe("Intentional error");
       expect(getConsoleOutput()).toEqual([]);
+    });
+  });
+
+  describe("useImmediateEffect hook", () => {
+    test("effect re-runs synchronously on change and is cleaned up on destroy", async () => {
+      const steps: string[] = [];
+      class MyComponent extends Component {
+        static template = xml`<div t-out="this.state.value"/>`;
+        state = proxy({ value: 0 });
+        setup() {
+          useImmediateEffect(() => {
+            const value = this.state.value;
+            steps.push(`value is ${value}`);
+            return () => steps.push(`cleaning up for ${value}`);
+          });
+        }
+      }
+
+      const component = await mount(MyComponent, fixture);
+      expect(steps).toEqual(["value is 0"]);
+
+      component.state.value++;
+      // no await: the effect already re-ran, as part of the write...
+      expect(steps).toEqual(["value is 0", "cleaning up for 0", "value is 1"]);
+      // ...before the component was re-rendered
+      expect(elem(component).textContent).toBe("0");
+      await nextTick();
+      expect(elem(component).textContent).toBe("1");
+
+      await component.__owl__.destroy();
+      expect(steps).toEqual(["value is 0", "cleaning up for 0", "value is 1", "cleaning up for 1"]);
+
+      component.state.value++;
+      expect(steps.length).toBe(4);
     });
   });
 

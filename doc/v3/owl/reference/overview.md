@@ -21,6 +21,7 @@ Here is a list of everything exported by the Owl library.
 - [`asyncComputed`](computed_values.md#async-computed-values): like `computed`, but the deriver returns a `Promise`
 - [`proxy`](proxies.md): create a reactive proxy for an object
 - [`effect`](effects.md): create a side effect that re-runs when dependencies change
+- [`immediateEffect`](effects.md#immediate-effects): like `effect`, but re-runs synchronously on write
 - [`markRaw`](proxies.md#markraw): mark an object so it is ignored by the reactivity system
 - [`toRaw`](proxies.md#toraw): given a proxy, return the underlying non-reactive object
 - [`untrack`](effects.md#untrack): execute a function without tracking reactive dependencies
@@ -38,6 +39,7 @@ Here is a list of everything exported by the Owl library.
 ## Other Hooks
 
 - [`useEffect`](hooks.md#useeffect): create a reactive effect, cleaned up on destroy
+- [`useImmediateEffect`](hooks.md#useimmediateeffect): like `useEffect`, for an immediate effect
 - [`useOnChange`](hooks.md#useonchange): run a callback when some dependencies change
 - [`useListener`](hooks.md#uselistener): add a listener to a target, removed on destroy
 - [`useApp`](hooks.md#useapp): get the current App instance

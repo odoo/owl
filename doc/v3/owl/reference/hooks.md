@@ -118,6 +118,17 @@ class SomeComponent extends Component {
 }
 ```
 
+### `useImmediateEffect`
+
+Same as [`useEffect`](#useeffect), but creates an
+[immediate effect](effects.md#immediate-effects): it re-runs synchronously, as
+part of the write that invalidated it, instead of being batched in a microtask.
+It is equivalent to:
+
+```js
+onWillDestroy(immediateEffect(fn));
+```
+
 ### `useOnChange`
 
 The `useOnChange` hook runs a callback whenever one of the values returned by a

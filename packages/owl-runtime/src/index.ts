@@ -51,6 +51,7 @@ export {
   asyncComputed,
   computed,
   effect,
+  immediateEffect,
   markRaw,
   proxy,
   signal,
@@ -63,7 +64,7 @@ export {
   type ReactiveValue,
   type Signal,
 } from "@odoo/owl-core";
-export { useEffect, useListener, useOnChange, useApp } from "./hooks";
+export { useEffect, useImmediateEffect, useListener, useOnChange, useApp } from "./hooks";
 export { batched, EventBus, htmlEscape, shallowEqual, whenReady, markup } from "./utils";
 export {
   onWillStart,

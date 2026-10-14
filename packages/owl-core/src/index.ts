@@ -26,7 +26,7 @@ export {
   type ReactiveValue,
   type Atom,
   type ComputationAtom,
-  ComputationState,
+  ComputationFlags,
   atomSymbol,
   createComputation,
   onReadAtom,

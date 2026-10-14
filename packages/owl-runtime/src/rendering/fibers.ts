@@ -1,5 +1,5 @@
 import {
-  ComputationState,
+  ComputationFlags,
   getCurrentComputation,
   OwlError,
   removeSources,
@@ -217,7 +217,7 @@ export class Fiber {
       const c = getCurrentComputation();
       removeSources(node.signalComputation);
       setComputation(node.signalComputation);
-      node.signalComputation.state = ComputationState.EXECUTED;
+      node.signalComputation.flags &= ~ComputationFlags.STATE_MASK; // EXECUTED
       try {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();

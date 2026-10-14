@@ -1,5 +1,5 @@
 import {
-  ComputationState,
+  ComputationFlags,
   ComputationAtom,
   getCurrentComputation,
   removeSources,
@@ -41,9 +41,7 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
       }
       return fn();
     },
-    false,
-    ComputationState.STALE,
-    immediate
+    immediate ? ComputationFlags.IMMEDIATE | ComputationFlags.STALE : ComputationFlags.STALE
   );
   getCurrentComputation()?.observers.add(computation);
   updateComputation(computation);
@@ -52,7 +50,7 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
   return function cleanupEffect() {
     // Mark as executed so a queued re-run (scheduled by an earlier signal
     // write in the same microtick) is skipped by updateComputation.
-    computation.state = ComputationState.EXECUTED;
+    computation.flags &= ~ComputationFlags.STATE_MASK;
     // Clear currentComputation across unsubscribeEffect so the user cleanup
     // function's atom reads do not attach as sources of whatever computation
     // happens to be active when dispose() is called. See test
@@ -72,7 +70,7 @@ function unsubscribeEffect(effect: ComputationAtom) {
     // Consider it executed to avoid it's re-execution. The recursive
     // unsubscribeEffect below clears the child's sources as its first step,
     // so no explicit removeSources call is needed here.
-    childEffect.state = ComputationState.EXECUTED;
+    childEffect.flags &= ~ComputationFlags.STATE_MASK;
     unsubscribeEffect(childEffect);
   }
   effect.observers.clear();

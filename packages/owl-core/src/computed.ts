@@ -1,6 +1,6 @@
 import {
   atomSymbol,
-  ComputationState,
+  ComputationFlags,
   Equals,
   onReadAtom,
   onWriteAtom,
@@ -50,10 +50,11 @@ export function computed<TRead, TWrite = TRead>(
     }
     hasValue = true;
     return newValue;
-  }, true);
+  }, ComputationFlags.DERIVED | ComputationFlags.STALE);
 
   function readComputed() {
-    if (computation.state !== ComputationState.EXECUTED) {
+    if (computation.flags & ComputationFlags.STATE_MASK) {
+      // not EXECUTED
       updateComputation(computation);
     }
     onReadAtom(computation);

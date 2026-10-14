@@ -46,10 +46,22 @@ export function toEqualsFn<T>(equals: Equals<T> | undefined): (a: T, b: T) => bo
   };
 }
 
-export enum ComputationState {
+/**
+ * `ComputationAtom.flags` packs the mutable state (low two bits) with two
+ * immutable kind bits, so a notified observer is classified from a single
+ * property read. EXECUTED is 0: "needs an update" is `flags & STATE_MASK`, and
+ * clearing the state bits marks a computation as executed.
+ */
+export enum ComputationFlags {
   EXECUTED = 0,
   STALE = 1,
   PENDING = 2,
+  STATE_MASK = 3,
+  // Produced by `computed`: lazy, pulled by its readers, notifies downstream.
+  DERIVED = 4,
+  // Effect that re-runs synchronously in the write that invalidated it,
+  // instead of being batched in the microtask flush (see `immediateEffect`).
+  IMMEDIATE = 8,
 }
 
 export interface Atom<T = any> {
@@ -59,12 +71,9 @@ export interface Atom<T = any> {
 
 export interface ComputationAtom<T = any> extends Atom<T> {
   compute: () => T;
-  isDerived: boolean;
   sources: Set<Atom>;
-  state: ComputationState;
-  // Effect that re-runs synchronously in the write that invalidated it,
-  // instead of being batched in the microtask flush (see `immediateEffect`).
-  immediate: boolean;
+  // a combination of ComputationFlags
+  flags: number;
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -84,18 +93,14 @@ let pendingDisposals = new Set<ComputationAtom>();
 
 export function createComputation(
   compute: () => any,
-  isDerived: boolean,
-  state: ComputationState = ComputationState.STALE,
-  immediate: boolean = false
+  flags: number = ComputationFlags.STALE
 ): ComputationAtom {
   return {
-    state,
+    flags,
     value: undefined,
     compute,
     sources: new Set(),
     observers: new Set(),
-    isDerived,
-    immediate,
   };
 }
 
@@ -109,17 +114,19 @@ export function onReadAtom(atom: Atom) {
 
 export function onWriteAtom(atom: Atom) {
   for (const ctx of atom.observers) {
-    if (ctx.state === ComputationState.EXECUTED) {
-      if (ctx.isDerived) {
+    const flags = ctx.flags;
+    if (!(flags & ComputationFlags.STATE_MASK)) {
+      // EXECUTED
+      if (flags & ComputationFlags.DERIVED) {
         markDownstream(ctx);
-      } else if (ctx.immediate) {
+      } else if (flags & ComputationFlags.IMMEDIATE) {
         immediateObservers.push(ctx);
       } else {
         observers.push(ctx);
       }
     }
-    ctx.state = ComputationState.STALE;
-    if (ctx.isDerived && ctx.observers.size === 0) {
+    ctx.flags = (flags & ~ComputationFlags.STATE_MASK) | ComputationFlags.STALE;
+    if (flags & ComputationFlags.DERIVED && ctx.observers.size === 0) {
       pendingDisposals.add(ctx);
     }
   }
@@ -166,11 +173,11 @@ export function setComputation(computation: ComputationAtom | undefined) {
 }
 
 export function updateComputation(computation: ComputationAtom) {
-  const state = computation.state;
-  if (state === ComputationState.EXECUTED) {
+  const state = computation.flags & ComputationFlags.STATE_MASK;
+  if (state === ComputationFlags.EXECUTED) {
     return;
   }
-  if (state === ComputationState.PENDING) {
+  if (state === ComputationFlags.PENDING) {
     for (const source of computation.sources) {
       if (!("compute" in source)) {
         continue;
@@ -182,14 +189,14 @@ export function updateComputation(computation: ComputationAtom) {
       // them eagerly can surface errors from values the about-to-run body will
       // not actually read (e.g. an `if (lastValue()) uppercase()` guard whose
       // upstream signal just went falsy).
-      if (computation.state === ComputationState.STALE) {
+      if ((computation.flags & ComputationFlags.STATE_MASK) === ComputationFlags.STALE) {
         break;
       }
     }
     // If the state is still not stale after processing the sources, none of
     // the dependencies have actually changed.
-    if (computation.state !== ComputationState.STALE) {
-      computation.state = ComputationState.EXECUTED;
+    if ((computation.flags & ComputationFlags.STATE_MASK) !== ComputationFlags.STALE) {
+      computation.flags &= ~ComputationFlags.STATE_MASK; // EXECUTED
       return;
     }
   }
@@ -200,7 +207,7 @@ export function updateComputation(computation: ComputationAtom) {
   currentComputation = computation;
   try {
     computation.value = computation.compute();
-    computation.state = ComputationState.EXECUTED;
+    computation.flags &= ~ComputationFlags.STATE_MASK; // EXECUTED
   } finally {
     // Restore the previous tracking pointer even if compute() threw, so a
     // subsequent atom read does not silently attach itself as a source of
@@ -225,17 +232,18 @@ export function disposeComputation(computation: ComputationAtom) {
   for (const source of sources) {
     source.observers.delete(computation);
     // Recursively dispose derived computations that lost all observers.
-    // `isDerived` is only set on ComputationAtoms produced by `computed`, so
-    // this check also acts as the "is this a ComputationAtom?" discriminator
-    // that the previous `"compute" in source` test served.
+    // Only ComputationAtoms produced by `computed` carry the DERIVED flag (a
+    // plain atom has no `flags` at all), so this check also acts as the "is
+    // this a ComputationAtom?" discriminator that the previous
+    // `"compute" in source` test served.
     const derived = source as ComputationAtom;
-    if (derived.isDerived && derived.observers.size === 0) {
+    if (derived.flags & ComputationFlags.DERIVED && derived.observers.size === 0) {
       disposeComputation(derived);
     }
   }
   sources.clear();
   // Mark as stale so it recomputes correctly if ever re-used (shared computed case)
-  computation.state = ComputationState.STALE;
+  computation.flags = (computation.flags & ~ComputationFlags.STATE_MASK) | ComputationFlags.STALE;
 }
 
 function markDownstream(computation: ComputationAtom) {
@@ -243,18 +251,20 @@ function markDownstream(computation: ComputationAtom) {
   let current: ComputationAtom | undefined;
   while ((current = stack.pop())) {
     for (const observer of current.observers) {
+      const flags = observer.flags;
       // Collect dead branches before the staleness short-circuit below: an
       // already-stale unobserved derived still needs to be unsubscribed.
-      if (observer.isDerived && observer.observers.size === 0) {
+      if (flags & ComputationFlags.DERIVED && observer.observers.size === 0) {
         pendingDisposals.add(observer);
       }
-      if (observer.state) {
+      if (flags & ComputationFlags.STATE_MASK) {
         continue;
       }
-      observer.state = ComputationState.PENDING;
-      if (observer.isDerived) {
+      // the state bits are 0 (EXECUTED) here
+      observer.flags = flags | ComputationFlags.PENDING;
+      if (flags & ComputationFlags.DERIVED) {
         stack.push(observer);
-      } else if (observer.immediate) {
+      } else if (flags & ComputationFlags.IMMEDIATE) {
         immediateObservers.push(observer);
       } else {
         observers.push(observer);

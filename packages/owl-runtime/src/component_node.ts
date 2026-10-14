@@ -1,6 +1,6 @@
 import {
   ComputationAtom,
-  ComputationState,
+  ComputationFlags,
   createComputation,
   disposeComputation,
   getCurrentComputation,
@@ -67,11 +67,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.parentKey = parentKey;
     this.pluginManager = pluginManager;
     this.componentName = C.name;
-    this.signalComputation = createComputation(
-      () => this.render(false),
-      false,
-      ComputationState.EXECUTED
-    );
+    this.signalComputation = createComputation(() => this.render(false), ComputationFlags.EXECUTED);
     this.props = props;
     const previousComputation = getCurrentComputation();
     setComputation(undefined);

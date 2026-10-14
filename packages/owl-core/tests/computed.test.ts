@@ -3,7 +3,7 @@ import { proxy, computed, shallowEqual, signal } from "../src";
 import {
   atomSymbol,
   ComputationAtom,
-  ComputationState,
+  ComputationFlags,
   createComputation,
   disposeComputation,
   removeSources,
@@ -271,13 +271,9 @@ describe("disposeComputation", () => {
 
     // Simulate a signalComputation (like component's render effect)
     // that reads isSelected during render
-    const signalComp = createComputation(
-      () => {
-        return isSelected(); // reads the computed during "render"
-      },
-      false,
-      ComputationState.STALE
-    );
+    const signalComp = createComputation(() => {
+      return isSelected(); // reads the computed during "render"
+    }, ComputationFlags.STALE);
 
     // Execute (simulating first _render)
     updateComputation(signalComp);
@@ -309,13 +305,9 @@ describe("disposeComputation", () => {
     const isSelected = computed(() => selectedId() === 42);
     const isSelectedAtom = (isSelected as any)[atomSymbol];
 
-    const signalComp = createComputation(
-      () => {
-        return isSelected();
-      },
-      false,
-      ComputationState.EXECUTED
-    );
+    const signalComp = createComputation(() => {
+      return isSelected();
+    }, ComputationFlags.EXECUTED);
 
     // Simulate _render() flow: removeSources, then set currentComputation, then render
     removeSources(signalComp); // noop first time

@@ -428,6 +428,26 @@ describe("Reactivity", () => {
     expect(state).toEqual([0]);
   });
 
+  test("growing an array through an index write is observed", async () => {
+    const spy = vi.fn();
+    const state: any = createProxy([0, 1]);
+    effect(() => spy(state.length));
+    expectSpy(spy, 1, [2]);
+
+    state[2] = 2;
+    await waitScheduler();
+    expectSpy(spy, 2, [3]);
+
+    state[10] = 10;
+    await waitScheduler();
+    expectSpy(spy, 3, [11]);
+
+    state[0] = 5;
+    state[5] = 5;
+    await waitScheduler();
+    expectSpy(spy, 3, [11]);
+  });
+
   test("object pushed into arrays are observed", async () => {
     const spy = vi.fn();
     const arr: any = createProxy([]);

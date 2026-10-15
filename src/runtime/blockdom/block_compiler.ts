@@ -568,15 +568,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         refs[w.idx] = w.getVal.call(refs[w.prevIdx]);
       }
 
-      // applying data to all update points
-      if (locN) {
-        const data = this.data!;
-        for (let i = 0; i < locN; i++) {
-          const loc = locations[i];
-          loc.setData.call(refs[loc.refIdx], data[i]);
-        }
-      }
-
       nodeInsertBefore.call(parent, el, afterNode);
 
       // preparing all children
@@ -592,6 +583,16 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
           }
         }
       }
+
+      // applying data to all update points
+      if (locN) {
+        const data = this.data!;
+        for (let i = 0; i < locN; i++) {
+          const loc = locations[i];
+          loc.setData.call(refs[loc.refIdx], data[i]);
+        }
+      }
+
       this.el = el as HTMLElement;
       this.parentEl = parent;
     };
@@ -601,20 +602,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         return;
       }
       const refs = this.refs!;
-      // update texts/attributes/
-      if (locN) {
-        const data1 = this.data!;
-        const data2 = other.data!;
-        for (let i = 0; i < locN; i++) {
-          const val1 = data1[i];
-          const val2 = data2[i];
-          if (val1 !== val2) {
-            const loc = locations[i];
-            loc.updateData.call(refs[loc.refIdx], val2, val1);
-          }
-        }
-        this.data = data2;
-      }
 
       // update children
       if (childN) {
@@ -640,6 +627,21 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
             children1![i] = child2;
           }
         }
+      }
+
+      // update texts/attributes/
+      if (locN) {
+        const data1 = this.data!;
+        const data2 = other.data!;
+        for (let i = 0; i < locN; i++) {
+          const val1 = data1[i];
+          const val2 = data2[i];
+          if (val1 !== val2) {
+            const loc = locations[i];
+            loc.updateData.call(refs[loc.refIdx], val2, val1);
+          }
+        }
+        this.data = data2;
       }
     };
   }

@@ -68,3 +68,13 @@ test("input type=checkbox with checked property", () => {
   const input = fixture.querySelector("input")!;
   expect(input.checked).toBe(true);
 });
+
+test("select with value property and options in child block", () => {
+  const block = createBlock(`<select block-property-0="value"><option value="a"/><block-child-0/></select>`);
+  const childBlock = createBlock(`<option value="b">b</option>`);
+
+  const tree = block(["b"], [childBlock()]);
+  mount(tree, fixture);
+  const select = fixture.querySelector("select")!;
+  expect(select.value).toBe("b");
+});

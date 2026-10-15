@@ -570,14 +570,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1].call(refs[(packed >> 15) & 0x7fff])!;
       }
 
-      // applying data to all update points
-      if (locN) {
-        const data = this.data!;
-        for (let i = 0; i < locN; i++) {
-          locSetters[i].call(refs[locRefIdxs[i]], data[i]);
-        }
-      }
-
       // preparing all children (off-DOM, before inserting el into the live document)
       if (childN) {
         const children = this.children;
@@ -590,6 +582,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
             child.isOnlyChild = !!(info & (1 << 15));
             child.mount(refs[info & 0x7fff] as any, afterNode);
           }
+        }
+      }
+
+      // applying data to all update points
+      if (locN) {
+        const data = this.data!;
+        for (let i = 0; i < locN; i++) {
+          locSetters[i].call(refs[locRefIdxs[i]], data[i]);
         }
       }
 
@@ -612,19 +612,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         return;
       }
       const refs = this.refs!;
-      // update texts/attributes/
-      if (locN) {
-        const data1 = this.data!;
-        const data2 = other.data!;
-        for (let i = 0; i < locN; i++) {
-          const val1 = data1[i];
-          const val2 = data2[i];
-          if (val1 !== val2) {
-            locUpdaters[i].call(refs[locRefIdxs[i]], val2, val1);
-          }
-        }
-        this.data = data2;
-      }
 
       // update children
       if (childN) {
@@ -651,6 +638,20 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
             children1![i] = child2;
           }
         }
+      }
+
+      // update texts/attributes/
+      if (locN) {
+        const data1 = this.data!;
+        const data2 = other.data!;
+        for (let i = 0; i < locN; i++) {
+          const val1 = data1[i];
+          const val2 = data2[i];
+          if (val1 !== val2) {
+            locUpdaters[i].call(refs[locRefIdxs[i]], val2, val1);
+          }
+        }
+        this.data = data2;
       }
     };
 

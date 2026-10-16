@@ -113,6 +113,11 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
+  invalidateAtom(atom);
+  runWriteEffects();
+}
+
+export function invalidateAtom(atom: Atom) {
   for (const ctx of atom.observers) {
     const flags = ctx.flags;
     if (!(flags & ComputationFlags.STATE_MASK)) {
@@ -130,24 +135,48 @@ export function onWriteAtom(atom: Atom) {
       pendingDisposals.add(ctx);
     }
   }
+}
+
+export function runWriteEffects() {
+  let hasError = false;
+  let error: unknown;
   if (immediateObservers.length) {
     // Swap the queue out before running: an immediate effect may itself write
-    // an atom, and that nested onWriteAtom collects and flushes its own queue.
+    // an atom, and that nested write collects and flushes its own queue.
     const toRun = immediateObservers;
     immediateObservers = [];
     for (let i = 0; i < toRun.length; i++) {
-      updateComputation(toRun[i]);
+      try {
+        updateComputation(toRun[i]);
+      } catch (e) {
+        if (!hasError) {
+          hasError = true;
+          error = e;
+        }
+      }
     }
   }
   batchProcessEffects();
+  if (hasError) {
+    throw error;
+  }
 }
 
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
   const pending = observers;
   observers = [];
+  let hasError = false;
+  let error: unknown;
   for (let i = 0; i < pending.length; i++) {
-    updateComputation(pending[i]);
+    try {
+      updateComputation(pending[i]);
+    } catch (e) {
+      if (!hasError) {
+        hasError = true;
+        error = e;
+      }
+    }
   }
   if (pendingDisposals.size !== 0) {
     const candidates = pendingDisposals;
@@ -161,6 +190,9 @@ function processEffects() {
         disposeComputation(computation);
       }
     }
+  }
+  if (hasError) {
+    throw error;
   }
 }
 
@@ -207,8 +239,9 @@ export function updateComputation(computation: ComputationAtom) {
   currentComputation = computation;
   try {
     computation.value = computation.compute();
-    computation.flags &= ~ComputationFlags.STATE_MASK; // EXECUTED
   } finally {
+    // mark executed even after a throw, as invalidateAtom only notifies an executed computation
+    computation.flags &= ~ComputationFlags.STATE_MASK;
     // Restore the previous tracking pointer even if compute() threw, so a
     // subsequent atom read does not silently attach itself as a source of
     // the failed computation.

@@ -225,6 +225,28 @@ describe("immediateEffect", () => {
     expect(() => s.set(2)).toThrow("boom");
   });
 
+  test("push reruns an immediateEffect reading length once", () => {
+    const state = proxy([1, 2]);
+    const spy = vi.fn();
+    immediateEffect(() => spy(state.length));
+    expectSpy(spy, 1, { args: [2] });
+    state.push(3);
+    expectSpy(spy, 2, { args: [3] });
+  });
+
+  test("push notifies length before an immediateEffect throws on the new index", () => {
+    const state = proxy([1, 2]);
+    const spy = vi.fn();
+    immediateEffect(() => spy(state.length));
+    immediateEffect(() => {
+      if (state[2] === 3) {
+        throw new Error("boom");
+      }
+    });
+    expect(() => state.push(3)).toThrow("boom");
+    expectSpy(spy, 2, { args: [3] });
+  });
+
   describe("nested immediateEffects", () => {
     test("should track correctly", () => {
       const state = proxy({ a: 1, b: 10 });

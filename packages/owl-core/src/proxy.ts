@@ -225,23 +225,27 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
     set(target, key, value, receiver) {
       const hadKey = objectHasOwnProperty.call(target, key);
       const originalValue = Reflect.get(target, key, receiver);
+      const originalLength = !hadKey && Array.isArray(target) ? target.length : -1;
       const ret = Reflect.set(target, key, toRaw(value), receiver);
       const keyCreated = !hadKey && objectHasOwnProperty.call(target, key);
       const valueChanged = originalValue !== Reflect.get(target, key, receiver);
       if (keyCreated) {
         onWriteTargetKey(target, KEYCHANGES);
+        // notify length on growth, as an index write past the end calls no trap for length
+        if (originalLength !== -1 && (target as any[]).length !== originalLength) {
+          onWriteTargetKey(target, "length");
+        }
       }
-      if (key === "length" && Array.isArray(target)) {
-        // While Array length may trigger the set trap, it's not actually set by this
-        // method but is updated behind the scenes, and the trap is not called with the
-        // new value. We disable the "same-value-optimization" for it because of that.
+      if (valueChanged) {
         onWriteTargetKey(target, key);
-        if (target.length < (originalValue as number)) {
+        if (
+          key === "length" &&
+          Array.isArray(target) &&
+          target.length < (originalValue as number)
+        ) {
           onWriteTargetKey(target, KEYCHANGES);
           onWriteDroppedIndices(target, target.length);
         }
-      } else if (valueChanged) {
-        onWriteTargetKey(target, key);
       }
       return ret;
     },

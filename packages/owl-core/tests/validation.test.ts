@@ -4,6 +4,7 @@ import {
   assertType,
   computed,
   getDefault,
+  proxy,
   signal,
   t,
   types,
@@ -285,6 +286,83 @@ test("literal", () => {
   expect(validateType(null, t.literal(undefined))).toEqual([
     { message: "value is not equal to undefined", path: "", received: null },
   ]);
+});
+
+describe("map", () => {
+  test("map", () => {
+    expect(validateType({}, t.map())).toEqual([
+      { message: "value is not a map", path: "", received: {} },
+    ]);
+    expect(validateType([], t.map())).toEqual([
+      { message: "value is not a map", path: "", received: [] },
+    ]);
+    expect(validateType("abc", t.map())).toEqual([
+      { message: "value is not a map", path: "", received: "abc" },
+    ]);
+    const set = new Set(["abc"]);
+    expect(validateType(set, t.map())).toEqual([
+      { message: "value is not a map", path: "", received: set },
+    ]);
+    expect(validateType(new Map(), t.map())).toEqual([]);
+    expect(validateType(new Map([["a", 123]]), t.map())).toEqual([]);
+  });
+
+  test("key and value types", () => {
+    const type = t.map(t.string(), t.number());
+    expect(validateType(new Map(), type)).toEqual([]);
+    expect(
+      validateType(
+        new Map([
+          ["a", 123],
+          ["b", 456],
+        ]),
+        type
+      )
+    ).toEqual([]);
+    expect(validateType(new Map([["a", "abc"]]), type)).toEqual([
+      { message: "value is not a number", path: "0 > value", received: "abc" },
+    ]);
+    expect(validateType(new Map([[123, 123]]), type)).toEqual([
+      { message: "value is not a string", path: "0 > key", received: 123 },
+    ]);
+    expect(
+      validateType(
+        new Map<any, any>([
+          ["a", 123],
+          [456, "def"],
+        ]),
+        type
+      )
+    ).toEqual([
+      { message: "value is not a string", path: "1 > key", received: 456 },
+      { message: "value is not a number", path: "1 > value", received: "def" },
+    ]);
+  });
+
+  test("key type only", () => {
+    const type = t.map(t.string());
+    expect(validateType(new Map([["a", 123]]), type)).toEqual([]);
+    expect(validateType(new Map([["a", "abc"]]), type)).toEqual([]);
+    expect(validateType(new Map([[123, "abc"]]), type)).toEqual([
+      { message: "value is not a string", path: "0 > key", received: 123 },
+    ]);
+  });
+
+  test("nested type", () => {
+    const type = t.map(t.string(), t.object({ a: t.number() }));
+    expect(validateType(new Map([["k", { a: 123 }]]), type)).toEqual([]);
+    expect(validateType(new Map([["k", { a: "abc" }]]), type)).toEqual([
+      { message: "value is not a number", path: "0 > value > a", received: "abc" },
+    ]);
+  });
+
+  test("a reactive map is validated like a plain one", () => {
+    const type = t.map(t.string(), t.number());
+    expect(validateType(proxy(new Map([["a", 123]])), type)).toEqual([]);
+    expect(validateType(proxy(new Map([["a", "abc"]])), type)).toEqual([
+      { message: "value is not a number", path: "0 > value", received: "abc" },
+    ]);
+  });
 });
 
 test("number", () => {
@@ -574,6 +652,55 @@ test("ref", () => {
   } finally {
     delete (globalThis as any).HTMLElement;
   }
+});
+
+describe("set", () => {
+  test("set", () => {
+    expect(validateType({}, t.set())).toEqual([
+      { message: "value is not a set", path: "", received: {} },
+    ]);
+    expect(validateType([], t.set())).toEqual([
+      { message: "value is not a set", path: "", received: [] },
+    ]);
+    expect(validateType("abc", t.set())).toEqual([
+      { message: "value is not a set", path: "", received: "abc" },
+    ]);
+    const map = new Map([["a", 123]]);
+    expect(validateType(map, t.set())).toEqual([
+      { message: "value is not a set", path: "", received: map },
+    ]);
+    expect(validateType(new Set(), t.set())).toEqual([]);
+    expect(validateType(new Set(["abc", 123]), t.set())).toEqual([]);
+  });
+
+  test("value type", () => {
+    const type = t.set(t.string());
+    expect(validateType(new Set(), type)).toEqual([]);
+    expect(validateType(new Set(["abc", "def"]), type)).toEqual([]);
+    expect(validateType(new Set([123]), type)).toEqual([
+      { message: "value is not a string", path: "0", received: 123 },
+    ]);
+    expect(validateType(new Set<any>(["abc", 123, 456]), type)).toEqual([
+      { message: "value is not a string", path: "1", received: 123 },
+      { message: "value is not a string", path: "2", received: 456 },
+    ]);
+  });
+
+  test("nested type", () => {
+    const type = t.set(t.object({ a: t.number() }));
+    expect(validateType(new Set([{ a: 123 }]), type)).toEqual([]);
+    expect(validateType(new Set([{ a: "abc" }]), type)).toEqual([
+      { message: "value is not a number", path: "0 > a", received: "abc" },
+    ]);
+  });
+
+  test("a reactive set is validated like a plain one", () => {
+    const type = t.set(t.string());
+    expect(validateType(proxy(new Set(["abc"])), type)).toEqual([]);
+    expect(validateType(proxy(new Set([123])), type)).toEqual([
+      { message: "value is not a string", path: "0", received: 123 },
+    ]);
+  });
 });
 
 test("strictObject", () => {

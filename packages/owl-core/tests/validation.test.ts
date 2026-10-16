@@ -1006,6 +1006,11 @@ describe("applyDefaults", () => {
     expect(applyDefaults(undefined, t.number())).toBe(undefined);
   });
 
+  test("fills in a String object default as it is", () => {
+    const defaultValue = new String("abc");
+    expect(applyDefaults(undefined, t.string().optional(defaultValue))).toBe(defaultValue);
+  });
+
   test("fills in nested defaults without mutating the input", () => {
     const type = t.object({
       config: t.object({

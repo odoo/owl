@@ -1,4 +1,6 @@
+import { untrack } from "./computations";
 import { OwlError } from "./owl_error";
+import { toRaw } from "./proxy";
 
 export interface ValidationIssue {
   message: string;
@@ -65,7 +67,8 @@ function createContext(
   return {
     issueDepth: 0,
     path,
-    value,
+    // Walk the raw value: a proxy read builds an atom the target then keeps.
+    value: toRaw(value),
     get isValid() {
       return !issues.length;
     },
@@ -96,6 +99,6 @@ function createContext(
 
 export function validateType(value: any, validation: any): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
-  validation(createContext(issues, value, []));
+  untrack(() => validation(createContext(issues, value, [])));
   return issues;
 }

@@ -1,4 +1,5 @@
 import { computed, immediateEffect, effect, proxy, signal } from "../src";
+import { atomSymbol, ComputationAtom, ComputationFlags } from "../src/computations";
 import { expectSpy, waitScheduler } from "./helpers";
 
 describe("immediateEffect", () => {
@@ -314,5 +315,166 @@ describe("immediateEffect", () => {
       // only the fresh child reacts
       expectSpy(spy, 4, { args: [30] });
     });
+  });
+
+  test("an unchanged computed read by an immediate effect does not notify", async () => {
+    const s = signal(1);
+    const isPositive = computed(() => s() > 0);
+    const spy = vi.fn();
+    immediateEffect(() => spy(isPositive()));
+    const label = computed(() => (isPositive() ? "positive" : "negative"));
+    const labels: string[] = [];
+    effect(() => {
+      labels.push(label());
+    });
+    const labelAtom = (label as any)[atomSymbol] as ComputationAtom;
+    s.set(2);
+    expect(labelAtom.flags & ComputationFlags.STATE_MASK).toBe(ComputationFlags.EXECUTED);
+    expectSpy(spy, 1, { args: [true] });
+    s.set(-1);
+    expectSpy(spy, 2, { args: [false] });
+    await waitScheduler();
+    expect(labels).toEqual(["positive", "negative"]);
+  });
+
+  test("a computed is lazy again once no immediate effect reads it", () => {
+    const s = signal(1);
+    const getter = vi.fn(() => s() > 0);
+    const isPositive = computed(getter);
+    const dispose = immediateEffect(() => {
+      isPositive();
+      isPositive();
+    });
+    s.set(2);
+    expectSpy(getter, 2);
+    dispose();
+    s.set(3);
+    expectSpy(getter, 2);
+  });
+
+  test("a changing computed read by an immediate effect runs its getter once per write", () => {
+    const s = signal(0);
+    const getter = vi.fn(() => s() * 2);
+    const double = computed(getter);
+    immediateEffect(() => double());
+    s.set(1);
+    s.set(2);
+    expectSpy(getter, 3);
+  });
+
+  test("a computed reading below another changing computed runs its getter once per write", () => {
+    const s = signal(0);
+    const double = computed(() => s() * 2);
+    const doublePlusOne = computed(() => double() + 1);
+    const getter = vi.fn(() => s() + doublePlusOne());
+    const sum = computed(getter);
+    const sums: number[] = [];
+    immediateEffect(() => sums.push(sum()));
+    immediateEffect(() => double());
+    s.set(1);
+    expect(sums).toEqual([1, 4]);
+    expectSpy(getter, 2);
+  });
+
+  test("an immediate effect writing the source of a changing computed leaves it fresh", () => {
+    const s = signal(0);
+    const double = computed(() => s() * 2);
+    immediateEffect(() => {
+      if (double() === 2) {
+        s.set(2);
+      }
+    });
+    s.set(1);
+    expect(s()).toBe(2);
+    expect(double()).toBe(4);
+  });
+
+  test("a throwing immediate effect does not leave a changing computed stale", () => {
+    class TestError extends Error {
+      override name = "TestError";
+    }
+    const s = signal(0);
+    const double = computed(() => s() * 2);
+    immediateEffect(() => {
+      if (s() === 1) {
+        throw new TestError("one");
+      }
+    });
+    immediateEffect(() => {
+      if (s() !== 1) {
+        double();
+      }
+    });
+    expect(() => s.set(1)).toThrow("one");
+    expect(double()).toBe(2);
+  });
+
+  test("two computeds read by immediate effects change in one write without a glitch", () => {
+    const s = signal(15);
+    const isLarge = computed(() => s() > 10);
+    const isPositive = computed(() => s() > 0);
+    const sign = computed(() => (isPositive() ? "+" : "-"));
+    const log: any[] = [];
+    immediateEffect(() => log.push([s(), isLarge(), sign()]));
+    immediateEffect(() => isPositive());
+    s.set(-1);
+    expect(log).toEqual([
+      [15, true, "+"],
+      [-1, false, "-"],
+    ]);
+  });
+
+  test("an unchanged computed read by an immediate effect still disposes its unread readers", async () => {
+    const s = signal(1);
+    const isPositive = computed(() => s() > 0);
+    immediateEffect(() => isPositive());
+    const label = computed(() => (isPositive() ? "positive" : "negative"));
+    label();
+    const isPositiveAtom = (isPositive as any)[atomSymbol] as ComputationAtom;
+    const labelAtom = (label as any)[atomSymbol] as ComputationAtom;
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(true);
+    s.set(2);
+    await waitScheduler();
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(false);
+  });
+
+  test("an unchanged computed read by an immediate effect disposes a reader an effect dropped", async () => {
+    const s = signal(1);
+    const isShown = signal(true);
+    const isPositive = computed(() => s() > 0);
+    immediateEffect(() => isPositive());
+    const label = computed(() => (isPositive() ? "positive" : "negative"));
+    effect(() => {
+      if (isShown()) {
+        label();
+      }
+    });
+    await waitScheduler();
+    isShown.set(false);
+    await waitScheduler();
+    const isPositiveAtom = (isPositive as any)[atomSymbol] as ComputationAtom;
+    const labelAtom = (label as any)[atomSymbol] as ComputationAtom;
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(true);
+    s.set(2);
+    await waitScheduler();
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(false);
+  });
+
+  test("an unchanged computed read by an immediate effect disposes a chain of unread readers", async () => {
+    const s = signal(1);
+    const isPositive = computed(() => s() > 0);
+    immediateEffect(() => isPositive());
+    const label = computed(() => (isPositive() ? "positive" : "negative"));
+    const upperLabel = computed(() => label().toUpperCase());
+    upperLabel();
+    const isPositiveAtom = (isPositive as any)[atomSymbol] as ComputationAtom;
+    const labelAtom = (label as any)[atomSymbol] as ComputationAtom;
+    const upperLabelAtom = (upperLabel as any)[atomSymbol] as ComputationAtom;
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(true);
+    expect(labelAtom.observers.has(upperLabelAtom)).toBe(true);
+    s.set(2);
+    await waitScheduler();
+    expect(isPositiveAtom.observers.has(labelAtom)).toBe(false);
+    expect(labelAtom.observers.has(upperLabelAtom)).toBe(false);
   });
 });

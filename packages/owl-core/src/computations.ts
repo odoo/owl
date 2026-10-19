@@ -74,6 +74,7 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   sources: Set<Atom>;
   // a combination of ComputationFlags
   flags: number;
+  immediateObserverCount: number;
 }
 
 export const atomSymbol = Symbol("Atom");
@@ -90,6 +91,7 @@ let currentComputation: ComputationAtom | undefined;
 // a computation being pulled lazily is unobserved while it recomputes — so
 // the flush re-checks before disposing.
 let pendingDisposals = new Set<ComputationAtom>();
+let eagerDepth = 0;
 
 export function createComputation(
   compute: () => any,
@@ -101,6 +103,7 @@ export function createComputation(
     compute,
     sources: new Set(),
     observers: new Set(),
+    immediateObserverCount: 0,
   };
 }
 
@@ -108,17 +111,40 @@ export function onReadAtom(atom: Atom) {
   if (!currentComputation) {
     return;
   }
+  if (
+    currentComputation.flags & ComputationFlags.IMMEDIATE &&
+    (atom as ComputationAtom).flags & ComputationFlags.DERIVED &&
+    !currentComputation.sources.has(atom)
+  ) {
+    (atom as ComputationAtom).immediateObserverCount++;
+  }
   currentComputation.sources.add(atom);
   atom.observers.add(currentComputation);
 }
 
+function readsOnlySignals(computation: ComputationAtom): boolean {
+  for (const source of computation.sources) {
+    if ((source as ComputationAtom).flags & ComputationFlags.DERIVED) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function onWriteAtom(atom: Atom) {
+  let eagerComputations: ComputationAtom[] | undefined;
   for (const ctx of atom.observers) {
     const flags = ctx.flags;
     if (!(flags & ComputationFlags.STATE_MASK)) {
       // EXECUTED
       if (flags & ComputationFlags.DERIVED) {
-        markDownstream(ctx);
+        // An immediate effect would pull this computed in this write anyway: recompute it before
+        // marking its observers, so that an equal value notifies no one.
+        if (ctx.immediateObserverCount && readsOnlySignals(ctx)) {
+          (eagerComputations ??= []).push(ctx);
+        } else {
+          markDownstream(ctx);
+        }
       } else if (flags & ComputationFlags.IMMEDIATE) {
         immediateObservers.push(ctx);
       } else {
@@ -132,7 +158,23 @@ export function onWriteAtom(atom: Atom) {
   }
   let hasError = false;
   let error: unknown;
-  if (immediateObservers.length) {
+  if (eagerComputations) {
+    eagerDepth++;
+    for (const computation of eagerComputations) {
+      try {
+        updateComputation(computation);
+      } catch (e) {
+        if (!hasError) {
+          hasError = true;
+          error = e;
+        }
+      }
+    }
+    eagerDepth--;
+  }
+  // A computed recomputed above notifies from inside its compute, before it holds its new value:
+  // the immediate effects queued during this loop run in the outermost write, after the loop.
+  if (immediateObservers.length && !eagerDepth) {
     // Swap the queue out before running: an immediate effect may itself write
     // an atom, and that nested onWriteAtom collects and flushes its own queue.
     const toRun = immediateObservers;
@@ -241,8 +283,19 @@ export function updateComputation(computation: ComputationAtom) {
   }
 }
 
+function forgetImmediateObserver(computation: ComputationAtom) {
+  for (const source of computation.sources) {
+    if ((source as ComputationAtom).flags & ComputationFlags.DERIVED) {
+      (source as ComputationAtom).immediateObserverCount--;
+    }
+  }
+}
+
 export function removeSources(computation: ComputationAtom) {
   const sources = computation.sources;
+  if (computation.flags & ComputationFlags.IMMEDIATE) {
+    forgetImmediateObserver(computation);
+  }
   for (const source of sources) {
     const observers = source.observers;
     observers.delete(computation);
@@ -254,6 +307,9 @@ export function removeSources(computation: ComputationAtom) {
 
 export function disposeComputation(computation: ComputationAtom) {
   const sources = computation.sources;
+  if (computation.flags & ComputationFlags.IMMEDIATE) {
+    forgetImmediateObserver(computation);
+  }
   for (const source of sources) {
     source.observers.delete(computation);
     // Recursively dispose derived computations that lost all observers.

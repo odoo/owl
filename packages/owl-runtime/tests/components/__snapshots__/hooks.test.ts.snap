@@ -399,6 +399,19 @@ exports[`hooks > useListener work with references 1`] = `
 }"
 `;
 
+exports[`hooks > useOnChange hook > callback destroying its app does not run again 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`hooks > useOnChange hook > callback does not run if the dependency values are unchanged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -426,6 +439,19 @@ exports[`hooks > useOnChange hook > callback receives each dependency as an argu
 `;
 
 exports[`hooks > useOnChange hook > callback runs on mount, on dependency change and is cleaned up 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`hooks > useOnChange hook > callback writing one of its dependencies keeps running on the next changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

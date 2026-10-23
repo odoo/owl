@@ -53,6 +53,10 @@ export type Static<T> = T & {
   ): WithDefault<T & { [isStatic]: T }>;
 };
 
+// Phantom brand of a read-only `types.signal()`: props promote a plain value passed on it.
+export declare const isPromotable: unique symbol;
+export type Promotable<T> = { [isPromotable]: T };
+
 // Type-level brand carried by every type built by the `types` factories. It
 // is phantom: at runtime, only the `optional` method exists on the validator.
 export declare const typeBrand: unique symbol;
@@ -139,15 +143,39 @@ type GetRequiredEntries<T> = {
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
 
+type Not<B extends boolean> = B extends true ? false : true;
+type IsPromotable<T> = IsAny<T> extends true ? false : T extends Promotable<any> ? true : false;
+type PromotedValue<T> = T extends Promotable<infer U> ? U : never;
+type IsAbsentForReader<T> = IsOptional<T> extends true ? Not<IsPromotable<T>> : false;
+type IsOmittable<T> = IsOptional<T> extends true ? true : HasDefault<T>;
+type ReaderValue<T> =
+  IsPromotable<T> extends true
+    ? IsOptional<T> extends true
+      ? ReactiveValue<PromotedValue<T> | undefined>
+      : StripBrands<T>
+    : StripBrands<T>;
+type ParentValue<T> =
+  IsPromotable<T> extends true ? StripBrands<T> | PromotedValue<T> : StripBrands<T>;
+
 // Object type as seen by the reader of the values once defaults are applied:
 // defaulted keys are required (the default fills them), only optional keys
-// may be absent. Resolves to a flat object type, so editors display it
-// expanded.
+// may be absent, except a read-only signal key, which props promote even when
+// omitted. Resolves to a flat object type, so editors display it expanded.
 export type ResolveReaderObjectType<T> = PrettifyShape<
   {
-    [K in keyof T as IsOptional<T[K]> extends true ? never : K]: StripBrands<T[K]>;
+    [K in keyof T as IsAbsentForReader<T[K]> extends true ? never : K]: ReaderValue<T[K]>;
   } & {
-    [K in keyof T as IsOptional<T[K]> extends true ? K : never]?: StripBrands<T[K]>;
+    [K in keyof T as IsAbsentForReader<T[K]> extends true ? K : never]?: StripBrands<T[K]>;
+  }
+>;
+
+// Object type as seen by the parent giving the props: a read-only signal key
+// also takes the plain value that props promote.
+export type ResolveParentObjectType<T> = PrettifyShape<
+  {
+    [K in keyof T as IsOmittable<T[K]> extends true ? never : K]: ParentValue<T[K]>;
+  } & {
+    [K in keyof T as IsOmittable<T[K]> extends true ? K : never]?: ParentValue<T[K]>;
   }
 >;
 
@@ -654,9 +682,20 @@ interface SignalTypeOptions {
   settable?: boolean;
 }
 
-function reactiveValueType(): Type<ReactiveValue<any>>;
-function reactiveValueType<T>(): Type<ReactiveValue<T>>;
-function reactiveValueType<T>(type: T): Type<ReactiveValue<StripBrands<T>>>;
+// No `.static()`: a signal prop is static by nature, and the wrapper would drop
+// the promotion brand.
+type NoStatic = { static: never };
+
+type ReadonlySignalType<T> = {
+  optional(): Optional<ReactiveValue<T>> & Promotable<T> & NoStatic;
+  optional(value: () => ReactiveValue<T>): WithDefault<ReactiveValue<T>> & Promotable<T> & NoStatic;
+} & Type<ReactiveValue<T>> &
+  Promotable<T> &
+  NoStatic;
+
+function reactiveValueType(): ReadonlySignalType<any>;
+function reactiveValueType<T>(): ReadonlySignalType<T>;
+function reactiveValueType<T>(type: T): ReadonlySignalType<StripBrands<T>>;
 function reactiveValueType<T>(
   type: T,
   options: { settable: true }

@@ -77,7 +77,7 @@ exports[`.signal suffix accepts a signal-typed prop without validation error 1`]
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])};
+    const props1 = {count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])};
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -103,7 +103,7 @@ exports[`.signal suffix lazy evaluation > a constant satisfies a signal-typed pr
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {count: toComputed(node, \`__sig_1\`, () => (7))};
+    const props1 = {count: toComputed(node, key + \`__sig_1\`, () => (7))};
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -135,7 +135,7 @@ exports[`.signal suffix lazy evaluation > a replaced t-foreach item reaches the 
       let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].id;
-      c_block1[i1] = withKey(comp1({value: toComputed(node, \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({value: toComputed(node, key + \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -153,6 +153,108 @@ exports[`.signal suffix lazy evaluation > a replaced t-foreach item reaches the 
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].props.value());
     return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a slot called per item keeps one computed per item 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent, markRaw } = helpers;
+  const comp1 = createComponent(app, \`Item\`, true, false, false, []);
+  const comp2 = createComponent(app, \`List\`, true, true, false, ["items"]);
+  
+  function slot1(ctx, node, key = "") {
+    return comp1({v: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].item), [ctx['scope']])}, key + \`__1\`, node, this, null);
+  }
+  
+  return function template(ctx, node, key = "") {
+    return comp2({items: ctx['this'].state.items,slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx, __scope: "scope"}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a slot called per item keeps one computed per item 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, callSlot, withKey } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.items);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`item\`] = k_block1[i1];
+      ctx[\`item_first\`] = i1 === 0;
+      ctx[\`item_last\`] = i1 === k_block1.length - 1;
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = v_block1[i1];
+      const key1 = ctx['item'];
+      c_block1[i1] = withKey(callSlot(ctx, node, key1, 'default', false, {item: ctx['item']}), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a slot called per item keeps one computed per item 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<i><block-child-0/></i>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.v());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a t-call sub-template keeps its own computed 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent, callTemplate } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = comp1({v: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.a), [ctx['this']])}, key + \`__1\`, node, this, null);
+    const b3 = callTemplate(\`__template__1000\`, this, app, ctx, node, key + \`__2\`);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a t-call sub-template keeps its own computed 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<i><block-child-0/></i>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].props.v());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix lazy evaluation > a t-call sub-template keeps its own computed 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({v: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.b), [ctx['this']])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -185,7 +287,7 @@ exports[`.signal suffix lazy evaluation > a t-call-context sub-template follows 
   return function template(ctx, node, key = "") {
     const b3 = safeOutput(ctx['this'].name);
     const b2 = block2([], [b3]);
-    const b4 = comp1({name: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].name), [ctx['this']])}, key + \`__1\`, node, this, null);
+    const b4 = comp1({name: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].name), [ctx['this']])}, key + \`__1\`, node, this, null);
     return multi([b2, b4]);
   }
 }"
@@ -220,7 +322,7 @@ exports[`.signal suffix lazy evaluation > a template string interpolation reache
       let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].id;
-      c_block1[i1] = withKey(comp1({label: toComputed(node, \`__sig_1__\${key1}\`, (__caps) => (\`item \${__caps[0].n}\`), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({label: toComputed(node, key + \`__sig_1__\${key1}\`, (__caps) => (\`item \${__caps[0].n}\`), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -250,7 +352,7 @@ exports[`.signal suffix lazy evaluation > an object literal reaches the child 1`
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    return comp1({cfg: toComputed(node, \`__sig_1\`, (__caps) => ({mode:__caps[0].state.mode}), [ctx['this']])}, key + \`__1\`, node, this, null);
+    return comp1({cfg: toComputed(node, key + \`__sig_1\`, (__caps) => ({mode:__caps[0].state.mode}), [ctx['this']])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -277,7 +379,7 @@ exports[`.signal suffix lazy evaluation > the parent does not re-render when the
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
+    const b2 = comp1({count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -309,7 +411,7 @@ exports[`.signal suffix lazy evaluation > the wrapper follows the t-key across a
       let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].id;
-      c_block1[i1] = withKey(comp1({value: toComputed(node, \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']]),id: ctx['item'].id}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({value: toComputed(node, key + \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']]),id: ctx['item'].id}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -339,7 +441,7 @@ exports[`.signal suffix promotes a plain value to a signal 1`] = `
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])};
+    const props1 = {count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])};
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -371,7 +473,7 @@ exports[`.signal suffix works in a t-foreach loop 1`] = `
       let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].id;
-      c_block1[i1] = withKey(comp1({value: toComputed(node, \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({value: toComputed(node, key + \`__sig_1__\${key1}\`, (__caps) => (__caps[0].n), [ctx['item']])}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -393,6 +495,31 @@ exports[`.signal suffix works in a t-foreach loop 2`] = `
 }"
 `;
 
+exports[`.signal suffix: an error on the first render of the child is not hidden 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({n: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.record.n), [ctx['this']])}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix: an error on the first render of the child is not hidden 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.n());
+  }
+}"
+`;
+
 exports[`.signal suffix: child re-reads updated value when parent state changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -401,7 +528,7 @@ exports[`.signal suffix: child re-reads updated value when parent state changes 
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    return comp1({count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
+    return comp1({count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -426,7 +553,7 @@ exports[`.signal suffix: child receives a read-only reactive value 1`] = `
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    return comp1({count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
+    return comp1({count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -451,7 +578,7 @@ exports[`.signal suffix: effects in child react to parent value changes 1`] = `
   const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    return comp1({count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
+    return comp1({count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -468,6 +595,146 @@ exports[`.signal suffix: effects in child react to parent value changes 2`] = `
 }"
 `;
 
+exports[`.signal suffix: no error in a child effect for an item removed from a t-foreach 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { prepareList, toComputed, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`Item\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.ids);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`id\`] = k_block1[i1];
+      const key1 = ctx['id'];
+      c_block1[i1] = withKey(comp1({n: toComputed(node, key + \`__sig_1__\${key1}\`, (__caps) => (__caps[0].state.records[__caps[1]].n), [ctx['this'],ctx['id']])}, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect for an item removed from a t-foreach 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.n());
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect once a t-if guard of an ancestor turns false 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Parent\`, true, false, false, []);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (ctx['this'].state.record) {
+      b2 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect once a t-if guard of an ancestor turns false 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({n: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.record.n), [ctx['this']])}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect once a t-if guard of an ancestor turns false 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.n());
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect once a t-if guard of the parent turns false 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput, toComputed, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3, b4;
+    b2 = safeOutput(ctx['this'].state.tick);
+    b3 = text(\`|\`);
+    if (ctx['this'].state.record) {
+      b4 = comp1({n: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.record.n), [ctx['this']])}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`.signal suffix: no error in a child effect once a t-if guard of the parent turns false 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.n());
+  }
+}"
+`;
+
+exports[`.signal suffix: no error on a first read in a child effect once a t-if guard turns false 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { toComputed, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (ctx['this'].state.record) {
+      b2 = comp1({n: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.record.n), [ctx['this']])}, key + \`__1\`, node, this, null);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`.signal suffix: no error on a first read in a child effect once a t-if guard turns false 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<span/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`.signal suffix: signal reference is stable across updates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -476,7 +743,7 @@ exports[`.signal suffix: signal reference is stable across updates 1`] = `
   const comp1 = createComponent(app, \`Child\`, true, false, false, ["tick"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({count: toComputed(node, \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']]),tick: ctx['this'].state.tick}, key + \`__1\`, node, this, null);
+    return comp1({count: toComputed(node, key + \`__sig_1\`, (__caps) => (__caps[0].state.val), [ctx['this']]),tick: ctx['this'].state.tick}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1331,6 +1598,31 @@ exports[`signal props declared in the schema > a promoted prop keeps the same re
 }"
 `;
 
+exports[`signal props declared in the schema > a read-only view follows signal.trigger on the same object 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["record"]);
+  
+  return function template(ctx, node, key = "") {
+    return comp1({record: ctx['this'].current}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a read-only view follows signal.trigger on the same object 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.record().n);
+  }
+}"
+`;
+
 exports[`signal props declared in the schema > a received read-only computed is exposed as is 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1396,6 +1688,33 @@ exports[`signal props declared in the schema > an absent optional signal prop re
 `;
 
 exports[`signal props declared in the schema > an absent optional signal prop reads undefined 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > passing a signal to an omitted settable prop throws in dev 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: ctx['this'].state.count};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > passing a signal to an omitted settable prop throws in dev 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;

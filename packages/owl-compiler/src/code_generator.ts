@@ -1094,7 +1094,7 @@ export class CodeGenerator {
     for (let i = 0; i < this.target.loopLevel; i++) {
       parts.push(`\${key${i + 1}}`);
     }
-    return `\`${parts.join("__")}\``;
+    return `key + \`${parts.join("__")}\``;
   }
 
   /**

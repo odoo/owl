@@ -82,7 +82,9 @@ export {
   type Optional,
   type PrettifyShape,
   type ResolveObjectType,
+  type Promotable,
   type ResolveOptionalEntries,
+  type ResolveParentObjectType,
   type ResolveReaderObjectType,
   type ShapeType,
   type SignalTypeMeta,
@@ -96,6 +98,7 @@ export {
   // emitting declaration files, mirroring `isProps` (see owl#1958).
   type hasDefault,
   type isOptional,
+  type isPromotable,
   type isStatic,
   type typeBrand,
 } from "./types";

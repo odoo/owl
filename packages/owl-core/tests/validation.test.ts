@@ -470,30 +470,31 @@ describe("promise", () => {
 });
 
 test("signal", () => {
-  // a plain value is accepted through the inner type: props promote it
   expect(validateType(123, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: 123 },
+    { message: "value is not a reactive value", path: "", received: 123 },
   ]);
-  expect(validateType("abc", t.signal(t.string()))).toEqual([]);
+  expect(validateType("abc", t.signal(t.string()))).toEqual([
+    { message: "value is not a reactive value", path: "", received: "abc" },
+  ]);
   expect(validateType(true, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: true },
+    { message: "value is not a reactive value", path: "", received: true },
   ]);
   const arrowFn = () => {};
   expect(validateType(arrowFn, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: arrowFn },
+    { message: "value is not a reactive value", path: "", received: arrowFn },
   ]);
   const fn = function () {};
   expect(validateType(fn, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: fn },
+    { message: "value is not a reactive value", path: "", received: fn },
   ]);
   expect(validateType(A, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: A },
+    { message: "value is not a reactive value", path: "", received: A },
   ]);
   class B {
     set() {}
   }
   expect(validateType(B, t.signal(t.string()))).toEqual([
-    { message: "value is not a string", path: "", received: B },
+    { message: "value is not a reactive value", path: "", received: B },
   ]);
   expect(validateType(signal(1), t.signal(t.number()))).toEqual([]);
   expect(
@@ -502,6 +503,13 @@ test("signal", () => {
       t.signal(t.number())
     )
   ).toEqual([]);
+});
+
+test("signal nested in an object", () => {
+  expect(validateType({ ref: 1 }, t.object({ ref: t.signal() }))).toEqual([
+    { message: "value is not a reactive value", path: "ref", received: 1 },
+  ]);
+  expect(validateType({ ref: signal(1) }, t.object({ ref: t.signal() }))).toEqual([]);
 });
 
 test("settable signal", () => {

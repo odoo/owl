@@ -203,6 +203,28 @@ export function getSignalType(type: any): SignalTypeMeta | undefined {
   return findInChain(type, signalSymbol)?.[signalSymbol];
 }
 
+/**
+ * Returns the validator of a prop typed `type`: props promote a plain value
+ * passed on a read-only signal key, so that value is checked against the
+ * inner type.
+ */
+export function promotableType(type: any): any {
+  const meta = getSignalType(type);
+  if (!meta || meta.settable) {
+    return type;
+  }
+  const validate = function validatePromotable(context: ValidationContext) {
+    const value = context.value;
+    if (value === undefined || (typeof value === "function" && value[atomSymbol])) {
+      context.validate(type);
+    } else if (meta.type) {
+      context.validate(meta.type);
+    }
+  } as any;
+  validate[innerTypeSymbol] = type;
+  return validate;
+}
+
 // Runtime implementation of the `optional` method declared on `Type`. With a
 // `value` argument, the type also carries a default: it fills the value for
 // the reader when it is omitted.
@@ -643,12 +665,7 @@ function reactiveValueType(type?: any, options?: SignalTypeOptions): any {
   const settable = options?.settable ?? false;
   const validate = makeType(function validateReactiveValue(context: ValidationContext) {
     if (typeof context.value !== "function" || !context.value[atomSymbol]) {
-      if (settable) {
-        context.addIssue({ message: "value is not a reactive value" });
-      } else if (type) {
-        // A plain value is promoted to a signal by the consumer (props).
-        context.validate(type);
-      }
+      context.addIssue({ message: "value is not a reactive value" });
       return;
     }
     if (settable && typeof context.value.set !== "function") {

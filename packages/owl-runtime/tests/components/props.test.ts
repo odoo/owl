@@ -1113,6 +1113,40 @@ describe("signal props declared in the schema", () => {
     expect(observed).toEqual([1, 2]);
   });
 
+  test("a plain value of the wrong type is reported against the inner type", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="'a'"/>`;
+      static components = { Child };
+    }
+
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toMatch("Invalid component props (Child)");
+    expect(error.message).toMatch("value is not a number");
+  });
+
+  test("a plain default on a signal key passes the dev check", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.label()"/>`;
+      props = useProps({ label: t.signal(t.string()).optional("x") });
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("x");
+  });
+
   test("a promoted prop keeps the same reactive value across updates", async () => {
     let sameRef: boolean | null = null;
     class Child extends Component {

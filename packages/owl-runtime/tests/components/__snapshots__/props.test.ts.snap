@@ -1166,6 +1166,32 @@ exports[`schema defaults and signal-driven props 2`] = `
 }"
 `;
 
+exports[`signal props declared in the schema > a plain default on a signal key passes the dev check 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a plain default on a signal key passes the dev check 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.label());
+  }
+}"
+`;
+
 exports[`signal props declared in the schema > a plain value is promoted: the child reads a reactive value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1188,6 +1214,20 @@ exports[`signal props declared in the schema > a plain value is promoted: the ch
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].props.count());
+  }
+}"
+`;
+
+exports[`signal props declared in the schema > a plain value of the wrong type is reported against the inner type 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["count"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {count: 'a'};
+    return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
 `;

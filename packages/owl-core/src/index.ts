@@ -73,6 +73,7 @@ export {
   getDefault,
   getSignalType,
   isStaticType,
+  promotableType,
   type Constructor,
   type GetDefaultedKeys,
   type GetOptionalEntries,

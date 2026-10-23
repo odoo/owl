@@ -7,6 +7,7 @@ import {
   getSignalType,
   isStaticType,
   OwlError,
+  promotableType,
   ResolveObjectType,
   ResolveReaderObjectType,
   signal,
@@ -187,7 +188,7 @@ function makeProps(type?: any): Props<{}> {
         const defaultedShape: Record<string, any> = {};
         for (const key in type) {
           if (key in defaults) {
-            defaultedShape[key] = type[key];
+            defaultedShape[key] = promotableType(type[key]);
           }
         }
         assertType(
@@ -197,7 +198,14 @@ function makeProps(type?: any): Props<{}> {
         );
       }
 
-      const validation = types.object(type);
+      let shape = type;
+      if (!Array.isArray(type)) {
+        shape = {};
+        for (const key in type) {
+          shape[key] = promotableType(type[key]);
+        }
+      }
+      const validation = types.object(shape);
       assertType(node.props, validation, `Invalid component props (${componentName})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
         assertType(np, validation, `Invalid component props (${componentName})`);

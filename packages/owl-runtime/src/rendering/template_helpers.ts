@@ -8,6 +8,7 @@ import {
   setComputation,
   signal,
   Signal,
+  updateComputation,
 } from "@odoo/owl-core";
 import { App } from "../app";
 import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
@@ -211,6 +212,17 @@ interface CachedComputed {
 
 const computedCaches = new WeakMap<ComponentNode, Map<string, CachedComputed>>();
 
+function findUnappliedRender(node: ComponentNode | null): ComponentNode | null {
+  for (; node; node = node.parent) {
+    // a notified render effect that did not run yet creates its fiber here
+    updateComputation(node.signalComputation);
+    if (node.fiber) {
+      return node;
+    }
+  }
+  return null;
+}
+
 // `fn` runs inside the cached computed, never here, so the parent's render
 // does not subscribe to what the `.signal=` expression reads.
 function toComputed(
@@ -230,13 +242,31 @@ function toComputed(
     return existing.value;
   }
   const entry: CachedComputed = {} as CachedComputed;
+  let evaluate = fn as () => any;
   if (captures) {
     const capturesSignal = signal(captures, { equals: shallowEqual });
     entry.captures = capturesSignal;
-    entry.value = computed(() => fn(capturesSignal()));
-  } else {
-    entry.value = computed(fn as () => any);
+    evaluate = () => fn(capturesSignal());
   }
+  const rerun = signal(undefined);
+  let evaluated = false;
+  let last: any;
+  entry.value = computed(() => {
+    rerun();
+    try {
+      last = evaluate();
+      evaluated = true;
+      return last;
+    } catch (error) {
+      // a t-if guard of a render not applied yet may no longer hold
+      const unapplied = evaluated && findUnappliedRender(node);
+      if (!unapplied) {
+        throw error;
+      }
+      (unapplied.rerunOnPatch ||= new Set()).add(rerun);
+      return last;
+    }
+  });
   cache.set(cacheKey, entry);
   return entry.value;
 }

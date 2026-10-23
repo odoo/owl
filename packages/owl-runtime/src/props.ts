@@ -122,15 +122,13 @@ function makeProps(type?: any): Props<{}> {
 
   function defineSignalProp(key: string, meta: SignalTypeMeta) {
     const raw = resolveValue(node.props, key);
-    if (isReactiveValue(raw)) {
-      defineValueProp(key, meta.settable || !raw.set ? raw : computed(raw));
+    if (meta.settable || isReactiveValue(raw)) {
+      defineValueProp(key, meta.settable || !raw.set ? raw : computed(raw, { equals: false }));
       guardStaticProp(
         key,
         raw,
         "changed. A signal prop is static: pass the same signal (its inner value may change)."
       );
-    } else if (meta.settable) {
-      defineValueProp(key, raw);
     } else {
       const promoted = signal(raw);
       defineValueProp(key, computed(promoted));

@@ -10,6 +10,8 @@ import {
   Scope,
   scopeStack,
   setComputation,
+  signal,
+  Signal,
   STATUS,
   useScope,
 } from "@odoo/owl-core";
@@ -53,6 +55,9 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   // after each patch and after this subtree is removed, to unset a ref pointing
   // at a bulk-removed element (slot host, enclosing t-if) — see sweepRefs.
   trackedRefs: Map<{ set(v: null): void }, { value: HTMLElement | null }> | null = null;
+  // `.signal=` expressions of descendants that threw before this node's
+  // pending render: they run again once that render is applied.
+  rerunOnPatch: Set<Signal<undefined>> | null = null;
 
   constructor(
     C: ComponentConstructor,
@@ -275,6 +280,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       sweepRemovedRefs();
       this.fiber!.renderState |= APPLIED_TO_DOM;
       this.fiber = null;
+      this.triggerRerunOnPatch();
     }
   }
 
@@ -341,6 +347,17 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     sweepRemovedRefs();
     fiber.renderState |= APPLIED_TO_DOM;
     this.fiber = null;
+    this.triggerRerunOnPatch();
+  }
+
+  triggerRerunOnPatch() {
+    const rerun = this.rerunOnPatch;
+    if (rerun) {
+      this.rerunOnPatch = null;
+      for (const s of rerun) {
+        signal.trigger(s);
+      }
+    }
   }
 
   beforeRemove() {

@@ -178,7 +178,9 @@ When the parent passes a **plain value** instead of a signal, the value is
 promoted: the child still reads a reactive value, updated when the parent
 re-renders with a new value. This keeps every caller working while they
 migrate to passing signals. A caller must not alternate between passing a
-plain value and a signal (dev mode throws).
+plain value and a signal (dev mode throws). An omitted optional key is
+promoted as `undefined`: the child always calls `this.props.value()`, and
+writes a fallback as `this.props.value() ?? fallback`.
 
 ### Static props in the schema
 

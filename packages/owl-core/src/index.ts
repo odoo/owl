@@ -24,6 +24,7 @@ export {
   untrack,
   type Equals,
   type ReactiveValue,
+  type WritableReactiveValue,
   type Atom,
   type ComputationAtom,
   ComputationFlags,
@@ -70,6 +71,9 @@ export {
   constructorType,
   applyDefaults,
   getDefault,
+  getSignalType,
+  isStaticType,
+  promotableType,
   type Constructor,
   type GetDefaultedKeys,
   type GetOptionalEntries,
@@ -81,6 +85,8 @@ export {
   type ResolveOptionalEntries,
   type ResolveReaderObjectType,
   type ShapeType,
+  type SignalTypeMeta,
+  type Static,
   type StripBrands,
   type Type,
   type UnionToIntersection,
@@ -90,6 +96,7 @@ export {
   // emitting declaration files, mirroring `isProps` (see owl#1958).
   type hasDefault,
   type isOptional,
+  type isStatic,
   type typeBrand,
 } from "./types";
 

@@ -268,10 +268,18 @@ interface ProcessedExpr {
 /**
  * Processes a javascript expression: compiles variable lookups and detects
  * top-level arrow functions with their free variables, all in a single pass.
+ * With `captureNonLocals` (`.signal=`), context variables compile to `__caps`
+ * lookups and are all returned as free variables.
  */
-export function processExpr(expr: string, seededLocals?: Set<string>): ProcessedExpr {
+export function processExpr(
+  expr: string,
+  seededLocals?: Set<string>,
+  captureNonLocals = false,
+  sharedCaptures?: Map<string, number>
+): ProcessedExpr {
   // scope entries carry the stack depth at which they were created
   const scopeStack: { vars: Set<string>; depth: number }[] = [];
+  const captureIndexes = sharedCaptures ?? new Map<string, number>();
 
   // Seed outer locals
   // depth: -Infinity so this scope never gets popped
@@ -342,7 +350,10 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
       for (const scope of scopeStack) {
         for (const v of scope.vars) currentLocals.add(v);
       }
-      token.value = token.replace!((expr: any) => compileExpr(expr, currentLocals));
+      // the interpolations share the capture indexes of the outer expression
+      token.value = token.replace!(
+        (expr: any) => processExpr(expr, currentLocals, captureNonLocals, captureIndexes).expr
+      );
     }
 
     if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
@@ -374,7 +385,17 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
       token.varName = token.value;
       if (!isLocal(token.value)) {
         token.originalValue = token.value;
-        token.value = `ctx['${token.value}']`;
+        // `this` is the component, stable across renders: never a capture
+        if (captureNonLocals && token.value !== "this") {
+          let index = captureIndexes.get(token.value);
+          if (index === undefined) {
+            index = captureIndexes.size;
+            captureIndexes.set(token.value, index);
+          }
+          token.value = `__caps[${index}]`;
+        } else {
+          token.value = `ctx['${token.value}']`;
+        }
       } else {
         token.value = `_${token.value}`;
         token.isLocal = true;
@@ -383,9 +404,12 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
     i++;
   }
 
-  // Collect free variables from arrow function body
+  // Collect free variables from arrow function body (the whole expression,
+  // in capture-index order, when non-locals are captured)
   let freeVariables: string[] | null = null;
-  if (topLevelArrowIndex !== -1) {
+  if (captureNonLocals) {
+    freeVariables = [...captureIndexes.keys()];
+  } else if (topLevelArrowIndex !== -1) {
     freeVariables = [];
     const seen = new Set<string>();
     for (let i = topLevelArrowIndex + 1; i < tokens.length; i++) {

@@ -1,11 +1,18 @@
 import {
   assertType,
+  atomSymbol,
+  computed,
   getDefault,
   GetDefaultedKeys,
+  getSignalType,
+  isStaticType,
+  OwlError,
+  promotableType,
   ResolveObjectType,
   ResolveReaderObjectType,
   signal,
   Signal,
+  SignalTypeMeta,
 } from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 import { staticProp } from "./prop";
@@ -94,17 +101,92 @@ function makeProps(type?: any): Props<{}> {
     }
   }
 
+  function isReactiveValue(value: any): boolean {
+    return typeof value === "function" && !!value[atomSymbol];
+  }
+
+  function defineValueProp(key: string, value: any) {
+    Reflect.defineProperty(result, key, { enumerable: true, configurable: true, value });
+  }
+
+  function guardStaticProp(key: string, initial: any, message: string) {
+    if (!app.dev) {
+      return;
+    }
+    node.willUpdateProps.push((nextProps: Record<string, any>) => {
+      if (resolveValue(nextProps, key) !== initial) {
+        throw new OwlError(`Prop '${key}' in component '${componentName}' ${message}`);
+      }
+    });
+  }
+
+  function defineSignalProp(key: string, meta: SignalTypeMeta) {
+    const raw = resolveValue(node.props, key);
+    if (meta.settable || isReactiveValue(raw)) {
+      defineValueProp(key, meta.settable || !raw.set ? raw : computed(raw, { equals: false }));
+      guardStaticProp(
+        key,
+        raw,
+        "changed. A signal prop is static: pass the same signal (its inner value may change)."
+      );
+    } else {
+      const promoted = signal(raw);
+      defineValueProp(key, computed(promoted));
+      promotedUpdates.push(() => promoted.set(resolveValue(node.props, key)));
+      if (app.dev) {
+        node.willUpdateProps.push((nextProps: Record<string, any>) => {
+          if (isReactiveValue(resolveValue(nextProps, key))) {
+            throw new OwlError(
+              `Prop '${key}' in component '${componentName}' changed from a plain value ` +
+                `to a signal. Pass the signal from the start instead.`
+            );
+          }
+        });
+      }
+    }
+  }
+
+  function defineStaticProp(key: string) {
+    const value = resolveValue(node.props, key);
+    defineValueProp(key, value);
+    guardStaticProp(
+      key,
+      value,
+      "changed. A static prop should not change. If the prop is a signal, pass the same " +
+        "signal reference (its inner value may change)."
+    );
+  }
+
+  const promotedUpdates: (() => void)[] = [];
+
   if (type) {
     const keys: string[] = Array.isArray(type) ? type : Object.keys(type);
-    defineProps(keys);
-    node.propsUpdated.push(() => updateSignals(keys));
+    const reactiveKeys: string[] = [];
+    for (const key of keys) {
+      const keyType = Array.isArray(type) ? undefined : type[key];
+      const signalMeta = keyType && getSignalType(keyType);
+      if (signalMeta) {
+        defineSignalProp(key, signalMeta);
+      } else if (keyType && isStaticType(keyType)) {
+        defineStaticProp(key);
+      } else {
+        defineProp(key);
+        reactiveKeys.push(key);
+      }
+    }
+    node.propsUpdated.push(() => {
+      updateSignals(reactiveKeys);
+      for (const update of promotedUpdates) {
+        update();
+      }
+    });
 
     if (app.dev) {
       if (defaults) {
         const defaultedShape: Record<string, any> = {};
         for (const key in type) {
           if (key in defaults) {
-            defaultedShape[key] = type[key];
+            defaultedShape[key] = promotableType(type[key]);
           }
         }
         assertType(
@@ -114,7 +196,14 @@ function makeProps(type?: any): Props<{}> {
         );
       }
 
-      const validation = types.object(type);
+      let shape = type;
+      if (!Array.isArray(type)) {
+        shape = {};
+        for (const key in type) {
+          shape[key] = promotableType(type[key]);
+        }
+      }
+      const validation = types.object(shape);
       assertType(node.props, validation, `Invalid component props (${componentName})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
         assertType(np, validation, `Invalid component props (${componentName})`);

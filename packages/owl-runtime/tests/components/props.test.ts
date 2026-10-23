@@ -1,18 +1,23 @@
 import {
   Component,
+  computed,
   effect,
   mount,
+  onPatched,
   onWillUpdateProps,
   proxy,
   signal,
   types as t,
+  useEffect,
   useProps,
   xml,
 } from "../../src";
 import {
   getConsoleOutput,
   makeTestFixture,
+  nextAppError,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
@@ -834,16 +839,12 @@ test(".signal suffix accepts a signal-typed prop without validation error", asyn
 });
 
 test(".signal suffix: child receives a read-only reactive value", async () => {
-  let childError: any;
+  let childSet: any = null;
   class Child extends Component {
     static template = xml`<t t-out="this.props.count()"/>`;
     props = useProps({ count: t.signal(t.number()) });
     setup() {
-      try {
-        (this.props.count as any).set(99);
-      } catch (e) {
-        childError = e;
-      }
+      childSet = (this.props.count as any).set;
     }
   }
 
@@ -854,9 +855,122 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   }
 
   await mount(Parent, fixture);
-  expect(childError).toBeDefined();
-  expect(childError.message).toMatch(/read-only/);
+  expect(childSet).toBeUndefined();
   expect(fixture.innerHTML).toBe("3");
+});
+
+async function withoutUnhandledRejection(run: () => Promise<void>) {
+  const errors: any[] = [];
+  const onRejection = (error: any) => errors.push(error);
+  process.on("unhandledRejection", onRejection);
+  try {
+    await run();
+  } finally {
+    process.off("unhandledRejection", onRejection);
+  }
+  expect(errors).toEqual([]);
+}
+
+test(".signal suffix: no error in a child effect once a t-if guard of the parent turns false", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-out="this.state.tick"/>|<t t-if="this.state.record"><Child n.signal="this.state.record.n"/></t>`;
+    static components = { Child };
+    state = proxy({ tick: 0, record: { n: 1 } as any });
+  }
+
+  await withoutUnhandledRejection(async () => {
+    const parent = await mount(Parent, fixture);
+    parent.state.record = null;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("0|");
+
+    parent.state.record = { n: 5 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("0|5");
+
+    parent.state.tick = 1;
+    parent.state.record = { n: 7 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1|7");
+  });
+});
+
+test(".signal suffix: no error in a child effect once a t-if guard of an ancestor turns false", async () => {
+  const state = proxy({ record: { n: 1 } as any });
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child n.signal="this.state.record.n"/>`;
+    static components = { Child };
+    state = state;
+  }
+
+  class GrandParent extends Component {
+    static template = xml`<div><t t-if="this.state.record"><Parent/></t></div>`;
+    static components = { Parent };
+    state = state;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(GrandParent, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    state.record = null;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    state.record = { n: 3 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+  });
+});
+
+test(".signal suffix: no error in a child effect for an item removed from a t-foreach", async () => {
+  class Item extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="this.state.ids" t-as="id" t-key="id"><Item n.signal="this.state.records[id].n"/></t>`;
+    static components = { Item };
+    state = proxy({ ids: [1, 2], records: { 1: { n: 10 }, 2: { n: 20 } } as any });
+  }
+
+  await withoutUnhandledRejection(async () => {
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("1020");
+
+    parent.state.ids = [1];
+    delete parent.state.records[2];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("10");
+  });
 });
 
 describe("reactive props (issue #1908)", () => {
@@ -997,5 +1111,454 @@ describe("reactive props (issue #1908)", () => {
     await nextTick();
     expect(seen).toEqual([{ next: 2, current: 1 }]);
     expect(fixture.innerHTML).toBe("<span>2</span>");
+  });
+});
+
+describe("signal props declared in the schema", () => {
+  test("a received signal reads through and its content updates the child", async () => {
+    const count = signal(1);
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.count"/>`;
+      static components = { Child };
+      count = count;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("1");
+
+    count.set(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+  });
+
+  test("a read-only view follows signal.trigger on the same object", async () => {
+    const record = { n: 1 };
+    const current = signal(record);
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.record().n"/>`;
+      props = useProps({ record: t.signal(t.object({ n: t.number() })) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child record="this.current"/>`;
+      static components = { Child };
+      current = current;
+    }
+
+    await mount(Parent, fixture);
+    record.n = 2;
+    signal.trigger(current);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+  });
+
+  test("read-only by default: set is hidden on a received writable signal", async () => {
+    const count = signal(1);
+    let exposed: any;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+      setup() {
+        exposed = this.props.count;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.count"/>`;
+      static components = { Child };
+      count = count;
+    }
+
+    await mount(Parent, fixture);
+    expect(typeof exposed).toBe("function");
+    expect(exposed.set).toBeUndefined();
+    expect(exposed()).toBe(1);
+  });
+
+  test("a received read-only computed is exposed as is", async () => {
+    const count = signal(1);
+    const view = computed(count);
+    let exposed: any;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+      setup() {
+        exposed = this.props.count;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.view"/>`;
+      static components = { Child };
+      view = view;
+    }
+
+    await mount(Parent, fixture);
+    expect(exposed).toBe(view);
+  });
+
+  test("settable exposes the original signal and the child writes it", async () => {
+    const count = signal(1);
+    let exposed: any;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number(), { settable: true }) });
+      setup() {
+        exposed = this.props.count;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.count"/>`;
+      static components = { Child };
+      count = count;
+    }
+
+    await mount(Parent, fixture);
+    expect(exposed).toBe(count);
+
+    exposed.set(5);
+    await nextTick();
+    expect(count()).toBe(5);
+    expect(fixture.innerHTML).toBe("5");
+  });
+
+  test("a plain value is promoted: the child reads a reactive value", async () => {
+    const observed: number[] = [];
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+      setup() {
+        effect(() => observed.push(this.props.count()));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.val"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+    }
+
+    const parent = await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("1");
+    expect(observed).toEqual([1]);
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+    expect(observed).toEqual([1, 2]);
+  });
+
+  test("a plain value of the wrong type is reported against the inner type", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="'a'"/>`;
+      static components = { Child };
+    }
+
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toMatch("Invalid component props (Child)");
+    expect(error.message).toMatch("value is not a number");
+  });
+
+  test("a plain default on a signal key passes the dev check", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.label()"/>`;
+      props = useProps({ label: t.signal(t.string()).optional("x") });
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("x");
+  });
+
+  test("a promoted prop keeps the same reactive value across updates", async () => {
+    let sameRef: boolean | null = null;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+      setup() {
+        const initial = this.props.count;
+        onWillUpdateProps(() => {
+          sameRef = this.props.count === initial;
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.val"/>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    parent.state.val = 2;
+    await nextTick();
+    expect(sameRef).toBe(true);
+    expect(fixture.innerHTML).toBe("2");
+  });
+
+  test("an absent optional signal prop reads undefined", async () => {
+    let read: any = "unset";
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ count: t.signal(t.number()).optional() });
+      setup() {
+        read = this.props.count?.();
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(read).toBeUndefined();
+  });
+
+  test("swapping the signal for another one throws in dev", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.count"/>`;
+      static components = { Child };
+      state = proxy({ count: signal(1) });
+    }
+
+    const parent = await mount(Parent, fixture, { dev: true });
+    expect(getConsoleOutput()).toEqual([`info:Owl is running in 'dev' mode.`]);
+    parent.state.count = signal(2);
+    render(parent);
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toMatch("Prop 'count' in component 'Child' changed");
+  });
+
+  test("switching a promoted prop to a signal throws in dev", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.count"/>`;
+      static components = { Child };
+      state = proxy({ count: 1 as any });
+    }
+
+    const parent = await mount(Parent, fixture, { dev: true });
+    parent.state.count = signal(2);
+    render(parent);
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toMatch("changed from a plain value to a signal");
+  });
+
+  test("passing a signal to an omitted settable prop throws in dev", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ count: t.signal(t.number(), { settable: true }).optional() });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.count"/>`;
+      static components = { Child };
+      state = proxy({ count: undefined as any });
+    }
+
+    const parent = await mount(Parent, fixture, { dev: true });
+    parent.state.count = signal(2);
+    render(parent);
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toMatch("Prop 'count' in component 'Child' changed");
+  });
+});
+
+describe("static props declared in the schema", () => {
+  test("the value is pinned and exposed unwrapped", async () => {
+    const onClick = () => {};
+    let exposed: any;
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ onClick: t.function([]).static() });
+      setup() {
+        exposed = this.props.onClick;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child onClick="this.onClick"/>`;
+      static components = { Child };
+      onClick = onClick;
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(exposed).toBe(onClick);
+  });
+
+  test("composes with optional and a default", async () => {
+    let exposed: any = "unset";
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ label: t.string().optional("hello").static() });
+      setup() {
+        exposed = this.props.label;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(exposed).toBe("hello");
+  });
+
+  test("changing the value throws in dev", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ label: t.string().static() });
+    }
+    class Parent extends Component {
+      static template = xml`<Child label="this.state.label"/>`;
+      static components = { Child };
+      state = proxy({ label: "a" });
+    }
+
+    const parent = await mount(Parent, fixture, { dev: true });
+    parent.state.label = "b";
+    render(parent);
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toMatch("Prop 'label' in component 'Child' changed");
+  });
+});
+
+describe(".signal suffix lazy evaluation", () => {
+  test("the parent does not re-render when the read value changes", async () => {
+    let parentPatches = 0;
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child count.signal="this.state.val"/></div>`;
+      static components = { Child };
+      state = proxy({ val: 1 });
+      setup() {
+        onPatched(() => parentPatches++);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    parent.state.val = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>2</div>");
+    expect(parentPatches).toBe(0);
+  });
+
+  test("a replaced t-foreach item reaches the child through the captures", async () => {
+    class Item extends Component {
+      static template = xml`<span><t t-out="this.props.value()"/></span>`;
+      props = useProps({ value: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.state.items" t-as="item" t-key="item.id">
+          <Item value.signal="item.n"/>
+        </t>`;
+      static components = { Item };
+      state = proxy({ items: [{ id: "a", n: 1 }] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+
+    parent.state.items = [{ id: "a", n: 5 }];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>5</span>");
+  });
+
+  test("the wrapper follows the t-key across a reorder", async () => {
+    const wrappers: Record<string, any[]> = { a: [], b: [] };
+    class Item extends Component {
+      static template = xml`<span><t t-out="this.props.value()"/></span>`;
+      props = useProps({ value: t.signal(t.number()), id: t.string() });
+      setup() {
+        wrappers[this.props.id].push(this.props.value);
+        onWillUpdateProps(() => wrappers[this.props.id].push(this.props.value));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.state.items" t-as="item" t-key="item.id">
+          <Item value.signal="item.n" id="item.id"/>
+        </t>`;
+      static components = { Item };
+      state = proxy({
+        items: [
+          { id: "a", n: 1 },
+          { id: "b", n: 2 },
+        ],
+      });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>1</span><span>2</span>");
+
+    parent.state.items = [
+      { id: "b", n: 2 },
+      { id: "a", n: 1 },
+    ];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>2</span><span>1</span>");
+    expect(new Set(wrappers.a).size).toBe(1);
+    expect(new Set(wrappers.b).size).toBe(1);
+  });
+
+  test("a template string interpolation reaches the captures", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-out="this.props.label()"/></span>`;
+      props = useProps({ label: t.signal(t.string()) });
+    }
+    class Parent extends Component {
+      static template = xml({
+        raw: [
+          '<t t-foreach="this.state.items" t-as="item" t-key="item.id">' +
+            '<Child label.signal="`item ${item.n}`"/>' +
+            "</t>",
+        ],
+      });
+      static components = { Child };
+      state = proxy({ items: [{ id: "a", n: 1 }] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>item 1</span>");
+
+    parent.state.items = [{ id: "a", n: 5 }];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>item 5</span>");
+  });
+
+  test("a constant satisfies a signal-typed prop", async () => {
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.count()"/>`;
+      props = useProps({ count: t.signal(t.number()) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count.signal="7"/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { test: true });
+    expect(fixture.innerHTML).toBe("7");
   });
 });

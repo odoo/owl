@@ -1,13 +1,21 @@
 import {
+  App,
   Component,
   computed,
   effect,
   mount,
+  onError,
+  onMounted,
   onPatched,
+  onWillStart,
   onWillUpdateProps,
+  Portal,
   proxy,
   signal,
+  Suspense,
   types as t,
+  useEffect,
+  useImmediateEffect,
   useProps,
   xml,
 } from "../../src";
@@ -858,6 +866,393 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   expect(fixture.innerHTML).toBe("3");
 });
 
+async function withoutUnhandledRejection(run: () => Promise<void>) {
+  const errors: any[] = [];
+  const onRejection = (error: any) => errors.push(error);
+  process.on("unhandledRejection", onRejection);
+  try {
+    await run();
+  } finally {
+    process.off("unhandledRejection", onRejection);
+  }
+  expect(errors).toEqual([]);
+}
+
+test(".signal suffix: no error in a child effect once a t-if guard of the parent turns false", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-out="this.state.tick"/>|<t t-if="this.state.record"><Child n.signal="this.state.record.n"/></t>`;
+    static components = { Child };
+    state = proxy({ tick: 0, record: { n: 1 } as any });
+  }
+
+  await withoutUnhandledRejection(async () => {
+    const parent = await mount(Parent, fixture);
+    parent.state.record = null;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("0|");
+
+    parent.state.record = { n: 5 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("0|5");
+
+    parent.state.tick = 1;
+    parent.state.record = { n: 7 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1|7");
+  });
+});
+
+test(".signal suffix: no error on a first read in a child effect once a t-if guard turns false", async () => {
+  const state = proxy({ open: false, record: { n: 1 } as any });
+  const reads: any[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        if (state.open) {
+          reads.push(this.props.n());
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<div><t t-if="this.state.record"><Child n.signal="this.state.record.n"/></t></div>`;
+    static components = { Child };
+    state = state;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span></span></div>");
+
+    state.open = true;
+    state.record = null;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(reads).toEqual([undefined]);
+  });
+});
+
+test(".signal suffix: no error on a first read in a child effect while the child loads", async () => {
+  const state = proxy({ open: false, record: null as any });
+  const reads: any[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      onWillStart(() => new Promise(() => {}));
+      useEffect(() => {
+        if (state.open) {
+          reads.push(this.props.n());
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<div><t t-if="this.state.record"><Child n.signal="this.state.record.n"/></t></div>`;
+    static components = { Child };
+    state = state;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(Parent, fixture);
+    state.record = { n: 1 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    state.open = true;
+    state.record = null;
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(reads).toEqual([undefined]);
+  });
+});
+
+test(".signal suffix: no error on a first read in a child effect while the child loads under a t-if guard of an ancestor", async () => {
+  const state = proxy({ open: false, record: null as any });
+  const reads: any[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      onWillStart(() => new Promise(() => {}));
+      useEffect(() => {
+        if (state.open) {
+          reads.push(this.props.n());
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child n.signal="this.state.record.n"/>`;
+    static components = { Child };
+    state = state;
+  }
+
+  class GrandParent extends Component {
+    static template = xml`<div><t t-if="this.state.record"><Parent/></t></div>`;
+    static components = { Parent };
+    state = state;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(GrandParent, fixture);
+    state.record = { n: 1 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    state.open = true;
+    state.record = null;
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(reads).toEqual([undefined]);
+  });
+});
+
+test(".signal suffix: no error in a child effect once a t-if guard above a Portal turns false", async () => {
+  const target = document.createElement("div");
+  document.body.appendChild(target);
+  const state = proxy({ open: false, record: { n: 1 } as any });
+  const reads: any[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        if (state.open) {
+          reads.push(this.props.n());
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <div><t t-if="this.state.record"><Portal target="this.target"><Child n.signal="this.state.record.n"/></Portal></t></div>`;
+    static components = { Child, Portal };
+    state = state;
+    target = target;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(Parent, fixture);
+    await nextTick();
+    expect(target.innerHTML).toBe("<span></span>");
+
+    state.open = true;
+    state.record = null;
+    await nextTick();
+    await nextTick();
+    expect(target.innerHTML).toBe("");
+    expect(reads).toEqual([undefined]);
+  });
+  target.remove();
+});
+
+test(".signal suffix: no error on a first read in a child effect while the child loads under a t-if guard above a Portal", async () => {
+  const target = document.createElement("div");
+  document.body.appendChild(target);
+  const state = proxy({ open: false, record: null as any });
+  const reads: any[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      onWillStart(() => new Promise(() => {}));
+      useEffect(() => {
+        if (state.open) {
+          reads.push(this.props.n());
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <div><t t-if="this.state.record"><Portal target="this.target"><Child n.signal="this.state.record.n"/></Portal></t></div>`;
+    static components = { Child, Portal };
+    state = state;
+    target = target;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(Parent, fixture);
+    state.record = { n: 1 };
+    await nextTick();
+    await nextTick();
+    expect(target.innerHTML).toBe("");
+
+    state.open = true;
+    state.record = null;
+    await nextTick();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(reads).toEqual([undefined]);
+  });
+  target.remove();
+});
+
+test(".signal suffix: an error on the first render of the child is not hidden", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child n.signal="this.state.record.n"/>`;
+    static components = { Child };
+    state = proxy({ record: null as any });
+  }
+
+  await expect(mount(Parent, fixture)).rejects.toThrow(
+    "Cannot read properties of null (reading 'n')"
+  );
+});
+
+test(".signal suffix: an error on the first render of a child inside a Suspense is not hidden", async () => {
+  let caught: any = null;
+  class Child extends Component {
+    static template = xml`<span t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <div><Suspense><t t-set-slot="fallback">loading...</t><Child n.signal="this.state.record.missing.x"/></Suspense></div>`;
+    static components = { Child, Suspense };
+    state = proxy({ record: {} as any });
+    setup() {
+      onError((error) => {
+        caught = error;
+      });
+    }
+  }
+
+  const app = new App();
+  await app.createRoot(Parent).mount(fixture);
+  await nextTick();
+  await nextTick();
+  expect(caught?.message).toBe("Cannot read properties of undefined (reading 'x')");
+  app.destroy();
+});
+
+test(".signal suffix: an error on a first read in a child effect after prepare() is not hidden", async () => {
+  const state = proxy({ open: false, record: {} as any });
+  const reads: string[] = [];
+  class Child extends Component {
+    static template = xml`<span/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        if (state.open) {
+          try {
+            reads.push(`read ${this.props.n()}`);
+          } catch (error: any) {
+            reads.push(error.message);
+          }
+        }
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child n.signal="this.state.record.missing.x"/>`;
+    static components = { Child };
+    state = state;
+  }
+
+  const app = new App();
+  await app.createRoot(Parent).prepare();
+  state.open = true;
+  await nextTick();
+  expect(reads).toEqual(["Cannot read properties of undefined (reading 'x')"]);
+  app.destroy();
+});
+
+test(".signal suffix: no error in a child effect once a t-if guard of an ancestor turns false", async () => {
+  const state = proxy({ record: { n: 1 } as any });
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child n.signal="this.state.record.n"/>`;
+    static components = { Child };
+    state = state;
+  }
+
+  class GrandParent extends Component {
+    static template = xml`<div><t t-if="this.state.record"><Parent/></t></div>`;
+    static components = { Parent };
+    state = state;
+  }
+
+  await withoutUnhandledRejection(async () => {
+    await mount(GrandParent, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    state.record = null;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    state.record = { n: 3 };
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+  });
+});
+
+test(".signal suffix: no error in a child effect for an item removed from a t-foreach", async () => {
+  class Item extends Component {
+    static template = xml`<t t-out="this.props.n()"/>`;
+    props = useProps({ n: t.signal(t.number()) });
+    setup() {
+      useEffect(() => {
+        this.props.n();
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="this.state.ids" t-as="id" t-key="id"><Item n.signal="this.state.records[id].n"/></t>`;
+    static components = { Item };
+    state = proxy({ ids: [1, 2], records: { 1: { n: 10 }, 2: { n: 20 } } as any });
+  }
+
+  await withoutUnhandledRejection(async () => {
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("1020");
+
+    parent.state.ids = [1];
+    delete parent.state.records[2];
+    await nextTick();
+    expect(fixture.innerHTML).toBe("10");
+  });
+});
+
 describe("reactive props (issue #1908)", () => {
   test("effect observing a prop reacts to both in-place mutation and value swap", async () => {
     const observed: number[] = [];
@@ -1016,6 +1411,26 @@ describe("signal props declared in the schema", () => {
     expect(fixture.innerHTML).toBe("1");
 
     count.set(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("2");
+  });
+
+  test("a read-only view follows signal.trigger on the same object", async () => {
+    const record = { n: 1 };
+    const current = signal(record);
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.record().n"/>`;
+      props = useProps({ record: t.signal(t.object({ n: t.number() })) });
+    }
+    class Parent extends Component {
+      static template = xml`<Child record="this.current"/>`;
+      static components = { Child };
+      current = current;
+    }
+
+    await mount(Parent, fixture);
+    record.n = 2;
+    signal.trigger(current);
     await nextTick();
     expect(fixture.innerHTML).toBe("2");
   });
@@ -1225,6 +1640,24 @@ describe("signal props declared in the schema", () => {
     render(parent);
     const error = await nextAppError(parent.__owl__.app);
     expect(error.message).toMatch("changed from a plain value to a signal");
+  });
+
+  test("passing a signal to an omitted settable prop throws in dev", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+      props = useProps({ count: t.signal(t.number(), { settable: true }).optional() });
+    }
+    class Parent extends Component {
+      static template = xml`<Child count="this.state.count"/>`;
+      static components = { Child };
+      state = proxy({ count: undefined as any });
+    }
+
+    const parent = await mount(Parent, fixture, { dev: true });
+    parent.state.count = signal(2);
+    render(parent);
+    const error = await nextAppError(parent.__owl__.app);
+    expect(error.message).toMatch("Prop 'count' in component 'Child' changed");
   });
 });
 
@@ -1446,5 +1879,279 @@ describe(".signal suffix lazy evaluation", () => {
     parent.state.index = 1;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><b>second</b><i>second</i></div>");
+  });
+
+  test("a t-call sub-template keeps its own computed", async () => {
+    class Child extends Component {
+      static template = xml`<i><t t-out="this.props.v()"/></i>`;
+      props = useProps({ v: t.signal(t.string()) });
+    }
+    const sub = xml`<Child v.signal="this.state.b"/>`;
+    class Parent extends Component {
+      static template = xml`<div><Child v.signal="this.state.a"/><t t-call="${sub}"/></div>`;
+      static components = { Child };
+      state = proxy({ a: "A", b: "B" });
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><i>A</i><i>B</i></div>");
+  });
+
+  test("a slot called per item keeps one computed per item", async () => {
+    class Item extends Component {
+      static template = xml`<i><t t-out="this.props.v()"/></i>`;
+      props = useProps({ v: t.signal(t.string()) });
+    }
+    class List extends Component {
+      static template = xml`
+        <t t-foreach="this.props.items" t-as="item" t-key="item">
+          <t t-call-slot="default" item="item"/>
+        </t>`;
+      props = useProps();
+    }
+    class Parent extends Component {
+      static template = xml`
+        <List items="this.state.items">
+          <t t-set-slot="default" t-slot-scope="scope"><Item v.signal="scope.item"/></t>
+        </List>`;
+      static components = { List, Item };
+      state = proxy({ items: ["x", "y", "z"] });
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<i>x</i><i>y</i><i>z</i>");
+  });
+});
+
+describe(".signal suffix: a hidden error reruns when the pending render is applied", () => {
+  function makeParts(state: any, onCaught: (e: any) => void) {
+    let resolveLoad!: () => void;
+    const loaded = new Promise<void>((r) => (resolveLoad = r));
+    class Child extends Component {
+      static template = xml`<span t-out="this.props.n()"/>`;
+      props = useProps({ n: t.signal(t.number()) });
+    }
+    class Loader extends Component {
+      static template = xml`<i/>`;
+      setup() {
+        onWillStart(() => loaded);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child n.signal="this.read()"/><Loader/><t t-out="this.state.tick"/></div>`;
+      static components = { Child, Loader };
+      state = state;
+      read() {
+        return state.x === 2 ? state.missing.y : state.x;
+      }
+      setup() {
+        onError(onCaught);
+      }
+    }
+    return { Parent, resolveLoad: () => resolveLoad() };
+  }
+
+  test("at the mount of the root", async () => {
+    const state = proxy({ x: 1, tick: 0 } as any);
+    let caught: any = null;
+    const { Parent, resolveLoad } = makeParts(state, (e) => (caught = e));
+    const app = new App();
+    app.createRoot(Parent).mount(fixture);
+    await nextTick();
+    state.x = 2;
+    await nextTick();
+    expect(caught).toBe(null);
+    resolveLoad();
+    await nextTick();
+    await nextTick();
+    expect(caught?.message).toBe("Cannot read properties of undefined (reading 'y')");
+    app.destroy();
+  });
+
+  test("at the mount of a component added under a mounted parent", async () => {
+    const state = proxy({ x: 1, tick: 0, show: false } as any);
+    let caught: any = null;
+    const { Parent, resolveLoad } = makeParts(state, (e) => (caught = e));
+    class GrandParent extends Component {
+      static template = xml`<p><t t-if="this.state.show"><Parent/></t></p>`;
+      static components = { Parent };
+      state = state;
+    }
+    const app = new App();
+    await app.createRoot(GrandParent).mount(fixture);
+    state.show = true;
+    await nextTick();
+    state.x = 2;
+    await nextTick();
+    expect(caught).toBe(null);
+    resolveLoad();
+    await nextTick();
+    await nextTick();
+    expect(caught?.message).toBe("Cannot read properties of undefined (reading 'y')");
+    app.destroy();
+  });
+
+  test("at the commit of a Suspense", async () => {
+    const state = proxy({ x: 1, tick: 0 } as any);
+    let caught: any = null;
+    const { Parent, resolveLoad } = makeParts(state, (e) => (caught = e));
+    class Host extends Component {
+      static template = xml`<p><Suspense><t t-set-slot="fallback">loading</t><Parent/></Suspense></p>`;
+      static components = { Parent, Suspense };
+    }
+    const app = new App();
+    await app.createRoot(Host).mount(fixture);
+    expect(fixture.innerHTML).toBe("<p>loading</p>");
+    state.x = 2;
+    await nextTick();
+    expect(caught).toBe(null);
+    resolveLoad();
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(caught?.message).toBe("Cannot read properties of undefined (reading 'y')");
+    app.destroy();
+  });
+
+  test("after the pending render was cancelled by a new one", async () => {
+    const state = proxy({ x: 1, tick: 0 } as any);
+    let caught: any = null;
+    const { Parent, resolveLoad } = makeParts(state, (e) => (caught = e));
+    const app = new App();
+    app.createRoot(Parent).mount(fixture);
+    await nextTick();
+    state.x = 2;
+    await nextTick();
+    expect(caught).toBe(null);
+    state.tick = 1;
+    await nextTick();
+    expect(caught).toBe(null);
+    resolveLoad();
+    await nextTick();
+    await nextTick();
+    expect(caught?.message).toBe("Cannot read properties of undefined (reading 'y')");
+    app.destroy();
+  });
+
+  test("under an owner whose patched hook crashed", async () => {
+    const state = proxy({ x: 1, tick: 0 } as any);
+    const caught: string[] = [];
+    class Child extends Component {
+      static template = xml`<span t-out="this.props.n()"/>`;
+      props = useProps({ n: t.signal(t.number()) });
+    }
+    class Owner extends Component {
+      static template = xml`<div><Child n.signal="this.read()"/><t t-out="this.state.tick"/></div>`;
+      static components = { Child };
+      state = state;
+      read() {
+        return state.x === 2 ? state.missing.y : state.x;
+      }
+      setup() {
+        onPatched(() => {
+          throw new Error("patched crash");
+        });
+      }
+    }
+    class Root extends Component {
+      static template = xml`<Owner/>`;
+      static components = { Owner };
+      setup() {
+        onError((e) => caught.push(e.message));
+      }
+    }
+    const app = new App();
+    await app.createRoot(Root).mount(fixture);
+    state.tick = 1;
+    await nextTick();
+    expect(caught).toEqual(["patched crash"]);
+    state.x = 2;
+    await nextTick();
+    await nextTick();
+    expect(caught).toEqual(["patched crash", "Cannot read properties of undefined (reading 'y')"]);
+    app.destroy();
+  });
+
+  test("no error under a t-if guard of a root between prepare() and mount()", async () => {
+    const state = proxy({ open: false, record: { n: 1 } as any });
+    const reads: any[] = [];
+    class Child extends Component {
+      static template = xml`<span/>`;
+      props = useProps({ n: t.signal(t.number()) });
+      setup() {
+        useEffect(() => {
+          if (state.open) {
+            reads.push(this.props.n());
+          }
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><t t-if="this.state.record"><Child n.signal="this.state.record.n"/></t></div>`;
+      static components = { Child };
+      state = state;
+    }
+    await withoutUnhandledRejection(async () => {
+      const app = new App();
+      const root = app.createRoot(Parent);
+      await root.prepare();
+      state.open = true;
+      state.record = null;
+      await nextTick();
+      await root.mount(fixture);
+      expect(fixture.innerHTML).toBe("<div></div>");
+      expect(reads).toEqual([undefined]);
+      app.destroy();
+    });
+  });
+
+  test("an immediate effect of the child gives the error to the owner without breaking the mount", async () => {
+    const state = proxy({ x: 1, tick: 0 } as any);
+    const caught: string[] = [];
+    const reads: any[] = [];
+    let resolveLoad!: () => void;
+    const loaded = new Promise<void>((r) => (resolveLoad = r));
+    class Child extends Component {
+      static template = xml`<span/>`;
+      props = useProps({ n: t.signal(t.number()) });
+      setup() {
+        useImmediateEffect(() => {
+          reads.push(this.props.n());
+        });
+        onMounted(() => reads.push("child mounted"));
+      }
+    }
+    class Loader extends Component {
+      static template = xml`<i/>`;
+      setup() {
+        onWillStart(() => loaded);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child n.signal="this.read()"/><Loader/></div>`;
+      static components = { Child, Loader };
+      read() {
+        return state.x === 2 ? state.missing.y : state.x;
+      }
+      setup() {
+        onError((e) => caught.push(e.message));
+        onMounted(() => reads.push("parent mounted"));
+      }
+    }
+    class GrandParent extends Component {
+      static template = xml`<Parent/>`;
+      static components = { Parent };
+    }
+    const app = new App();
+    const mounted = app.createRoot(GrandParent).mount(fixture);
+    await nextTick();
+    state.x = 2;
+    await nextTick();
+    expect(caught).toEqual([]);
+    resolveLoad();
+    await mounted;
+    expect(reads).toEqual([1, "child mounted", "parent mounted"]);
+    expect(caught).toEqual(["Cannot read properties of undefined (reading 'y')"]);
+    app.destroy();
   });
 });

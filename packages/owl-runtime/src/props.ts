@@ -3,12 +3,12 @@ import {
   atomSymbol,
   computed,
   getDefault,
-  GetDefaultedKeys,
   getSignalType,
   isStaticType,
   OwlError,
   promotableType,
   ResolveObjectType,
+  ResolveParentObjectType,
   ResolveReaderObjectType,
   signal,
   Signal,
@@ -20,34 +20,24 @@ import { types } from "./types";
 
 export declare const isProps: unique symbol;
 
-// The brand stores the defaulted key names: those keys are required for the
+// The brand stores the parent view: a defaulted key is required for the
 // component reading the props (the default fills them), but may be omitted by
 // the parent providing them. The props type itself is the flat reader view,
 // so editors display it expanded.
-export type Props<T extends {}> = T & { [isProps]: never };
-export type PropsWithDefaults<T extends {}, DK extends PropertyKey> = T & { [isProps]: DK };
+export type Props<T extends {}, P extends {} = T> = T & { [isProps]: P };
 
-// Recovers the parent view from the branded reader view: keys with a default
-// become optional again.
-type GetPropsWithOptionals<T> = T extends { [isProps]: infer DK extends PropertyKey }
-  ? Omit<T, typeof isProps | (DK & keyof T)> & Partial<Pick<T, DK & keyof T>>
-  : never;
 export type GetProps<T> = {
-  [K in keyof T]: T[K] extends { [isProps]: PropertyKey }
-    ? (x: GetPropsWithOptionals<T[K]>) => void
-    : never;
+  [K in keyof T]: T[K] extends { [isProps]: infer P } ? (x: P) => void : never;
 }[keyof T] extends (x: infer I) => void
   ? { [K in keyof I]: I[K] }
   : never;
 
-type ResolveProps<Shape> = [GetDefaultedKeys<Shape>] extends [never]
-  ? Props<ResolveReaderObjectType<Shape>>
-  : PropsWithDefaults<ResolveReaderObjectType<Shape>, GetDefaultedKeys<Shape> & PropertyKey>;
-
 export interface PropsFunction {
   (): Props<Record<string, any>>;
   <const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
-  <Shape extends {}>(shape: Shape): ResolveProps<Shape>;
+  <Shape extends {}>(
+    shape: Shape
+  ): Props<ResolveReaderObjectType<Shape>, ResolveParentObjectType<Shape>>;
   static: typeof staticProp;
 }
 
@@ -122,15 +112,13 @@ function makeProps(type?: any): Props<{}> {
 
   function defineSignalProp(key: string, meta: SignalTypeMeta) {
     const raw = resolveValue(node.props, key);
-    if (isReactiveValue(raw)) {
-      defineValueProp(key, meta.settable || !raw.set ? raw : computed(raw));
+    if (meta.settable || isReactiveValue(raw)) {
+      defineValueProp(key, meta.settable || !raw.set ? raw : computed(raw, { equals: false }));
       guardStaticProp(
         key,
         raw,
         "changed. A signal prop is static: pass the same signal (its inner value may change)."
       );
-    } else if (meta.settable) {
-      defineValueProp(key, raw);
     } else {
       const promoted = signal(raw);
       defineValueProp(key, computed(promoted));

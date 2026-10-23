@@ -8,6 +8,7 @@ import {
   setComputation,
   signal,
   Signal,
+  updateComputation,
 } from "@odoo/owl-core";
 import { App } from "../app";
 import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
@@ -15,8 +16,8 @@ import { html } from "../blockdom/index";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
 import { Markup } from "../utils";
-import { handleError } from "./error_handling";
-import { Fiber, makeChildFiber } from "./fibers";
+import { fibersInError, handleError } from "./error_handling";
+import { APPLIED_TO_DOM, Fiber, makeChildFiber, subRootHosts } from "./fibers";
 
 const ObjectCreate = Object.create;
 /**
@@ -211,6 +212,34 @@ interface CachedComputed {
 
 const computedCaches = new WeakMap<ComponentNode, Map<string, CachedComputed>>();
 
+function ancestorsOf(node: ComponentNode): ComponentNode[] {
+  const ancestors: ComponentNode[] = [];
+  for (
+    let current: ComponentNode | null = node;
+    current;
+    current = current.parent || subRootHosts.get(current) || null
+  ) {
+    ancestors.push(current);
+  }
+  return ancestors;
+}
+
+// applied and in error: a fiber that handleError put back on its node after a hook crashed
+function hasUnappliedRender(node: ComponentNode): boolean {
+  const fiber = node.fiber;
+  return !!fiber && !(fiber.renderState & APPLIED_TO_DOM && fibersInError.has(fiber));
+}
+
+function findUnappliedRenders(node: ComponentNode): ComponentNode[] {
+  const ancestors = ancestorsOf(node);
+  // top down: a notified render that did not run yet creates its fiber here
+  // and cancels the pending fibers of the nodes below
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    updateComputation(ancestors[i].signalComputation);
+  }
+  return ancestors.filter(hasUnappliedRender);
+}
+
 // `fn` runs inside the cached computed, never here, so the parent's render
 // does not subscribe to what the `.signal=` expression reads.
 function toComputed(
@@ -230,13 +259,43 @@ function toComputed(
     return existing.value;
   }
   const entry: CachedComputed = {} as CachedComputed;
+  let evaluate = fn as () => any;
   if (captures) {
     const capturesSignal = signal(captures, { equals: shallowEqual });
     entry.captures = capturesSignal;
-    entry.value = computed(() => fn(capturesSignal()));
-  } else {
-    entry.value = computed(fn as () => any);
+    evaluate = () => fn(capturesSignal());
   }
+  const rerun = signal(undefined);
+  // weak: the cache outlives the fiber tree of the render that created it
+  const createdIn = node.fiber ? new WeakRef(node.fiber) : null;
+  // makeRootFiber reuses a pending fiber for the next render and bumps its recycle count
+  const createdAt = node.fiber ? node.fiber.renderState >> 1 : -1;
+  const topmostRoot = ancestorsOf(node).filter(hasUnappliedRender).at(-1)?.fiber!.root;
+  const createdRoot = topmostRoot ? new WeakRef(topmostRoot) : null;
+  let evaluated = false;
+  let last: any;
+  entry.value = computed(() => {
+    rerun();
+    try {
+      last = evaluate();
+      evaluated = true;
+      return last;
+    } catch (error) {
+      // a t-if guard of a render not applied yet may no longer hold
+      const unapplied = findUnappliedRenders(node);
+      if (
+        !unapplied.length ||
+        (!evaluated &&
+          node.fiber === createdIn?.deref() &&
+          node.fiber!.renderState >> 1 === createdAt &&
+          unapplied[unapplied.length - 1].fiber!.root === createdRoot?.deref())
+      ) {
+        throw error;
+      }
+      (unapplied[0].rerunOnPatch ||= new Map()).set(rerun, node);
+      return last;
+    }
+  });
   cache.set(cacheKey, entry);
   return entry.value;
 }

@@ -10,6 +10,11 @@ export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginIns
   const scope = useScope();
 
   let plugin = scope.pluginManager.getPluginById<InstanceType<T>>(pluginType.id);
+  // Also check the class of the started plugin: as lookups go by id, another
+  // class with the same id would otherwise give access to it.
+  if (pluginType.private || (plugin && (plugin.constructor as PluginConstructor).private)) {
+    throw new OwlError(`Plugin "${pluginType.id}" is private and cannot be used with usePlugin`);
+  }
   if (!plugin) {
     if (scope instanceof PluginManager) {
       plugin = scope.pluginManager.startPlugin(pluginType)!;

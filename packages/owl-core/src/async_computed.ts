@@ -21,7 +21,12 @@ export interface AsyncComputed<T> {
   (): T | undefined;
   loading(): boolean;
   error(): Error | null;
-  refresh(): void;
+  /**
+   * Re-runs the fetcher, even if no dependency changed. The re-run itself is
+   * batched like any other effect, but it counts as in flight right away: the
+   * returned promise (same as `currentPromise()`) resolves once it settles.
+   */
+  refresh(): Promise<void>;
   dispose(): void;
   /**
    * Returns a promise that resolves as soon as no run is in flight: if a run
@@ -49,6 +54,7 @@ export function asyncComputed<T>(
 
   let runId = 0;
   let runController: AbortController | null = null;
+  let isDisposed = false;
 
   // Whether a run is currently in flight. Mirrors `loading`, but as a plain
   // (non-reactive) flag: `currentPromise()` can read it without registering a
@@ -128,6 +134,7 @@ export function asyncComputed<T>(
   });
 
   function dispose() {
+    isDisposed = true;
     runId++;
     stopEffect();
     runController?.abort();
@@ -143,7 +150,18 @@ export function asyncComputed<T>(
   const read = (() => value()) as AsyncComputed<T>;
   read.loading = () => loading();
   read.error = () => error();
-  read.refresh = () => refreshTick.set(refreshTick() + 1);
+  read.refresh = () => {
+    if (isDisposed) {
+      return Promise.resolve();
+    }
+    refreshTick.set(refreshTick() + 1);
+    // The effect only re-runs in the next microtask. Start the run now so that
+    // currentPromise() waits for it, and bump runId so that the run it
+    // supersedes cannot settle it in between.
+    runId++;
+    beginRun();
+    return read.currentPromise();
+  };
   read.dispose = dispose;
   read.currentPromise = () => {
     if (!inFlight) {

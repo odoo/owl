@@ -239,6 +239,70 @@ test("refresh() re-runs even when no deps changed", async () => {
   a.dispose();
 });
 
+test("refresh() returns a promise that resolves once the refreshed run settles", async () => {
+  const defs = [makeDeferred<number>(), makeDeferred<number>()];
+  let i = 0;
+  const a = asyncComputed(() => defs[i++]);
+  defs[0].resolve(1);
+  await flush();
+  expect(a()).toBe(1);
+
+  let resolved = false;
+  a.refresh().then(() => (resolved = true));
+  // in flight right away, although the fetcher only re-runs in a microtask
+  expect(a.loading()).toBe(true);
+
+  await flush();
+  expect(i).toBe(2);
+  expect(resolved).toBe(false);
+
+  defs[1].resolve(2);
+  await flush();
+  expect(resolved).toBe(true);
+  expect(a()).toBe(2);
+
+  a.dispose();
+});
+
+test("refresh(): the superseded run settling before the re-run does not resolve it", async () => {
+  const defs = [makeDeferred<number>(), makeDeferred<number>()];
+  let i = 0;
+  const a = asyncComputed(() => defs[i++]);
+  // let the effect flush scheduled by the creation go, so that the re-run
+  // below is scheduled after run 1's settlement
+  await flush();
+
+  // run 1 settles in the same tick as refresh(), before the re-run starts
+  defs[0].resolve(1);
+  let resolved = false;
+  a.refresh().then(() => (resolved = true));
+
+  await flush();
+  expect(i).toBe(2);
+  expect(resolved).toBe(false);
+  expect(a.loading()).toBe(true);
+  expect(a()).toBeUndefined();
+
+  defs[1].resolve(2);
+  await flush();
+  expect(resolved).toBe(true);
+  expect(a()).toBe(2);
+
+  a.dispose();
+});
+
+test("refresh() after dispose does not re-run and resolves immediately", async () => {
+  let calls = 0;
+  const a = asyncComputed(async () => ++calls);
+  await flush();
+  a.dispose();
+
+  await a.refresh();
+  await flush();
+  expect(calls).toBe(1);
+  expect(a.loading()).toBe(false);
+});
+
 test("auto-cleanup on component destroy aborts the in-flight signal", async () => {
   let captured: AbortSignal | null = null;
   const def = makeDeferred<number>();

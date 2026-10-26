@@ -107,7 +107,7 @@ const user = asyncComputed(
 user(); // current value (initial → resolved → next resolved)
 user.loading(); // reactive boolean: true while a run is in flight
 user.error(); // reactive Error | null
-user.refresh(); // re-run the fetcher even if nothing changed
+user.refresh(); // re-run the fetcher even if nothing changed, returns a promise
 user.dispose(); // tear down (auto-called when the surrounding scope dies)
 user.currentPromise(); // promise that resolves once no run is in flight
 ```
@@ -152,6 +152,18 @@ The component mounts only once the first fetch settles, so `this.user()` is
 already populated on the initial render. Later re-runs (a dependency changed,
 or `refresh()`) update the value reactively without blocking, and you can
 branch on `loading()` to show a spinner for those.
+
+`refresh()` returns the same promise as `currentPromise()`. The re-run itself
+starts in the next microtask, like any other effect, but it already counts as
+in flight when `refresh()` returns, so awaiting the result waits for the fresh
+value:
+
+```js
+async reload() {
+  await this.user.refresh();
+  // this.user() holds the refreshed value (or error() is set)
+}
+```
 
 ### Tracking only happens before the first `await`
 

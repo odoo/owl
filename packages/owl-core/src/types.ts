@@ -31,6 +31,10 @@ export type WithDefault<T> = T & { [hasDefault]: T };
 export declare const isOptional: unique symbol;
 export type Optional<T> = T & { [isOptional]: T };
 
+// A string type also accepts a `String` object: `stringType` validates one, and
+// the vdom renders it as text.
+export type StringLike<T> = [string] extends [T] ? T | String : T;
+
 // Type-level brand carried by every type built by the `types` factories. It
 // is phantom: at runtime, only the `optional` method exists on the validator.
 export declare const typeBrand: unique symbol;
@@ -48,7 +52,9 @@ export type Type<T> = T & {
    * per consumer, so mutable defaults ([], {}) are not shared. A default for
    * a function type must use the factory form.
    */
-  optional(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
+  optional(
+    value: T extends Function ? () => T : StringLike<T> | (() => StringLike<T>)
+  ): WithDefault<T>;
 
   type: T;
 };

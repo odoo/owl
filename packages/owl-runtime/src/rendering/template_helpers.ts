@@ -8,6 +8,7 @@ import {
   setComputation,
   signal,
   Signal,
+  updateComputation,
 } from "@odoo/owl-core";
 import { App } from "../app";
 import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
@@ -204,25 +205,70 @@ function callHandler(fn: any, ctx: any, ev: Event) {
   fn.call(ctx["this"], ev);
 }
 
-type CachedSignal<T> = Signal<T> & { readonly: ReactiveValue<T> };
+interface CachedComputed {
+  value: ReactiveValue<any>;
+  captures?: Signal<any[]>;
+}
 
-const signalCaches = new WeakMap<ComponentNode, Map<string, CachedSignal<any>>>();
+const computedCaches = new WeakMap<ComponentNode, Map<string, CachedComputed>>();
 
-function toSignal(node: ComponentNode, cacheKey: string, value: any): ReactiveValue<any> {
-  let cache = signalCaches.get(node);
+function findUnappliedRender(node: ComponentNode | null): ComponentNode | null {
+  for (; node; node = node.parent) {
+    // a notified render effect that did not run yet creates its fiber here
+    updateComputation(node.signalComputation);
+    if (node.fiber) {
+      return node;
+    }
+  }
+  return null;
+}
+
+// `fn` runs inside the cached computed, never here, so the parent's render
+// does not subscribe to what the `.signal=` expression reads.
+function toComputed(
+  node: ComponentNode,
+  cacheKey: string,
+  fn: (captures: any[]) => any,
+  captures?: any[]
+): ReactiveValue<any> {
+  let cache = computedCaches.get(node);
   if (!cache) {
     cache = new Map();
-    signalCaches.set(node, cache);
+    computedCaches.set(node, cache);
   }
   const existing = cache.get(cacheKey);
   if (existing) {
-    existing.set(value);
-    return existing.readonly;
+    existing.captures?.set(captures!);
+    return existing.value;
   }
-  const s = signal(value) as CachedSignal<any>;
-  s.readonly = computed(s);
-  cache.set(cacheKey, s);
-  return s.readonly;
+  const entry: CachedComputed = {} as CachedComputed;
+  let evaluate = fn as () => any;
+  if (captures) {
+    const capturesSignal = signal(captures, { equals: shallowEqual });
+    entry.captures = capturesSignal;
+    evaluate = () => fn(capturesSignal());
+  }
+  const rerun = signal(undefined);
+  let evaluated = false;
+  let last: any;
+  entry.value = computed(() => {
+    rerun();
+    try {
+      last = evaluate();
+      evaluated = true;
+      return last;
+    } catch (error) {
+      // a t-if guard of a render not applied yet may no longer hold
+      const unapplied = evaluated && findUnappliedRender(node);
+      if (!unapplied) {
+        throw error;
+      }
+      (unapplied.rerunOnPatch ||= new Set()).add(rerun);
+      return last;
+    }
+  });
+  cache.set(cacheKey, entry);
+  return entry.value;
 }
 
 function modelExpr(value: any) {
@@ -399,5 +445,5 @@ export const helpers = {
   createComponent,
   callTemplate,
   callHandler,
-  toSignal,
+  toComputed,
 };

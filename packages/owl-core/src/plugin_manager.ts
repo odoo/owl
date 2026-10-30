@@ -112,7 +112,7 @@ export class PluginManager extends Scope {
       const existingPluginType = this.getPluginById(pluginConstructor.id)!.constructor;
       if (existingPluginType !== pluginConstructor) {
         throw new OwlError(
-          `Trying to start a plugin with the same id as an other plugin (id: '${pluginConstructor.id}', existing plugin: '${existingPluginType.name}', starting plugin: '${pluginConstructor.name}')`
+          `Trying to start a plugin with the same id as another plugin (id: '${pluginConstructor.id}', existing plugin: '${existingPluginType.name}', starting plugin: '${pluginConstructor.name}')`
         );
       }
       return null;

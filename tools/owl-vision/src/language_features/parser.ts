@@ -15,10 +15,10 @@ export interface ParseResult {
 
 /**
  * Will parse the document to find the selected expression based on an offset.
- * The result can be on of three types:
+ * The result can be one of three types:
  *
- * Element: The offset is on a element tag name, the expression is the current
- * tagname or and empty string if it's just a opening tag.
+ * Element: The offset is on an element tag name, the expression is the current
+ * tagname or an empty string if it's just an opening tag.
  *
  * Attribute: The offset is inside the element but not in an attribute value,
  * the expression is the current attribute name if any.

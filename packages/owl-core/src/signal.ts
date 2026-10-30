@@ -14,7 +14,7 @@ import type { Constructor } from "./types";
 export interface Signal<T> extends ReactiveValue<T> {
   /**
    * Update the value of the signal with a new value. If the new value is different
-   * from the previous values, all computations that depends on this signal will
+   * from the previous value, all computations that depend on this signal will
    * be invalidated, and effects will rerun.
    */
   set(nextValue: T): void;

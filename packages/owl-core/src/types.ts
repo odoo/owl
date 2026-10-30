@@ -72,7 +72,7 @@ type MemberShape<M> = M extends { toShape(): infer S } ? S : never;
 // keys intersect at the type level (the runtime merge lets later members win).
 type MergedShape<T extends any[]> = UnionToIntersection<MemberShape<T[number]>>;
 
-type IsAny<T> = 0 extends 1 & T ? true : false;
+export type IsAny<T> = 0 extends 1 & T ? true : false;
 type HasDefault<T> = IsAny<T> extends true ? false : T extends { [hasDefault]: any } ? true : false;
 type IsOptional<T> = IsAny<T> extends true ? false : T extends { [isOptional]: any } ? true : false;
 type StripDefault<T> = T extends { [hasDefault]: infer U } ? U : T;

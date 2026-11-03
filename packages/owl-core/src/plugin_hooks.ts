@@ -1,10 +1,26 @@
 import { OwlError } from "./owl_error";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
-import { useScope } from "./scope";
-import { getDefault, types, type Optional, type StripBrands, type WithDefault } from "./types";
+import { Scope, useScope } from "./scope";
+import {
+  getDefault,
+  types,
+  type IsAny,
+  type Optional,
+  type StripBrands,
+  type WithDefault,
+} from "./types";
 import { assertType } from "./validation";
 
-export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
+// `usePlugin` returns what the plugin's `scoped` factory returns. A factory
+// typed as `any` (e.g. an untyped `Object.create(self)` in plain JS) says
+// nothing about its view, so the plugin's own type is used instead.
+export type PluginInstance<T extends PluginConstructor> = T extends {
+  scoped(plugin: any, scope: Scope): infer R;
+}
+  ? IsAny<R> extends true
+    ? Omit<InstanceType<T>, "setup">
+    : R
+  : Omit<InstanceType<T>, "setup">;
 
 export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
   const scope = useScope();

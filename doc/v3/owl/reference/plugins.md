@@ -128,8 +128,9 @@ reactive state) from the shared instance. The factory runs once per
 
 `scoped` is a static rather than an instance method so that the view does
 not itself inherit it. The return type of `usePlugin` follows the factory's
-return type. See [Scope](./scope.md) for the cancellation model of
-`scope.run`.
+return type, or the plugin's own type when the factory returns `any` (as an
+untyped `Object.create(self)` does). See [Scope](./scope.md) for the
+cancellation model of `scope.run`.
 
 ## Providing Plugins
 

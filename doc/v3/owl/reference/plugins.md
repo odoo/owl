@@ -190,6 +190,27 @@ class ActionPlugin extends Plugin {
 When `ActionPlugin` is started, it will automatically start `RouterPlugin`
 if it hasn't been started already.
 
+## Private Plugins
+
+Some plugins only do their own work: they listen to events, update other
+plugins, contribute to resources. To make sure that no other code depends on
+them or reaches into their state, mark them as private:
+
+```js
+class AutoSavePlugin extends Plugin {
+  static private = true;
+
+  setup() {
+    const orm = usePlugin(ORM); // a private plugin can still use other plugins
+    // ...
+  }
+}
+```
+
+`usePlugin(AutoSavePlugin)` throws an error, in a component as well as in
+another plugin. So a private plugin is never auto-started as a dependency: it
+must be given explicitly, in the app's `plugins` or to `providePlugins()`.
+
 ## Configuration
 
 Plugins can read configuration values using the `useConfig()` hook. Config

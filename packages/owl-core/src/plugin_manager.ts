@@ -9,6 +9,7 @@ export interface PluginConstructor {
   new (...args: any[]): Plugin;
   id: string;
   sequence: number;
+  private: boolean;
   /**
    * Optional factory producing a specialized view of the plugin for a
    * consumer scope. When defined, `usePlugin` returns
@@ -52,6 +53,11 @@ export class Plugin {
   // run their setup. Explicit `usePlugin(X)` dependencies bypass batching and
   // start immediately.
   static sequence = 50;
+
+  // A private plugin only does its own work: `usePlugin` refuses to return it,
+  // so no other code can depend on it or reach into it. It must be started
+  // explicitly (`startPlugins`, the app's `plugins`, `providePlugins`).
+  static private = false;
 
   setup() {}
 }

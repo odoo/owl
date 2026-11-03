@@ -1197,6 +1197,93 @@ describe("plugin sequence", () => {
   });
 });
 
+describe("private plugins", () => {
+  test("a private plugin is started and destroyed like any plugin", () => {
+    const steps: string[] = [];
+
+    class Dep extends Plugin {
+      value = 1;
+    }
+
+    class Private extends Plugin {
+      static private = true;
+      dep = usePlugin(Dep);
+      setup() {
+        steps.push(`setup ${this.dep.value}`);
+        onWillDestroy(() => steps.push("destroy"));
+      }
+    }
+
+    expect(Plugin.private).toBe(false);
+    const manager = new PluginManager(new App());
+    manager.startPlugins([Private]);
+    expect(steps.splice(0)).toEqual(["setup 1"]);
+
+    manager.destroy();
+    expect(steps.splice(0)).toEqual(["destroy"]);
+  });
+
+  test("usePlugin of a private plugin throws in a component", async () => {
+    class Private extends Plugin {
+      static private = true;
+    }
+
+    class Root extends Component {
+      static template = xml`<span>ok</span>`;
+      p = usePlugin(Private);
+    }
+
+    const fixture = makeTestFixture();
+    await expect(mount(Root, fixture, { plugins: [Private] })).rejects.toThrow(
+      `Plugin "Private" is private and cannot be used with usePlugin`
+    );
+    expect(fixture.innerHTML).toBe("");
+  });
+
+  test("usePlugin of a private plugin throws in a plugin, and does not start it", () => {
+    const steps: string[] = [];
+
+    class Private extends Plugin {
+      static private = true;
+      setup() {
+        steps.push("setup Private");
+      }
+    }
+
+    class A extends Plugin {
+      p = usePlugin(Private);
+    }
+
+    const manager = new PluginManager(new App());
+    expect(() => manager.startPlugins([A])).toThrow(
+      `Plugin "Private" is private and cannot be used with usePlugin`
+    );
+    expect(steps).toEqual([]);
+    expect(manager.getPlugin(Private)).toBe(null);
+  });
+
+  test("a private plugin cannot be reached through another class with the same id", () => {
+    class Private extends Plugin {
+      static id = "p";
+      static private = true;
+    }
+
+    class Impostor extends Plugin {
+      static id = "p";
+    }
+
+    class A extends Plugin {
+      p = usePlugin(Impostor);
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([Private]);
+    expect(() => manager.startPlugins([A])).toThrow(
+      `Plugin "p" is private and cannot be used with usePlugin`
+    );
+  });
+});
+
 test("can use useListener in a plugin", () => {
   let n: number = 0;
   const bus = new EventTarget();

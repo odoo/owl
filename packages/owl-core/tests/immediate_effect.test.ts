@@ -24,6 +24,54 @@ describe("immediateEffect", () => {
     expect(second).toEqual([0, 1, 2]);
   });
 
+  test("an immediate effect that throws on a new key does not stop the notification of the key", async () => {
+    const p = proxy({} as Record<string, number>);
+    const seen: (number | undefined)[] = [];
+    immediateEffect(() => {
+      if (Object.keys(p).length === 1) {
+        throw new Error("keys");
+      }
+    });
+    effect(() => {
+      seen.push(p.a);
+    });
+    expect(() => (p.a = 1)).toThrow("keys");
+    await waitScheduler();
+    expect(seen).toEqual([undefined, 1]);
+  });
+
+  test("an immediate effect that throws on an array length does not stop the notification of the dropped indices", async () => {
+    const p = proxy([1, 2]);
+    const seen: (number | undefined)[] = [];
+    immediateEffect(() => {
+      if (p.length === 0) {
+        throw new Error("length");
+      }
+    });
+    effect(() => {
+      seen.push(p[1]);
+    });
+    expect(() => (p.length = 0)).toThrow("length");
+    await waitScheduler();
+    expect(seen).toEqual([2, undefined]);
+  });
+
+  test("an immediate effect that throws on clear does not stop the notification of the keys", async () => {
+    const p = proxy(new Map([["a", 1]]));
+    const seen: (number | undefined)[] = [];
+    immediateEffect(() => {
+      if (p.size === 0) {
+        throw new Error("clear");
+      }
+    });
+    effect(() => {
+      seen.push(p.get("a"));
+    });
+    expect(() => p.clear()).toThrow("clear");
+    await waitScheduler();
+    expect(seen).toEqual([1, undefined]);
+  });
+
   test("immediateEffect runs directly", () => {
     const spy = vi.fn();
     immediateEffect(() => {
@@ -218,6 +266,20 @@ describe("immediateEffect", () => {
     expectSpy(spy, 1, { args: [1, 1] });
     s.set(2);
     expectSpy(spy, 2, { args: [2, 2] });
+  });
+
+  test("an immediateEffect reading a new key and its value runs once per write", () => {
+    const p = proxy({} as Record<string, number>);
+    const value = computed(() => p.a);
+    const seen: [number, number | undefined][] = [];
+    immediateEffect(() => {
+      seen.push([Object.keys(p).length, value()]);
+    });
+    p.a = 1;
+    expect(seen).toEqual([
+      [0, undefined],
+      [1, 1],
+    ]);
   });
 
   test("an immediateEffect disposed by an earlier one in the same flush does not run", () => {

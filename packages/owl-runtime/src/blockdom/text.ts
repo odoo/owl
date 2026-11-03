@@ -48,10 +48,14 @@ class VText {
 
   patch(other: VText) {
     const text2 = other.text;
-    if (this.text !== text2) {
-      characterDataSetData.call(this.el!, toText(text2));
-      this.text = text2;
+    if (this.text === text2) {
+      return;
     }
+    const data = toText(text2);
+    if (data !== toText(this.text)) {
+      characterDataSetData.call(this.el!, data);
+    }
+    this.text = text2;
   }
 
   toString() {
@@ -72,6 +76,6 @@ export function toText(value: any): string {
     case "boolean":
       return value ? "true" : "false";
     default:
-      return value || "";
+      return value ? String(value) : "";
   }
 }

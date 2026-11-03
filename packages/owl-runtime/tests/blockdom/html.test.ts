@@ -1,4 +1,5 @@
 import { html, mount, patch, text } from "../../src/blockdom";
+import { markup } from "../../src/utils";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -27,6 +28,19 @@ describe("html block", () => {
 
     patch(tree, html("<div>coucou</div>"));
     expect(fixture.innerHTML).toBe("<div>coucou</div>");
+  });
+
+  test("patching with an equal Markup keeps the content nodes", () => {
+    const tree = html(markup("<b>foo</b>") as any);
+    mount(tree, fixture);
+    const b = fixture.querySelector("b");
+
+    patch(tree, html(markup("<b>foo</b>") as any));
+    expect(fixture.querySelector("b")).toBe(b);
+
+    patch(tree, html(markup("<b>bar</b>") as any));
+    expect(fixture.querySelector("b")).not.toBe(b);
+    expect(fixture.innerHTML).toBe("<b>bar</b>");
   });
 
   test("html vnode can be used as text", () => {

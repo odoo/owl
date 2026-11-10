@@ -65,6 +65,32 @@ exports[`force render in case of existing render 3`] = `
 }"
 `;
 
+exports[`render loop detection > a render loop going through async code is still detected 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value","inc"]);
+  
+  return function template(ctx, node, key = "") {
+    const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`render loop detection > a render loop going through async code is still detected 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].props.value);
+  }
+}"
+`;
+
 exports[`render loop detection > throws a clear error instead of freezing on a render loop (#1968) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -87,6 +113,18 @@ exports[`render loop detection > throws a clear error instead of freezing on a r
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].props.value);
+  }
+}"
+`;
+
+exports[`render loop detection > updates from separate tasks while commits are on hold are not a render loop (#2062) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].n());
   }
 }"
 `;

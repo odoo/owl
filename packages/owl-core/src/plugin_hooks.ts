@@ -1,10 +1,21 @@
 import { OwlError } from "./owl_error";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
-import { useScope } from "./scope";
+import { Scope, useScope } from "./scope";
 import { getDefault, types, type Optional, type StripBrands, type WithDefault } from "./types";
 import { assertType } from "./validation";
 
-export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
+// `usePlugin` returns what the plugin's `scoped` factory returns. When the
+// plugin itself fits that type, the factory returns a view of the plugin (as
+// `Object.create(self)` does), so the plugin's own type is used instead: it
+// has the members of a subclass inheriting the factory, and is not `any` for
+// an untyped `Object.create(self)` in plain JS.
+export type PluginInstance<T extends PluginConstructor> = T extends {
+  scoped(plugin: any, scope: Scope): infer R;
+}
+  ? InstanceType<T> extends R
+    ? Omit<InstanceType<T>, "setup">
+    : R
+  : Omit<InstanceType<T>, "setup">;
 
 export function usePlugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
   const scope = useScope();

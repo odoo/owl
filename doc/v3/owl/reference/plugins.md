@@ -73,8 +73,10 @@ class App extends Component {
 ```
 
 The return value is the plugin instance with full type information (minus the
-`setup` method). Any reactive values on the plugin (signals, computed) are
-tracked automatically when read during a component render.
+`setup` method), unless the plugin defines a `scoped` factory (see
+[Scoped plugin views](#scoped-plugin-views)). Any reactive values on the
+plugin (signals, computed) are tracked automatically when read during a
+component render.
 
 ### Scoped plugin views
 
@@ -128,8 +130,11 @@ reactive state) from the shared instance. The factory runs once per
 
 `scoped` is a static rather than an instance method so that the view does
 not itself inherit it. The return type of `usePlugin` follows the factory's
-return type. See [Scope](./scope.md) for the cancellation model of
-`scope.run`.
+return type, unless the plugin itself fits that type: the factory then returns
+a view of the plugin, so `usePlugin` keeps the plugin's own type (minus
+`setup`). This also covers a subclass inheriting the factory, and a factory
+returning `any`, as an untyped `Object.create(self)` does. See
+[Scope](./scope.md) for the cancellation model of `scope.run`.
 
 ## Providing Plugins
 

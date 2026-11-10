@@ -10,6 +10,8 @@ let requestAnimationFrame: Window["requestAnimationFrame"];
 if (typeof window !== "undefined") {
   requestAnimationFrame = window.requestAnimationFrame.bind(window);
 }
+// captured early for the same reason as requestAnimationFrame (see below)
+const setTimeout = globalThis.setTimeout.bind(globalThis);
 
 export class Scheduler {
   // capture the value of requestAnimationFrame as soon as possible, to avoid
@@ -20,6 +22,9 @@ export class Scheduler {
   frame: number = 0;
   delayedRenders: Fiber[] = [];
   processing = false;
+  // fibers with a non-zero recycle count, see trackRecycle
+  recycled: Fiber[] = [];
+  resetPending = false;
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -28,6 +33,48 @@ export class Scheduler {
 
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
+  }
+
+  /**
+   * Called each time makeRootFiber recycles an uncommitted fiber. A render
+   * loop (#1968) is driven by microtasks only, so the timeout scheduled here
+   * cannot run while it spins, and the recycle count climbs until it is
+   * detected. Updates coming from separate tasks (timers, network) while
+   * commits are on hold, e.g. in a hidden tab where rAF does not run (#2062),
+   * let the timeout run in between and reset the count.
+   */
+  trackRecycle(fiber: Fiber) {
+    if (fiber.renderState >> 1 === 1) {
+      // first recycle since the count was last cleared: a fiber with a higher
+      // count is already in the list
+      this.recycled.push(fiber);
+    }
+    if (!this.resetPending) {
+      this.resetPending = true;
+      setTimeout(() => this.resetRecycleCounts());
+    }
+  }
+
+  /**
+   * Clears the recycle count of fibers whose render is complete and only
+   * waiting to be committed. Fibers whose root still waits on async work
+   * (e.g. onWillStart) keep their count: a loop going through async code keeps
+   * its root incomplete, and must still be detected.
+   */
+  resetRecycleCounts() {
+    this.resetPending = false;
+    const pending: Fiber[] = [];
+    for (let f of this.recycled) {
+      if (f.node.fiber !== f || f.node.status === STATUS.DESTROYED) {
+        continue; // committed or discarded: will not be recycled again
+      }
+      if (f.root!.counter === 0) {
+        f.renderState &= APPLIED_TO_DOM; // clear the recycle count
+      } else {
+        pending.push(f);
+      }
+    }
+    this.recycled = pending;
   }
 
   /**

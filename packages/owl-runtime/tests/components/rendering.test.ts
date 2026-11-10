@@ -10,6 +10,7 @@ import {
   useProps,
   xml,
 } from "../../src";
+import { Fiber } from "../../src/rendering/fibers";
 import {
   getConsoleOutput,
   makeDeferred,
@@ -503,6 +504,15 @@ test("children, default props and renderings", async () => {
 });
 
 describe("render loop detection", () => {
+  // a low limit keeps the tests below fast
+  const maxRenderIterations = Fiber.maxRenderIterations;
+  beforeEach(() => {
+    Fiber.maxRenderIterations = 5;
+  });
+  afterEach(() => {
+    Fiber.maxRenderIterations = maxRenderIterations;
+  });
+
   test("throws a clear error instead of freezing on a render loop (#1968)", async () => {
     class Child extends Component {
       static template = xml`<t t-out="this.props.value"/>`;
@@ -532,8 +542,9 @@ describe("render loop detection", () => {
   });
 
   test("wide re-render under an uncommitted root is not a render loop", async () => {
-    // 1001 children each re-rendering once while the root fiber is held open
-    // by an async sibling. Each child renders only twice: no loop. A counter
+    // More children than the limit, each re-rendering once while the root
+    // fiber is held open by an async sibling. Each child renders only twice:
+    // no loop. A counter
     // shared at the root level would add up all sibling re-renders and reach
     // the limit anyway (false positive), so the count must stay per fiber.
     const shared = signal(0);
@@ -554,7 +565,7 @@ describe("render loop detection", () => {
       static template = xml`
         <t t-foreach="this.ids" t-as="i" t-key="i"><Child/></t>
         <AsyncChild/>`;
-      ids = [...Array(1001).keys()];
+      ids = [...Array(Fiber.maxRenderIterations + 1).keys()];
     }
 
     const promise = mount(Root, fixture, { test: true });
@@ -565,6 +576,70 @@ describe("render loop detection", () => {
     def.resolve();
     await promise;
     expect(fixture.textContent).toContain("async");
+    expect(getConsoleOutput()).toEqual([]);
+  });
+
+  test("updates from separate tasks while commits are on hold are not a render loop (#2062)", async () => {
+    // In a hidden tab, rAF does not run but timers do: each timer update
+    // recycles the same uncommitted fiber, possibly more times than the limit
+    // before the tab is visible again. Those updates are spread over separate
+    // tasks, so this is not a render loop.
+    const n = signal(0);
+    class Root extends Component {
+      static template = xml`<t t-out="this.n()"/>`;
+      n = n;
+    }
+    const comp: any = await mount(Root, fixture, { test: true });
+    const scheduler = comp.__owl__.app.scheduler;
+    const requestAnimationFrame = scheduler.requestAnimationFrame;
+    let frame: any = null;
+    scheduler.requestAnimationFrame = (cb: any) => {
+      frame = cb;
+      return 1;
+    };
+
+    const updates = Fiber.maxRenderIterations + 5;
+    for (let i = 1; i <= updates; i++) {
+      n.set(i);
+      await new Promise((resolve) => setTimeout(resolve));
+    }
+    expect(fixture.innerHTML).toBe("0");
+
+    // tab visible again
+    scheduler.requestAnimationFrame = requestAnimationFrame;
+    frame();
+    expect(fixture.innerHTML).toBe(String(updates));
+    expect(getConsoleOutput()).toEqual([]);
+  });
+
+  test("a render loop going through async code is still detected", async () => {
+    // Same loop as #1968, but each iteration awaits a timer (think of an RPC)
+    // in onWillStart, so the scheduler gets a turn between iterations. The
+    // root fiber is waiting on onWillStart, not on a frame: its recycle count
+    // must not be reset, or the loop runs forever.
+    class Child extends Component {
+      static template = xml`<t t-out="this.props.value"/>`;
+      props = useProps({ value: t.number(), inc: t.function() });
+      setup() {
+        onWillStart(async () => {
+          await new Promise((resolve) => setTimeout(resolve));
+          this.props.inc();
+        });
+      }
+    }
+    class Root extends Component {
+      static components = { Child };
+      static template = xml`<Child value="this.value()" inc="this.inc"/>`;
+      value = signal(1);
+      inc = () => this.value.set(this.value() + 1);
+    }
+
+    let error: any;
+    await mount(Root, fixture, { test: true }).catch((e) => (error = e));
+
+    expect(error).toBeInstanceOf(OwlError);
+    expect(error.message).toMatch(/render loop/);
+    expect(error.message).toContain("Root");
     expect(getConsoleOutput()).toEqual([]);
   });
 });

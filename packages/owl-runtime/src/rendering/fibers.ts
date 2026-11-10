@@ -10,11 +10,6 @@ import { BDom, mount, type MountTarget } from "../blockdom";
 import type { ComponentNode } from "../component_node";
 import { fibersInError, handleError } from "./error_handling";
 
-// Max times a given fiber may be recycled before being committed to the DOM
-// before we treat it as an infinite render loop. A healthy render commits after
-// ~1 pass; only a self-retriggering loop ever approaches this. See issue #1968.
-const MAX_RENDER_ITERATIONS = 1000;
-
 // Bit 0 of Fiber.renderState: whether the fiber's result was applied to the
 // DOM (the other bits hold the recycle count, see the renderState declaration).
 export const APPLIED_TO_DOM = 1;
@@ -33,12 +28,14 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   if (current) {
     let root = current.root!;
     // This fiber is being re-rendered before it was ever committed to the DOM.
-    // In a healthy app a fiber is committed (and node.fiber nulled) before the
-    // next render, so this only climbs without bound in a render loop (#1968).
+    // Within a single task, this only climbs without bound in a render loop
+    // (#1968); the scheduler resets the count at the next task if the render
+    // is then only waiting to be committed (#2062).
     // The count is per fiber, NOT on the root: under a long-lived uncommitted
     // root, many sibling subtrees may legitimately re-render once each, and a
     // shared counter would add those up and flag a loop where there is none.
     current.renderState += 2; // bump the recycle count held in bits 1+
+    node.app.scheduler.trackRecycle(current);
     // lock root fiber because canceling children fibers may destroy components,
     // which means any arbitrary code can be run in onWillDestroy, which may
     // trigger new renderings
@@ -133,6 +130,15 @@ function cancelFibers(fibers: Fiber[]): number {
 }
 
 export class Fiber {
+  // Max times a given fiber may be recycled before being committed to the DOM
+  // before we treat it as an infinite render loop. Only a self-retriggering
+  // loop ever approaches this (#1968). Recycles spread over separate tasks
+  // while the render is complete and only waiting to be committed do not count
+  // (see Scheduler.trackRecycle): commits may legitimately be on hold for a
+  // long time, e.g. in a hidden tab where rAF does not run (#2062). Static so
+  // that tests can lower it.
+  static maxRenderIterations = 1000;
+
   node: ComponentNode;
   bdom: BDom | null = null;
   root: RootFiber | null; // A Fiber that has been replaced by another has no root
@@ -140,9 +146,10 @@ export class Fiber {
   children: Fiber[] = [];
   // Packs the "applied to DOM" flag (bit 0, see APPLIED_TO_DOM) together with
   // the number of times this uncommitted fiber has been recycled by
-  // makeRootFiber (bits 1 and up). The recycle count climbs without bound only
-  // in a render loop (#1968); it shares a slot with the flag so the many
-  // fibers that are never recycled don't pay for a dedicated field.
+  // makeRootFiber since the scheduler last cleared it (bits 1 and up). The recycle
+  // count climbs without bound only in a render loop (#1968); it shares a slot
+  // with the flag so the many fibers that are never recycled don't pay for a
+  // dedicated field.
   renderState = 0;
   deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
@@ -201,11 +208,11 @@ export class Fiber {
       // that app.destroy is about to dispose. The looping node's own fiber is
       // the one makeRootFiber keeps recycling, so the reported component is
       // the one actually stuck in the loop.
-      if (this.renderState >> 1 > MAX_RENDER_ITERATIONS) {
+      if (this.renderState >> 1 > Fiber.maxRenderIterations) {
         handleError({
           node,
           error: new OwlError(
-            `Maximum render iterations (${MAX_RENDER_ITERATIONS}) exceeded. ` +
+            `Maximum render iterations (${Fiber.maxRenderIterations}) exceeded. ` +
               `Component "${node.componentName}" is stuck in a render loop: rendering it ` +
               `keeps triggering another render before the DOM is updated. A common cause is ` +
               `updating reactive state during render or setup() — e.g. calling a parent's ` +

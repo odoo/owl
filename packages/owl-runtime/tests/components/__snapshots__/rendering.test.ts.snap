@@ -91,6 +91,18 @@ exports[`render loop detection > throws a clear error instead of freezing on a r
 }"
 `;
 
+exports[`render loop detection > updates from separate tasks while commits are on hold are not a render loop (#2062) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].n());
+  }
+}"
+`;
+
 exports[`render loop detection > wide re-render under an uncommitted root is not a render loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

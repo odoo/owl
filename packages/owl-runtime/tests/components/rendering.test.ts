@@ -567,4 +567,36 @@ describe("render loop detection", () => {
     expect(fixture.textContent).toContain("async");
     expect(getConsoleOutput()).toEqual([]);
   });
+
+  test("updates from separate tasks while commits are on hold are not a render loop (#2062)", async () => {
+    // In a hidden tab, rAF does not run but timers do: each timer update
+    // recycles the same uncommitted fiber, possibly more than 1000 times
+    // before the tab is visible again. Those updates are spread over separate
+    // tasks, so this is not a render loop.
+    const n = signal(0);
+    class Root extends Component {
+      static template = xml`<t t-out="this.n()"/>`;
+      n = n;
+    }
+    const comp: any = await mount(Root, fixture, { test: true });
+    const scheduler = comp.__owl__.app.scheduler;
+    const requestAnimationFrame = scheduler.requestAnimationFrame;
+    let frame: any = null;
+    scheduler.requestAnimationFrame = (cb: any) => {
+      frame = cb;
+      return 1;
+    };
+
+    for (let i = 1; i <= 1005; i++) {
+      n.set(i);
+      await new Promise((resolve) => setTimeout(resolve));
+    }
+    expect(fixture.innerHTML).toBe("0");
+
+    // tab visible again
+    scheduler.requestAnimationFrame = requestAnimationFrame;
+    frame();
+    expect(fixture.innerHTML).toBe("1005");
+    expect(getConsoleOutput()).toEqual([]);
+  });
 });

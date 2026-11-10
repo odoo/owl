@@ -10,6 +10,8 @@ let requestAnimationFrame: Window["requestAnimationFrame"];
 if (typeof window !== "undefined") {
   requestAnimationFrame = window.requestAnimationFrame.bind(window);
 }
+// captured early for the same reason as requestAnimationFrame (see below)
+const setTimeout = globalThis.setTimeout.bind(globalThis);
 
 export class Scheduler {
   // capture the value of requestAnimationFrame as soon as possible, to avoid
@@ -20,6 +22,9 @@ export class Scheduler {
   frame: number = 0;
   delayedRenders: Fiber[] = [];
   processing = false;
+  // fibers recycled by makeRootFiber since the last task boundary, see
+  // trackRecycle
+  recycled: Fiber[] = [];
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -28,6 +33,26 @@ export class Scheduler {
 
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
+  }
+
+  /**
+   * Called each time makeRootFiber recycles an uncommitted fiber. A render
+   * loop (#1968) is driven by microtasks only, so the timeout scheduled here
+   * cannot run while it spins, and the recycle count climbs until it is
+   * detected. Updates coming from separate tasks (timers, network) while
+   * commits are on hold, e.g. in a hidden tab where rAF does not run (#2062),
+   * let the timeout run in between and reset the count.
+   */
+  trackRecycle(fiber: Fiber) {
+    if (!this.recycled.length) {
+      setTimeout(() => {
+        for (let f of this.recycled) {
+          f.renderState &= APPLIED_TO_DOM; // clear the recycle count
+        }
+        this.recycled = [];
+      });
+    }
+    this.recycled.push(fiber);
   }
 
   /**

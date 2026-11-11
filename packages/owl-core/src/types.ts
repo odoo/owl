@@ -1,4 +1,4 @@
-import { atomSymbol, type ReactiveValue } from "./computations";
+import { atomSymbol, type ReactiveValue, type WritableReactiveValue } from "./computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
 export type Constructor<T = any> = { new (...args: any[]): T };
@@ -16,6 +16,12 @@ const elementTypeSymbol = Symbol("elementType");
 // Attached to validators created by `.optional()`: an object key with an
 // optional type may be omitted.
 const optionalSymbol = Symbol("optional");
+// Attached to validators created by `.static()`: the consumer of the schema
+// (props) reads such a key once and pins it.
+const staticSymbol = Symbol("static");
+// Attached to validators created by `types.signal()`, carrying the inner type
+// and the settable flag, so that props can give signal keys their behavior.
+const signalSymbol = Symbol("signal");
 // Attached to intersection validators (`and`), so that `applyDefaults` can
 // fold defaults from every member type into the value.
 const intersectionSymbol = Symbol("intersection");
@@ -25,11 +31,31 @@ const intersectionSymbol = Symbol("intersection");
 // so it can be recovered with `infer`. Exported so that dependent
 // declarations (e.g. a `Resource<T>` field) can be emitted across modules.
 export declare const hasDefault: unique symbol;
-export type WithDefault<T> = T & { [hasDefault]: T };
+export type WithDefault<T> = T & {
+  [hasDefault]: T;
+  static(): Static<T & { [hasDefault]: T }>;
+};
 
 // Type-level brand carried by `.optional()`, phantom like `hasDefault`.
 export declare const isOptional: unique symbol;
-export type Optional<T> = T & { [isOptional]: T };
+export type Optional<T> = T & {
+  [isOptional]: T;
+  static(): Static<T & { [isOptional]: T }>;
+};
+
+// Type-level brand carried by `.static()`, phantom like `hasDefault`.
+export declare const isStatic: unique symbol;
+export type Static<T> = T & {
+  [isStatic]: T;
+  optional(): Optional<T & { [isStatic]: T }>;
+  optional(
+    value: T extends Function ? () => T : T | (() => T)
+  ): WithDefault<T & { [isStatic]: T }>;
+};
+
+// Phantom brand of a read-only `types.signal()`: props promote a plain value passed on it.
+export declare const isPromotable: unique symbol;
+export type Promotable<T> = { [isPromotable]: T };
 
 // Type-level brand carried by every type built by the `types` factories. It
 // is phantom: at runtime, only the `optional` method exists on the validator.
@@ -49,6 +75,11 @@ export type Type<T> = T & {
    * a function type must use the factory form.
    */
   optional(value: T extends Function ? () => T : T | (() => T)): WithDefault<T>;
+  /**
+   * Marks the type as static: props read such a key once and keep it. Only
+   * meaningful at the top level of a prop declaration.
+   */
+  static(): Static<T>;
 
   type: T;
 };
@@ -77,10 +108,11 @@ type HasDefault<T> = IsAny<T> extends true ? false : T extends { [hasDefault]: a
 type IsOptional<T> = IsAny<T> extends true ? false : T extends { [isOptional]: any } ? true : false;
 type StripDefault<T> = T extends { [hasDefault]: infer U } ? U : T;
 type StripOptional<T> = T extends { [isOptional]: infer U } ? U | undefined : T;
+type StripStatic<T> = T extends { [isStatic]: infer U } ? U : T;
 type StripType<T> = T extends { [typeBrand]: infer U } ? U : T;
 // Recovers the value type carried by a validator: brands are removed, and an
 // optional type resolves to `T | undefined`.
-export type StripBrands<T> = StripType<StripDefault<StripOptional<T>>>;
+export type StripBrands<T> = StripType<StripStatic<StripDefault<StripOptional<T>>>>;
 type StripBrandsAll<T extends any[]> = { [K in keyof T]: StripBrands<T[K]> };
 
 // Keys whose type carries a default. The distributive conditional makes the
@@ -111,15 +143,39 @@ type GetRequiredEntries<T> = {
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
 
+type Not<B extends boolean> = B extends true ? false : true;
+type IsPromotable<T> = IsAny<T> extends true ? false : T extends Promotable<any> ? true : false;
+type PromotedValue<T> = T extends Promotable<infer U> ? U : never;
+type IsAbsentForReader<T> = IsOptional<T> extends true ? Not<IsPromotable<T>> : false;
+type IsOmittable<T> = IsOptional<T> extends true ? true : HasDefault<T>;
+type ReaderValue<T> =
+  IsPromotable<T> extends true
+    ? IsOptional<T> extends true
+      ? ReactiveValue<PromotedValue<T> | undefined>
+      : StripBrands<T>
+    : StripBrands<T>;
+type ParentValue<T> =
+  IsPromotable<T> extends true ? StripBrands<T> | PromotedValue<T> : StripBrands<T>;
+
 // Object type as seen by the reader of the values once defaults are applied:
 // defaulted keys are required (the default fills them), only optional keys
-// may be absent. Resolves to a flat object type, so editors display it
-// expanded.
+// may be absent, except a read-only signal key, which props promote even when
+// omitted. Resolves to a flat object type, so editors display it expanded.
 export type ResolveReaderObjectType<T> = PrettifyShape<
   {
-    [K in keyof T as IsOptional<T[K]> extends true ? never : K]: StripBrands<T[K]>;
+    [K in keyof T as IsAbsentForReader<T[K]> extends true ? never : K]: ReaderValue<T[K]>;
   } & {
-    [K in keyof T as IsOptional<T[K]> extends true ? K : never]?: StripBrands<T[K]>;
+    [K in keyof T as IsAbsentForReader<T[K]> extends true ? K : never]?: StripBrands<T[K]>;
+  }
+>;
+
+// Object type as seen by the parent giving the props: a read-only signal key
+// also takes the plain value that props promote.
+export type ResolveParentObjectType<T> = PrettifyShape<
+  {
+    [K in keyof T as IsOmittable<T[K]> extends true ? never : K]: ParentValue<T[K]>;
+  } & {
+    [K in keyof T as IsOmittable<T[K]> extends true ? K : never]?: ParentValue<T[K]>;
   }
 >;
 
@@ -145,7 +201,56 @@ export type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) ext
  * schema, not a validation side-effect.
  */
 export function getDefault(type: any): (() => any) | undefined {
-  return typeof type === "function" ? type[defaultSymbol] : undefined;
+  return findInChain(type, defaultSymbol)?.[defaultSymbol];
+}
+
+// Walk the wrapper chain, as `.optional()` and `.static()` compose in any
+// order, so a brand can sit on any layer.
+function findInChain(type: any, symbol: symbol): any | undefined {
+  while (typeof type === "function") {
+    if (symbol in type) {
+      return type;
+    }
+    type = type[innerTypeSymbol];
+  }
+  return undefined;
+}
+
+/** Returns whether the type was marked with `.static()`. */
+export function isStaticType(type: any): boolean {
+  return !!findInChain(type, staticSymbol);
+}
+
+export interface SignalTypeMeta {
+  settable: boolean;
+  type: any;
+}
+
+/** Returns the signal metadata of a `types.signal(...)` type, if it is one. */
+export function getSignalType(type: any): SignalTypeMeta | undefined {
+  return findInChain(type, signalSymbol)?.[signalSymbol];
+}
+
+/**
+ * Returns the validator of a prop typed `type`: props promote a plain value
+ * passed on a read-only signal key, so that value is checked against the
+ * inner type.
+ */
+export function promotableType(type: any): any {
+  const meta = getSignalType(type);
+  if (!meta || meta.settable) {
+    return type;
+  }
+  const validate = function validatePromotable(context: ValidationContext) {
+    const value = context.value;
+    if (value === undefined || (typeof value === "function" && value[atomSymbol])) {
+      context.validate(type);
+    } else if (meta.type) {
+      context.validate(meta.type);
+    }
+  } as any;
+  validate[innerTypeSymbol] = type;
+  return validate;
 }
 
 // Runtime implementation of the `optional` method declared on `Type`. With a
@@ -160,6 +265,7 @@ function makeOptional(type: any, value?: any): any {
   } as any;
   validate[optionalSymbol] = true;
   validate[innerTypeSymbol] = type;
+  validate.static = () => makeStatic(validate);
   if (value !== undefined) {
     validate[defaultSymbol] = typeof value === "function" ? value : () => value;
   }
@@ -167,13 +273,27 @@ function makeOptional(type: any, value?: any): any {
 }
 
 function isOptionalType(type: any): boolean {
-  return typeof type === "function" && optionalSymbol in type;
+  return !!findInChain(type, optionalSymbol);
 }
 
-// Attaches the `optional` method to a validator: every `types` factory
-// funnels its validator through this.
+function makeStatic(type: any): any {
+  const validate = makeType(function validateStatic(context: ValidationContext) {
+    if (context.path.length > 1) {
+      context.addIssue({ message: "a static type is only valid on a prop" });
+      return;
+    }
+    context.validate(type);
+  });
+  validate[staticSymbol] = true;
+  validate[innerTypeSymbol] = type;
+  return validate;
+}
+
+// Attaches the `optional` and `static` methods to a validator: every `types`
+// factory funnels its validator through this.
 function makeType(validate: (context: ValidationContext) => void): any {
   (validate as any).optional = (value?: any) => makeOptional(validate, value);
+  (validate as any).static = () => makeStatic(validate);
   return validate;
 }
 
@@ -602,15 +722,45 @@ function union<T extends unknown[]>(types: T): Type<StripBrands<T[number]>> {
   });
 }
 
-function reactiveValueType(): Type<ReactiveValue<any>>;
-function reactiveValueType<T>(): Type<ReactiveValue<T>>;
-function reactiveValueType<T>(type: T): Type<ReactiveValue<StripBrands<T>>>;
-function reactiveValueType(type?: any): any {
-  return makeType(function validateReactiveValue(context: ValidationContext) {
+interface SignalTypeOptions {
+  /**
+   * The consumer writes the received signal: validation requires a `set`
+   * method on it.
+   */
+  settable?: boolean;
+}
+
+// No `.static()`: a signal prop is static by nature, and the wrapper would drop
+// the promotion brand.
+type NoStatic = { static: never };
+
+type ReadonlySignalType<T> = {
+  optional(): Optional<ReactiveValue<T>> & Promotable<T> & NoStatic;
+  optional(value: () => ReactiveValue<T>): WithDefault<ReactiveValue<T>> & Promotable<T> & NoStatic;
+} & Type<ReactiveValue<T>> &
+  Promotable<T> &
+  NoStatic;
+
+function reactiveValueType(): ReadonlySignalType<any>;
+function reactiveValueType<T>(): ReadonlySignalType<T>;
+function reactiveValueType<T>(type: T): ReadonlySignalType<StripBrands<T>>;
+function reactiveValueType<T>(
+  type: T,
+  options: { settable: true }
+): Type<WritableReactiveValue<StripBrands<T>>>;
+function reactiveValueType(type?: any, options?: SignalTypeOptions): any {
+  const settable = options?.settable ?? false;
+  const validate = makeType(function validateReactiveValue(context: ValidationContext) {
     if (typeof context.value !== "function" || !context.value[atomSymbol]) {
       context.addIssue({ message: "value is not a reactive value" });
+      return;
+    }
+    if (settable && typeof context.value.set !== "function") {
+      context.addIssue({ message: "value is not a settable reactive value" });
     }
   });
+  validate[signalSymbol] = { settable, type } satisfies SignalTypeMeta;
+  return validate;
 }
 
 function ref(): Type<HTMLElement | null>;

@@ -564,5 +564,51 @@ describe("effect", () => {
       await waitScheduler();
       expect(outerRuns).toBe(1);
     });
+
+    test("an effect disposed while it runs does not run again", async () => {
+      const open = signal(false);
+      const value = signal(0);
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        if (!open()) {
+          return undefined;
+        }
+        dispose();
+        steps.push(`read ${value()}`);
+        return () => steps.push("cleanup");
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0", "cleanup"]);
+
+      value.set(1);
+      open.set(false);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0", "cleanup"]);
+    });
+
+    test("an effect disposed while it runs then throws does not run again", async () => {
+      class IntentionalTestError extends Error {
+        override name = "IntentionalTestError";
+      }
+      const open = signal(false);
+      const value = signal(0);
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        if (!open()) {
+          return;
+        }
+        dispose();
+        steps.push(`read ${value()}`);
+        throw new IntentionalTestError("boom");
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0"]);
+
+      value.set(1);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0"]);
+    });
   });
 });

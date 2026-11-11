@@ -10,6 +10,8 @@ import {
   Scope,
   scopeStack,
   setComputation,
+  signal,
+  Signal,
   STATUS,
   useScope,
 } from "@odoo/owl-core";
@@ -53,6 +55,9 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   // after each patch and after this subtree is removed, to unset a ref pointing
   // at a bulk-removed element (slot host, enclosing t-if) — see sweepRefs.
   trackedRefs: Map<{ set(v: null): void }, { value: HTMLElement | null }> | null = null;
+  // `.signal=` expressions of descendants that threw before this node's
+  // pending render: they run again once that render is applied.
+  rerunOnPatch: Map<Signal<undefined>, ComponentNode> | null = null;
 
   constructor(
     C: ComponentConstructor,
@@ -275,6 +280,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       sweepRemovedRefs();
       this.fiber!.renderState |= APPLIED_TO_DOM;
       this.fiber = null;
+      this.triggerRerunOnPatch();
     }
   }
 
@@ -295,6 +301,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     this.fiber!.renderState |= APPLIED_TO_DOM;
     this.children = this.fiber!.childrenMap;
     this.fiber = null;
+    this.triggerRerunOnPatch();
   }
 
   moveBeforeDOMNode(node: Node | null, parent?: HTMLElement): void {
@@ -341,6 +348,22 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     sweepRemovedRefs();
     fiber.renderState |= APPLIED_TO_DOM;
     this.fiber = null;
+    this.triggerRerunOnPatch();
+  }
+
+  triggerRerunOnPatch() {
+    const rerun = this.rerunOnPatch;
+    if (rerun) {
+      this.rerunOnPatch = null;
+      for (const [s, owner] of rerun) {
+        try {
+          signal.trigger(s);
+        } catch (error) {
+          // an immediate effect reads the expression inside the trigger
+          handleError({ node: owner, error });
+        }
+      }
+    }
   }
 
   beforeRemove() {

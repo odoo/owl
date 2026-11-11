@@ -395,6 +395,7 @@ export class MountFiber extends RootFiber {
 
       node.status = STATUS.MOUNTED;
       this.renderState |= APPLIED_TO_DOM;
+      node.triggerRerunOnPatch();
       let mountedFibers = this.mounted;
       while ((current = mountedFibers.pop())) {
         if (current.renderState & APPLIED_TO_DOM) {

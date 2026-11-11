@@ -23,6 +23,7 @@ export function immediateEffect<T>(fn: () => T) {
 }
 
 function createEffect<T>(fn: () => T, immediate: boolean) {
+  let disposed = false;
   const computation = createComputation(
     () => {
       // Only run the unsubscribe dance (and the surrounding setComputation
@@ -39,7 +40,22 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
       } else {
         removeSources(computation);
       }
-      return fn();
+      let result;
+      try {
+        result = fn();
+      } finally {
+        if (disposed) {
+          // fn disposed the effect: unsubscribe what fn read since
+          setComputation(undefined);
+          unsubscribeEffect(computation);
+          setComputation(computation);
+        }
+      }
+      if (disposed && typeof result === "function") {
+        result();
+        return undefined;
+      }
+      return result;
     },
     immediate ? ComputationFlags.IMMEDIATE | ComputationFlags.STALE : ComputationFlags.STALE
   );
@@ -57,6 +73,7 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
 
   // Remove sources and unsubscribe
   return function cleanupEffect() {
+    disposed = true;
     // Mark as executed so a queued re-run (scheduled by an earlier signal
     // write in the same microtick) is skipped by updateComputation.
     computation.flags &= ~ComputationFlags.STATE_MASK;

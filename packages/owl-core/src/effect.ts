@@ -39,7 +39,28 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
       } else {
         removeSources(computation);
       }
-      return fn();
+      if (computation.flags & ComputationFlags.DISPOSED) {
+        return undefined;
+      }
+      let result;
+      try {
+        result = fn();
+      } finally {
+        if (computation.flags & ComputationFlags.DISPOSED) {
+          // the effect or its parent was disposed during fn: unsubscribe what
+          // fn read since
+          setComputation(undefined);
+          unsubscribeEffect(computation);
+          setComputation(computation);
+        }
+      }
+      if (computation.flags & ComputationFlags.DISPOSED && typeof result === "function") {
+        setComputation(undefined);
+        result();
+        setComputation(computation);
+        return undefined;
+      }
+      return result;
     },
     immediate ? ComputationFlags.IMMEDIATE | ComputationFlags.STALE : ComputationFlags.STALE
   );
@@ -59,7 +80,8 @@ function createEffect<T>(fn: () => T, immediate: boolean) {
   return function cleanupEffect() {
     // Mark as executed so a queued re-run (scheduled by an earlier signal
     // write in the same microtick) is skipped by updateComputation.
-    computation.flags &= ~ComputationFlags.STATE_MASK;
+    computation.flags =
+      (computation.flags & ~ComputationFlags.STATE_MASK) | ComputationFlags.DISPOSED;
     // Clear currentComputation across unsubscribeEffect so the user cleanup
     // function's atom reads do not attach as sources of whatever computation
     // happens to be active when dispose() is called. See test
@@ -76,10 +98,12 @@ function unsubscribeEffect(effect: ComputationAtom) {
   removeSources(effect);
   cleanupEffect(effect);
   for (const childEffect of effect.observers) {
-    // Consider it executed to avoid it's re-execution. The recursive
+    // Consider it executed to avoid its re-execution, and disposed so that a
+    // run still in progress unsubscribes again when it ends. The recursive
     // unsubscribeEffect below clears the child's sources as its first step,
     // so no explicit removeSources call is needed here.
-    childEffect.flags &= ~ComputationFlags.STATE_MASK;
+    childEffect.flags =
+      (childEffect.flags & ~ComputationFlags.STATE_MASK) | ComputationFlags.DISPOSED;
     unsubscribeEffect(childEffect);
   }
   effect.observers.clear();
@@ -89,7 +113,7 @@ function cleanupEffect(effect: ComputationAtom) {
   // the computation.value of an effect is a cleanup function
   const cleanupFn = effect.value;
   if (cleanupFn && typeof cleanupFn === "function") {
-    cleanupFn();
     effect.value = undefined;
+    cleanupFn();
   }
 }

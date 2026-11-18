@@ -564,5 +564,126 @@ describe("effect", () => {
       await waitScheduler();
       expect(outerRuns).toBe(1);
     });
+
+    test("an effect disposed while it runs does not run again", async () => {
+      const open = signal(false);
+      const value = signal(0);
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        if (!open()) {
+          return undefined;
+        }
+        dispose();
+        steps.push(`read ${value()}`);
+        return () => steps.push("cleanup");
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0", "cleanup"]);
+
+      value.set(1);
+      open.set(false);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0", "cleanup"]);
+    });
+
+    test("an effect disposed while it runs does not track the reads of its cleanup", async () => {
+      const open = signal(false);
+      const theme = signal("light");
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        steps.push(`run ${open()}`);
+        if (open()) {
+          dispose();
+        }
+        return () => steps.push(`cleanup ${theme()}`);
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["run false", "cleanup light", "run true", "cleanup light"]);
+
+      theme.set("dark");
+      await waitScheduler();
+      expect(steps).toEqual(["run false", "cleanup light", "run true", "cleanup light"]);
+    });
+
+    test("an effect disposed while it runs then throws does not run again", async () => {
+      class IntentionalTestError extends Error {
+        override name = "IntentionalTestError";
+      }
+      const open = signal(false);
+      const value = signal(0);
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        if (!open()) {
+          return;
+        }
+        dispose();
+        steps.push(`read ${value()}`);
+        throw new IntentionalTestError("boom");
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0"]);
+
+      value.set(1);
+      await waitScheduler();
+      expect(steps).toEqual(["read 0"]);
+    });
+
+    test("an effect whose cleanup disposes the effect calls the cleanup once", () => {
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        steps.push("run");
+        return () => {
+          steps.push("cleanup");
+          dispose();
+        };
+      });
+      dispose();
+      expect(steps).toEqual(["run", "cleanup"]);
+    });
+
+    test("an effect whose cleanup disposes the effect on a re-run does not run again", async () => {
+      const value = signal(0);
+      const steps: string[] = [];
+      const dispose = effect(() => {
+        steps.push(`run ${value()}`);
+        return () => {
+          steps.push("cleanup");
+          dispose();
+        };
+      });
+      value.set(1);
+      await waitScheduler();
+      expect(steps).toEqual(["run 0", "cleanup"]);
+
+      value.set(2);
+      await waitScheduler();
+      expect(steps).toEqual(["run 0", "cleanup"]);
+    });
+
+    test("a child effect that disposes its parent while it runs does not run again", async () => {
+      const open = signal(false);
+      const value = signal(0);
+      const steps: string[] = [];
+      const disposeParent = effect(() => {
+        effect(() => {
+          if (!open()) {
+            return undefined;
+          }
+          disposeParent();
+          steps.push(`child read ${value()}`);
+          return () => steps.push("child cleanup");
+        });
+      });
+      open.set(true);
+      await waitScheduler();
+      expect(steps).toEqual(["child read 0", "child cleanup"]);
+
+      value.set(1);
+      await waitScheduler();
+      expect(steps).toEqual(["child read 0", "child cleanup"]);
+    });
   });
 });

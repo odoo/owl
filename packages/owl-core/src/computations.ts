@@ -48,9 +48,10 @@ export function toEqualsFn<T>(equals: Equals<T> | undefined): (a: T, b: T) => bo
 
 /**
  * `ComputationAtom.flags` packs the mutable state (low two bits) with two
- * immutable kind bits, so a notified observer is classified from a single
- * property read. EXECUTED is 0: "needs an update" is `flags & STATE_MASK`, and
- * clearing the state bits marks a computation as executed.
+ * immutable kind bits and the disposed bit of an effect, so a notified
+ * observer is classified from a single property read. EXECUTED is 0: "needs
+ * an update" is `flags & STATE_MASK`, and clearing the state bits marks a
+ * computation as executed.
  */
 export enum ComputationFlags {
   EXECUTED = 0,
@@ -62,6 +63,9 @@ export enum ComputationFlags {
   // Effect that re-runs synchronously in the write that invalidated it,
   // instead of being batched in the microtask flush (see `immediateEffect`).
   IMMEDIATE = 8,
+  // Effect disposed by its own dispose function or by its parent: a run still
+  // in progress unsubscribes again when it ends.
+  DISPOSED = 16,
 }
 
 export interface Atom<T = any> {

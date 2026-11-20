@@ -10,6 +10,8 @@ import {
   Scope,
   scopeStack,
   setComputation,
+  signal,
+  Signal,
   STATUS,
   useScope,
 } from "@odoo/owl-core";
@@ -18,6 +20,7 @@ import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import type { CachedComputed } from "./rendering/template_helpers";
 
 // -----------------------------------------------------------------------------
 //  Component VNode class
@@ -53,6 +56,13 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   // after each patch and after this subtree is removed, to unset a ref pointing
   // at a bulk-removed element (slot host, enclosing t-if) — see sweepRefs.
   trackedRefs: Map<{ set(v: null): void }, { value: HTMLElement | null }> | null = null;
+  // `.signal=` expressions of descendants that threw before this node's
+  // pending render: they run again once that render is applied.
+  rerunOnPatch: Map<Signal<undefined>, ComponentNode> | null = null;
+  // `.signal=` computeds of the sites this node renders (slots included), by
+  // site and render key. The fiber of a render keeps the keys it reached: the
+  // others are dropped when it is applied (removed t-foreach items)
+  computedCache: Map<string, CachedComputed> | null = null;
 
   constructor(
     C: ComponentConstructor,
@@ -273,8 +283,10 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
       }
       this.sweepRefs();
       sweepRemovedRefs();
+      this.sweepComputedCache(this.fiber!);
       this.fiber!.renderState |= APPLIED_TO_DOM;
       this.fiber = null;
+      this.triggerRerunOnPatch();
     }
   }
 
@@ -288,13 +300,16 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
   }
 
   mount(parent: HTMLElement, anchor: ChildNode) {
-    const bdom = this.fiber!.bdom!;
+    const fiber = this.fiber!;
+    const bdom = fiber.bdom!;
     this.bdom = bdom;
     bdom.mount(parent, anchor);
     this.status = STATUS.MOUNTED;
-    this.fiber!.renderState |= APPLIED_TO_DOM;
-    this.children = this.fiber!.childrenMap;
+    fiber.renderState |= APPLIED_TO_DOM;
+    this.children = fiber.childrenMap;
     this.fiber = null;
+    this.sweepComputedCache(fiber);
+    this.triggerRerunOnPatch();
   }
 
   moveBeforeDOMNode(node: Node | null, parent?: HTMLElement): void {
@@ -339,8 +354,37 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     }
     this.sweepRefs();
     sweepRemovedRefs();
+    this.sweepComputedCache(fiber);
     fiber.renderState |= APPLIED_TO_DOM;
     this.fiber = null;
+    this.triggerRerunOnPatch();
+  }
+
+  sweepComputedCache(fiber: Fiber) {
+    const cache = this.computedCache;
+    const reached = fiber.reachedComputedKeys;
+    if (cache) {
+      for (const key of cache.keys()) {
+        if (!reached?.has(key)) {
+          cache.delete(key);
+        }
+      }
+    }
+  }
+
+  triggerRerunOnPatch() {
+    const rerun = this.rerunOnPatch;
+    if (rerun) {
+      this.rerunOnPatch = null;
+      for (const [s, owner] of rerun) {
+        try {
+          signal.trigger(s);
+        } catch (error) {
+          // an immediate effect reads the expression inside the trigger
+          handleError({ node: owner, error });
+        }
+      }
+    }
   }
 
   beforeRemove() {

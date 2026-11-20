@@ -29,5 +29,6 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     globals: true,
     testTimeout: 10000,
+    execArgv: ["--expose-gc"],
   },
 });

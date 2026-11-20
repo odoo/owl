@@ -214,15 +214,15 @@ So, with computed values, we have a dynamic graph of values (base values like
 signals and proxies, and derived values with compute functions). Owl will try
 to efficiently only recompute what it needs.
 
-A computed function can act like a signal, but by default it is read-only: its
-`set` function throws. It is also possible to redefine the `.set` function, to
+A computed function can act like a signal, but by default it is read-only: it
+has no `set` function. It is also possible to give it a `set` function, to
 make it writable, in some situations:
 
 ```js
 const s = signal(3);
 const double = computed(() => 2*s());
 double();       // return 6
-double.set(5);  // throws: "Cannot write to a read-only computed value..."
+double.set;     // undefined
 const triple = computed(() => 3*s(), {
   set: value => s.set(value/3);
 });
@@ -1664,7 +1664,7 @@ class Counter extends Component {
         Count: <t t-out="this.props.count()"/>
       </div>`;
 
-  props = useProps({ count: t.signal(t.number()) });
+  props = useProps({ count: t.signal(t.number(), { settable: true }) });
 
   increment() {
     this.props.count.set(this.props.count() + 1);

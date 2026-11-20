@@ -92,9 +92,9 @@ export function htmlEscape(str: any): Markup {
  * If called as a tag function, the interpolated strings are escaped.
  */
 export function markup(strings: TemplateStringsArray, ...placeholders: unknown[]): Markup;
-export function markup(value: string): Markup;
+export function markup(value: string | String): Markup;
 export function markup(
-  valueOrStrings: string | TemplateStringsArray,
+  valueOrStrings: string | String | TemplateStringsArray,
   ...placeholders: unknown[]
 ): Markup {
   if (!Array.isArray(valueOrStrings)) {

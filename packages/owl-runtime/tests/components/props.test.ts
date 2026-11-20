@@ -859,6 +859,47 @@ test(".signal suffix: child receives a read-only reactive value", async () => {
   expect(fixture.innerHTML).toBe("3");
 });
 
+test(".signal suffix: a site in a t-call sub-template keeps its own value", async () => {
+  class Child extends Component {
+    static template = xml`<i><t t-out="this.props.v()"/></i>`;
+    props = useProps({ v: t.signal(t.string()) });
+  }
+  const sub = xml`<Child v.signal="this.state.b"/>`;
+  class Parent extends Component {
+    static template = xml`<div><Child v.signal="this.state.a"/><t t-call="${sub}"/></div>`;
+    static components = { Child };
+    state = proxy({ a: "A", b: "B" });
+  }
+
+  await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<div><i>A</i><i>B</i></div>");
+});
+
+test(".signal suffix: a slot called per item keeps one value per item", async () => {
+  class Item extends Component {
+    static template = xml`<i><t t-out="this.props.v()"/></i>`;
+    props = useProps({ v: t.signal(t.string()) });
+  }
+  class List extends Component {
+    static template = xml`
+      <t t-foreach="this.props.items" t-as="item" t-key="item">
+        <t t-call-slot="default" item="item"/>
+      </t>`;
+    props = useProps();
+  }
+  class Parent extends Component {
+    static template = xml`
+      <List items="this.state.items">
+        <t t-set-slot="default" t-slot-scope="scope"><Item v.signal="scope.item"/></t>
+      </List>`;
+    static components = { List, Item };
+    state = proxy({ items: ["x", "y", "z"] });
+  }
+
+  await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<i>x</i><i>y</i><i>z</i>");
+});
+
 describe("reactive props (issue #1908)", () => {
   test("effect observing a prop reacts to both in-place mutation and value swap", async () => {
     const observed: number[] = [];

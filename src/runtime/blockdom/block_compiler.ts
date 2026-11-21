@@ -511,6 +511,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
   const nodeInsertBefore = nodeProto.insertBefore;
   const elementRemove = elementProto.remove;
 
+  // Safari (WebKit) never renders a MediaStream in a <video> element created in
+  // the inert document of a <template>, which is where the block template lives
+  // (see buildTree). Such blocks are imported into the document they are mounted
+  // in instead of being cloned.
+  const hasVideo =
+    template.nodeType === Node.ELEMENT_NODE &&
+    (template.nodeName === "VIDEO" || template.querySelector("video") !== null);
+
   class Block {
     el: HTMLElement | undefined;
     parentEl?: HTMLElement | undefined;
@@ -548,7 +556,11 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
     }
 
     mount(parent: HTMLElement, afterNode: Node | null) {
-      const el = nodeCloneNode.call(template, true) as HTMLElement;
+      const el = (
+        hasVideo
+          ? parent.ownerDocument.importNode(template, true)
+          : nodeCloneNode.call(template, true)
+      ) as HTMLElement;
       nodeInsertBefore.call(parent, el, afterNode);
       this.el = el;
       this.parentEl = parent;
@@ -558,7 +570,9 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
 
   if (isDynamic) {
     Block.prototype.mount = function mount(parent: HTMLElement, afterNode: Node | null) {
-      const el = nodeCloneNode.call(template, true);
+      const el = hasVideo
+        ? parent.ownerDocument.importNode(template, true)
+        : nodeCloneNode.call(template, true);
       // collecting references
       const refs: Node[] = new Array(refN);
       this.refs = refs;

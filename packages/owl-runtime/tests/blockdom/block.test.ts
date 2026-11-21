@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { createBlock, mount, patch, remove, text } from "../../src/blockdom";
 import { makeTestFixture } from "./helpers";
 
@@ -259,5 +260,39 @@ describe("misc", () => {
       "http://www.w3.org/1999/xhtml",
       "http://www.w3.org/1999/xhtml",
     ]);
+  });
+});
+
+describe("blocks with a video element", () => {
+  // Safari does not render a MediaStream in a <video> created in the inert
+  // document of a <template>, so these blocks are imported, not cloned.
+  test("static block containing a video is imported into the document", async () => {
+    const importNode = vi.spyOn(document, "importNode");
+    const block = createBlock("<div><video/></div>");
+    mount(block(), fixture);
+    expect(importNode).toHaveBeenCalledTimes(1);
+    expect(fixture.innerHTML).toBe("<div><video></video></div>");
+    importNode.mockRestore();
+  });
+
+  test("dynamic block with a video root is imported into the document", async () => {
+    const importNode = vi.spyOn(document, "importNode");
+    const block = createBlock(`<video block-attribute-0="class"/>`);
+    const tree = block(["a"]);
+    mount(tree, fixture);
+    expect(importNode).toHaveBeenCalledTimes(1);
+    expect(fixture.innerHTML).toBe(`<video class="a"></video>`);
+    patch(tree, block(["b"]));
+    expect(fixture.innerHTML).toBe(`<video class="b"></video>`);
+    importNode.mockRestore();
+  });
+
+  test("block without video is still cloned", async () => {
+    const importNode = vi.spyOn(document, "importNode");
+    const block = createBlock("<div><p>foo</p></div>");
+    mount(block(), fixture);
+    expect(importNode).not.toHaveBeenCalled();
+    expect(fixture.innerHTML).toBe("<div><p>foo</p></div>");
+    importNode.mockRestore();
   });
 });

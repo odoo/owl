@@ -211,3 +211,6 @@ signal.trigger(list); // manually notify subscribers
 In general, prefer collection signals (`signal.Array`, `signal.Object`, etc.)
 which handle this automatically. Use `signal.trigger` only when collection
 signals are not appropriate for your use case.
+
+`signal.trigger` also accepts a computed value, which it invalidates: see
+[Manual Invalidation](computed_values.md#manual-invalidation).

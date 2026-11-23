@@ -792,3 +792,76 @@ describe("equals option", () => {
     expectSpy(e.spy, 2);
   });
 });
+
+describe("signal.trigger", () => {
+  test("recomputes a computed and re-runs its readers when the value changed", async () => {
+    let external = 1; // not reactive
+    const c = spyComputed(() => external);
+    const e = spyEffect(() => c());
+    e();
+    expectSpy(e.spy, 1, { result: 1 });
+
+    external = 2;
+    signal.trigger(c);
+    await waitScheduler();
+    expectSpy(c.spy, 2);
+    expectSpy(e.spy, 2, { result: 2 });
+  });
+
+  test("readers do not re-run when the recomputed value is equal", async () => {
+    let external = 1;
+    const c = spyComputed(() => external > 0);
+    const e = spyEffect(() => c());
+    e();
+    expectSpy(e.spy, 1, { result: true });
+
+    external = 2;
+    signal.trigger(c);
+    await waitScheduler();
+    expectSpy(c.spy, 2);
+    expectSpy(e.spy, 1);
+  });
+
+  test("propagates through the computeds reading it", async () => {
+    let external = 1;
+    const c1 = computed(() => external);
+    const c2 = computed(() => c1() * 10);
+    const e = spyEffect(() => c2());
+    e();
+    expectSpy(e.spy, 1, { result: 10 });
+
+    external = 2;
+    signal.trigger(c1);
+    await waitScheduler();
+    expectSpy(e.spy, 2, { result: 20 });
+  });
+
+  test("an in-place mutation reaches readers with equals: false", async () => {
+    const obj = { n: 1 };
+    const sameRef = computed(() => obj);
+    const noEquals = computed(() => obj, { equals: false });
+    const e1 = spyEffect(() => sameRef().n);
+    const e2 = spyEffect(() => noEquals().n);
+    e1();
+    e2();
+
+    obj.n = 2;
+    signal.trigger(sameRef);
+    signal.trigger(noEquals);
+    await waitScheduler();
+    expectSpy(e1.spy, 1); // same reference: equal, readers not notified
+    expectSpy(e2.spy, 2, { result: 2 });
+  });
+
+  test("an unobserved computed recomputes on its next read", () => {
+    let external = 1;
+    const c = spyComputed(() => external);
+    expect(c()).toBe(1);
+
+    external = 2;
+    expect(c()).toBe(1); // still cached
+    signal.trigger(c);
+    expect(c()).toBe(2);
+    expectSpy(c.spy, 2);
+  });
+});

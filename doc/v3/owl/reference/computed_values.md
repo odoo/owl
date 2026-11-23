@@ -82,6 +82,25 @@ never receives the initial `undefined`.
 fetch resolving to an equal value does not notify. Note that there, the
 previous value _can_ be `undefined` when no `initial` is given.
 
+## Manual Invalidation
+
+A computed value only tracks reactive reads. If its getter also depends on
+something Owl cannot observe (`Date.now()`, `localStorage`, a third-party
+object), call [`signal.trigger`](signals.md#manual-trigger) on it when that
+input changes:
+
+```js
+const isLate = computed(() => Date.now() > deadline());
+
+setInterval(() => signal.trigger(isLate), 1000);
+```
+
+The computed value is invalidated as if one of its sources had changed: it
+recomputes on its next read, and its observers are notified only if the result
+differs (see [Custom Equality](#custom-equality)). So if the getter returns the
+same object after it was mutated in place, the computed value needs
+`equals: false` for the trigger to reach its observers.
+
 ## Async Computed Values
 
 > **Experimental.** `asyncComputed` is still shaking out; the exact API

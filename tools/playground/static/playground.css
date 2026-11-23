@@ -1444,10 +1444,23 @@ body {
 }
 
 /* CONSOLE PANE ****************************************/
+.console-separator {
+  flex: 0 0 4px;
+  background: #d0d0d0;
+  cursor: row-resize;
+  transition: background 0.15s;
+}
+
+.console-separator:hover {
+  background: #58a6ff;
+}
+
 .console-pane {
   flex: 0 0 150px;
+  min-height: 60px;
+  /* toolbar (32px) + separator (4px) + 50px of preview */
+  max-height: calc(100% - 86px);
   background: #f5f5f5;
-  border-top: 1px solid #d0d0d0;
   display: flex;
   flex-direction: column;
   overflow: hidden;

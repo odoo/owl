@@ -1033,9 +1033,11 @@ class SettingsPlugin extends Plugin {
   fullscreen = signal(false);
   leftPaneWidth = signal(Math.ceil((window.innerWidth + 160) / 2));
   sidebarWidth = signal(180);
+  consoleHeight = signal(150);
 
   leftPaneStyle = computed(() => `width:${this.leftPaneWidth()}px`);
   sidebarStyle = computed(() => `width:${this.sidebarWidth()}px`);
+  consoleStyle = computed(() => `flex-basis:${this.consoleHeight()}px`);
 
   setup() {
     this._applyTheme(this.darkMode());
@@ -1073,6 +1075,10 @@ class SettingsPlugin extends Plugin {
   setSidebarWidth(width) {
     const clampedWidth = Math.max(120, Math.min(400, width));
     this.sidebarWidth.set(clampedWidth);
+  }
+
+  setConsoleHeight(height, maxHeight) {
+    this.consoleHeight.set(Math.max(60, Math.min(maxHeight, height)));
   }
 }
 

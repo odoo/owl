@@ -424,7 +424,8 @@
 
       </div>
     </div>
-    <div class="console-pane" t-att-class="{hidden: !this.showConsole()}">
+    <div class="console-separator" t-if="this.showConsole()" t-on-mousedown="this.onConsoleSeparatorMouseDown"/>
+    <div class="console-pane" t-att-class="{hidden: !this.showConsole()}" t-att-style="this.settings.consoleStyle()">
       <div class="console-header">
         <span>Console Output</span>
         <a class="console-clear" t-on-click="this.clearConsole">Clear</a>

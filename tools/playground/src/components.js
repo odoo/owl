@@ -1754,6 +1754,36 @@ class ContentView extends Component {
     this.settings.fullscreen.set(!this.settings.fullscreen());
   }
 
+  onConsoleSeparatorMouseDown(ev) {
+    ev.preventDefault();
+    const container = ev.target.closest(".right-pane-inner");
+    const toolbar = container.querySelector(".content-toolbar");
+    const containerRect = container.getBoundingClientRect();
+    // keep at least 50px of the preview visible above the console
+    const maxHeight = containerRect.height - toolbar.offsetHeight - ev.target.offsetHeight - 50;
+    document.documentElement.style.userSelect = "none";
+    document.documentElement.style.cursor = "row-resize";
+    for (const iframe of document.getElementsByTagName("iframe")) {
+      iframe.classList.add("disabled");
+    }
+    const onMouseMove = (e) => {
+      this.settings.setConsoleHeight(containerRect.bottom - e.clientY, maxHeight);
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener(
+      "mouseup",
+      () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.documentElement.style.userSelect = "";
+        document.documentElement.style.cursor = "";
+        for (const iframe of document.getElementsByTagName("iframe")) {
+          iframe.classList.remove("disabled");
+        }
+      },
+      { once: true }
+    );
+  }
+
   errorCount = computed(() => this.consoleMessages().filter((m) => m.type === "error").length);
 
   formatArgs(args) {

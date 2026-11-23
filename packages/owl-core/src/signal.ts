@@ -2,7 +2,9 @@ import { OwlError } from "./owl_error";
 import {
   Atom,
   atomSymbol,
+  ComputationFlags,
   Equals,
+  invalidateComputation,
   onReadAtom,
   onWriteAtom,
   ReactiveValue,
@@ -56,11 +58,16 @@ function buildSignal<T>(value: T, set: (atom: Atom) => T, equals?: Equals<T>): S
   return readSignal;
 }
 
-function triggerSignal(signal: Signal<any>): void {
-  if (typeof signal !== "function" || (signal as any)[atomSymbol]?.type !== "signal") {
-    throw new OwlError(`Value is not a signal (${signal})`);
+function triggerSignal(value: ReactiveValue<any, any>): void {
+  const atom = typeof value === "function" ? (value as any)[atomSymbol] : undefined;
+  if (atom?.type === "signal") {
+    onWriteAtom(atom);
+  } else if (atom?.flags & ComputationFlags.DERIVED) {
+    // a computed: its getter may read something that is not reactive
+    invalidateComputation(atom);
+  } else {
+    throw new OwlError(`Value is not a signal or a computed (${value})`);
   }
-  onWriteAtom((signal as any)[atomSymbol]);
 }
 
 /**

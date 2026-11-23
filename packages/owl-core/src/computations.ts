@@ -158,6 +158,15 @@ export function onWriteAtom(atom: Atom) {
   }
 }
 
+/**
+ * Invalidates a derived computation as if one of its sources had been written:
+ * it recomputes on its next read, and its readers re-run only if the new value
+ * differs (according to its `equals` option).
+ */
+export function invalidateComputation(computation: ComputationAtom) {
+  onWriteAtom({ value: undefined, observers: new Set([computation]) });
+}
+
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
   const pending = observers;

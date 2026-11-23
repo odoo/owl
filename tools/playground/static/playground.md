@@ -116,7 +116,7 @@ Persists projects to `localStorage`.
 - `darkMode` - Boolean, toggles the `light-mode` class on `<html>` and the
   Monaco theme (`slate-dark` / `github-light`)
 - `vimMode` - Boolean, attaches Vim keybindings to the editor
-- `fullscreen`, `leftPaneWidth`, `sidebarWidth` - Layout state
+- `fullscreen`, `leftPaneWidth`, `sidebarWidth`, `consoleHeight` - Layout state
 
 #### 7. DialogPlugin (`dialog`)
 
@@ -372,5 +372,6 @@ its own `slate-dark`/`github-light` themes (see CodeEditor above).
 - `.editor-area` - Flex column for the split editor
 - `.editor-pane` - Single editor pane
 - `.editor-split-separator` - Draggable divider
+- `.console-separator` - Draggable divider above the console pane
 - `.file-icon-{js,xml,css,md}` - File type icons
 - `.console-msg` - Log output with type-specific colors

@@ -11,6 +11,7 @@ const branchName = require('current-git-branch');
 
 const REL_NOTES_FILE = `dist/release-notes.md`;
 const branch = "master";
+const RELEASE_TYPES = ["alpha", "beta", "stable"];
 
 // Only the umbrella package is published to npm. The siblings are workspace-
 // internal: their code is bundled into @odoo/owl by esbuild.
@@ -47,8 +48,17 @@ async function startRelease() {
   log(`   settings => branches => edit master => uncheck Do not allow bypassing the above settings`);
   log(`   (and probably a good idea to readd the protection after)`)
 
-  let isAlpha = await ask("Is this an alpha release? [y/n] (n): ");
-  isAlpha = isAlpha.toLowerCase() === "y";
+  // defaults to the type of the current version
+  const currentType = getReleaseType(package.version);
+  let releaseType = await ask(`Release type [${RELEASE_TYPES.join("/")}] (${currentType}): `);
+  releaseType = releaseType.toLowerCase() || currentType;
+  if (!RELEASE_TYPES.includes(releaseType)) {
+    logError(`Unknown release type: ${releaseType}. Aborting.`);
+    return;
+  }
+  // alpha and beta releases are GitHub prereleases, published on npm under
+  // their own tag, so that they do not replace the "latest" version
+  const isPrerelease = releaseType !== "stable";
 
   const STEPS = 11;
   let step = 1;
@@ -62,17 +72,14 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: collecting info...`);
-  const currentVersion = package.version;
-  let defaultNext = "";
-  if (isAlpha) {
-    const alphaMatch = currentVersion.match(/^(.+)-alpha\.(\d+)$/);
-    if (alphaMatch) {
-      defaultNext = `${alphaMatch[1]}-alpha.${parseInt(alphaMatch[2]) + 1}`;
-    }
-  }
+  const defaultNext = getDefaultNextVersion(package.version, releaseType);
   let next = await ask(`Next version${defaultNext ? ` (${defaultNext})` : ""}: `);
   next = next || defaultNext;
   if (next[0] === 'v') next = next.substring(1);
+  if (getReleaseType(next) !== releaseType || !/^\d+\.\d+\.\d+(-(alpha|beta)\.\d+)?$/.test(next)) {
+    logError(`"${next}" is not a valid ${releaseType} version. Aborting.`);
+    return;
+  }
   let file = await ask(`Release notes (${REL_NOTES_FILE}): `);
   file = file || REL_NOTES_FILE;
   if (!fs.existsSync(`./${file}`)) {
@@ -193,7 +200,7 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Creating the release...`);
-  const prerelease = isAlpha ? "--prerelease" : "";
+  const prerelease = isPrerelease ? "--prerelease" : "";
   const relaseResult = await execCommand(`gh release create v${next} packages/owl/dist/*.js dist/*.zip ${draft} ${prerelease} -F ${file}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
@@ -201,10 +208,11 @@ async function startRelease() {
   }
 
   log(`Step ${step++}/${STEPS}: publishing module on npm...`);
-  const npmTag = isAlpha ? "--tag alpha" : "";
-  const publishResult = await execCommand(`npm publish ${npmTag} --access public -w packages/owl`);
+  const npmTag = isPrerelease ? ` --tag ${releaseType}` : "";
+  const publishCommand = `npm publish${npmTag} --access public -w packages/owl`;
+  const publishResult = await execCommand(publishCommand);
   if (publishResult !== 0) {
-    logError("npm publish failed. The GitHub release succeeded — re-run `npm publish --tag alpha --access public -w packages/owl` once fixed.");
+    logError(`npm publish failed. The GitHub release succeeded — re-run \`${publishCommand}\` once fixed.`);
     return;
   }
 
@@ -221,6 +229,34 @@ async function startRelease() {
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
+
+function getReleaseType(version) {
+  const match = version.match(/-(alpha|beta)\.\d+$/);
+  return match ? match[1] : "stable";
+}
+
+/**
+ * 3.0.0-alpha.50 => 3.0.0-alpha.51 (alpha), 3.0.0-beta.1 (beta), 3.0.0 (stable)
+ * 3.0.0-beta.2 => 3.0.0-beta.3 (beta), 3.0.0 (stable)
+ * No default otherwise: the next stable version must be typed in.
+ */
+function getDefaultNextVersion(current, releaseType) {
+  const match = current.match(/^(.+)-(alpha|beta)\.(\d+)$/);
+  if (!match) {
+    return "";
+  }
+  const [, base, type, n] = match;
+  if (releaseType === type) {
+    return `${base}-${type}.${parseInt(n) + 1}`;
+  }
+  if (releaseType === "beta" && type === "alpha") {
+    return `${base}-beta.1`; // like 2.0.0: betas start at 1
+  }
+  if (releaseType === "stable") {
+    return base;
+  }
+  return "";
+}
 
 function log(text) {
   console.log(chalk.yellow(formatLog(text)));

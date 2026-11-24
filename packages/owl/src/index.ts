@@ -1,6 +1,9 @@
 import { TemplateSet } from "@odoo/owl-runtime";
 import { compile, parseXML, Template, TemplateFunction } from "@odoo/owl-compiler";
 export type { Template, TemplateFunction };
+// the template compiler, e.g. to precompile templates (see also the
+// compile_owl_templates command)
+export { compile };
 
 export * from "@odoo/owl-runtime";
 

@@ -37,7 +37,7 @@
     "check-formatting": "prettier {packages/*/src/**/*.ts,packages/*/tests/**/*.ts,doc/**/*.md,tools/devtools/**/*.js} --check",
     "lint": "eslint packages/owl/src/**/*.ts packages/owl/tests/**/*.ts",
     "release": "node tools/release.cjs",
-    "compile_templates": "node tools/compile_owl_templates.mjs"
+    "compile_templates": "node packages/owl/bin/compile_owl_templates.mjs"
   },
   "repository": {
     "type": "git",

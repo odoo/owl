@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
 import { execSync } from "child_process";
-import { readFileSync, mkdirSync } from "fs";
+import { copyFileSync, readFileSync, mkdirSync } from "fs";
 
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
@@ -77,4 +77,7 @@ switch (target) {
     break;
   default:
     await buildVariant("src/index.ts");
+    // the standalone template compiler (built by owl-compiler), used by the
+    // compile_owl_templates command
+    copyFileSync("../owl-compiler/dist/compile_templates.mjs", "dist/compile_templates.mjs");
 }

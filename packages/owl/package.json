@@ -17,8 +17,12 @@
   },
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
+  "bin": {
+    "compile_owl_templates": "bin/compile_owl_templates.mjs"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
@@ -42,6 +46,14 @@
     "url": "https://github.com/odoo/owl/issues"
   },
   "homepage": "https://github.com/odoo/owl#readme",
+  "peerDependencies": {
+    "jsdom": ">=25.0.1"
+  },
+  "peerDependenciesMeta": {
+    "jsdom": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@odoo/owl-compiler": "3.0.0-beta.1",
     "@odoo/owl-core": "3.0.0-beta.1",

@@ -5,7 +5,7 @@ const runtimePackage = require("../packages/owl-runtime/package.json");
 const packageLock = require("../package-lock.json");
 const readline = require("readline");
 const fs = require("fs");
-const exec = require("child_process").exec;
+const { exec, spawn } = require("child_process");
 const chalk = require("chalk");
 const branchName = require('current-git-branch');
 
@@ -230,7 +230,12 @@ async function startRelease() {
   log(`Step ${step++}/${STEPS}: publishing module on npm...`);
   const npmTag = isPrerelease ? ` --tag ${releaseType}` : "";
   const publishCommand = `npm publish${npmTag} --access public -w packages/owl`;
-  const publishResult = await execCommand(publishCommand);
+  // npm asks for a one-time password (in the browser, or typed in) when the
+  // account uses 2FA, which needs the terminal. No question is asked after
+  // this point: close the prompt so that it does not read the input meant for
+  // npm.
+  rl.close();
+  const publishResult = await execInTerminal(publishCommand);
   if (publishResult !== 0) {
     logError(`npm publish failed. The GitHub release succeeded — re-run \`${publishCommand}\` once fixed.`);
     return;
@@ -309,6 +314,15 @@ function ask(question) {
 function logStream(stream) {
   stream.on("data", data => {
     logSubContent(data);
+  });
+}
+
+// Runs a command attached to the terminal, for commands that may prompt.
+function execInTerminal(command) {
+  return new Promise(resolve => {
+    const childProcess = spawn(command, { shell: true, stdio: "inherit" });
+    childProcess.on("error", () => resolve(1));
+    childProcess.on("exit", code => resolve(code));
   });
 }
 

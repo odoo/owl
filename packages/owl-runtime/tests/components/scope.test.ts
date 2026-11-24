@@ -180,9 +180,11 @@ describe("async cancellation via signal", () => {
     await app.createRoot(Root).mount(fixture);
 
     const deferred = makeDeferred();
-    scope!.run(() => deferred as Promise<unknown>).then(() => {
-      steps.push("resolved");
-    });
+    scope!
+      .run(() => deferred as Promise<unknown>)
+      .then(() => {
+        steps.push("resolved");
+      });
     await nextTick();
 
     deferred.resolve(42);

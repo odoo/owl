@@ -305,10 +305,7 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
       case "RIGHT_PAREN":
         stack.pop();
         // Pop arrow scopes whose body has ended (stack dropped below creation depth)
-        while (
-          scopeStack.length > 0 &&
-          stack.length < scopeStack[scopeStack.length - 1].depth
-        ) {
+        while (scopeStack.length > 0 && stack.length < scopeStack[scopeStack.length - 1].depth) {
           scopeStack.pop();
         }
         break;
@@ -401,7 +398,7 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
   return { expr: compiled, freeVariables };
 }
 
-export function compileExpr(expr: string,  seededLocals?: Set<string>): string {
+export function compileExpr(expr: string, seededLocals?: Set<string>): string {
   return processExpr(expr, seededLocals).expr;
 }
 

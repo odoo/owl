@@ -43,15 +43,30 @@ test("and", () => {
     { message: "object value has missing keys", path: "", missingKeys: ["b"], received: {} },
   ]);
   expect(validateType({ a: "abc" }, t.and([a, b]))).toEqual([
-    { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: "abc" } },
+    {
+      message: "object value has missing keys",
+      path: "",
+      missingKeys: ["b"],
+      received: { a: "abc" },
+    },
   ]);
   expect(validateType({ a: 123 }, t.and([a, b]))).toEqual([
     { message: "value is not a string", path: "a", received: 123 },
-    { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: 123 } },
+    {
+      message: "object value has missing keys",
+      path: "",
+      missingKeys: ["b"],
+      received: { a: 123 },
+    },
   ]);
   expect(validateType({ a: "abc", b: 123 }, t.and([a, b]))).toEqual([]);
   expect(validateType({ b: 123 }, t.and([a, b]))).toEqual([
-    { message: "object value has missing keys", path: "", missingKeys: ["a"], received: { b: 123 } },
+    {
+      message: "object value has missing keys",
+      path: "",
+      missingKeys: ["a"],
+      received: { b: 123 },
+    },
   ]);
   expect(validateType({ a: "abc", b: "abc" }, t.and([a, b]))).toEqual([
     { message: "value is not a number", path: "b", received: "abc" },
@@ -76,13 +91,27 @@ test("any", () => {
 });
 
 test("array", () => {
-  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: "", received: {} }]);
-  expect(validateType("", t.array())).toEqual([{ message: "value is not an array", path: "", received: "" }]);
-  expect(validateType("abc", t.array())).toEqual([{ message: "value is not an array", path: "", received: "abc" }]);
-  expect(validateType(123, t.array())).toEqual([{ message: "value is not an array", path: "", received: 123 }]);
-  expect(validateType(987, t.array())).toEqual([{ message: "value is not an array", path: "", received: 987 }]);
-  expect(validateType(true, t.array())).toEqual([{ message: "value is not an array", path: "", received: true }]);
-  expect(validateType({}, t.array())).toEqual([{ message: "value is not an array", path: "", received: {} }]);
+  expect(validateType({}, t.array())).toEqual([
+    { message: "value is not an array", path: "", received: {} },
+  ]);
+  expect(validateType("", t.array())).toEqual([
+    { message: "value is not an array", path: "", received: "" },
+  ]);
+  expect(validateType("abc", t.array())).toEqual([
+    { message: "value is not an array", path: "", received: "abc" },
+  ]);
+  expect(validateType(123, t.array())).toEqual([
+    { message: "value is not an array", path: "", received: 123 },
+  ]);
+  expect(validateType(987, t.array())).toEqual([
+    { message: "value is not an array", path: "", received: 987 },
+  ]);
+  expect(validateType(true, t.array())).toEqual([
+    { message: "value is not an array", path: "", received: true },
+  ]);
+  expect(validateType({}, t.array())).toEqual([
+    { message: "value is not an array", path: "", received: {} },
+  ]);
   expect(validateType([], t.array())).toEqual([]);
   expect(validateType([123], t.array())).toEqual([]);
   expect(validateType(["abc"], t.array())).toEqual([]);
@@ -187,7 +216,9 @@ test("constructor", () => {
 
 test("customValidator", () => {
   const validator = t.customValidator(t.string(), (size) => ["sm", "md", "lg"].includes(size));
-  expect(validateType(123, validator)).toEqual([{ message: "value is not a string", path: "", received: 123 }]);
+  expect(validateType(123, validator)).toEqual([
+    { message: "value is not a string", path: "", received: 123 },
+  ]);
   expect(validateType("sm", validator)).toEqual([]);
   expect(validateType("md", validator)).toEqual([]);
   expect(validateType("lg", validator)).toEqual([]);
@@ -204,7 +235,9 @@ test("customValidator", () => {
 
 describe("function", () => {
   test("function", () => {
-    expect(validateType(123, t.function())).toEqual([{ message: "value is not a function", path: "", received: 123 }]);
+    expect(validateType(123, t.function())).toEqual([
+      { message: "value is not a function", path: "", received: 123 },
+    ]);
     expect(validateType("abc", t.function())).toEqual([
       { message: "value is not a function", path: "", received: "abc" },
     ]);
@@ -422,7 +455,12 @@ describe("object", () => {
       { message: "value is not a string", path: "a", received: 1 },
     ]);
     expect(validateType({ b: 1 }, t.object({ a: t.string() }))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["a"], received: { b: 1 } },
+      {
+        message: "object value has missing keys",
+        path: "",
+        missingKeys: ["a"],
+        received: { b: 1 },
+      },
     ]);
     expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string() }))).toEqual([]);
   });
@@ -435,7 +473,9 @@ describe("object", () => {
     expect(validateType({}, t.object({ a: t.number(), b: t.number().optional() }))).toEqual([
       { message: "object value has missing keys", path: "", missingKeys: ["a"], received: {} },
     ]);
-    expect(validateType({ a: 1 }, t.object({ a: t.number(), b: t.number().optional() }))).toEqual([]);
+    expect(validateType({ a: 1 }, t.object({ a: t.number(), b: t.number().optional() }))).toEqual(
+      []
+    );
     expect(
       validateType({ a: 1, b: 1 }, t.object({ a: t.number(), b: t.number().optional() }))
     ).toEqual([]);
@@ -456,7 +496,12 @@ describe("object", () => {
       { message: "object value has missing keys", path: "", missingKeys: ["a", "b"], received: {} },
     ]);
     expect(validateType({ a: 1 }, type)).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: 1 } },
+      {
+        message: "object value has missing keys",
+        path: "",
+        missingKeys: ["b"],
+        received: { a: 1 },
+      },
     ]);
     expect(validateType({ a: 1, b: 1 }, type)).toEqual([
       { message: "value is not an object", path: "b", received: 1 },
@@ -487,11 +532,21 @@ describe("object", () => {
       { message: "object value has missing keys", path: "", missingKeys: ["a", "b"], received: {} },
     ]);
     expect(validateType({ a: "abc" }, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: "abc" } },
+      {
+        message: "object value has missing keys",
+        path: "",
+        missingKeys: ["b"],
+        received: { a: "abc" },
+      },
     ]);
     expect(validateType({ a: "abc", b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123 }, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: 123 } },
+      {
+        message: "object value has missing keys",
+        path: "",
+        missingKeys: ["b"],
+        received: { a: 123 },
+      },
     ]);
     expect(validateType({ a: 123, b: "def" }, t.object(["a", "b"]))).toEqual([]);
     expect(validateType({ a: 123, b: 123 }, t.object(["a", "b"]))).toEqual([]);
@@ -507,7 +562,12 @@ describe("object", () => {
     expect(validateType({ a: 123 }, type)).toEqual([]);
     expect(validateType({ a: 123, b: 123 }, type)).toEqual([]);
     expect(validateType({ a: 123 }, t.object(["a", "b"]))).toEqual([
-      { message: "object value has missing keys", path: "", missingKeys: ["b"], received: { a: 123 } },
+      {
+        message: "object value has missing keys",
+        path: "",
+        missingKeys: ["b"],
+        received: { a: 123 },
+      },
     ]);
   });
 
@@ -796,14 +856,18 @@ test("tuple", () => {
     { message: "value is not a string", path: "0", received: true },
   ]);
   expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number()]))).toEqual([
-    { message: "tuple value does not have the correct length", path: "", received: ["abc", 123, true] },
+    {
+      message: "tuple value does not have the correct length",
+      path: "",
+      received: ["abc", 123, true],
+    },
   ]);
   expect(validateType(["abc", 123, true], t.tuple([t.string(), t.number(), t.boolean()]))).toEqual(
     []
   );
-  expect(
-    validateType(["abc", 123, 123], t.tuple([t.string(), t.number(), t.boolean()]))
-  ).toEqual([{ message: "value is not a boolean", path: "2", received: 123 }]);
+  expect(validateType(["abc", 123, 123], t.tuple([t.string(), t.number(), t.boolean()]))).toEqual([
+    { message: "value is not a boolean", path: "2", received: 123 },
+  ]);
 });
 
 test("or", () => {
@@ -905,10 +969,18 @@ test("complex type", () => {
     ),
   });
 
-  expect(validateType(1, complexType)).toEqual([{ message: "value is not an object", path: "", received: 1 }]);
-  expect(validateType("", complexType)).toEqual([{ message: "value is not an object", path: "", received: "" }]);
-  expect(validateType([], complexType)).toEqual([{ message: "value is not an object", path: "", received: [] }]);
-  expect(validateType(null, complexType)).toEqual([{ message: "value is not an object", path: "", received: null }]);
+  expect(validateType(1, complexType)).toEqual([
+    { message: "value is not an object", path: "", received: 1 },
+  ]);
+  expect(validateType("", complexType)).toEqual([
+    { message: "value is not an object", path: "", received: "" },
+  ]);
+  expect(validateType([], complexType)).toEqual([
+    { message: "value is not an object", path: "", received: [] },
+  ]);
+  expect(validateType(null, complexType)).toEqual([
+    { message: "value is not an object", path: "", received: null },
+  ]);
   expect(validateType({}, complexType)).toEqual([
     { message: "object value has missing keys", path: "", missingKeys: ["b"], received: {} },
   ]);
@@ -931,7 +1003,11 @@ test("complex type", () => {
     )
   ).toEqual([
     { message: "value is not an instance of 'A'", path: "b > 0 > a", received: 1 },
-    { message: "tuple value does not have the correct length", path: "b > 0 > c", received: ["a", "b", "c"] },
+    {
+      message: "tuple value does not have the correct length",
+      path: "b > 0 > c",
+      received: ["a", "b", "c"],
+    },
   ]);
   expect(
     validateType(
@@ -998,8 +1074,7 @@ test("assert wrong object and circular reference", () => {
       "str"
     ]
   }
-]`
-  );
+]`);
 });
 
 test("assert class instance", () => {
@@ -1013,8 +1088,7 @@ test("assert class instance", () => {
     "path": "a",
     "message": "value is not a number"
   }
-]`
-  );
+]`);
 });
 
 test("assertType path is not hidden", () => {
@@ -1040,8 +1114,7 @@ test("assertType path is not hidden", () => {
       }
     ]
   }
-]`
-  );
+]`);
 });
 
 describe(".optional()", () => {

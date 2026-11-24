@@ -985,7 +985,9 @@ describe("schema.toShape()", () => {
     let captured: any;
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.title"/></div>`;
-      props = useProps(t.object({ title: t.string(), color: t.string().optional("red") }).toShape());
+      props = useProps(
+        t.object({ title: t.string(), color: t.string().optional("red") }).toShape()
+      );
       setup() {
         captured = this.props;
       }

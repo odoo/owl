@@ -1,4 +1,12 @@
-import { onWillDestroy, onWillStart, PluginConstructor, PluginManager, Resource, startPlugins, STATUS } from "@odoo/owl-core";
+import {
+  onWillDestroy,
+  onWillStart,
+  PluginConstructor,
+  PluginManager,
+  Resource,
+  startPlugins,
+  STATUS,
+} from "@odoo/owl-core";
 import { getComponentScope } from "./component_node";
 
 export { useConfig, usePlugin, type PluginInstance } from "@odoo/owl-core";

@@ -16,7 +16,7 @@ import {
   types as t,
   useConfig,
   useListener,
-  xml
+  xml,
 } from "../src";
 import { makeDeferred, makeTestFixture, nextMicroTick, nextTick, waitScheduler } from "./helpers";
 

@@ -57,6 +57,18 @@ exports[`Cascading renders after microtaskTick 3`] = `
 }"
 `;
 
+exports[`Scheduler.processTasks can be patched after the app is created 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].state.n);
+  }
+}"
+`;
+
 exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

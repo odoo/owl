@@ -41,8 +41,27 @@ async function startRelease() {
     return;
   }
 
+  // The GitHub release and the npm publish are the last steps, after the
+  // push: check both logins before doing anything.
+  let githubUser;
+  try {
+    githubUser = (await getOutput("gh api user --jq .login")).trim();
+  } catch (e) {
+    logError("You are not logged in to GitHub. Run `gh auth login`, then try again.");
+    return;
+  }
+  let npmUser;
+  try {
+    npmUser = (await getOutput("npm whoami")).trim();
+  } catch (e) {
+    logError("You are not logged in to npm. Run `npm login`, then try again.");
+    return;
+  }
+
   log(`*** Owl release script ***`);
   log(`Current Version: ${package.version}`);
+  log(`Logged in to GitHub as: ${githubUser}`);
+  log(`Logged in to npm as: ${npmUser}`);
   log(`Warning: this script will push to the master branch!`);
   log(`Make sure that github is configured to allow it:`);
   log(`   settings => branches => edit master => uncheck Do not allow bypassing the above settings`);

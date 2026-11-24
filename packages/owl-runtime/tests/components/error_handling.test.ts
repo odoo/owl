@@ -74,9 +74,7 @@ describe("basics", () => {
       .catch((e: Error) => (error = e));
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 
@@ -92,9 +90,7 @@ describe("basics", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.message).toBe(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(getConsoleOutput()).toEqual([]);
   });
 

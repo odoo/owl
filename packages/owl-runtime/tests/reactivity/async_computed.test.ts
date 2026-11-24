@@ -1,4 +1,14 @@
-import { App, Component, asyncComputed, computed, effect, onWillStart, shallowEqual, signal, xml } from "../../src";
+import {
+  App,
+  Component,
+  asyncComputed,
+  computed,
+  effect,
+  onWillStart,
+  shallowEqual,
+  signal,
+  xml,
+} from "../../src";
 import { makeDeferred, makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
@@ -545,16 +555,16 @@ test("dispose prevents a late resolution from mutating the asyncComputed state",
 });
 
 test("dispose prevents a late rejection from mutating the asyncComputed state", async () => {
-    const def = makeDeferred<number>();
-    const a = asyncComputed(() => def, { initial: 0 });
+  const def = makeDeferred<number>();
+  const a = asyncComputed(() => def, { initial: 0 });
 
-    a.dispose();
+  a.dispose();
 
-    def.reject(new Error("boom"));
-    await flush();
+  def.reject(new Error("boom"));
+  await flush();
 
-    expect(a()).toBe(0);
-    expect(a.error()).toBeNull();
+  expect(a()).toBe(0);
+  expect(a.error()).toBeNull();
 });
 
 test("onWillStart can await currentPromise() before mounting", async () => {

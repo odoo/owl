@@ -207,16 +207,16 @@ describe("event handling", () => {
           <div class="default unnamed" />
         </Child>
       `;
-      inc(){
+      inc() {
         clickCount++;
       }
     }
 
     await mount(Parent, fixture);
     expect(clickCount).toBe(0);
-    (fixture.querySelector('.named') as HTMLDivElement).click();
+    (fixture.querySelector(".named") as HTMLDivElement).click();
     expect(clickCount).toBe(1);
-    (fixture.querySelector('.unnamed') as HTMLDivElement).click();
+    (fixture.querySelector(".unnamed") as HTMLDivElement).click();
     expect(clickCount).toBe(2);
-  })
+  });
 });

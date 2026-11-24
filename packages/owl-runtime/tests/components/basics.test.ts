@@ -1,6 +1,19 @@
 import { PluginManager, STATUS } from "@odoo/owl-core";
 import { describe, expect, test } from "vitest";
-import { App, Component, mount, Plugin, providePlugins, proxy, types as t, toRaw, usePlugin, useProps, useScope, xml } from "../../src";
+import {
+  App,
+  Component,
+  mount,
+  Plugin,
+  providePlugins,
+  proxy,
+  types as t,
+  toRaw,
+  usePlugin,
+  useProps,
+  useScope,
+  xml,
+} from "../../src";
 import { markup } from "../../src/utils";
 import {
   elem,

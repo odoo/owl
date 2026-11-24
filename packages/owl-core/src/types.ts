@@ -109,7 +109,9 @@ type GetRequiredEntries<T> = {
       : K]: StripBrands<T[K]>;
 };
 export type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
-export type ResolveOptionalEntries<T> = PrettifyShape<GetRequiredEntries<T> & GetOptionalEntries<T>>;
+export type ResolveOptionalEntries<T> = PrettifyShape<
+  GetRequiredEntries<T> & GetOptionalEntries<T>
+>;
 
 // Object type as seen by the reader of the values once defaults are applied:
 // defaulted keys are required (the default fills them), only optional keys

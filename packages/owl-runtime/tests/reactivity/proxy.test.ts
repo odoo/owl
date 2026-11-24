@@ -1,5 +1,16 @@
 import { vi, type Mock } from "vitest";
-import { Component, effect, markRaw, mount, onWillStart, onWillUpdateProps, proxy, toRaw, useProps, xml } from "../../src";
+import {
+  Component,
+  effect,
+  markRaw,
+  mount,
+  onWillStart,
+  onWillUpdateProps,
+  proxy,
+  toRaw,
+  useProps,
+  xml,
+} from "../../src";
 
 import {
   makeDeferred,

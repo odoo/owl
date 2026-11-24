@@ -38,7 +38,6 @@ function safeReplacer(knownObjects: any[], _key: string, value: any): any {
   return value;
 }
 
-
 export function assertType(
   value: any,
   validation: any,

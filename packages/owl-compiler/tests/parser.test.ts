@@ -1234,7 +1234,7 @@ describe("qweb parser", () => {
       props: null,
       propsTranslationCtx: null,
       isDynamic: false,
-      on: {click: "someMethod"},
+      on: { click: "someMethod" },
       slots: {
         default: {
           content: {
@@ -1254,9 +1254,9 @@ describe("qweb parser", () => {
           on: null,
           scope: null,
         },
-      }
-    })
-  })
+      },
+    });
+  });
 
   test("component with event handler", async () => {
     expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrow(

@@ -8,13 +8,7 @@ export { STATUS } from "./status";
 export { batched } from "./batched";
 
 // Scope / lifetime
-export {
-  Scope,
-  scopeStack,
-  getScope,
-  useScope,
-  isAbortError,
-} from "./scope";
+export { Scope, scopeStack, getScope, useScope, isAbortError } from "./scope";
 
 // Reactivity: proxy
 export { proxy, markRaw, toRaw, proxifyTarget } from "./proxy";
@@ -98,12 +92,7 @@ export { Registry } from "./registry";
 export { Resource, type ResourceAddOptions } from "./resource";
 
 // Plugin system
-export {
-  Plugin,
-  PluginManager,
-  startPlugins,
-  type PluginConstructor,
-} from "./plugin_manager";
+export { Plugin, PluginManager, startPlugins, type PluginConstructor } from "./plugin_manager";
 
 // Hooks
 export {
@@ -116,21 +105,8 @@ export {
   useOnChange,
 } from "./hooks";
 
-export {
-  onWillDestroy,
-  onWillStart,
-} from "./lifecycle_hooks";
+export { onWillDestroy, onWillStart } from "./lifecycle_hooks";
 
-export {
-  useConfig,
-  usePlugin,
-  type PluginInstance,
-} from "./plugin_hooks";
+export { useConfig, usePlugin, type PluginInstance } from "./plugin_hooks";
 
-export {
-  EventBus,
-  htmlEscape,
-  Markup,
-  markup,
-  shallowEqual,
-} from "./utils";
+export { EventBus, htmlEscape, Markup, markup, shallowEqual } from "./utils";

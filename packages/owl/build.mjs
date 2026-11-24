@@ -47,11 +47,17 @@ async function buildVariant(entry, suffix) {
     },
   };
 
+  // esbuild exposes the exports of an iife bundle as getters, which cannot be
+  // reassigned. Replace the `owl` global with a plain copy, so that code using
+  // it (e.g. Odoo) can override them. No export is a live binding (`export
+  // let`), so nothing is lost by copying.
+  const iifeOptions = { format: "iife", globalName: "owl", footer: { js: "owl = { ...owl };" } };
+
   await Promise.all([
     esbuild.build({ ...common, outfile: esm, format: "esm" }),
     esbuild.build({ ...common, outfile: cjs, format: "cjs" }),
-    esbuild.build({ ...common, outfile: iife, format: "iife", globalName: "owl" }),
-    esbuild.build({ ...common, outfile: iifeMin, format: "iife", globalName: "owl", minify: true }),
+    esbuild.build({ ...common, ...iifeOptions, outfile: iife }),
+    esbuild.build({ ...common, ...iifeOptions, outfile: iifeMin, minify: true }),
   ]);
 }
 

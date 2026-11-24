@@ -4424,3 +4424,27 @@ test("slot content renders after microtick when child has willStart", async () =
   `);
   expect(fixture.innerHTML).toBe("<div><div><p>content</p></div><span>sibling</span></div>");
 });
+
+test("Scheduler.processTasks can be patched after the app is created", async () => {
+  // e.g. Odoo patches it in its waitUntilIdle test helper
+  class Root extends Component {
+    static template = xml`<t t-out="this.state.n"/>`;
+    state = proxy({ n: 0 });
+  }
+  const root = await mount(Root, fixture);
+
+  const processTasks = Scheduler.prototype.processTasks;
+  let calls = 0;
+  Scheduler.prototype.processTasks = function () {
+    calls++;
+    return processTasks.call(this);
+  };
+  try {
+    root.state.n = 1;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("1");
+    expect(calls).toBeGreaterThan(0);
+  } finally {
+    Scheduler.prototype.processTasks = processTasks;
+  }
+});

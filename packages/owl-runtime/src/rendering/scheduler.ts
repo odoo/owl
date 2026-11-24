@@ -28,7 +28,6 @@ export class Scheduler {
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
-    this.processTasks = this.processTasks.bind(this);
   }
 
   addFiber(fiber: Fiber) {
@@ -93,7 +92,9 @@ export class Scheduler {
     }
 
     if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(this.processTasks);
+      // looked up at each frame, not bound once, so that processTasks can be
+      // patched (e.g. by Odoo's waitUntilIdle test helper)
+      this.frame = this.requestAnimationFrame(() => this.processTasks());
     }
   }
 

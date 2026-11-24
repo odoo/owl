@@ -10,7 +10,7 @@
 
 ---
 
-> **Owl 3.0.0 Alpha:** This is an alpha release. The API and features are subject to change without notice.
+> **Owl 3.0.0 Beta:** This is a beta release. The API may still change before the final 3.0.0 release.
 
 ---
 

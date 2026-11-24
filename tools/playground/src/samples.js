@@ -1061,7 +1061,7 @@ const WELCOME_STATE_V3 = {
     'Hooks',
     'Plugin System'
   ],
-  version: "v3.0.0 alpha",
+  version: "v3.0.0 beta",
 };
 
 const WELCOME_STATE_V2 = {

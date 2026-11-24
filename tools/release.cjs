@@ -80,24 +80,25 @@ async function startRelease() {
     logError(`"${next}" is not a valid ${releaseType} version. Aborting.`);
     return;
   }
-  let file = await ask(`Release notes (${REL_NOTES_FILE}): `);
-  file = file || REL_NOTES_FILE;
-  if (!fs.existsSync(`./${file}`)) {
-    const lastRelease = await getOutput("git log --grep='\\[REL\\]' -n 1 --pretty=%H");
-    const commitsSinceLastRelease = await getOutput(`git log ${lastRelease.trim()}..HEAD --pretty=%s`);
-    const commitsAsMdList = commitsSinceLastRelease.trim().split("\n").map(l => " - " + l).join("\n");
-    log(`${file} did not exist, created a template containing all commits since last release.`)
-    fs.mkdirSync("dist", { recursive: true });
-    fs.writeFileSync(file, `# v${next}\n\n${commitsAsMdList}`);
-    const shouldContinue = await ask(`Check that the contents of ${file} is correct, then press y to continue: `);
-    if (shouldContinue.toLowerCase() !== "y") {
-      log("aborted");
-      return;
-    }
+  // The release notes are always generated from the commits since the last
+  // release (overwriting the file of a previous run), and written to a file
+  // so that they can be edited before confirming.
+  const lastRelease = await getOutput("git log --grep='\\[REL\\]' -n 1 --pretty=%H");
+  const commitsSinceLastRelease = await getOutput(`git log ${lastRelease.trim()}..HEAD --pretty=%s`);
+  const commitsAsMdList = commitsSinceLastRelease.trim().split("\n").filter(Boolean).map(l => " - " + l).join("\n");
+  fs.mkdirSync("dist", { recursive: true });
+  fs.writeFileSync(REL_NOTES_FILE, `# v${next}\n\n${commitsAsMdList}\n`);
+  log(`Release notes (${REL_NOTES_FILE}):`);
+  logSubContent(fs.readFileSync(REL_NOTES_FILE, "utf8"));
+  const confirmNotes = await ask(`Edit ${REL_NOTES_FILE} if needed, then confirm [Y/n]: `);
+  if (confirmNotes.toLowerCase() === "n") {
+    log("aborted");
+    return;
   }
   let content;
   try {
-    content = await readFile("./" + file);
+    // read again: the file may have been edited
+    content = await readFile(REL_NOTES_FILE);
   } catch (e) {
     logSubContent(e.message);
     logError("Cannot find release notes... Aborting");
@@ -201,7 +202,7 @@ async function startRelease() {
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Creating the release...`);
   const prerelease = isPrerelease ? "--prerelease" : "";
-  const relaseResult = await execCommand(`gh release create v${next} packages/owl/dist/*.js dist/*.zip ${draft} ${prerelease} -F ${file}`);
+  const relaseResult = await execCommand(`gh release create v${next} packages/owl/dist/*.js dist/*.zip ${draft} ${prerelease} -F ${REL_NOTES_FILE}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
     return;
@@ -217,8 +218,8 @@ async function startRelease() {
   }
 
   // Clean up release notes
-  if (fs.existsSync(file)) {
-    fs.unlinkSync(file);
+  if (fs.existsSync(REL_NOTES_FILE)) {
+    fs.unlinkSync(REL_NOTES_FILE);
   }
 
   log("Owl Release process completed! Thank you for your patience");

@@ -1006,6 +1006,52 @@ describe("plugin sequence", () => {
     manager.destroy();
   });
 
+  test("plugins started synchronously see the ready promise of all batches", async () => {
+    const rpc = makeDeferred<string>();
+    const steps: string[] = [];
+    let readyInSetup: Promise<void> | null = null;
+
+    class Foundation extends Plugin {
+      static sequence = 10;
+      setup() {
+        readyInSetup = manager.ready;
+        readyInSetup.then(() => steps.push("ready"));
+        onWillStart(() => rpc);
+      }
+    }
+    class Feature extends Plugin {
+      setup() {
+        steps.push("feature:setup");
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([Feature, Foundation]);
+    expect(readyInSetup).toBe(manager.ready);
+
+    rpc.resolve("hello");
+    await manager.ready;
+    expect(steps).toEqual(["feature:setup", "ready"]);
+    manager.destroy();
+  });
+
+  test("ready is resolved when all plugins start synchronously", async () => {
+    let readyInSetup: Promise<void> | null = null;
+
+    class A extends Plugin {
+      setup() {
+        readyInSetup = manager.ready;
+      }
+    }
+
+    const manager = new PluginManager(new App());
+    manager.startPlugins([A]);
+    expect(manager.status).toBe(STATUS.MOUNTED);
+    expect(readyInSetup).toBe(manager.ready);
+    await readyInSetup;
+    manager.destroy();
+  });
+
   test("same-sequence plugins run their willStarts in parallel", async () => {
     const rpc1 = makeDeferred<number>();
     const rpc2 = makeDeferred<number>();

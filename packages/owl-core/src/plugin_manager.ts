@@ -171,6 +171,11 @@ export class PluginManager extends Scope {
     // to a Resource while startup is in flight) so new plugins wait for the
     // previous batches.
     let chain: Promise<unknown> | null = this.hasPendingReady ? this.ready : null;
+    // Publish `ready` before starting anything: the first batch may start
+    // synchronously, and its plugins must already see the promise covering all
+    // the batches of this call (not a stale, already resolved one).
+    let resolveReady!: (value: void | PromiseLike<void>) => void;
+    const ready = (this.ready = new Promise<void>((resolve) => (resolveReady = resolve)));
     for (const batch of batches) {
       if (chain) {
         // Later batches are instantiated inside the previous batch's `then` so
@@ -187,21 +192,27 @@ export class PluginManager extends Scope {
         // read `status` right after `startPlugins` see MOUNTED immediately.
         this.status = STATUS.MOUNTED;
       }
+      resolveReady();
       return;
     }
+    // A nested startPlugins call made by a synchronously started plugin may
+    // have replaced `ready`: this call's promise is the one to wait for.
+    this.ready = ready;
     this.hasPendingReady = true;
-    const ready = (this.ready = chain.then(() => {
-      if (this.status < STATUS.MOUNTED) {
-        this.status = STATUS.MOUNTED;
-      }
-      if (this.ready === ready) {
-        this.hasPendingReady = false;
-      }
-      // Note: no rejection handler here. On failure, `ready` stays rejected
-      // and `hasPendingReady` stays true, so later startPlugins calls chain
-      // onto the rejected promise and are skipped, and the error surfaces as
-      // an unhandled rejection when no consumer awaits `ready`.
-    }));
+    resolveReady(
+      chain.then(() => {
+        if (this.status < STATUS.MOUNTED) {
+          this.status = STATUS.MOUNTED;
+        }
+        if (this.ready === ready) {
+          this.hasPendingReady = false;
+        }
+        // Note: no rejection handler here. On failure, `ready` stays rejected
+        // and `hasPendingReady` stays true, so later startPlugins calls chain
+        // onto the rejected promise and are skipped, and the error surfaces as
+        // an unhandled rejection when no consumer awaits `ready`.
+      })
+    );
   }
 }
 

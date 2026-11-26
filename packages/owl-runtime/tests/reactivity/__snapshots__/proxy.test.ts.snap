@@ -3,18 +3,19 @@
 exports[`Reactivity: proxy > destroyed component before being mounted is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = toggle(() => (ctx['this'].state.flag) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -22,16 +23,17 @@ exports[`Reactivity: proxy > destroyed component before being mounted is inactiv
 exports[`Reactivity: proxy > destroyed component before being mounted is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const b2 = safeOutput(ctx['this'].contextObj.a);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const b1 = block1();
+    const c1 = out(() => (ctx1['this'].contextObj.a));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -39,18 +41,19 @@ exports[`Reactivity: proxy > destroyed component before being mounted is inactiv
 exports[`Reactivity: proxy > destroyed component is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = toggle(() => (ctx['this'].state.flag) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -58,14 +61,16 @@ exports[`Reactivity: proxy > destroyed component is inactive 1`] = `
 exports[`Reactivity: proxy > destroyed component is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.a);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.a));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -73,17 +78,19 @@ exports[`Reactivity: proxy > destroyed component is inactive 2`] = `
 exports[`Reactivity: proxy > one components can subscribe twice to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const b2 = safeOutput(ctx['this'].contextObj1.a);
-    const b3 = safeOutput(ctx['this'].contextObj2.b);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const c1 = out(() => (ctx1['this'].contextObj1.a));
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx1['this'].contextObj2.b));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -91,18 +98,19 @@ exports[`Reactivity: proxy > one components can subscribe twice to same context 
 exports[`Reactivity: proxy > parent and children subscribed to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { tset, component, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = safeOutput(ctx['this'].contextObj.b);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const b1 = block1();
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({}));
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx1['this'].contextObj.b));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -110,16 +118,17 @@ exports[`Reactivity: proxy > parent and children subscribed to same context 1`] 
 exports[`Reactivity: proxy > parent and children subscribed to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const b2 = safeOutput(ctx['this'].contextObj.a);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const c1 = out(() => (ctx1['this'].contextObj.a));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -127,17 +136,18 @@ exports[`Reactivity: proxy > parent and children subscribed to same context 2`] 
 exports[`Reactivity: proxy > two components are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = comp2({}, key + \`__2\`, node, this, null);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(0, c1);
+    const c2 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -145,14 +155,16 @@ exports[`Reactivity: proxy > two components are updated in parallel 1`] = `
 exports[`Reactivity: proxy > two components are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -160,17 +172,18 @@ exports[`Reactivity: proxy > two components are updated in parallel 2`] = `
 exports[`Reactivity: proxy > two components can subscribe to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = comp2({}, key + \`__2\`, node, this, null);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(0, c1);
+    const c2 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -178,14 +191,16 @@ exports[`Reactivity: proxy > two components can subscribe to same context 1`] = 
 exports[`Reactivity: proxy > two components can subscribe to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -193,17 +208,18 @@ exports[`Reactivity: proxy > two components can subscribe to same context 2`] = 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Parent\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = comp2({}, key + \`__2\`, node, this, null);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(0, c1);
+    const c2 = component(this, ctx, node, \`Parent\`, () => ({}));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -211,14 +227,16 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -226,15 +244,16 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > two independent components on different levels are updated in parallel 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -242,14 +261,16 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 exports[`Reactivity: proxy > useContext=proxy hook is proxy, for one component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -257,27 +278,24 @@ exports[`Reactivity: proxy > useContext=proxy hook is proxy, for one component 1
 exports[`Reactivity: proxy > useless atoms should be deleted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Quantity\`, true, false, false, ["id"]);
+  let { createBlock } = bdom;
+  let { tset, component, list, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/> Total: <block-child-1/> Count: <block-child-2/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const ctx1 = ctx;
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['this'].state));;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`id\`] = k_block2[i1];
-      const key1 = ctx['id'];
-      c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    const b2 = list(c_block2);
-    const b4 = safeOutput(ctx['this'].total);
-    const b5 = safeOutput(Object.keys(ctx['this'].state).length);
-    return block1([], [b2, b4, b5]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const c2 = list(() => (Object.keys(ctx1['this'].state)), ctx1, \`id\`, (ctx2) => (ctx2['id']), 15, (ctx2) => {
+    const c1 = component(this, ctx2, node, \`Quantity\`, () => ({id: ctx2['id']}));
+    return c1;
+  }, false);
+    b1.insert(0, c2);
+    const c3 = out(() => (ctx1['this'].total));
+    b1.insert(1, c3);
+    const c4 = out(() => (Object.keys(ctx1['this'].state).length));
+    b1.insert(2, c4);
+    return b1;
   }
 }"
 `;
@@ -285,16 +303,17 @@ exports[`Reactivity: proxy > useless atoms should be deleted 1`] = `
 exports[`Reactivity: proxy > useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["noop"] = ctx['this'].notify();
-    const b2 = safeOutput(ctx['this'].state.quantity);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const ctx1 = tset(ctx, \`noop\`, true, () => (ctx['this'].notify()));
+    const b1 = block1();
+    const c1 = out(() => (ctx1['this'].state.quantity));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -302,14 +321,16 @@ exports[`Reactivity: proxy > useless atoms should be deleted 2`] = `
 exports[`Reactivity: proxy > very simple use, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].contextObj.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].contextObj.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;

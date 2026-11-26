@@ -10,8 +10,8 @@ import {
 } from "./attributes";
 import { config } from "./config";
 import { createEventHandler } from "./events";
-import type { VNode } from "./index";
-import { VMulti } from "./multi";
+import type { Content } from "../rendering/content";
+import { addCleanup } from "../rendering/content";
 import { toText } from "./text";
 
 const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
@@ -41,7 +41,22 @@ function makePropSetter(name: string): Setter<HTMLElement> {
 // Main compiler code
 // -----------------------------------------------------------------------------
 
-type BlockType = (data?: any[], children?: VNode[]) => VNode;
+/**
+ * An instance of a block template: a cloned element, whose dynamic locations
+ * (attributes, properties, handlers, refs) are set through `set` and `ref`,
+ * and whose child slots receive contents through `insert`.
+ */
+export interface Block extends Content {
+  el: HTMLElement;
+  /** sets the value of location `i`, if it changed */
+  set(i: number, value: any): void;
+  /** binds a t-ref callback to the element of location `i` */
+  ref(i: number, fn: (el: HTMLElement | null, previousEl: HTMLElement | null) => void): void;
+  /** inserts a content at child slot `i` */
+  insert(i: number, content: Content): void;
+}
+
+type BlockType = () => Block;
 
 const cache: { [key: string]: BlockType } = {};
 
@@ -455,31 +470,19 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
 // -----------------------------------------------------------------------------
 
 function buildBlock(template: HTMLElement, ctx: BlockCtx): BlockType {
-  let B = createBlockClass(template, ctx);
-
-  if (ctx.children.length) {
-    B = class extends B {
-      children: (VNode | undefined)[] | undefined;
-      constructor(data?: any[], children?: VNode[]) {
-        super(data);
-        this.children = children;
-      }
-    };
-    B.prototype.beforeRemove = VMulti.prototype.beforeRemove;
-    return (data?: any[], children: (VNode | undefined)[] = []) => new B(data, children);
-  }
-
-  return (data?: any[]) => new B(data);
+  const B = createBlockClass(template, ctx);
+  return () => new B();
 }
 
-type Constructor<T> = new (...args: any[]) => T;
-type BlockClass = Constructor<VNode<any>>;
+type BlockClass = new () => Block;
+
+// marks a location that was never set
+const NOT_SET = {};
 
 function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
-  const { refN, collectors, children, locations, cbRefs } = ctx;
+  const { refN, collectors, children, locations } = ctx;
   locations.sort((a, b) => a.idx - b.idx);
   const locN = locations.length;
-  const childN = children.length;
   const isDynamic = refN > 0;
 
   // Flatten locations into parallel arrays (hot path optimization)
@@ -513,168 +516,74 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
   const nodeInsertBefore = nodeProto.insertBefore;
   const elementRemove = elementProto.remove;
 
-  class Block {
-    el: HTMLElement | undefined;
-    parentEl?: HTMLElement | undefined;
-    data: any[] | undefined;
-    children?: (VNode | undefined)[];
-    refs: Node[] | undefined;
+  class BlockInstance implements Block {
+    el: HTMLElement;
+    refs: Node[] | null = null;
+    data: any[] | null = null;
 
-    constructor(data?: any[]) {
-      this.data = data;
+    constructor() {
+      const el = nodeCloneNode.call(template, true) as HTMLElement;
+      this.el = el;
+      if (isDynamic) {
+        // collecting references
+        const refs: Node[] = new Array(refN);
+        refs[0] = el;
+        for (let i = 0; i < colN; i++) {
+          const packed = colPacked[i];
+          refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1].call(refs[(packed >> 15) & 0x7fff])!;
+        }
+        this.refs = refs;
+        if (locN) {
+          this.data = new Array(locN).fill(NOT_SET);
+        }
+      }
     }
 
-    beforeRemove() {}
+    set(i: number, value: any) {
+      const data = this.data!;
+      const previous = data[i];
+      if (previous === NOT_SET) {
+        data[i] = value;
+        locSetters[i].call(this.refs![locRefIdxs[i]], value);
+      } else if (previous !== value) {
+        data[i] = value;
+        locUpdaters[i].call(this.refs![locRefIdxs[i]], value, previous);
+      }
+    }
+
+    ref(i: number, fn: (el: HTMLElement | null, previousEl: HTMLElement | null) => void) {
+      const el = this.refs![locRefIdxs[i]] as HTMLElement;
+      fn(el, null);
+      // unbound when the owner of the block is disposed, which happens after
+      // its dom is detached (a focused input can dispatch `change` or `blur`
+      // from inside its removal, and its handlers may read the ref)
+      addCleanup(() => fn(null, el));
+    }
+
+    insert(i: number, content: Content) {
+      const info = childInfos[i];
+      const refs = this.refs!;
+      const afterRefIdx = (info >> 16) & 0x7fff;
+      content.mount(refs[info & 0x7fff], afterRefIdx ? refs[afterRefIdx] : null);
+    }
+
+    mount(parent: Node, ref: Node | null) {
+      nodeInsertBefore.call(parent, this.el, ref);
+    }
 
     remove() {
       elementRemove.call(this.el);
     }
 
     firstNode(): Node {
-      return this.el!;
+      return this.el;
     }
 
-    moveBeforeDOMNode(node: Node | null, parent = this.parentEl) {
-      this.parentEl = parent;
-      nodeInsertBefore.call(parent, this.el!, node);
+    lastNode(): Node {
+      return this.el;
     }
-
-    moveBeforeVNode(other: Block | null, afterNode: Node | null) {
-      nodeInsertBefore.call(this.parentEl, this.el!, other ? other.el! : afterNode);
-    }
-
-    toString() {
-      const div = document.createElement("div");
-      this.mount(div, null);
-      return div.innerHTML;
-    }
-
-    mount(parent: HTMLElement, afterNode: Node | null) {
-      const el = nodeCloneNode.call(template, true) as HTMLElement;
-      nodeInsertBefore.call(parent, el, afterNode);
-      this.el = el;
-      this.parentEl = parent;
-    }
-    patch(other: Block, withBeforeRemove: boolean) {}
   }
-
-  if (isDynamic) {
-    Block.prototype.mount = function mount(parent: HTMLElement, afterNode: Node | null) {
-      const el = nodeCloneNode.call(template, true);
-      // collecting references
-      const refs: Node[] = new Array(refN);
-      this.refs = refs;
-      refs[0] = el;
-      for (let i = 0; i < colN; i++) {
-        const packed = colPacked[i];
-        refs[packed & 0x7fff] = GETTERS[(packed >> 30) & 1].call(refs[(packed >> 15) & 0x7fff])!;
-      }
-
-      // preparing all children (off-DOM, before inserting el into the live document)
-      if (childN) {
-        const children = this.children;
-        for (let i = 0; i < childN; i++) {
-          const child = children![i];
-          if (child) {
-            const info = childInfos[i];
-            const afterRefIdx = (info >> 16) & 0x7fff;
-            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
-            child.isOnlyChild = !!(info & (1 << 15));
-            child.mount(refs[info & 0x7fff] as any, afterNode);
-          }
-        }
-      }
-
-      // applying data to all update points
-      if (locN) {
-        const data = this.data!;
-        for (let i = 0; i < locN; i++) {
-          locSetters[i].call(refs[locRefIdxs[i]], data[i]);
-        }
-      }
-
-      nodeInsertBefore.call(parent, el, afterNode);
-      this.el = el as HTMLElement;
-      this.parentEl = parent;
-
-      if (cbRefs.length) {
-        const data = this.data!;
-        const refs = this.refs!;
-        for (let cbRef of cbRefs) {
-          const fn = data[cbRef];
-          fn(refs[locRefIdxs[cbRef]], null);
-        }
-      }
-    };
-
-    Block.prototype.patch = function patch(other: Block, withBeforeRemove: boolean) {
-      if (this === other) {
-        return;
-      }
-      const refs = this.refs!;
-
-      // update children
-      if (childN) {
-        let children1 = this.children;
-        const children2 = other.children;
-        for (let i = 0; i < childN; i++) {
-          const child1 = children1![i];
-          const child2 = children2![i];
-          if (child1) {
-            if (child2) {
-              child1.patch(child2, withBeforeRemove);
-            } else {
-              if (withBeforeRemove) {
-                child1.beforeRemove();
-              }
-              child1.remove();
-              children1![i] = undefined;
-            }
-          } else if (child2) {
-            const info = childInfos[i];
-            const afterRefIdx = (info >> 16) & 0x7fff;
-            const afterNode = afterRefIdx ? refs[afterRefIdx] : null;
-            child2.mount(refs[info & 0x7fff] as any, afterNode);
-            children1![i] = child2;
-          }
-        }
-      }
-
-      // update texts/attributes/
-      if (locN) {
-        const data1 = this.data!;
-        const data2 = other.data!;
-        for (let i = 0; i < locN; i++) {
-          const val1 = data1[i];
-          const val2 = data2[i];
-          if (val1 !== val2) {
-            locUpdaters[i].call(refs[locRefIdxs[i]], val2, val1);
-          }
-        }
-        this.data = data2;
-      }
-    };
-
-    Block.prototype.remove = function remove() {
-      // Detach first, unbind the refs after. The removal is where the browser
-      // hands control back to user code: chrome dispatches `change` and `blur`
-      // synchronously from inside remove() on a focused input whose value is not
-      // committed yet, and both a t-on handler and a useListener one run there.
-      // Unbinding first would leave them reading a null ref while their element
-      // is still in the document.
-      elementRemove.call(this.el);
-
-      if (cbRefs.length) {
-        const data = this.data!;
-        const refs = this.refs!;
-        for (let cbRef of cbRefs) {
-          const fn = data[cbRef];
-          fn(null, refs[locRefIdxs[cbRef]]);
-        }
-      }
-    };
-  }
-  return Block;
+  return BlockInstance;
 }
 
 function setText(this: Text, value: any) {

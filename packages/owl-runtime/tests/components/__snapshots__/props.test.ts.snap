@@ -3,20 +3,15 @@
 exports[`.alike suffix in a list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo"]);
+  let { createBlock } = bdom;
+  let { component, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.elems);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`elem\`] = k_block1[i1];
-      const key1 = ctx['elem'].id;
-      c_block1[i1] = withKey(comp1({todo: ctx['elem'],toggle: ()=>ctx['this'].toggle(ctx['elem'].id)}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].state.elems), ctx, \`elem\`, (ctx1) => (ctx1['elem'].id), 15, (ctx1) => {
+    const c1 = component(this, ctx1, node, \`Todo\`, () => ({todo: ctx1['elem'], toggle: ()=>ctx1['this'].toggle(ctx1['elem'].id)}));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -24,20 +19,23 @@ exports[`.alike suffix in a list 1`] = `
 exports[`.alike suffix in a list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callHandler, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { callHandler, out, text, toggle } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].props.toggle, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/><block-child-1/></button>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    let hdlr1 = [hdlr_fn1, ctx];
-    b2 = safeOutput(ctx['this'].props.todo.id);
-    if (ctx['this'].props.todo.isChecked) {
-      b3 = text(\`V\`);
-    }
-    return block1([hdlr1], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c1 = out(() => (ctx['this'].props.todo.id));
+    b1.insert(0, c1);
+    const c3 = toggle(() => (ctx['this'].props.todo.isChecked) ? 0 : -1, [() => {
+    const c2 = text(\`V\`);
+    return c2;
+  }]);
+    b1.insert(1, c3);
+    return b1;
   }
 }"
 `;
@@ -45,14 +43,14 @@ exports[`.alike suffix in a list 2`] = `
 exports[`.alike suffix in a simple case 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { out, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.counter);
-    const b3 = comp1({fn: ()=>1}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].state.counter));
+    const c2 = component(this, ctx, node, \`Child\`, () => ({fn: ()=>1}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -60,11 +58,12 @@ exports[`.alike suffix in a simple case 1`] = `
 exports[`.alike suffix in a simple case 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.fn());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.fn()));
+    return c1;
   }
 }"
 `;
@@ -72,13 +71,13 @@ exports[`.alike suffix in a simple case 2`] = `
 exports[`.signal suffix accepts a signal-typed prop without validation error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
-    return comp1(props1, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val)}));
+    return c1;
   }
 }"
 `;
@@ -86,11 +85,12 @@ exports[`.signal suffix accepts a signal-typed prop without validation error 1`]
 exports[`.signal suffix accepts a signal-typed prop without validation error 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.count());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    return c1;
   }
 }"
 `;
@@ -98,13 +98,13 @@ exports[`.signal suffix accepts a signal-typed prop without validation error 2`]
 exports[`.signal suffix promotes a plain value to a signal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
-    return comp1(props1, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val)}));
+    return c1;
   }
 }"
 `;
@@ -112,11 +112,12 @@ exports[`.signal suffix promotes a plain value to a signal 1`] = `
 exports[`.signal suffix promotes a plain value to a signal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.count());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    return c1;
   }
 }"
 `;
@@ -124,20 +125,16 @@ exports[`.signal suffix promotes a plain value to a signal 2`] = `
 exports[`.signal suffix works in a t-foreach loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, toSignal, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Item\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.items);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block1[i1];
-      const key1 = ctx['item'].id;
-      c_block1[i1] = withKey(comp1({value: toSignal(node, \`__sig_1__\${key1}\`, ctx['item'].n)}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].state.items), ctx, \`item\`, (ctx1) => (ctx1['item'].id), 15, (ctx1) => {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx1, node, \`Item\`, () => ({value: sig1(ctx1['item'].n)}));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -145,14 +142,16 @@ exports[`.signal suffix works in a t-foreach loop 1`] = `
 exports[`.signal suffix works in a t-foreach loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value());
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value()));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -160,12 +159,13 @@ exports[`.signal suffix works in a t-foreach loop 2`] = `
 exports[`.signal suffix: child re-reads updated value when parent state changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val)}));
+    return c1;
   }
 }"
 `;
@@ -173,11 +173,12 @@ exports[`.signal suffix: child re-reads updated value when parent state changes 
 exports[`.signal suffix: child re-reads updated value when parent state changes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.count());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    return c1;
   }
 }"
 `;
@@ -185,12 +186,13 @@ exports[`.signal suffix: child re-reads updated value when parent state changes 
 exports[`.signal suffix: child receives a read-only reactive value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val)}));
+    return c1;
   }
 }"
 `;
@@ -198,11 +200,12 @@ exports[`.signal suffix: child receives a read-only reactive value 1`] = `
 exports[`.signal suffix: child receives a read-only reactive value 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.count());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    return c1;
   }
 }"
 `;
@@ -210,12 +213,13 @@ exports[`.signal suffix: child receives a read-only reactive value 2`] = `
 exports[`.signal suffix: effects in child react to parent value changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val)}));
+    return c1;
   }
 }"
 `;
@@ -223,11 +227,12 @@ exports[`.signal suffix: effects in child react to parent value changes 1`] = `
 exports[`.signal suffix: effects in child react to parent value changes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.count());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    return c1;
   }
 }"
 `;
@@ -235,12 +240,13 @@ exports[`.signal suffix: effects in child react to parent value changes 2`] = `
 exports[`.signal suffix: signal reference is stable across updates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { toSignal, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["tick"]);
+  let { createBlock } = bdom;
+  let { propSignal, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val),tick: ctx['this'].state.tick}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const sig1 = propSignal();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({count: sig1(ctx['this'].state.val), tick: ctx['this'].state.tick}));
+    return c1;
   }
 }"
 `;
@@ -248,13 +254,14 @@ exports[`.signal suffix: signal reference is stable across updates 1`] = `
 exports[`.signal suffix: signal reference is stable across updates 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.count());
-    const b3 = safeOutput(ctx['this'].props.tick);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.count()));
+    const c2 = out(() => (ctx['this'].props.tick));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -262,12 +269,12 @@ exports[`.signal suffix: signal reference is stable across updates 2`] = `
 exports[`.translate props are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({message: \`translated message\`}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({message: \`translated message\`}));
+    return c1;
   }
 }"
 `;
@@ -275,11 +282,12 @@ exports[`.translate props are translated 1`] = `
 exports[`.translate props are translated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.message);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.message));
+    return c1;
   }
 }"
 `;
@@ -287,14 +295,14 @@ exports[`.translate props are translated 2`] = `
 exports[`arrow function props auto-skip re-render when captured variables don't change 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { out, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.counter);
-    const b3 = comp1({fn: ()=>1}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].state.counter));
+    const c2 = component(this, ctx, node, \`Child\`, () => ({fn: ()=>1}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -302,11 +310,12 @@ exports[`arrow function props auto-skip re-render when captured variables don't 
 exports[`arrow function props auto-skip re-render when captured variables don't change 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.fn());
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.fn()));
+    return c1;
   }
 }"
 `;
@@ -314,20 +323,15 @@ exports[`arrow function props auto-skip re-render when captured variables don't 
 exports[`arrow function props re-render when captured variable changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Todo\`, true, false, false, ["todo","toggle.elem"]);
+  let { createBlock } = bdom;
+  let { component, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.elems);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`elem\`] = k_block1[i1];
-      const key1 = ctx['elem'].id;
-      c_block1[i1] = withKey(comp1({todo: ctx['elem'],toggle: ()=>ctx['this'].toggle(ctx['elem'].id),"toggle.elem": ctx['elem']}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].state.elems), ctx, \`elem\`, (ctx1) => (ctx1['elem'].id), 15, (ctx1) => {
+    const c1 = component(this, ctx1, node, \`Todo\`, () => ({todo: ctx1['elem'], toggle: ()=>ctx1['this'].toggle(ctx1['elem'].id)}));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -335,20 +339,23 @@ exports[`arrow function props re-render when captured variable changes 1`] = `
 exports[`arrow function props re-render when captured variable changes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callHandler, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { callHandler, out, text, toggle } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].props.toggle, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/><block-child-1/></button>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    let hdlr1 = [hdlr_fn1, ctx];
-    b2 = safeOutput(ctx['this'].props.todo.id);
-    if (ctx['this'].props.todo.isChecked) {
-      b3 = text(\`V\`);
-    }
-    return block1([hdlr1], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c1 = out(() => (ctx['this'].props.todo.id));
+    b1.insert(0, c1);
+    const c3 = toggle(() => (ctx['this'].props.todo.isChecked) ? 0 : -1, [() => {
+    const c2 = text(\`V\`);
+    return c2;
+  }]);
+    b1.insert(1, c3);
+    return b1;
   }
 }"
 `;
@@ -356,15 +363,16 @@ exports[`arrow function props re-render when captured variable changes 2`] = `
 exports[`basics > accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["greetings"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({greetings: ctx['this'].greetings}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({greetings: ctx['this'].greetings}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -372,14 +380,16 @@ exports[`basics > accept ES6-like syntax for props (with getters) 1`] = `
 exports[`basics > accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.greetings);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.greetings));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -387,20 +397,15 @@ exports[`basics > accept ES6-like syntax for props (with getters) 2`] = `
 exports[`basics > arrow function props do not leak synthetic keys into useProps() 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"]);
+  let { createBlock } = bdom;
+  let { component, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block1[i1];
-      const key1 = ctx['item'].val;
-      c_block1[i1] = withKey(comp1({onClick: (_ev)=>ctx['this'].onClick(ctx['item'].val,_ev),"onClick.item": ctx['item']}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].items), ctx, \`item\`, (ctx1) => (ctx1['item'].val), 15, (ctx1) => {
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({onClick: (_ev)=>ctx1['this'].onClick(ctx1['item'].val,_ev)}));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -408,14 +413,16 @@ exports[`basics > arrow function props do not leak synthetic keys into useProps(
 exports[`basics > arrow function props do not leak synthetic keys into useProps() 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.onClick);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.onClick));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -423,20 +430,15 @@ exports[`basics > arrow function props do not leak synthetic keys into useProps(
 exports[`basics > arrow functions as prop correctly capture their scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["onClick.item"]);
+  let { createBlock } = bdom;
+  let { component, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block1[i1];
-      const key1 = ctx['item'].val;
-      c_block1[i1] = withKey(comp1({onClick: (_ev)=>ctx['this'].onClick(ctx['item'].val,_ev),"onClick.item": ctx['item']}, key + \`__1__\${key1}\`, node, this, null), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].items), ctx, \`item\`, (ctx1) => (ctx1['item'].val), 15, (ctx1) => {
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({onClick: (_ev)=>ctx1['this'].onClick(ctx1['item'].val,_ev)}));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -444,15 +446,16 @@ exports[`basics > arrow functions as prop correctly capture their scope 1`] = `
 exports[`basics > arrow functions as prop correctly capture their scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callHandler } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].props.onClick, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -460,15 +463,16 @@ exports[`basics > arrow functions as prop correctly capture their scope 2`] = `
 exports[`basics > explicit object prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({value: ctx['this'].state.val}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Child\`, () => ({value: ctx['this'].state.val}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -476,14 +480,16 @@ exports[`basics > explicit object prop 1`] = `
 exports[`basics > explicit object prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.someval);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.someval));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -491,12 +497,12 @@ exports[`basics > explicit object prop 2`] = `
 exports[`basics > prop names can contain - 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["prop-name"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({'prop-name': 7}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({'prop-name': 7}));
+    return c1;
   }
 }"
 `;
@@ -504,14 +510,16 @@ exports[`basics > prop names can contain - 1`] = `
 exports[`basics > prop names can contain - 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props['prop-name']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props['prop-name']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -519,12 +527,12 @@ exports[`basics > prop names can contain - 2`] = `
 exports[`basics > support prop names that aren't valid bare object property names 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["some-dashed-prop"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({'some-dashed-prop': 5}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({'some-dashed-prop': 5}));
+    return c1;
   }
 }"
 `;
@@ -532,15 +540,16 @@ exports[`basics > support prop names that aren't valid bare object property name
 exports[`basics > support prop names that aren't valid bare object property names 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callHandler } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].props.onClick, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -548,22 +557,22 @@ exports[`basics > support prop names that aren't valid bare object property name
 exports[`basics > t-set with a body expression can be passed in props, and then t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, withDefault, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { lazy, tset, component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>43</p>\`);
   
-  function value1(ctx, node, key = "") {
-    return block2();
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`abc\`] = new LazyValue(value1, ctx, this, node, key);
-    const b3 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
-    return block1([], [b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const lazy1 = lazy(() => {
+    const b2 = block2();
+    return b2;
+  });
+    const ctx1 = tset(ctx, \`abc\`, false, lazy1);
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({val: ctx1['abc']}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -571,14 +580,16 @@ exports[`basics > t-set with a body expression can be passed in props, and then 
 exports[`basics > t-set with a body expression can be passed in props, and then t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -586,17 +597,17 @@ exports[`basics > t-set with a body expression can be passed in props, and then 
 exports[`basics > t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { tset, component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["abc"] = \`42\`;
-    const b2 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`abc\`, false, \`42\`);
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({val: ctx1['abc']}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -604,14 +615,16 @@ exports[`basics > t-set with a body expression can be used as textual prop 1`] =
 exports[`basics > t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -619,17 +632,17 @@ exports[`basics > t-set with a body expression can be used as textual prop 2`] =
 exports[`basics > t-set works  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { tset, component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["val"] = 42;
-    const b2 = comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`val\`, true, () => (42));
+    const c1 = component(this, ctx1, node, \`Child\`, () => ({val: ctx1['val']}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -637,14 +650,16 @@ exports[`basics > t-set works  1`] = `
 exports[`basics > t-set works  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -652,12 +667,12 @@ exports[`basics > t-set works  2`] = `
 exports[`basics > template string in prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["propName"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({propName: \`1\${ctx['this'].someVal}3\`}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({propName: \`1\${ctx['this'].someVal}3\`}));
+    return c1;
   }
 }"
 `;
@@ -665,10 +680,12 @@ exports[`basics > template string in prop 1`] = `
 exports[`basics > template string in prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -676,14 +693,14 @@ exports[`basics > template string in prop 2`] = `
 exports[`bound functions are considered 'alike' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { out, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.val);
-    const b3 = comp1({fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].state.val));
+    const c2 = component(this, ctx, node, \`Child\`, () => ({fn: (ctx['this'].someFunction).bind(this)}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -691,10 +708,12 @@ exports[`bound functions are considered 'alike' 1`] = `
 exports[`bound functions are considered 'alike' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    return c1;
   }
 }"
 `;
@@ -702,12 +721,12 @@ exports[`bound functions are considered 'alike' 2`] = `
 exports[`bound functions is not referentially equal after update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({val: ctx['this'].state.val,fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({val: ctx['this'].state.val, fn: (ctx['this'].someFunction).bind(this)}));
+    return c1;
   }
 }"
 `;
@@ -715,11 +734,12 @@ exports[`bound functions is not referentially equal after update 1`] = `
 exports[`bound functions is not referentially equal after update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.val);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.val));
+    return c1;
   }
 }"
 `;
@@ -727,12 +747,12 @@ exports[`bound functions is not referentially equal after update 2`] = `
 exports[`can bind function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({doSomething: (ctx['this'].doSomething).bind(this)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({doSomething: (ctx['this'].doSomething).bind(this)}));
+    return c1;
   }
 }"
 `;
@@ -740,10 +760,12 @@ exports[`can bind function prop with bind suffix 1`] = `
 exports[`can bind function prop with bind suffix 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    return c1;
   }
 }"
 `;
@@ -751,12 +773,12 @@ exports[`can bind function prop with bind suffix 2`] = `
 exports[`can use .translate suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({message: \`some message\`}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({message: \`some message\`}));
+    return c1;
   }
 }"
 `;
@@ -764,11 +786,12 @@ exports[`can use .translate suffix 1`] = `
 exports[`can use .translate suffix 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.message);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.message));
+    return c1;
   }
 }"
 `;
@@ -776,19 +799,20 @@ exports[`can use .translate suffix 2`] = `
 exports[`default props don't cause spurious updates with t-props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callHandler, safeOutput, createComponent } = helpers;
+  let { createBlock } = bdom;
+  let { callHandler, out, component, multi } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].increment, ctx, ev);
-  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
-  let block2 = createBlock(\`<div block-handler-0="click">tick: <block-child-0/></div>\`);
+  let block1 = createBlock(\`<div block-handler-0="click">tick: <block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    const b3 = safeOutput(ctx['this'].v());
-    const b2 = block2([hdlr1], [b3]);
-    const b4 = comp1(Object.assign({}, ctx['this'].makeProps()), key + \`__1\`, node, this, null);
-    return multi([b2, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c1 = out(() => (ctx['this'].v()));
+    b1.insert(0, c1);
+    const c2 = component(this, ctx, node, \`Child\`, () => (Object.assign({}, ctx['this'].makeProps())));
+    const c3 = multi([b1, c2]);
+    return c3;
   }
 }"
 `;
@@ -796,11 +820,12 @@ exports[`default props don't cause spurious updates with t-props 1`] = `
 exports[`default props don't cause spurious updates with t-props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].props.b);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.b));
+    return c1;
   }
 }"
 `;
@@ -808,12 +833,12 @@ exports[`default props don't cause spurious updates with t-props 2`] = `
 exports[`do not crash when binding anonymous function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({doSomething: ((_val)=>ctx['this'].doSomething(_val)).bind(this)}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({doSomething: ((_val)=>ctx['this'].doSomething(_val)).bind(this)}));
+    return c1;
   }
 }"
 `;
@@ -821,10 +846,12 @@ exports[`do not crash when binding anonymous function prop with bind suffix 1`] 
 exports[`do not crash when binding anonymous function prop with bind suffix 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    return c1;
   }
 }"
 `;
@@ -832,15 +859,16 @@ exports[`do not crash when binding anonymous function prop with bind suffix 2`] 
 exports[`reactive props (issue #1908) > a prop read only in an effect (not the template) still reacts to a value swap 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Test\`, () => ({o: ctx['this'].obj()}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -848,12 +876,13 @@ exports[`reactive props (issue #1908) > a prop read only in an effect (not the t
 exports[`reactive props (issue #1908) > a prop read only in an effect (not the template) still reacts to a value swap 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>hi</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -861,15 +890,16 @@ exports[`reactive props (issue #1908) > a prop read only in an effect (not the t
 exports[`reactive props (issue #1908) > effect observing a prop reacts to both in-place mutation and value swap 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Test\`, () => ({o: ctx['this'].obj()}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -877,14 +907,16 @@ exports[`reactive props (issue #1908) > effect observing a prop reacts to both i
 exports[`reactive props (issue #1908) > effect observing a prop reacts to both in-place mutation and value swap 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.o.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.o.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -892,15 +924,16 @@ exports[`reactive props (issue #1908) > effect observing a prop reacts to both i
 exports[`reactive props (issue #1908) > making props reactive does not introduce extra renders 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Test\`, true, false, false, ["o"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({o: ctx['this'].obj()}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`Test\`, () => ({o: ctx['this'].obj()}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -908,14 +941,16 @@ exports[`reactive props (issue #1908) > making props reactive does not introduce
 exports[`reactive props (issue #1908) > making props reactive does not introduce extra renders 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].tick());
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].tick()));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -923,12 +958,12 @@ exports[`reactive props (issue #1908) > making props reactive does not introduce
 exports[`reactive props (issue #1908) > this.props still reflects the old value inside onWillUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({value: ctx['this'].state.value}));
+    return c1;
   }
 }"
 `;
@@ -936,14 +971,16 @@ exports[`reactive props (issue #1908) > this.props still reflects the old value 
 exports[`reactive props (issue #1908) > this.props still reflects the old value inside onWillUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -951,12 +988,12 @@ exports[`reactive props (issue #1908) > this.props still reflects the old value 
 exports[`reactive props (issue #1908) > useProps() tracks new and deleted keys from t-props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1(Object.assign({}, ctx['this'].childProps()), key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => (Object.assign({}, ctx['this'].childProps())));
+    return c1;
   }
 }"
 `;
@@ -964,14 +1001,16 @@ exports[`reactive props (issue #1908) > useProps() tracks new and deleted keys f
 exports[`reactive props (issue #1908) > useProps() tracks new and deleted keys from t-props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].label());
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].label()));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -979,12 +1018,12 @@ exports[`reactive props (issue #1908) > useProps() tracks new and deleted keys f
 exports[`schema defaults and signal-driven props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["height","width"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({height: ctx['this'].height(),width: ctx['this'].width()}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({height: ctx['this'].height(), width: ctx['this'].width()}));
+    return c1;
   }
 }"
 `;
@@ -992,14 +1031,15 @@ exports[`schema defaults and signal-driven props 1`] = `
 exports[`schema defaults and signal-driven props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, text, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.width);
-    const b3 = text(\` / \`);
-    const b4 = safeOutput(ctx['this'].props.height);
-    return multi([b2, b3, b4]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].props.width));
+    const c2 = text(\` / \`);
+    const c3 = out(() => (ctx['this'].props.height));
+    const c4 = multi([c1, c2, c3]);
+    return c4;
   }
 }"
 `;

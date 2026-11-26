@@ -3,16 +3,16 @@
 exports[`t-call > body content is not evaluated if callee does not use t-out='0' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, zero, callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { out, callCtx, callTemplate } = helpers;
   
-  function callBody1(ctx, node, key = "") {
-    return safeOutput(ctx['this'].sideEffect());
-  }
-  
-  return function template(ctx, node, key = "") {
-    const lazyBlock1 = callBody1.bind(this, ctx);
-    return callTemplate(\`noZero\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(ctx, {}, () => {
+    const c1 = out(() => (ctx['this'].sideEffect()));
+    return c1;
+  });
+    const c2 = callTemplate(\`noZero\`, this, app, ctx1, node);
+    return c2;
   }
 }"
 `;
@@ -20,12 +20,13 @@ exports[`t-call > body content is not evaluated if callee does not use t-out='0'
 exports[`t-call > body content is not evaluated if callee does not use t-out='0' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>no zero here</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -33,16 +34,16 @@ exports[`t-call > body content is not evaluated if callee does not use t-out='0'
 exports[`t-call > dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { zero, callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { text, callCtx, callTemplate, keyed } = helpers;
   
-  function callBody1(ctx, node, key = "") {
-    return text(\` owl \`);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const lazyBlock1 = callBody1.bind(this, ctx);
-    return callTemplate((ctx['this'].current.template), this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(ctx, {}, () => {
+    const c1 = text(\` owl \`);
+    return c1;
+  });
+    const c2 = keyed(() => (ctx['this'].current.template), (name) => callTemplate(name, this, app, ctx1, node));
+    return c2;
   }
 }"
 `;
@@ -50,12 +51,13 @@ exports[`t-call > dynamic t-call 1`] = `
 exports[`t-call > dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>foo</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -63,10 +65,12 @@ exports[`t-call > dynamic t-call 2`] = `
 exports[`t-call > dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`bar\`);
+  return function template(ctx, node) {
+    const c1 = text(\`bar\`);
+    return c1;
   }
 }"
 `;
@@ -74,13 +78,14 @@ exports[`t-call > dynamic t-call 3`] = `
 exports[`t-call > dynamic t-call with same sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { out, callTemplate, keyed, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].current.template);
-    const b3 = callTemplate((ctx['this'].current.template), this, app, ctx, node, key + \`__1\`);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].current.template));
+    const c2 = keyed(() => (ctx['this'].current.template), (name) => callTemplate(name, this, app, ctx, node));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -88,12 +93,12 @@ exports[`t-call > dynamic t-call with same sub component 1`] = `
 exports[`t-call > dynamic t-call with same sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -101,10 +106,12 @@ exports[`t-call > dynamic t-call with same sub component 2`] = `
 exports[`t-call > dynamic t-call with same sub component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    return c1;
   }
 }"
 `;
@@ -112,12 +119,12 @@ exports[`t-call > dynamic t-call with same sub component 3`] = `
 exports[`t-call > dynamic t-call with same sub component 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -125,14 +132,14 @@ exports[`t-call > dynamic t-call with same sub component 4`] = `
 exports[`t-call > dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent, callTemplate } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, callTemplate, keyed, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = callTemplate((ctx['this'].sub), this, app, ctx, node, key + \`__2\`);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    const c2 = keyed(() => (ctx['this'].sub), (name) => callTemplate(name, this, app, ctx, node));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -140,13 +147,17 @@ exports[`t-call > dynamic t-call: key is propagated 1`] = `
 exports[`t-call > dynamic t-call: key is propagated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { renderEffect } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0="id"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let attr1 = ctx['this'].id;
-    return block1([attr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    renderEffect(() => {
+      b1.set(0, ctx['this'].id);
+    });
+    return b1;
   }
 }"
 `;
@@ -154,12 +165,12 @@ exports[`t-call > dynamic t-call: key is propagated 2`] = `
 exports[`t-call > dynamic t-call: key is propagated 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -167,15 +178,18 @@ exports[`t-call > dynamic t-call: key is propagated 3`] = `
 exports[`t-call > handlers are properly bound through a dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { callTemplate, keyed, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(('__template__999'), this, app, ctx, node, key + \`__1\`);
-    const b3 = safeOutput(ctx['this'].counter);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = keyed(() => ('__template__999'), (name) => callTemplate(name, this, app, ctx, node));
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx['this'].counter));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -183,14 +197,15 @@ exports[`t-call > handlers are properly bound through a dynamic t-call 1`] = `
 exports[`t-call > handlers are properly bound through a dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   const hdlr_fn1 = (ctx)=>ctx['this'].update();
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -198,15 +213,18 @@ exports[`t-call > handlers are properly bound through a dynamic t-call 2`] = `
 exports[`t-call > handlers are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { callTemplate, out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1\`);
-    const b3 = safeOutput(ctx['this'].counter);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callTemplate(\`__template__999\`, this, app, ctx, node);
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx['this'].counter));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -214,15 +232,16 @@ exports[`t-call > handlers are properly bound through a t-call 1`] = `
 exports[`t-call > handlers are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callHandler } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].update, ctx, ev);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -230,14 +249,16 @@ exports[`t-call > handlers are properly bound through a t-call 2`] = `
 exports[`t-call > handlers with arguments are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1\`);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callTemplate(\`__template__999\`, this, app, ctx, node);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -245,14 +266,15 @@ exports[`t-call > handlers with arguments are properly bound through a t-call 1`
 exports[`t-call > handlers with arguments are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   const hdlr_fn1 = (ctx)=>ctx['this'].update(ctx['this'].a);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -260,14 +282,16 @@ exports[`t-call > handlers with arguments are properly bound through a t-call 2`
 exports[`t-call > parent is set within t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1\`);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callTemplate(\`__template__999\`, this, app, ctx, node);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -275,12 +299,12 @@ exports[`t-call > parent is set within t-call 1`] = `
 exports[`t-call > parent is set within t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -288,12 +312,13 @@ exports[`t-call > parent is set within t-call 2`] = `
 exports[`t-call > parent is set within t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>lucas</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -301,11 +326,12 @@ exports[`t-call > parent is set within t-call 3`] = `
 exports[`t-call > parent is set within t-call with no parentNode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const c1 = callTemplate(\`__template__999\`, this, app, ctx, node);
+    return c1;
   }
 }"
 `;
@@ -313,12 +339,12 @@ exports[`t-call > parent is set within t-call with no parentNode 1`] = `
 exports[`t-call > parent is set within t-call with no parentNode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -326,12 +352,13 @@ exports[`t-call > parent is set within t-call with no parentNode 2`] = `
 exports[`t-call > parent is set within t-call with no parentNode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>lucas</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -339,14 +366,17 @@ exports[`t-call > parent is set within t-call with no parentNode 3`] = `
 exports[`t-call > recursive t-call binding this -- static t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`recursive\`, this, app, Object.assign(Object.create(ctx), {level: 0}), node, key + \`__1\`);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = callCtx(ctx, {level: () => (0)}, null);
+    const c1 = callTemplate(\`recursive\`, this, app, ctx1, node);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -354,22 +384,24 @@ exports[`t-call > recursive t-call binding this -- static t-call 1`] = `
 exports[`t-call > recursive t-call binding this -- static t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callHandler, safeOutput, callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callHandler, out, callCtx, callTemplate, multi, toggle } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].onClicked.bind(ctx['this']), ctx, ev);
   
-  let block3 = createBlock(\`<div block-handler-0="click.stop"><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div block-handler-0="click.stop"><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['level']<2) {
-      let hdlr1 = ["stop", hdlr_fn1, ctx];
-      const b4 = safeOutput(ctx['level']);
-      const b3 = block3([hdlr1], [b4]);
-      const b5 = callTemplate(\`recursive\`, this, app, Object.assign(Object.create(ctx), {level: ctx['level']+1}), node, key + \`__1\`);
-      b2 = multi([b3, b5]);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c4 = toggle(() => (ctx['level']<2) ? 0 : -1, [() => {
+    const b1 = block1();
+    b1.set(0, ["stop", hdlr_fn1, ctx]);
+    const c1 = out(() => (ctx['level']));
+    b1.insert(0, c1);
+    const ctx1 = callCtx(ctx, {level: () => (ctx['level']+1)}, null);
+    const c2 = callTemplate(\`recursive\`, this, app, ctx1, node);
+    const c3 = multi([b1, c2]);
+    return c3;
+  }]);
+    return c4;
   }
 }"
 `;
@@ -377,20 +409,22 @@ exports[`t-call > recursive t-call binding this -- static t-call 2`] = `
 exports[`t-call > sub components in two t-calls 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callTemplate, toggle } = helpers;
   
-  let block3 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].state.val===1) {
-      b2 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
-    } else {
-      const b4 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__2\`);
-      b3 = block3([], [b4]);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c3 = toggle(() => (ctx['this'].state.val===1) ? 0 : 1, [() => {
+    const c1 = callTemplate(\`sub\`, this, app, ctx, node);
+    return c1;
+  }, () => {
+    const b1 = block1();
+    const c2 = callTemplate(\`sub\`, this, app, ctx, node);
+    b1.insert(0, c2);
+    return b1;
+  }]);
+    return c3;
   }
 }"
 `;
@@ -398,12 +432,12 @@ exports[`t-call > sub components in two t-calls 1`] = `
 exports[`t-call > sub components in two t-calls 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({val: ctx['this'].state.val}));
+    return c1;
   }
 }"
 `;
@@ -411,14 +445,16 @@ exports[`t-call > sub components in two t-calls 2`] = `
 exports[`t-call > sub components in two t-calls 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -426,11 +462,12 @@ exports[`t-call > sub components in two t-calls 3`] = `
 exports[`t-call > t-call and t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return callTemplate(\`a\`, this, app, ctx, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const c1 = callTemplate(\`a\`, this, app, ctx, node);
+    return c1;
   }
 }"
 `;
@@ -438,11 +475,12 @@ exports[`t-call > t-call and t-out 1`] = `
 exports[`t-call > t-call and t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { zero } = helpers;
+  let { createBlock } = bdom;
+  let { callZero } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return ctx[zero]?.(node, key) || text("");
+  return function template(ctx, node) {
+    const c1 = callZero(ctx);
+    return c1;
   }
 }"
 `;
@@ -450,26 +488,19 @@ exports[`t-call > t-call and t-out 2`] = `
 exports[`t-call > t-call in t-foreach and children component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, callTemplate, withKey } = helpers;
+  let { createBlock } = bdom;
+  let { callTemplate, list } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`val\`] = k_block2[i1];
-      ctx[\`val_first\`] = i1 === 0;
-      ctx[\`val_last\`] = i1 === k_block2.length - 1;
-      ctx[\`val_index\`] = i1;
-      ctx[\`val_value\`] = v_block2[i1];
-      const key1 = ctx['val'];
-      c_block2[i1] = withKey(callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1__\${key1}\`), key1);
-    }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = list(() => (['a','b','c']), ctx, \`val\`, (ctx1) => (ctx1['val']), 0, (ctx1) => {
+    const c1 = callTemplate(\`__template__999\`, this, app, ctx1, node);
+    return c1;
+  }, false);
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -477,12 +508,12 @@ exports[`t-call > t-call in t-foreach and children component 1`] = `
 exports[`t-call > t-call in t-foreach and children component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({val: ctx['val']}));
+    return c1;
   }
 }"
 `;
@@ -490,14 +521,16 @@ exports[`t-call > t-call in t-foreach and children component 2`] = `
 exports[`t-call > t-call in t-foreach and children component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -505,12 +538,13 @@ exports[`t-call > t-call in t-foreach and children component 3`] = `
 exports[`t-call > t-call with t-call-context and subcomponent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx['this'].subctx;
-    return callTemplate(\`someTemplate\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => (ctx['this'].subctx)}, null);
+    const c1 = callTemplate(\`someTemplate\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -518,15 +552,14 @@ exports[`t-call > t-call with t-call-context and subcomponent 1`] = `
 exports[`t-call > t-call with t-call-context and subcomponent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["name"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["name"]);
+  let { createBlock } = bdom;
+  let { component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({name: ctx['this'].aab}, key + \`__1\`, node, this, null);
-    const b3 = comp2({name: ctx['this'].lpe}, key + \`__2\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({name: ctx['this'].aab}));
+    const c2 = component(this, ctx, node, \`Child\`, () => ({name: ctx['this'].lpe}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -534,13 +567,14 @@ exports[`t-call > t-call with t-call-context and subcomponent 2`] = `
 exports[`t-call > t-call with t-call-context and subcomponent 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`child\`);
-    const b3 = safeOutput(ctx['this'].props.name);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    const c2 = out(() => (ctx['this'].props.name));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -548,12 +582,13 @@ exports[`t-call > t-call with t-call-context and subcomponent 3`] = `
 exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx['this'].subctx;
-    return callTemplate(\`someTemplate\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => (ctx['this'].subctx)}, null);
+    const c1 = callTemplate(\`someTemplate\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -561,17 +596,14 @@ exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 1`] =
 exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["name"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["name"]);
+  let { createBlock } = bdom;
+  let { component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const props1 = {name: ctx['this'].aab};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    const props2 = {name: ctx['this'].lpe};
-    const b3 = comp2(props2, key + \`__2\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({name: ctx['this'].aab}));
+    const c2 = component(this, ctx, node, \`Child\`, () => ({name: ctx['this'].lpe}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -579,13 +611,14 @@ exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 2`] =
 exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`child\`);
-    const b3 = safeOutput(ctx['this'].props.name);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    const c2 = out(() => (ctx['this'].props.name));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -593,12 +626,13 @@ exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 3`] =
 exports[`t-call > t-call with t-call-context, simple use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx['this'].subctx;
-    return callTemplate(\`someTemplate\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => (ctx['this'].subctx)}, null);
+    const c1 = callTemplate(\`someTemplate\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -606,13 +640,14 @@ exports[`t-call > t-call with t-call-context, simple use 1`] = `
 exports[`t-call > t-call with t-call-context, simple use 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].aab);
-    const b3 = safeOutput(ctx['this'].lpe);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].aab));
+    const c2 = out(() => (ctx['this'].lpe));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -620,12 +655,13 @@ exports[`t-call > t-call with t-call-context, simple use 2`] = `
 exports[`t-call > t-call-context: ComponentNode is not looked up in the context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = {method:function(){},myRef:ctx['this'].myRef,myRef2:ctx['this'].myRef2};
-    return callTemplate(\`someTemplate\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => ({method:function(){},myRef:ctx['this'].myRef,myRef2:ctx['this'].myRef2})}, null);
+    const c1 = callTemplate(\`someTemplate\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -633,29 +669,29 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
 exports[`t-call > t-call-context: ComponentNode is not looked up in the context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, tset, out, multi, makeSlots, component } = helpers;
   
-  let block2 = createBlock(\`<div block-ref="0">outside slot</div>\`);
-  let block4 = createBlock(\`<div block-ref="0">I'm the default slot</div>\`);
-  let block5 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div block-ref="0">outside slot</div>\`);
+  let block2 = createBlock(\`<div block-ref="0">I'm the default slot</div>\`);
+  let block3 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    let ref2 = createRef(ctx['this'].myRef2, node);
-    const b4 = block4([ref2]);
-    ctx["test"] = 3;
-    const b6 = safeOutput(ctx['test']);
-    const b5 = block5([], [b6]);
-    return multi([b4, b5]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    const b2 = block2([ref1]);
-    const b7 = comp1({prop: (ctx['this'].method).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    return multi([b2, b7]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].myRef, node));
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx1['this'].myRef2, node));
+    const ctx2 = tset(ctx1, \`test\`, true, () => (3));
+    const b3 = block3();
+    const c1 = out(() => (ctx2['test']));
+    b3.insert(0, c1);
+    const c2 = multi([b2, b3]);
+    return c2;
+  }, __ctx: ctx}});
+    const c3 = component(this, ctx, node, \`Child\`, () => ({prop: (ctx['this'].method).bind(this), slots: slots1}));
+    const c4 = multi([b1, c3]);
+    return c4;
   }
 }"
 `;
@@ -663,11 +699,12 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
 exports[`t-call > t-call-context: ComponentNode is not looked up in the context 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'default', false, {});
+  return function template(ctx, node) {
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    return c1;
   }
 }"
 `;
@@ -675,12 +712,13 @@ exports[`t-call > t-call-context: ComponentNode is not looked up in the context 
 exports[`t-call > t-call-context: slots don't make component available again when context is captured 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = {};
-    return callTemplate(\`template\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => ({})}, null);
+    const c1 = callTemplate(\`template\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -688,19 +726,17 @@ exports[`t-call > t-call-context: slots don't make component available again whe
 exports[`t-call > t-call-context: slots don't make component available again when context is captured 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { tset, out, makeSlots, component } = helpers;
   
-  function slot1(ctx, node, key = "") {
-    return safeOutput(Object.keys(ctx['this']));
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["dummy"] = 0;
-    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
-    return comp1(props1, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const ctx1 = tset(ctx, \`dummy\`, true, () => (0));
+    const slots1 = makeSlots({'default': {__render: (ctx2, node) => {
+    const c1 = out(() => (Object.keys(ctx2['this'])));
+    return c1;
+  }, __ctx: ctx1}});
+    const c2 = component(this, ctx1, node, \`Child\`, () => ({slots: slots1}));
+    return c2;
   }
 }"
 `;
@@ -708,11 +744,12 @@ exports[`t-call > t-call-context: slots don't make component available again whe
 exports[`t-call > t-call-context: slots don't make component available again when context is captured 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'default', false, {});
+  return function template(ctx, node) {
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    return c1;
   }
 }"
 `;
@@ -720,12 +757,13 @@ exports[`t-call > t-call-context: slots don't make component available again whe
 exports[`t-call > t-call-context: this is not available inside t-call-context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = {};
-    return callTemplate(\`someTemplate\`, this, app, {this: ctx1}, node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx1 = callCtx(null, {this: () => ({})}, null);
+    const c1 = callTemplate(\`someTemplate\`, this, app, ctx1, node);
+    return c1;
   }
 }"
 `;
@@ -733,11 +771,12 @@ exports[`t-call > t-call-context: this is not available inside t-call-context 1`
 exports[`t-call > t-call-context: this is not available inside t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(Object.keys(ctx['this']));
+  return function template(ctx, node) {
+    const c1 = out(() => (Object.keys(ctx['this'])));
+    return c1;
   }
 }"
 `;
@@ -745,21 +784,20 @@ exports[`t-call > t-call-context: this is not available inside t-call-context 2`
 exports[`t-call > t-set inside t-call are not evaluated before being rendered 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, zero, callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { out, text, tset, multi, callCtx, callTemplate } = helpers;
   
-  function callBody1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const b3 = safeOutput(ctx['v']);
-    const b4 = text(\` coucou \`);
-    ctx["v"] = ctx['this'].f();
-    const b5 = safeOutput(ctx['v']);
-    return multi([b3, b4, b5]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const lazyBlock1 = callBody1.bind(this, ctx);
-    return callTemplate(\`a\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+  return function template(ctx, node) {
+    const ctx2 = callCtx(ctx, {}, () => {
+    const c1 = out(() => (ctx['v']));
+    const c2 = text(\` coucou \`);
+    const ctx1 = tset(ctx, \`v\`, true, () => (ctx['this'].f()));
+    const c3 = out(() => (ctx1['v']));
+    const c4 = multi([c1, c2, c3]);
+    return c4;
+  });
+    const c5 = callTemplate(\`a\`, this, app, ctx2, node);
+    return c5;
   }
 }"
 `;
@@ -767,11 +805,12 @@ exports[`t-call > t-set inside t-call are not evaluated before being rendered 1`
 exports[`t-call > t-set inside t-call are not evaluated before being rendered 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { zero } = helpers;
+  let { createBlock } = bdom;
+  let { callZero } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return ctx[zero]?.(node, key) || text("");
+  return function template(ctx, node) {
+    const c1 = callZero(ctx);
+    return c1;
   }
 }"
 `;

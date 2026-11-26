@@ -1,24 +1,30 @@
 import {
   atomSymbol,
   computed,
-  getCurrentComputation,
   markRaw,
   OwlError,
   ReactiveValue,
-  setComputation,
   signal,
-  Signal,
+  untrack,
 } from "@odoo/owl-core";
-import { App } from "../app";
-import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
-import { html } from "../blockdom/index";
+import type { App } from "../app";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
-import { Markup } from "../utils";
+import {
+  catcher,
+  Content,
+  getCurrentOwner,
+  keyed,
+  LazyValue,
+  list,
+  multi,
+  out,
+  renderEffect,
+  text,
+  toggle,
+} from "./content";
 import { handleError } from "./error_handling";
-import { Fiber, makeChildFiber } from "./fibers";
 
-const ObjectCreate = Object.create;
 /**
  * This file contains utility functions that will be injected in each template,
  * to perform various useful tasks in the compiled code.
@@ -28,170 +34,226 @@ function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
 
+const zero = Symbol("zero");
+
+/** t-out="0": the body of the t-call that called the current template */
+function callZero(ctx: any): Content {
+  const fn = ctx[zero];
+  return fn ? fn() : text("");
+}
+
+function defineComputed(target: any, key: string, fn: () => any) {
+  Object.defineProperty(target, key, {
+    get: computed(fn),
+    enumerable: true,
+    configurable: true,
+  });
+}
+
+/**
+ * t-set: a new context layer. A value given as a function is a getter, computed
+ * when read (and kept up to date), in the previous layer.
+ */
+function tset(ctx: any, name: string, isGetter: boolean, value: any): any {
+  const result = Object.create(ctx);
+  if (isGetter) {
+    defineComputed(result, name, value);
+  } else {
+    // defined, not assigned: it may shadow an inherited getter
+    Object.defineProperty(result, name, {
+      value,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+  }
+  return result;
+}
+
+/**
+ * The slots given to a component, created once. The attributes of a slot
+ * (`<t t-set-slot="x" title="..."/>`) are getters, computed when read.
+ */
+function makeSlots(slots: Record<string, any>): Record<string, any> {
+  for (const name in slots) {
+    const slot = slots[name];
+    const attrs = slot.__attrs;
+    if (attrs) {
+      delete slot.__attrs;
+      for (const key in attrs) {
+        defineComputed(slot, key, attrs[key]);
+      }
+    }
+  }
+  return markRaw(slots);
+}
+
+function lazy(fn: () => Content): LazyValue {
+  return new LazyValue(fn);
+}
+
+/** the context of a t-call: its attributes are getters on the caller context */
+function callCtx(base: any, getters: Record<string, () => any>, zeroFn: (() => Content) | null) {
+  const result = base ? Object.create(base) : {};
+  for (const key in getters) {
+    defineComputed(result, key, getters[key]);
+  }
+  if (zeroFn) {
+    result[zero] = zeroFn;
+  }
+  return result;
+}
+
+function callTemplate(name: string, owner: any, app: App, ctx: any, node: ComponentNode): Content {
+  return app.getTemplate(name).call(owner, ctx, node);
+}
+
 function callSlot(
   ctx: any,
-  parent: any,
-  key: string,
+  node: ComponentNode,
   name: string,
-  dynamic: boolean,
-  extra: any,
-  defaultContent?: (ctx: any, node: any, key: string) => BDom
-): BDom {
-  key = key + "__slot_" + name;
+  scope: Record<string, () => any> | null,
+  dynScope: (() => any) | null,
+  defaultContent: (() => Content) | null
+): Content {
   const slots = ctx.__owl__.props.slots || {};
-  const { __render, __ctx, __scope } = slots[name] || {};
-  const slotScope = ObjectCreate(__ctx || {});
-  if (__scope) {
-    slotScope[__scope] = extra;
-  }
-  const slotBDom = __render ? __render(slotScope, parent, key) : null;
-  if (defaultContent) {
-    let child1: BDom | undefined = undefined;
-    let child2: BDom | undefined = undefined;
-    if (slotBDom) {
-      child1 = dynamic ? toggler(name, slotBDom) : slotBDom;
-    } else {
-      child2 = defaultContent(ctx, parent, key);
+  const slot = slots[name];
+  if (slot && slot.__render) {
+    const slotCtx = Object.create(slot.__ctx || {});
+    if (slot.__scope) {
+      const slotScope = dynScope ? Object.assign({}, dynScope()) : {};
+      for (const key in scope) {
+        defineComputed(slotScope, key, scope[key]);
+      }
+      slotCtx[slot.__scope] = slotScope;
     }
-    return multi([child1, child2]);
+    return slot.__render(slotCtx, node);
   }
-  return slotBDom || text("");
+  if (defaultContent) {
+    return defaultContent();
+  }
+  return text("");
 }
 
-function withKey(elem: any, k: string) {
-  elem.key = k;
-  return elem;
+function resolveComponent(parent: any, name: string): any {
+  const components = parent.constructor.components;
+  if (!components) {
+    throw new OwlError(
+      `Cannot find the definition of component "${name}", missing static components key in parent`
+    );
+  }
+  const C = components[name];
+  if (!C) {
+    throw new OwlError(`Cannot find the definition of component "${name}"`);
+  } else if (!(C.prototype instanceof Component)) {
+    throw new OwlError(`"${name}" is not a Component. It must inherit from the Component class`);
+  }
+  return C;
 }
 
-function prepareList(collection: unknown): [unknown[], unknown[], number, undefined[]] {
-  let keys: unknown[];
-  let values: unknown[];
+/**
+ * A child component. Its props are computed by a render effect in the parent:
+ * the first run creates the component, the next ones update its props.
+ */
+function createComponent(C: any, node: ComponentNode, propsFn: () => any): Content {
+  const owner = getCurrentOwner();
+  let child: ComponentNode | null = null;
+  let failed = false;
+  renderEffect(() => {
+    const props = propsFn();
+    if (child) {
+      const c = child;
+      untrack(() => c.updateProps(props));
+      return;
+    }
+    if (failed) {
+      return;
+    }
+    untrack(() => {
+      let c: ComponentNode;
+      try {
+        c = new ComponentNode(C, props, node.app, node.pluginManager, node, owner);
+      } catch (e) {
+        failed = true;
+        throw e;
+      }
+      child = c;
+      owner.components.push(c);
+      try {
+        c.start();
+      } catch (error) {
+        handleError({ node: c, error });
+      }
+    });
+  });
+  return child || text("");
+}
 
-  if (Array.isArray(collection)) {
-    keys = collection;
-    values = collection;
-  } else if (collection instanceof Map) {
-    keys = [...collection.keys()];
-    values = [...collection.values()];
-  } else if (Symbol.iterator in Object(collection)) {
-    keys = [...(<Iterable<unknown>>collection)];
-    values = keys;
-  } else if (collection && typeof collection === "object") {
-    values = Object.values(collection);
-    keys = Object.keys(collection);
-  } else {
-    throw new OwlError(`Invalid loop expression: "${collection}" is not iterable`);
+function component(
+  parent: any,
+  ctx: any,
+  node: ComponentNode,
+  name: string,
+  propsFn: () => any
+): Content {
+  return createComponent(resolveComponent(parent, name), node, propsFn);
+}
+
+function dynamicComponent(
+  parent: any,
+  ctx: any,
+  node: ComponentNode,
+  classFn: () => any,
+  propsFn: () => any
+): Content {
+  return keyed(classFn, (C) => (C ? createComponent(C, node, propsFn) : text("")));
+}
+
+/** a .signal prop: one signal per component site, set by the props effect */
+function propSignal(): (value: any) => ReactiveValue<any> {
+  const s = signal<any>(undefined);
+  const readonly = computed(s);
+  return (value: any) => {
+    s.set(value);
+    return readonly;
+  };
+}
+
+function createRef(ref: any) {
+  if (!ref) {
+    throw new OwlError(`Ref is undefined or null`);
   }
-  const n = values.length;
-  return [keys, values, n, new Array(n)];
+  if (ref.add && ref.delete) {
+    return (el: HTMLElement | null, previousEl: HTMLElement | null) => {
+      if (previousEl) {
+        ref.delete(previousEl);
+      }
+      if (el) {
+        ref.add(el);
+      }
+    };
+  }
+  if (ref.set) {
+    // A sibling (e.g. t-if/t-else with a shared ref) may have taken the ref
+    // over: only clear it if it still points to our element.
+    const atom = ref[atomSymbol];
+    return (el: HTMLElement | null, previousEl: HTMLElement | null) => {
+      if (previousEl && (!atom || atom.value === previousEl)) {
+        ref.set(null);
+      }
+      if (el) {
+        ref.set(el);
+      }
+    };
+  }
+  throw new OwlError(
+    `Ref should implement either a 'set' function or 'add' and 'delete' functions`
+  );
 }
 
 function toNumber(val: string): number | string {
   const n = parseFloat(val);
   return isNaN(n) ? val : n;
-}
-
-function shallowEqual(l1: any[], l2: any[]): boolean {
-  for (let i = 0, l = l1.length; i < l; i++) {
-    if (l1[i] !== l2[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-class LazyValue {
-  fn: any;
-  ctx: any;
-  component: any;
-  node: any;
-  key: any;
-
-  constructor(fn: any, ctx: any, component: any, node: any, key: any) {
-    this.fn = fn;
-    this.ctx = ctx;
-    this.component = component;
-    this.node = node;
-    this.key = key;
-  }
-
-  evaluate(): any {
-    return this.fn.call(this.component, this.ctx, this.node, this.key);
-  }
-
-  toString() {
-    return this.evaluate().toString();
-  }
-}
-
-/*
- * Safely outputs `value` as a block depending on the nature of `value`
- */
-export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof toggler> {
-  if (value === undefined || value === null) {
-    return defaultValue ? toggler("default", defaultValue) : toggler("undefined", text(""));
-  }
-  let safeKey;
-  let block;
-  if (value instanceof Markup) {
-    safeKey = `string_safe`;
-    block = html(value as string);
-  } else if (value instanceof LazyValue) {
-    safeKey = `lazy_value`;
-    block = value.evaluate();
-  } else {
-    safeKey = "string_unsafe";
-    block = text(value);
-  }
-  return toggler(safeKey, block);
-}
-
-function createRef(ref: any, node: ComponentNode) {
-  if (!ref) {
-    throw new OwlError(`Ref is undefined or null`);
-  }
-
-  let add: (el: HTMLElement) => void;
-  let remove: (el: HTMLElement) => void;
-
-  if (ref.add && ref.delete) {
-    add = ref.add.bind(ref);
-    remove = ref.delete.bind(ref);
-  } else if (ref.set) {
-    add = ref.set.bind(ref);
-    // A sibling slot in the same patch may have already taken ownership of the
-    // signal (e.g. t-if/t-else swap with a shared ref). In that case the new
-    // element is mounted before this branch's remove runs, so only clear the
-    // ref if it still points to the element we're unbinding.
-    const atom = (ref as any)[atomSymbol];
-    remove = atom
-      ? (prevEl: HTMLElement) => {
-          if (atom.value === prevEl) ref.set(null);
-        }
-      : () => ref.set(null);
-    // The block-ref callback above only fires when this block's own remove() is
-    // called. When an enclosing block is removed in bulk (e.g. a slot host),
-    // the callback is skipped and the signal would keep pointing at a detached
-    // element. Track the ref on its host component, which clears it on unmount
-    // and sweeps detached refs after each patch. `node` is the host even for
-    // forwarded slot content (createRef sees the innermost host via callSlot).
-    if (atom) {
-      node.trackRef(ref, atom);
-    }
-  } else {
-    throw new OwlError(
-      `Ref should implement either a 'set' function or 'add' and 'delete' functions`
-    );
-  }
-
-  return (el: HTMLElement | null, previousEl: HTMLElement | null) => {
-    if (previousEl) {
-      remove(previousEl);
-    }
-    if (el) {
-      add(el);
-    }
-  };
 }
 
 function callHandler(fn: any, ctx: any, ev: Event) {
@@ -204,27 +266,6 @@ function callHandler(fn: any, ctx: any, ev: Event) {
   fn.call(ctx["this"], ev);
 }
 
-type CachedSignal<T> = Signal<T> & { readonly: ReactiveValue<T> };
-
-const signalCaches = new WeakMap<ComponentNode, Map<string, CachedSignal<any>>>();
-
-function toSignal(node: ComponentNode, cacheKey: string, value: any): ReactiveValue<any> {
-  let cache = signalCaches.get(node);
-  if (!cache) {
-    cache = new Map();
-    signalCaches.set(node, cache);
-  }
-  const existing = cache.get(cacheKey);
-  if (existing) {
-    existing.set(value);
-    return existing.readonly;
-  }
-  const s = signal(value) as CachedSignal<any>;
-  s.readonly = computed(s);
-  cache.set(cacheKey, s);
-  return s.readonly;
-}
-
 function modelExpr(value: any) {
   if (typeof value !== "function" || typeof value.set !== "function") {
     throw new OwlError(
@@ -234,170 +275,31 @@ function modelExpr(value: any) {
   return value;
 }
 
-function createComponent<P extends Record<string, any>>(
-  app: App,
-  name: string | null,
-  isStatic: boolean,
-  hasSlotsProp: boolean,
-  hasDynamicPropList: boolean,
-  propList: string[]
-) {
-  const isDynamic = !isStatic;
-  let arePropsDifferent: (p1: P, p2: P) => boolean;
-  const hasNoProp = propList.length === 0;
-  if (hasSlotsProp) {
-    arePropsDifferent = (_1, _2) => true;
-  } else if (hasDynamicPropList) {
-    arePropsDifferent = function (props1: P, props2: P) {
-      for (let k in props1) {
-        if (props1[k] !== props2[k]) {
-          return true;
-        }
-      }
-      return Object.keys(props1).length !== Object.keys(props2).length;
-    };
-  } else if (hasNoProp) {
-    arePropsDifferent = (_1: any, _2: any) => false;
-  } else {
-    arePropsDifferent = function (props1: P, props2: P) {
-      for (let p of propList) {
-        if (props1[p] !== props2[p]) {
-          return true;
-        }
-      }
-      return false;
-    };
-  }
-
-  const initiateRender = ComponentNode.prototype.initiateRender;
-
-  return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
-    let children = ctx.children;
-    let node: any = children[key];
-    if (isDynamic && node && node.component.constructor !== C) {
-      node = undefined;
-    }
-    const parentFiber = ctx.fiber!;
-    if (node) {
-      if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
-        node.forceNextRender = false;
-        const hooks = node.willUpdateProps;
-        const fiber = makeChildFiber(node, parentFiber);
-        node.fiber = fiber;
-        const parentRoot = parentFiber.root!;
-        if (node.willPatch.length) parentRoot.willPatch.push(fiber);
-        if (node.patched.length) parentRoot.patched.push(fiber);
-        let promises: Promise<any>[] | undefined;
-        if (hooks.length) {
-          // Defaults must reach the hooks but must NOT be stored on node.props:
-          // otherwise the next arePropsDifferent call sees ghost diffs on default
-          // keys and re-renders on every parent render. Consumers (`props.static`/`props`)
-          // already resolve defaults lazily from raw node.props.
-          let nextProps = props;
-          const defaultProps = node.defaultProps;
-          if (defaultProps) {
-            nextProps = Object.assign({}, props) as P;
-            for (const k in defaultProps) {
-              if ((nextProps as any)[k] === undefined) {
-                (nextProps as any)[k] = defaultProps[k];
-              }
-            }
-          }
-          const component = node.component;
-          const prev = getCurrentComputation();
-          setComputation(undefined);
-          for (const f of hooks) {
-            const r = f.call(component, nextProps);
-            if (r && typeof r.then === "function") {
-              (promises ||= []).push(r);
-            }
-          }
-          setComputation(prev);
-        }
-        if (promises) {
-          const p = promises.length === 1 ? promises[0] : Promise.all(promises);
-          p.then(
-            () => {
-              if (fiber !== node.fiber) return;
-              node.props = props;
-              for (const f of node.propsUpdated) f();
-              fiber.render();
-            },
-            (error) => {
-              handleError({ node, error });
-            }
-          );
-        } else {
-          node.props = props;
-          for (const f of node.propsUpdated) f();
-          fiber.render();
-        }
-      }
-    } else {
-      // new component
-      if (isStatic) {
-        const components = parent.constructor.components;
-        if (!components) {
-          throw new OwlError(
-            `Cannot find the definition of component "${name}", missing static components key in parent`
-          );
-        }
-        C = components[name as any];
-        if (!C) {
-          throw new OwlError(`Cannot find the definition of component "${name}"`);
-        } else if (!(C.prototype instanceof Component)) {
-          throw new OwlError(
-            `"${name}" is not a Component. It must inherit from the Component class`
-          );
-        }
-      }
-      node = new ComponentNode(C, props, app, ctx.pluginManager, ctx, key);
-      children[key] = node;
-      const fiber = new Fiber(node, parentFiber);
-      if (node.willStart.length) {
-        initiateRender.call(node, fiber);
-      } else {
-        node.fiber = fiber;
-        if (node.mounted.length) {
-          fiber.root!.mounted.push(fiber);
-        }
-        fiber.render();
-      }
-    }
-    parentFiber.childrenMap[key] = node;
-    return node;
-  };
-}
-
-function callTemplate(
-  subTemplate: string,
-  owner: any,
-  app: App,
-  ctx: any,
-  parent: any,
-  key: any
-): any {
-  const template = app.getTemplate(subTemplate);
-  return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
-}
-
 export const helpers = {
-  withDefault,
-  zero: Symbol("zero"),
+  text,
+  multi,
+  toggle,
+  keyed,
+  list,
+  out,
+  catcher,
+  renderEffect,
+  callZero,
+  callTemplate,
+  callCtx,
   callSlot,
-  withKey,
-  prepareList,
-  shallowEqual,
+  component,
+  dynamicComponent,
+  tset,
+  lazy,
+  makeSlots,
+  withDefault,
+  zero,
+  createRef,
+  propSignal,
+  modelExpr,
   toNumber,
-  LazyValue,
-  safeOutput,
-  createCatcher,
+  callHandler,
   markRaw,
   OwlError,
-  createRef,
-  modelExpr,
-  createComponent,
-  callTemplate,
-  callHandler,
-  toSignal,
 };

@@ -11,35 +11,34 @@ import {
   STATUS,
   toRaw,
 } from "@odoo/owl-core";
+import { mountTree } from "./rendering/content";
 import { nodeErrorHandlers } from "./rendering/error_handling";
-import { Fiber, MountFiber, MountOptions, RootFiber, subRootHosts } from "./rendering/fibers";
-import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
-
-// reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
 type ComponentInstance<C extends ComponentConstructor> = C extends new (...args: any) => infer T
   ? T
   : never;
 
+export type MountTarget = HTMLElement | ShadowRoot;
+
+type Position = "first-child" | "last-child";
+
+export interface MountOptions {
+  position?: Position;
+  // If set, the root is inserted immediately before this node inside `target`
+  // (ignoring `position`).
+  afterNode?: Node | null;
+}
+
 interface RootConfig<P> {
   props?: P;
 }
 
-// Internal-only options threaded into createRoot by Portal/Suspense sub-roots.
-// Not part of the public RootConfig — passed via `as any` at those call sites
-// and read through a cast inside createRoot.
+// Internal-only options (e.g. for sub-roots)
 interface SubRootConfig<P> extends RootConfig<P> {
-  // overrides the root node's plugin manager so ancestor `providePlugins`
-  // contributions are visible in the subtree. Defaults to app.pluginManager.
   pluginManager?: PluginManager;
-  // error handler seeded on the root node so descendant errors route back into
-  // the host's parent chain instead of tearing down the whole app.
   onError?: (error: any, finalize: Function) => void;
-  // the component node hosting the sub-root, so the scheduler can delay
-  // renders inside the sub-root while an ancestor of the host is rendering.
-  host?: ComponentNode;
 }
 
 export interface AppConfig extends TemplateSetConfig {
@@ -57,41 +56,23 @@ declare global {
   interface Window {
     __OWL_DEVTOOLS__: {
       apps: Set<App>;
-      Fiber: typeof Fiber;
-      RootFiber: typeof RootFiber;
       toRaw: typeof toRaw;
       proxy: typeof proxy;
     };
   }
 }
 
-import type { MountTarget } from "./blockdom";
-
 interface Root<T extends ComponentConstructor> {
   promise: Promise<ComponentInstance<T>>;
-  // true once the render phase has finished. Read synchronously right after
-  // prepare() to detect a fully-synchronous subtree (Suspense's no-flash fast
-  // path). false while the render is still pending or not yet started.
   readonly prepared: boolean;
-  // true once destroy() has been called. A destroyed root is inert: prepare()
-  // and mount() become no-ops, so a teardown racing with an in-flight
-  // prepare-then-mount sequence needs no guard at the call site.
   readonly destroyed: boolean;
-  // Kick off rendering without a DOM target. Descendants' onWillStart fires
-  // immediately and the bdom is built in memory. Idempotent — second call
-  // returns the same promise. Resolves when the render phase finishes, or as
-  // soon as the root is destroyed (the render phase will then never complete).
   prepare(): Promise<void>;
-  // Mount the (possibly already-prepared) bdom into target, then fire
-  // onMounted hooks. If prepare() was not called, mount() prepares first.
-  // On a destroyed root this does nothing and the returned promise stays
-  // pending: the mount was cancelled, not completed.
   mount(target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>>;
   destroy(): void;
 }
 
 if (typeof window !== "undefined") {
-  window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
+  window.__OWL_DEVTOOLS__ ||= { apps, toRaw, proxy };
 }
 
 export class App extends TemplateSet {
@@ -100,7 +81,6 @@ export class App extends TemplateSet {
   static version = version;
 
   name: string;
-  scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
   destroyed = false;
@@ -113,8 +93,6 @@ export class App extends TemplateSet {
     if (config.plugins) {
       startPlugins(this.pluginManager, config.plugins);
     } else {
-      // No plugins provided: nothing to await, mark as MOUNTED so mount()
-      // takes the sync fast path.
       this.pluginManager.status = STATUS.MOUNTED;
     }
     if (config.test) {
@@ -137,119 +115,103 @@ export class App extends TemplateSet {
       resolve = res;
       reject = rej;
     });
-    let node: ComponentNode;
+    const subConfig = config as SubRootConfig<any>;
+    let node: ComponentNode | null = null;
     let error: any = null;
     try {
-      // Sub-roots (Portal/Suspense) thread their host's scope and error routing
-      // in through internal config, applied before the render phase begins.
-      const subConfig = config as SubRootConfig<any>;
-      let pluginManager = this.pluginManager;
-      if (subConfig.pluginManager) {
-        pluginManager = subConfig.pluginManager;
-      }
-      node = new ComponentNode(Root, props, this, pluginManager, null, null);
-      if (subConfig.onError) {
-        nodeErrorHandlers.set(node, [subConfig.onError]);
-      }
-      if (subConfig.host) {
-        subRootHosts.set(node, subConfig.host);
-      }
+      node = new ComponentNode(
+        Root,
+        props,
+        this,
+        subConfig.pluginManager || this.pluginManager,
+        null,
+        null
+      );
     } catch (e) {
       error = e;
       reject(e);
     }
 
-    let fiber: MountFiber | null = null;
-    let preparedPromise: Promise<void> | null = null;
-    let resolvePrepared: (() => void) | null = null;
+    if (node) {
+      const n = node;
+      // setup may already have registered onError handlers
+      let handlers = nodeErrorHandlers.get(n);
+      if (!handlers) {
+        handlers = [];
+        nodeErrorHandlers.set(n, handlers);
+      }
+      if (subConfig.onError) {
+        handlers.unshift(subConfig.onError);
+      }
+      // until the root is mounted, an unhandled error rejects its promise
+      const rejectMount = (_: any, finalize: Function) => {
+        reject(finalize());
+      };
+      handlers.unshift(rejectMount);
+      n.mounted.push(() => {
+        resolve(n.component);
+        const index = handlers.indexOf(rejectMount);
+        if (index >= 0) {
+          handlers.splice(index, 1);
+        }
+      });
+      if (this.pluginManager.status < STATUS.MOUNTED) {
+        n.willStart.unshift(() => this.pluginManager.ready);
+      }
+    }
+
+    let started = false;
     let destroyed = false;
+    let preparedPromise: Promise<void> | null = null;
 
     const prepare = (): Promise<void> => {
       if (preparedPromise) {
         return preparedPromise;
       }
-      if (destroyed) {
-        // Destroyed before the render phase started: no fiber, and no
-        // onWillStart on an already finalized component.
-        return (preparedPromise = Promise.resolve());
-      }
       if (error) {
         return Promise.reject(error);
       }
-      fiber = new MountFiber(node, null);
-
-      // Set up error handler. We install it at prepare() time so that errors
-      // during the render phase (e.g. a descendant's onWillStart rejecting)
-      // reject both `promise` (the mount result) and the prepared promise.
-      let handlers = nodeErrorHandlers.get(node);
-      if (!handlers) {
-        handlers = [];
-        nodeErrorHandlers.set(node, handlers);
+      if (destroyed) {
+        return (preparedPromise = Promise.resolve());
       }
-      handlers.unshift((_, finalize) => {
-        const finalError = finalize();
-        reject(finalError);
-      });
-
-      const ready = new Promise<void>((res) => {
-        resolvePrepared = res;
-        fiber!.onPrepared = () => res();
-      });
-      preparedPromise = ready;
-
-      // Install the mount-resolve callback up front so the sync render path's
-      // `if (node.mounted.length)` check sees it and registers the fiber in
-      // root.mounted. Without this ordering the callback would never fire for
-      // the commit-after-prepare sequence.
-      node.mounted.push(() => {
-        resolve(node.component);
-        handlers!.shift();
-      });
-
-      this.scheduler.addFiber(fiber);
-      if (this.pluginManager.status < STATUS.MOUNTED) {
-        // Plugins have pending onWillStart callbacks — await them before the
-        // root renders, so plugin state is populated during first render.
-        node.willStart.unshift(() => this.pluginManager.ready);
+      started = true;
+      try {
+        node!.start();
+      } catch (e) {
+        reject(e);
+        return (preparedPromise = Promise.reject(e));
       }
-      if (node.willStart.length) {
-        node.initiateRender(fiber);
-      } else {
-        node.fiber = fiber;
-        if (node.mounted.length) {
-          fiber.root!.mounted.push(fiber);
-        }
-        try {
-          fiber.render();
-        } catch (e) {
-          reject(e);
-        }
-      }
-      return preparedPromise;
+      return (preparedPromise = node!.whenReady());
     };
 
-    const mount = (target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>> => {
-      if (destroyed) {
-        // Inert: no target validation, no dom insertion. Committing here would
-        // insert a finalized subtree into the document and flip it back to
-        // MOUNTED, with nothing left to ever clean it up.
-        return promise;
-      }
-      if (error) {
+    const mount = (target: MountTarget, options: MountOptions = {}): Promise<any> => {
+      if (destroyed || error) {
         return promise;
       }
       App.validateTarget(target);
-      prepare();
-      fiber!.commit(target, options);
+      prepare().then(() => {
+        const n = node!;
+        if (destroyed || this.destroyed || n.status !== STATUS.NEW || n.inserted) {
+          return;
+        }
+        // the target may have been detached while waiting for onWillStart
+        App.validateTarget(target);
+        let ref: Node | null = null;
+        if (options.afterNode !== undefined) {
+          ref = options.afterNode;
+        } else if (options.position === "first-child") {
+          ref = target.firstChild;
+        }
+        n.mount(target, ref);
+        n.inserted = true;
+        mountTree(n);
+      }, reject);
       return promise;
     };
 
     const root = {
       get prepared() {
-        // counter === 0 means every descendant has rendered — the synchronous
-        // signal that the render phase is done. (MountFiber.prepared is only
-        // set later, when the scheduler runs complete() in the next frame.)
-        return fiber ? fiber.counter === 0 : false;
+        return started && !!node && node.pendingCount === 0;
       },
       get destroyed() {
         return destroyed;
@@ -264,10 +226,6 @@ export class App extends TemplateSet {
         destroyed = true;
         this.roots.delete(root);
         node?.destroy();
-        // The scheduler drops fibers whose node is destroyed, so complete()
-        // (and with it onPrepared) will never run. Resolve here instead, so
-        // `await root.prepare()` does not hang forever.
-        resolvePrepared?.();
       },
     };
     this.roots.add(root);
@@ -279,8 +237,6 @@ export class App extends TemplateSet {
       root.destroy();
     }
     this.pluginManager.destroy();
-    this.scheduler.tasks.clear();
-    this.scheduler.delayedRenders = [];
     apps.delete(this);
     this.destroyed = true;
   }
@@ -297,9 +253,6 @@ export async function mount<T extends ComponentConstructor>(
 ): Promise<ComponentInstance<T>> {
   const app = new App(config);
   if (app.pluginManager.status < STATUS.MOUNTED) {
-    // Plugins are still starting: wait for them before building the root, so
-    // the root's setup/field initializers can safely call usePlugin() — including
-    // plugins that only start in a later sequence batch.
     await app.pluginManager.ready;
   }
   const root = app.createRoot(C, config);

@@ -3,24 +3,22 @@
 exports[`t-key > t-foreach with t-key switch component position 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component, list } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].clist);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`c\`] = k_block2[i1];
-      const key1 = ctx['c'];
-      const tKey_1 = ctx['this'].key1;
-      c_block2[i1] = withKey(comp1({key: ctx['c']+ctx['this'].key1}, tKey_1 + key + \`__1__\${key1}\`, node, this, null), tKey_1 + key1);
-    }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c3 = list(() => (ctx['this'].clist), ctx, \`c\`, (ctx1) => (ctx1['c']), 15, (ctx1) => {
+    const c2 = keyed(() => (ctx1['this'].key1), () => {
+      const c1 = component(this, ctx1, node, \`Child\`, () => ({key: ctx1['c']+ctx1['this'].key1}));
+      return c1;
+    });
+    return c2;
+  }, false);
+    b1.insert(0, c3);
+    return b1;
   }
 }"
 `;
@@ -28,14 +26,16 @@ exports[`t-key > t-foreach with t-key switch component position 1`] = `
 exports[`t-key > t-foreach with t-key switch component position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -43,19 +43,21 @@ exports[`t-key > t-foreach with t-key switch component position 2`] = `
 exports[`t-key > t-key change on a component rendering an empty list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`List\`, true, false, false, ["items"]);
+  let { createBlock } = bdom;
+  let { keyed, component, multi } = helpers;
   
-  let block2 = createBlock(\`<button>b</button>\`);
-  let block4 = createBlock(\`<span>end</span>\`);
+  let block1 = createBlock(\`<button>b</button>\`);
+  let block2 = createBlock(\`<span>end</span>\`);
   
-  return function template(ctx, node, key = "") {
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = keyed(() => (ctx['this'].key), () => {
+    const c1 = component(this, ctx, node, \`List\`, () => ({items: ctx['this'].items}));
+    return c1;
+  });
     const b2 = block2();
-    const tKey_1 = ctx['this'].key;
-    const b3 = toggler(tKey_1, comp1({items: ctx['this'].items}, tKey_1 + key + \`__1\`, node, this, null));
-    const b4 = block4();
-    return multi([b2, b3, b4]);
+    const c3 = multi([b1, c2, b2]);
+    return c3;
   }
 }"
 `;
@@ -63,20 +65,15 @@ exports[`t-key > t-key change on a component rendering an empty list 1`] = `
 exports[`t-key > t-key change on a component rendering an empty list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { createBlock } = bdom;
+  let { out, list } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.items);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block1[i1];
-      ctx[\`item_index\`] = i1;
-      const key1 = ctx['item_index'];
-      c_block1[i1] = withKey(safeOutput(ctx['item']), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c2 = list(() => (ctx['this'].props.items), ctx, \`item\`, (ctx1) => (ctx1['item_index']), 11, (ctx1) => {
+    const c1 = out(() => (ctx1['item']));
+    return c1;
+  }, false);
+    return c2;
   }
 }"
 `;
@@ -84,13 +81,15 @@ exports[`t-key > t-key change on a component rendering an empty list 2`] = `
 exports[`t-key > t-key on Component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['this'].key;
-    return toggler(tKey_1, comp1({key: ctx['this'].key}, tKey_1 + key + \`__1\`, node, this, null));
+  return function template(ctx, node) {
+    const c2 = keyed(() => (ctx['this'].key), () => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({key: ctx['this'].key}));
+    return c1;
+  });
+    return c2;
   }
 }"
 `;
@@ -98,14 +97,16 @@ exports[`t-key > t-key on Component 1`] = `
 exports[`t-key > t-key on Component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -113,16 +114,19 @@ exports[`t-key > t-key on Component 2`] = `
 exports[`t-key > t-key on Component as a function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['this'].key;
-    const b2 = toggler(tKey_1, comp1({key: ctx['this'].key}, tKey_1 + key + \`__1\`, node, this, null));
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = keyed(() => (ctx['this'].key), () => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({key: ctx['this'].key}));
+    return c1;
+  });
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -130,14 +134,16 @@ exports[`t-key > t-key on Component as a function 1`] = `
 exports[`t-key > t-key on Component as a function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -145,19 +151,24 @@ exports[`t-key > t-key on Component as a function 2`] = `
 exports[`t-key > t-key on multiple Components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['this'].key1;
-    const b2 = toggler(tKey_1, comp1({key: ctx['this'].key1}, tKey_1 + key + \`__1\`, node, this, null));
-    const tKey_2 = ctx['this'].key2;
-    const b3 = toggler(tKey_2, comp2({key: ctx['this'].key2}, tKey_2 + key + \`__2\`, node, this, null));
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = keyed(() => (ctx['this'].key1), () => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({key: ctx['this'].key1}));
+    return c1;
+  });
+    b1.insert(0, c2);
+    const c4 = keyed(() => (ctx['this'].key2), () => {
+    const c3 = component(this, ctx, node, \`Child\`, () => ({key: ctx['this'].key2}));
+    return c3;
+  });
+    b1.insert(1, c4);
+    return b1;
   }
 }"
 `;
@@ -165,14 +176,16 @@ exports[`t-key > t-key on multiple Components 1`] = `
 exports[`t-key > t-key on multiple Components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -180,15 +193,20 @@ exports[`t-key > t-key on multiple Components 2`] = `
 exports[`t-key > t-key on multiple Components with t-call 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`calledTemplate\`, this, app, Object.assign(Object.create(ctx), {key: ctx['this'].key1}), node, key + \`__1\`);
-    const b3 = callTemplate(\`calledTemplate\`, this, app, Object.assign(Object.create(ctx), {key: ctx['this'].key2}), node, key + \`__2\`);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = callCtx(ctx, {key: () => (ctx['this'].key1)}, null);
+    const c1 = callTemplate(\`calledTemplate\`, this, app, ctx1, node);
+    b1.insert(0, c1);
+    const ctx2 = callCtx(ctx, {key: () => (ctx['this'].key2)}, null);
+    const c2 = callTemplate(\`calledTemplate\`, this, app, ctx2, node);
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -196,13 +214,15 @@ exports[`t-key > t-key on multiple Components with t-call 1 1`] = `
 exports[`t-key > t-key on multiple Components with t-call 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['key'];
-    return toggler(tKey_1, comp1({key: ctx['key']}, tKey_1 + key + \`__1\`, node, this, null));
+  return function template(ctx, node) {
+    const c2 = keyed(() => (ctx['key']), () => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({key: ctx['key']}));
+    return c1;
+  });
+    return c2;
   }
 }"
 `;
@@ -210,14 +230,16 @@ exports[`t-key > t-key on multiple Components with t-call 1 2`] = `
 exports[`t-key > t-key on multiple Components with t-call 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -225,14 +247,17 @@ exports[`t-key > t-key on multiple Components with t-call 1 3`] = `
 exports[`t-key > t-key on multiple Components with t-call 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callTemplate } = helpers;
+  let { createBlock } = bdom;
+  let { callCtx, callTemplate } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callTemplate(\`calledTemplate\`, this, app, Object.assign(Object.create(ctx), {'key1': ctx['this'].key1, 'key2': ctx['this'].key2}), node, key + \`__1\`);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = callCtx(ctx, {'key1': () => (ctx['this'].key1), 'key2': () => (ctx['this'].key2)}, null);
+    const c1 = callTemplate(\`calledTemplate\`, this, app, ctx1, node);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -240,17 +265,20 @@ exports[`t-key > t-key on multiple Components with t-call 2 1`] = `
 exports[`t-key > t-key on multiple Components with t-call 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  let { createBlock } = bdom;
+  let { keyed, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['key1'];
-    const b2 = toggler(tKey_1, comp1({key: ctx['key1']}, tKey_1 + key + \`__1\`, node, this, null));
-    const tKey_2 = ctx['key2'];
-    const b3 = toggler(tKey_2, comp2({key: ctx['key2']}, tKey_2 + key + \`__2\`, node, this, null));
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c2 = keyed(() => (ctx['key1']), () => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({key: ctx['key1']}));
+    return c1;
+  });
+    const c4 = keyed(() => (ctx['key2']), () => {
+    const c3 = component(this, ctx, node, \`Child\`, () => ({key: ctx['key2']}));
+    return c3;
+  });
+    const c5 = multi([c2, c4]);
+    return c5;
   }
 }"
 `;
@@ -258,14 +286,16 @@ exports[`t-key > t-key on multiple Components with t-call 2 2`] = `
 exports[`t-key > t-key on multiple Components with t-call 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.key);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.key));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;

@@ -3,19 +3,21 @@
 exports[`refs > a listener firing during the removal still sees its ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, toggle } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<input block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].show()) {
-      let ref1 = createRef(ctx['this'].input, node);
-      b2 = block2([ref1]);
-    }
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx['this'].input, node));
+    return b2;
+  }]);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -23,14 +25,15 @@ exports[`refs > a listener firing during the removal still sees its ref 1`] = `
 exports[`refs > basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].button, node);
-    return block1([ref1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].button, node));
+    return b1;
   }
 }"
 `;
@@ -38,14 +41,15 @@ exports[`refs > basic use 1`] = `
 exports[`refs > basic use with signal.ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<input block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].input, node);
-    return block1([ref1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].input, node));
+    return b1;
   }
 }"
 `;
@@ -53,27 +57,25 @@ exports[`refs > basic use with signal.ref 1`] = `
 exports[`refs > ref in slot is unset across a t-if nested inside the slot content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, toggle, makeSlots, component } = helpers;
   
-  let block3 = createBlock(\`<span block-ref="0">hi</span>\`);
+  let block1 = createBlock(\`<span block-ref="0">hi</span>\`);
   
-  function slot1(ctx, node, key = "") {
-    let b3;
-    if (ctx['this'].inner()) {
-      let ref1 = createRef(ctx['this'].myRef, node);
-      b3 = block3([ref1]);
-    }
-    return multi([b3]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b4;
-    if (ctx['this'].visible()) {
-      b4 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b4]);
+  return function template(ctx, node) {
+    const c3 = toggle(() => (ctx['this'].visible()) ? 0 : -1, [() => {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const c1 = toggle(() => (ctx1['this'].inner()) ? 0 : -1, [() => {
+        const b1 = block1();
+        b1.ref(0, createRef(ctx1['this'].myRef, node));
+        return b1;
+      }]);
+      return c1;
+    }, __ctx: ctx}});
+    const c2 = component(this, ctx, node, \`Wrapper\`, () => ({slots: slots1}));
+    return c2;
+  }]);
+    return c3;
   }
 }"
 `;
@@ -81,14 +83,16 @@ exports[`refs > ref in slot is unset across a t-if nested inside the slot conten
 exports[`refs > ref in slot is unset across a t-if nested inside the slot content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<section><block-child-0/></section>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -96,25 +100,25 @@ exports[`refs > ref in slot is unset across a t-if nested inside the slot conten
 exports[`refs > ref in slot is unset when an intermediate host is removed in place 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Inner\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component, toggle } = helpers;
   
-  let block2 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span block-ref="0">x</span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<span block-ref="0">x</span>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    return block3([ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].show()) {
-      const b4 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-      b2 = block2([], [b4]);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const b1 = block1();
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const b2 = block2();
+      b2.ref(0, createRef(ctx1['this'].myRef, node));
+      return b2;
+    }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`Inner\`, () => ({slots: slots1}));
+    b1.insert(0, c1);
+    return b1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -122,14 +126,16 @@ exports[`refs > ref in slot is unset when an intermediate host is removed in pla
 exports[`refs > ref in slot is unset when an intermediate host is removed in place 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<i><block-child-0/></i>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -137,23 +143,22 @@ exports[`refs > ref in slot is unset when an intermediate host is removed in pla
 exports[`refs > ref in slot is unset when forwarded through a nested component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component, toggle } = helpers;
   
-  let block2 = createBlock(\`<b block-ref="0">x</b>\`);
+  let block1 = createBlock(\`<b block-ref="0">x</b>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    return block2([ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b3;
-    if (ctx['this'].visible()) {
-      b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b3]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].visible()) ? 0 : -1, [() => {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const b1 = block1();
+      b1.ref(0, createRef(ctx1['this'].myRef, node));
+      return b1;
+    }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`Wrapper\`, () => ({slots: slots1}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -161,19 +166,20 @@ exports[`refs > ref in slot is unset when forwarded through a nested component 1
 exports[`refs > ref in slot is unset when forwarded through a nested component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Inner\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { callSlot, makeSlots, component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'default', false, {});
-  }
-  
-  return function template(ctx, node, key = "") {
-    const b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    return block1([], [b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const c1 = callSlot(ctx1, node, 'default', null, null, null);
+    return c1;
+  }, __ctx: ctx}});
+    const c2 = component(this, ctx, node, \`Inner\`, () => ({slots: slots1}));
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -181,14 +187,16 @@ exports[`refs > ref in slot is unset when forwarded through a nested component 2
 exports[`refs > ref in slot is unset when forwarded through a nested component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<i><block-child-0/></i>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -196,19 +204,19 @@ exports[`refs > ref in slot is unset when forwarded through a nested component 3
 exports[`refs > ref in slot is unset when the host removes it in place (host survives) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component } = helpers;
   
   let block1 = createBlock(\`<span class="slotted" block-ref="0">hi</span>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    return block1([ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx1['this'].myRef, node));
+    return b1;
+  }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`Wrapper\`, () => ({slots: slots1}));
+    return c1;
   }
 }"
 `;
@@ -216,18 +224,19 @@ exports[`refs > ref in slot is unset when the host removes it in place (host sur
 exports[`refs > ref in slot is unset when the host removes it in place (host survives) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot } = helpers;
+  let { createBlock } = bdom;
+  let { callSlot, toggle } = helpers;
   
-  let block2 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].show()) {
-      const b3 = callSlot(ctx, node, key, 'default', false, {});
-      b2 = block2([], [b3]);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -235,23 +244,22 @@ exports[`refs > ref in slot is unset when the host removes it in place (host sur
 exports[`refs > ref in slot is unset when the slot host is removed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component, toggle } = helpers;
   
-  let block2 = createBlock(\`<div class="slotted" block-ref="0">Coucou</div>\`);
+  let block1 = createBlock(\`<div class="slotted" block-ref="0">Coucou</div>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    return block2([ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b3;
-    if (ctx['this'].visible()) {
-      b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b3]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].visible()) ? 0 : -1, [() => {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const b1 = block1();
+      b1.ref(0, createRef(ctx1['this'].myRef, node));
+      return b1;
+    }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`Wrapper\`, () => ({slots: slots1}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -259,14 +267,16 @@ exports[`refs > ref in slot is unset when the slot host is removed 1`] = `
 exports[`refs > ref in slot is unset when the slot host is removed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -274,12 +284,12 @@ exports[`refs > ref in slot is unset when the slot host is removed 2`] = `
 exports[`refs > ref is set by child component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["ref"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({ref: ctx['this'].ref}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({ref: ctx['this'].ref}));
+    return c1;
   }
 }"
 `;
@@ -287,14 +297,15 @@ exports[`refs > ref is set by child component 1`] = `
 exports[`refs > ref is set by child component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div id="ref" block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].props.ref, node);
-    return block1([ref1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].props.ref, node));
+    return b1;
   }
 }"
 `;
@@ -302,12 +313,13 @@ exports[`refs > ref is set by child component 2`] = `
 exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-removal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<p>sub</p>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -315,23 +327,22 @@ exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-
 exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-removal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component, toggle } = helpers;
   
-  let block2 = createBlock(\`<span block-ref="0">hi</span>\`);
+  let block1 = createBlock(\`<span block-ref="0">hi</span>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].myRef, node);
-    return block2([ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b3;
-    if (ctx['this'].show()) {
-      b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b3]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const b1 = block1();
+      b1.ref(0, createRef(ctx1['this'].myRef, node));
+      return b1;
+    }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`Wrapper\`, () => ({slots: slots1}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -339,14 +350,16 @@ exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-
 exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-removal 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -354,19 +367,21 @@ exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-
 exports[`refs > ref is unset only once its element is detached 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, toggle } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].show()) {
-      let ref1 = createRef(ctx['this'].myRef, node);
-      b2 = block2([ref1]);
-    }
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx['this'].myRef, node));
+    return b2;
+  }]);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -374,19 +389,21 @@ exports[`refs > ref is unset only once its element is detached 1`] = `
 exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, renderEffect, toggle } = helpers;
   
-  let block2 = createBlock(\`<div block-attribute-0="class" block-ref="1"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class" block-ref="1"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.show) {
-      let attr1 = ctx['this'].state.class;
-      let ref1 = createRef(ctx['this'].ref, node);
-      b2 = block2([attr1, ref1]);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c1 = toggle(() => (ctx['this'].state.show) ? 0 : -1, [() => {
+    const b1 = block1();
+    b1.ref(1, createRef(ctx['this'].ref, node));
+    renderEffect(() => {
+      b1.set(0, ctx['this'].state.class);
+    });
+    return b1;
+  }]);
+    return c1;
   }
 }"
 `;
@@ -394,22 +411,23 @@ exports[`refs > ref is unset when t-if goes to false after unrelated render 1`] 
 exports[`refs > ref shared between t-if and t-else, plain 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, toggle } = helpers;
   
-  let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
-  let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
+  let block1 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
+  let block2 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].cond()) {
-      let ref1 = createRef(ctx['this'].ref, node);
-      b2 = block2([ref1]);
-    } else {
-      let ref2 = createRef(ctx['this'].ref, node);
-      b3 = block3([ref2]);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = toggle(() => (ctx['this'].cond()) ? 0 : 1, [() => {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].ref, node));
+    return b1;
+  }, () => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx['this'].ref, node));
+    return b2;
+  }]);
+    return c1;
   }
 }"
 `;
@@ -417,27 +435,27 @@ exports[`refs > ref shared between t-if and t-else, plain 1`] = `
 exports[`refs > ref shared between t-if and t-else, t-else has a slotted component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`SlotCp\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { createRef, makeSlots, component, toggle } = helpers;
   
-  let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
-  let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
+  let block1 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
+  let block2 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
   
-  function slot1(ctx, node, key = "") {
-    let ref2 = createRef(ctx['this'].ref, node);
-    return block3([ref2]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    let b2, b4;
-    if (ctx['this'].cond()) {
-      let ref1 = createRef(ctx['this'].ref, node);
-      b2 = block2([ref1]);
-    } else {
-      b4 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b4]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].cond()) ? 0 : 1, [() => {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].ref, node));
+    return b1;
+  }, () => {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+      const b2 = block2();
+      b2.ref(0, createRef(ctx1['this'].ref, node));
+      return b2;
+    }, __ctx: ctx}});
+    const c1 = component(this, ctx, node, \`SlotCp\`, () => ({slots: slots1}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -445,11 +463,12 @@ exports[`refs > ref shared between t-if and t-else, t-else has a slotted compone
 exports[`refs > ref shared between t-if and t-else, t-else has a slotted component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'default', false, {});
+  return function template(ctx, node) {
+    const c1 = callSlot(ctx, node, 'default', null, null, null);
+    return c1;
   }
 }"
 `;
@@ -457,20 +476,22 @@ exports[`refs > ref shared between t-if and t-else, t-else has a slotted compone
 exports[`refs > refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Test\`, true, false, false, ["tree"]);
+  let { createBlock } = bdom;
+  let { createRef, out, component, toggle } = helpers;
   
   let block1 = createBlock(\`<p block-ref="0"><block-child-0/><block-child-1/></p>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    let ref1 = createRef(ctx['this'].root, node);
-    b2 = safeOutput(ctx['this'].props.tree.value);
-    if (ctx['this'].props.tree.child) {
-      b3 = comp1({tree: ctx['this'].props.tree.child}, key + \`__1\`, node, this, null);
-    }
-    return block1([ref1], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].root, node));
+    const c1 = out(() => (ctx['this'].props.tree.value));
+    b1.insert(0, c1);
+    const c3 = toggle(() => (ctx['this'].props.tree.child) ? 0 : -1, [() => {
+    const c2 = component(this, ctx, node, \`Test\`, () => ({tree: ctx['this'].props.tree.child}));
+    return c2;
+  }]);
+    b1.insert(1, c3);
+    return b1;
   }
 }"
 `;
@@ -478,20 +499,23 @@ exports[`refs > refs and recursive templates 1`] = `
 exports[`refs > refs and t-key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { keyed, createRef, multi } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].state.renderId++;
   
-  let block2 = createBlock(\`<button block-handler-0="click"/>\`);
-  let block3 = createBlock(\`<p block-ref="0"/>\`);
+  let block1 = createBlock(\`<button block-handler-0="click"/>\`);
+  let block2 = createBlock(\`<p block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    const b2 = block2([hdlr1]);
-    const tKey_1 = ctx['this'].state.renderId;
-    let ref1 = createRef(ctx['this'].root, node);
-    const b3 = toggler(tKey_1, block3([ref1]));
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c1 = keyed(() => (ctx['this'].state.renderId), () => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx['this'].root, node));
+    return b2;
+  });
+    const c2 = multi([b1, c1]);
+    return c2;
   }
 }"
 `;
@@ -499,24 +523,26 @@ exports[`refs > refs and t-key 1`] = `
 exports[`refs > refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, callHandler, createRef, markRaw, createComponent } = helpers;
+  let { createBlock } = bdom;
+  let { out, callHandler, createRef, makeSlots, component } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx, ev);
-  const comp1 = createComponent(app, \`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
-  let block3 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);
+  let block2 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);
   
-  function slot1(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    let ref1 = createRef(ctx['this'].button, node);
-    return block3([hdlr1, ref1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.val);
-    const b4 = comp1({slots: markRaw({'footer': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    return block1([], [b2, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.val));
+    b1.insert(0, c1);
+    const slots1 = makeSlots({'footer': {__render: (ctx1, node) => {
+    const b2 = block2();
+    b2.set(0, [hdlr_fn1, ctx1]);
+    b2.ref(1, createRef(ctx1['this'].button, node));
+    return b2;
+  }, __ctx: ctx}});
+    const c2 = component(this, ctx, node, \`Dialog\`, () => ({slots: slots1}));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -524,14 +550,16 @@ exports[`refs > refs are properly bound in slots 1`] = `
 exports[`refs > refs are properly bound in slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = callSlot(ctx, node, key, 'footer', false, {});
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = callSlot(ctx, node, 'footer', null, null, null);
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -539,23 +567,21 @@ exports[`refs > refs are properly bound in slots 2`] = `
 exports[`refs > resource can be used for multi ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, createRef, withKey } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, renderEffect, list } = helpers;
   
-  let block2 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
+  let block1 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items());;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block1[i1];
-      const key1 = ctx['item'];
-      let attr1 = \`item-\${ctx['item']}\`;
-      let ref1 = createRef(ctx['this'].refs, node);
-      c_block1[i1] = withKey(block2([attr1, ref1]), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c1 = list(() => (ctx['this'].items()), ctx, \`item\`, (ctx1) => (ctx1['item']), 15, (ctx1) => {
+    const b1 = block1();
+    b1.ref(1, createRef(ctx1['this'].refs, node));
+    renderEffect(() => {
+      b1.set(0, \`item-\${ctx1['item']}\`);
+    });
+    return b1;
+  }, false);
+    return c1;
   }
 }"
 `;
@@ -563,22 +589,23 @@ exports[`refs > resource can be used for multi ref 1`] = `
 exports[`refs > use 2 refs in a t-if/t-else situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, toggle } = helpers;
   
-  let block2 = createBlock(\`<div block-ref="0"/>\`);
-  let block3 = createBlock(\`<span block-ref="0"/>\`);
+  let block1 = createBlock(\`<div block-ref="0"/>\`);
+  let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].state.value) {
-      let ref1 = createRef(ctx['this'].ref1, node);
-      b2 = block2([ref1]);
-    } else {
-      let ref2 = createRef(ctx['this'].ref2, node);
-      b3 = block3([ref2]);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = toggle(() => (ctx['this'].state.value) ? 0 : 1, [() => {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].ref1, node));
+    return b1;
+  }, () => {
+    const b2 = block2();
+    b2.ref(0, createRef(ctx['this'].ref2, node));
+    return b2;
+  }]);
+    return c1;
   }
 }"
 `;

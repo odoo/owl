@@ -1,10 +1,10 @@
 import { getScope, OwlError } from "@odoo/owl-core";
 import { compile, CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
-import { createBlock, html, list, multi, text, toggler } from "./blockdom";
+import { createBlock } from "./blockdom";
 import { helpers } from "./rendering/template_helpers";
 import { ComponentNode } from "./component_node";
 
-const bdom = { text, createBlock, list, multi, html, toggler };
+const bdom = { createBlock };
 
 export interface TemplateSetConfig {
   dev?: boolean;

@@ -1,49 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`hooks > autofocus hook > input in a t-if 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
-  
-  let block1 = createBlock(\`<div><input/><block-child-0/></div>\`);
-  let block2 = createBlock(\`<input block-ref="0"/>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.flag) {
-      let ref1 = createRef(ctx['this'].input, node);
-      b2 = block2([ref1]);
-    }
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`hooks > autofocus hook > simple input 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
-  
-  let block1 = createBlock(\`<div><input/><input block-ref="0"/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].input, node);
-    return block1([ref1]);
-  }
-}"
-`;
-
 exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, ["value"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`MyComponent\`, () => ({value: ctx['this'].state.value}));
+    return c1;
   }
 }"
 `;
@@ -51,14 +16,16 @@ exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 exports[`hooks > can use onWillStart, onWillUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -66,14 +33,16 @@ exports[`hooks > can use onWillStart, onWillUpdateProps 2`] = `
 exports[`hooks > mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -81,13 +50,12 @@ exports[`hooks > mounted callbacks should be called in reverse order from willUn
 exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const props1 = {value: ctx['this'].value()};
-    return comp1(props1, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({value: ctx['this'].value()}));
+    return c1;
   }
 }"
 `;
@@ -95,14 +63,16 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -110,12 +80,12 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 2`] = `
 exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({value: ctx['this'].value()}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({value: ctx['this'].value()}));
+    return c1;
   }
 }"
 `;
@@ -123,14 +93,16 @@ exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 exports[`hooks > onWillUpdateProps receives nextProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -138,14 +110,16 @@ exports[`hooks > onWillUpdateProps receives nextProps 2`] = `
 exports[`hooks > two different call to willPatch/patched should work 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -153,12 +127,13 @@ exports[`hooks > two different call to willPatch/patched should work 1`] = `
 exports[`hooks > useEffect hook > dependencies prevent effects from rerunning when unchanged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -166,18 +141,18 @@ exports[`hooks > useEffect hook > dependencies prevent effects from rerunning wh
 exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, toggle } = helpers;
   
-  let block2 = createBlock(\`<div block-ref="0"/>\`);
+  let block1 = createBlock(\`<div block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.value) {
-      let ref1 = createRef(ctx['this'].ref, node);
-      b2 = block2([ref1]);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c1 = toggle(() => (ctx['this'].state.value) ? 0 : -1, [() => {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].ref, node));
+    return b1;
+  }]);
+    return c1;
   }
 }"
 `;
@@ -185,12 +160,13 @@ exports[`hooks > useEffect hook > effect can depend on stuff in dom 1`] = `
 exports[`hooks > useEffect hook > effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -198,14 +174,16 @@ exports[`hooks > useEffect hook > effect runs on mount, is reapplied on patch, a
 exports[`hooks > useEffect hook > effect that depends on a value is rerun if value changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -213,12 +191,13 @@ exports[`hooks > useEffect hook > effect that depends on a value is rerun if val
 exports[`hooks > useEffect hook > properly behaves when the effect function throws 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -226,14 +205,16 @@ exports[`hooks > useEffect hook > properly behaves when the effect function thro
 exports[`hooks > useImmediateEffect hook > effect re-runs synchronously on change and is cleaned up on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].state.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].state.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -241,16 +222,15 @@ exports[`hooks > useImmediateEffect hook > effect re-runs synchronously on chang
 exports[`hooks > useListener 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle } = helpers;
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].state.flag) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`MyComponent\`, () => ({}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -258,14 +238,16 @@ exports[`hooks > useListener 1`] = `
 exports[`hooks > useListener 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -273,21 +255,21 @@ exports[`hooks > useListener 2`] = `
 exports[`hooks > useListener ignores the event that created its component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
+  let { createBlock } = bdom;
+  let { component, toggle, multi } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
-  let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">open</button>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    let hdlr1 = [hdlr_fn1, ctx];
-    b2 = block2([hdlr1]);
-    if (ctx['this'].show()) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    const c3 = multi([b1, c2]);
+    return c3;
   }
 }"
 `;
@@ -295,12 +277,13 @@ exports[`hooks > useListener ignores the event that created its component 1`] = 
 exports[`hooks > useListener ignores the event that created its component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>child</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -308,16 +291,15 @@ exports[`hooks > useListener ignores the event that created its component 2`] = 
 exports[`hooks > useListener ignores the event that created its component, from another useListener 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle } = helpers;
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].show()) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    return c2;
   }
 }"
 `;
@@ -325,12 +307,13 @@ exports[`hooks > useListener ignores the event that created its component, from 
 exports[`hooks > useListener ignores the event that created its component, from another useListener 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>child</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -338,12 +321,13 @@ exports[`hooks > useListener ignores the event that created its component, from 
 exports[`hooks > useListener keeps the event target as \`this\` 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -351,21 +335,21 @@ exports[`hooks > useListener keeps the event target as \`this\` 1`] = `
 exports[`hooks > useListener still receives an event dispatched while it is being attached 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
+  let { createBlock } = bdom;
+  let { component, toggle, multi } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
   
-  let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">open</button>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    let hdlr1 = [hdlr_fn1, ctx];
-    b2 = block2([hdlr1]);
-    if (ctx['this'].show()) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c2 = toggle(() => (ctx['this'].show()) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`MyComponent\`, () => ({}));
+    return c1;
+  }]);
+    const c3 = multi([b1, c2]);
+    return c3;
   }
 }"
 `;
@@ -373,12 +357,13 @@ exports[`hooks > useListener still receives an event dispatched while it is bein
 exports[`hooks > useListener still receives an event dispatched while it is being attached 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -386,15 +371,17 @@ exports[`hooks > useListener still receives an event dispatched while it is bein
 exports[`hooks > useListener work with references 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createRef, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { createRef, out } = helpers;
   
   let block1 = createBlock(\`<span block-ref="0"><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].span, node);
-    const b2 = safeOutput(ctx['this'].value());
-    return block1([ref1], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].span, node));
+    const c1 = out(() => (ctx['this'].value()));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -402,12 +389,13 @@ exports[`hooks > useListener work with references 1`] = `
 exports[`hooks > useOnChange hook > callback destroying its app does not run again 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -415,12 +403,13 @@ exports[`hooks > useOnChange hook > callback destroying its app does not run aga
 exports[`hooks > useOnChange hook > callback does not run if the dependency values are unchanged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -428,12 +417,13 @@ exports[`hooks > useOnChange hook > callback does not run if the dependency valu
 exports[`hooks > useOnChange hook > callback receives each dependency as an argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -441,12 +431,13 @@ exports[`hooks > useOnChange hook > callback receives each dependency as an argu
 exports[`hooks > useOnChange hook > callback runs on mount, on dependency change and is cleaned up 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -454,12 +445,13 @@ exports[`hooks > useOnChange hook > callback runs on mount, on dependency change
 exports[`hooks > useOnChange hook > callback writing one of its dependencies keeps running on the next changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -467,12 +459,13 @@ exports[`hooks > useOnChange hook > callback writing one of its dependencies kee
 exports[`hooks > useOnChange hook > does not run the callback on mount with initialRun=false 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -480,12 +473,13 @@ exports[`hooks > useOnChange hook > does not run the callback on mount with init
 exports[`hooks > useOnChange hook > reactive values read in the callback are not dependencies 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;

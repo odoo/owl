@@ -5,12 +5,9 @@ export function getConsoleOutput(): string[] {
 }
 import { diff } from "@vitest/utils/diff";
 import {
-  blockDom,
   Component,
   onMounted,
-  onPatched,
   onWillDestroy,
-  onWillPatch,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
@@ -18,12 +15,13 @@ import {
   effect,
 } from "../src";
 import { helpers } from "../src/rendering/template_helpers";
+import { Content, create, Owner } from "../src/rendering/content";
 import { TemplateSet, globalTemplates } from "../src/template_set";
-import { BDom } from "../src/blockdom";
+import { createBlock } from "../src/blockdom";
 import { compile } from "@odoo/owl-compiler";
 import { OwlError, useScope } from "@odoo/owl-core";
 
-const mount = blockDom.mount;
+const bdom = { createBlock };
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
@@ -87,47 +85,46 @@ export function snapshotTemplate(template: string) {
   expect(fn.toString()).toMatchSnapshot();
 }
 
-export function renderToBdom(template: string, context: any = {}, node?: any): BDom {
+/**
+ * Instantiates a template once (outside of any component), in a new owner.
+ */
+export function renderToContent(template: string, context: any = {}, node?: any): Content {
   if (!node) {
     if (!context.__owl__) {
       context.__owl__ = { component: context };
     } else {
       context.__owl__.component = context;
     }
-    // Compiled templates always run with a ComponentNode as `node`; at this
-    // blockdom level there is none, so stub the bits createRef needs.
-    node = { trackRef() {} };
+    node = null;
   }
   const fn = compile(template);
   if (shouldSnapshot && !snapshottedTemplates.has(template)) {
     snapshottedTemplates.add(template);
     expect(fn.toString()).toMatchSnapshot();
   }
-  const app = {
-    createComponent() {},
-    createDynamicComponent() {},
-  };
-  return fn(app as any, blockDom, helpers).call(context, context, node);
+  const app = {};
+  const owner = new Owner(node, null);
+  return create(owner, () => fn(app as any, bdom, helpers).call(context, context, node));
 }
+
+export const renderToBdom = renderToContent;
 
 export function renderToString(template: string, context: any = {}, node?: any): string {
   const fixture = makeTestFixture();
-  const bdom = renderToBdom(template, context, node);
-  mount(bdom, fixture);
+  const content = renderToContent(template, context, node);
+  content.mount(fixture, null);
   return fixture.innerHTML;
 }
 
 export class TestContext extends TemplateSet {
   renderToString(name: string, context: any = {}): string {
     const renderFn = this.getTemplate(name);
-    const bdom = renderFn(context, {});
+    const owner = new Owner(null as any, null);
+    const content = create(owner, () => renderFn.call(context, context, null as any));
     const fixture = makeTestFixture();
-    mount(bdom, fixture);
+    content.mount(fixture, null);
     return fixture.innerHTML;
   }
-}
-export function render(c: Component, deep: boolean = false) {
-  return c.__owl__.render(deep);
 }
 
 export function snapshotEverything() {
@@ -187,16 +184,6 @@ export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
     });
   }
 
-  onWillPatch(() => {
-    expect(name + ": " + scope.status).toBe(name + ": 1");
-    logStep(`${name}:willPatch`);
-  });
-
-  onPatched(() => {
-    expect(name + ": " + scope.status).toBe(name + ": 1");
-    logStep(`${name}:patched`);
-  });
-
   onWillUnmount(() => {
     expect(name + ": " + scope.status).toBe(name + ": 1");
     logStep(`${name}:willUnmount`);
@@ -209,8 +196,7 @@ export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
 }
 
 export function children(w: Component): Component[] {
-  const childrenMap = w.__owl__.children;
-  return Object.keys(childrenMap).map((id) => childrenMap[id].component);
+  return [...w.__owl__.children].map((node) => node.component);
 }
 
 export function isDirectChildOf(child: Component, parent: Component): boolean {

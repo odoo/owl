@@ -3,12 +3,13 @@
 exports[`simple templates, mostly static > can render a table row 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<tr><td>cell</td></tr>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -16,12 +17,13 @@ exports[`simple templates, mostly static > can render a table row 1`] = `
 exports[`simple templates, mostly static > div with a class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="abc">foo</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -29,12 +31,13 @@ exports[`simple templates, mostly static > div with a class attribute 1`] = `
 exports[`simple templates, mostly static > div with a class attribute with a quote 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="a'bc">word</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -42,12 +45,13 @@ exports[`simple templates, mostly static > div with a class attribute with a quo
 exports[`simple templates, mostly static > div with a span child node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div><span>word</span></div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -55,12 +59,13 @@ exports[`simple templates, mostly static > div with a span child node 1`] = `
 exports[`simple templates, mostly static > div with an arbitrary attribute with a quote 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div abc="a'bc">word</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -68,12 +73,13 @@ exports[`simple templates, mostly static > div with an arbitrary attribute with 
 exports[`simple templates, mostly static > div with an empty class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>word</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -81,12 +87,13 @@ exports[`simple templates, mostly static > div with an empty class attribute 1`]
 exports[`simple templates, mostly static > div with content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>foo</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -94,14 +101,16 @@ exports[`simple templates, mostly static > div with content 1`] = `
 exports[`simple templates, mostly static > dom node with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -109,14 +118,16 @@ exports[`simple templates, mostly static > dom node with t-out 1`] = `
 exports[`simple templates, mostly static > dom node with t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -124,11 +135,12 @@ exports[`simple templates, mostly static > dom node with t-out 2`] = `
 exports[`simple templates, mostly static > dynamic text value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['text']);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['text']));
+    return c1;
   }
 }"
 `;
@@ -136,12 +148,13 @@ exports[`simple templates, mostly static > dynamic text value 1`] = `
 exports[`simple templates, mostly static > empty div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -149,10 +162,12 @@ exports[`simple templates, mostly static > empty div 1`] = `
 exports[`simple templates, mostly static > empty string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -160,10 +175,12 @@ exports[`simple templates, mostly static > empty string 1`] = `
 exports[`simple templates, mostly static > empty string in a template set 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -171,11 +188,12 @@ exports[`simple templates, mostly static > empty string in a template set 1`] = 
 exports[`simple templates, mostly static > inline template string in t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(\`text\`);
+  return function template(ctx, node) {
+    const c1 = out(() => (\`text\`));
+    return c1;
   }
 }"
 `;
@@ -183,13 +201,13 @@ exports[`simple templates, mostly static > inline template string in t-out 1`] =
 exports[`simple templates, mostly static > inline template string with content in t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["v"] = 1;
-    return safeOutput(\`text\${ctx['v']}\`);
+  return function template(ctx, node) {
+    const ctx1 = tset(ctx, \`v\`, true, () => (1));
+    const c1 = out(() => (\`text\${ctx1['v']}\`));
+    return c1;
   }
 }"
 `;
@@ -197,11 +215,12 @@ exports[`simple templates, mostly static > inline template string with content i
 exports[`simple templates, mostly static > inline template string with variable in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(\`text \${ctx['v']}\`);
+  return function template(ctx, node) {
+    const c1 = out(() => (\`text \${ctx['v']}\`));
+    return c1;
   }
 }"
 `;
@@ -209,15 +228,17 @@ exports[`simple templates, mostly static > inline template string with variable 
 exports[`simple templates, mostly static > multiple root nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { multi } = helpers;
   
-  let block2 = createBlock(\`<div>foo</div>\`);
-  let block3 = createBlock(\`<span>hey</span>\`);
+  let block1 = createBlock(\`<div>foo</div>\`);
+  let block2 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = "") {
+  return function template(ctx, node) {
+    const b1 = block1();
     const b2 = block2();
-    const b3 = block3();
-    return multi([b2, b3]);
+    const c1 = multi([b1, b2]);
+    return c1;
   }
 }"
 `;
@@ -225,10 +246,12 @@ exports[`simple templates, mostly static > multiple root nodes 1`] = `
 exports[`simple templates, mostly static > simple string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`hello vdom\`);
+  return function template(ctx, node) {
+    const c1 = text(\`hello vdom\`);
+    return c1;
   }
 }"
 `;
@@ -236,10 +259,12 @@ exports[`simple templates, mostly static > simple string 1`] = `
 exports[`simple templates, mostly static > simple string in t tag 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`hello vdom\`);
+  return function template(ctx, node) {
+    const c1 = text(\`hello vdom\`);
+    return c1;
   }
 }"
 `;
@@ -247,13 +272,14 @@ exports[`simple templates, mostly static > simple string in t tag 1`] = `
 exports[`simple templates, mostly static > static text and dynamic text (no t tag) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`hello \`);
-    const b3 = safeOutput(ctx['text']);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`hello \`);
+    const c2 = out(() => (ctx['text']));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -261,13 +287,14 @@ exports[`simple templates, mostly static > static text and dynamic text (no t ta
 exports[`simple templates, mostly static > static text and dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`hello \`);
-    const b3 = safeOutput(ctx['text']);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`hello \`);
+    const c2 = out(() => (ctx['text']));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -275,14 +302,16 @@ exports[`simple templates, mostly static > static text and dynamic text 1`] = `
 exports[`simple templates, mostly static > t-out in dom node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -290,14 +319,16 @@ exports[`simple templates, mostly static > t-out in dom node 1`] = `
 exports[`simple templates, mostly static > t-out in dom node, variations 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div>hello <block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -305,14 +336,16 @@ exports[`simple templates, mostly static > t-out in dom node, variations 1`] = `
 exports[`simple templates, mostly static > t-out in dom node, variations 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div>hello <block-child-0/> world</div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -320,16 +353,20 @@ exports[`simple templates, mostly static > t-out in dom node, variations 2`] = `
 exports[`simple templates, mostly static > template with multiple t tag with multiple content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/>Loading<block-child-2/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['a']);
-    const b3 = safeOutput(ctx['b']);
-    const b4 = safeOutput(ctx['c']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['a']));
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx['b']));
+    b1.insert(1, c2);
+    const c3 = out(() => (ctx['c']));
+    b1.insert(2, c3);
+    return b1;
   }
 }"
 `;
@@ -337,16 +374,19 @@ exports[`simple templates, mostly static > template with multiple t tag with mul
 exports[`simple templates, mostly static > template with t tag with multiple content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text, toggle } = helpers;
   
   let block1 = createBlock(\`<div>Loading<block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (false) {
-      b2 = text(\`\`);
-    }
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = toggle(() => (false) ? 0 : -1, [() => {
+    const c1 = text(\`\`);
+    return c1;
+  }]);
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -354,10 +394,12 @@ exports[`simple templates, mostly static > template with t tag with multiple con
 exports[`simple templates, mostly static > text node with backslash at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\\\\\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\\\\\`);
+    return c1;
   }
 }"
 `;
@@ -365,10 +407,12 @@ exports[`simple templates, mostly static > text node with backslash at top level
 exports[`simple templates, mostly static > text node with backtick at top-level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\\\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\\\`\`);
+    return c1;
   }
 }"
 `;
@@ -376,10 +420,12 @@ exports[`simple templates, mostly static > text node with backtick at top-level 
 exports[`simple templates, mostly static > text node with interpolation sigil at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\\\${very cool}\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\\\${very cool}\`);
+    return c1;
   }
 }"
 `;
@@ -387,13 +433,14 @@ exports[`simple templates, mostly static > text node with interpolation sigil at
 exports[`simple templates, mostly static > two t-outs next to each other 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text1']);
-    const b3 = safeOutput(ctx['text2']);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['text1']));
+    const c2 = out(() => (ctx['text2']));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -401,13 +448,14 @@ exports[`simple templates, mostly static > two t-outs next to each other 1`] = `
 exports[`simple templates, mostly static > two t-outs next to each other 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text1']);
-    const b3 = safeOutput(ctx['text2']);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['text1']));
+    const c2 = out(() => (ctx['text2']));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -415,15 +463,18 @@ exports[`simple templates, mostly static > two t-outs next to each other 2`] = `
 exports[`simple templates, mostly static > two t-outs next to each other, in a div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['text1']);
-    const b3 = safeOutput(ctx['text2']);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['text1']));
+    b1.insert(0, c1);
+    const c2 = out(() => (ctx['text2']));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;

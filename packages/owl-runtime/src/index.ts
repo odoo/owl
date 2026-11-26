@@ -1,37 +1,12 @@
 /// <reference path="./build-env.d.ts" />
 import { App } from "./app";
-import {
-  config,
-  createBlock,
-  html,
-  list,
-  mount as blockMount,
-  multi,
-  patch,
-  remove,
-  text,
-  toggler,
-} from "./blockdom";
+import { config } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
 export { Resource, Registry } from "@odoo/owl-core";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
 
-export const blockDom = {
-  config,
-  // bdom entry points
-  mount: blockMount,
-  patch,
-  remove,
-  // bdom block types
-  list,
-  multi,
-  text,
-  toggler,
-  createBlock,
-  html,
-};
 export { App, mount } from "./app";
 export { xml, TemplateSet, globalTemplates } from "./template_set";
 export type { TemplateSetConfig } from "./template_set";
@@ -39,7 +14,6 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { ErrorBoundary } from "./error_boundary";
 export { Portal } from "./portal";
-export { Suspense } from "./suspense";
 export { useProps } from "./props";
 // `isProps` is a phantom (declare const) brand symbol referenced by the public
 // `Props`/`PropsWithDefaults`/`GetProps` types. It must be exported from the
@@ -71,8 +45,6 @@ export {
   onMounted,
   onWillUnmount,
   onWillUpdateProps,
-  onWillPatch,
-  onPatched,
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";

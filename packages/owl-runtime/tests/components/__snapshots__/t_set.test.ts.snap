@@ -3,25 +3,26 @@
 exports[`t-set > slot setted value (with t-set) not accessible with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Childcomp\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { tset, out, text, makeSlots, component } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["iter"] = 'inCall';
-  return text('');
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["iter"] = 'source';
-    const b2 = safeOutput(ctx['iter']);
-    const b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
-    const b4 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`iter\`, true, () => ('source'));
+    const c1 = out(() => (ctx1['iter']));
+    b1.insert(0, c1);
+    const slots1 = makeSlots({'default': {__render: (ctx2, node) => {
+    const ctx3 = tset(ctx2, \`iter\`, true, () => ('inCall'));
+    const c2 = text("");
+    return c2;
+  }, __ctx: ctx1}});
+    const c3 = component(this, ctx1, node, \`Childcomp\`, () => ({slots: slots1}));
+    b1.insert(1, c3);
+    const c4 = out(() => (ctx1['iter']));
+    b1.insert(2, c4);
+    return b1;
   }
 }"
 `;
@@ -29,17 +30,19 @@ exports[`t-set > slot setted value (with t-set) not accessible with t-out 1`] = 
 exports[`t-set > slot setted value (with t-set) not accessible with t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, tset } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const b2 = safeOutput(ctx['iter']);
-    ctx["iter"] = 'called';
-    const b3 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['iter']));
+    b1.insert(0, c1);
+    const ctx1 = tset(ctx, \`iter\`, true, () => ('called'));
+    const c2 = out(() => (ctx1['iter']));
+    b1.insert(1, c2);
+    return b1;
   }
 }"
 `;
@@ -47,25 +50,23 @@ exports[`t-set > slot setted value (with t-set) not accessible with t-out 2`] = 
 exports[`t-set > slots with a t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, createComponent, withDefault, safeOutput, markRaw } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { lazy, component, tset, text, out, multi, makeSlots } = helpers;
   
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
-    const b3 = text(\` in slot \`);
-    const b4 = safeOutput(ctx['v']);
-    return multi([b3, b4]);
-  }
-  
-  function value1(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-  
-  return function template(ctx, node, key = "") {
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
+  return function template(ctx, node) {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const lazy1 = lazy(() => {
+      const c1 = component(this, ctx1, node, \`C\`, () => ({}));
+      return c1;
+    });
+    const ctx2 = tset(ctx1, \`v\`, false, lazy1);
+    const c2 = text(\` in slot \`);
+    const c3 = out(() => (ctx2['v']));
+    const c4 = multi([c2, c3]);
+    return c4;
+  }, __ctx: ctx}});
+    const c5 = component(this, ctx, node, \`Child\`, () => ({slots: slots1}));
+    return c5;
   }
 }"
 `;
@@ -73,13 +74,14 @@ exports[`t-set > slots with a t-set with a component in body 1`] = `
 exports[`t-set > slots with a t-set with a component in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot } = helpers;
+  let { createBlock } = bdom;
+  let { text, callSlot, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`Child \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`Child \`);
+    const c2 = callSlot(ctx, node, 'default', null, null, null);
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -87,10 +89,12 @@ exports[`t-set > slots with a t-set with a component in body 2`] = `
 exports[`t-set > slots with a t-set with a component in body 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`C\`);
+  return function template(ctx, node) {
+    const c1 = text(\`C\`);
+    return c1;
   }
 }"
 `;
@@ -98,29 +102,27 @@ exports[`t-set > slots with a t-set with a component in body 3`] = `
 exports[`t-set > slots with an t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, createComponent, withDefault, safeOutput, markRaw } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Blorg\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { lazy, component, multi, tset, text, out, makeSlots } = helpers;
   
-  let block4 = createBlock(\`<div>coffee</div>\`);
+  let block1 = createBlock(\`<div>coffee</div>\`);
   
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
-    const b5 = text(\` tea \`);
-    const b6 = safeOutput(ctx['v']);
-    return multi([b5, b6]);
-  }
-  
-  function value1(ctx, node, key = "") {
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    const b4 = block4();
-    return multi([b3, b4]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
+  return function template(ctx, node) {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const lazy1 = lazy(() => {
+      const c1 = component(this, ctx1, node, \`Child\`, () => ({}));
+      const b1 = block1();
+      const c2 = multi([c1, b1]);
+      return c2;
+    });
+    const ctx2 = tset(ctx1, \`v\`, false, lazy1);
+    const c3 = text(\` tea \`);
+    const c4 = out(() => (ctx2['v']));
+    const c5 = multi([c3, c4]);
+    return c5;
+  }, __ctx: ctx}});
+    const c6 = component(this, ctx, node, \`Blorg\`, () => ({slots: slots1}));
+    return c6;
   }
 }"
 `;
@@ -128,13 +130,14 @@ exports[`t-set > slots with an t-set with a component in body 1`] = `
 exports[`t-set > slots with an t-set with a component in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot } = helpers;
+  let { createBlock } = bdom;
+  let { text, callSlot, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`Blorg \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`Blorg \`);
+    const c2 = callSlot(ctx, node, 'default', null, null, null);
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -142,10 +145,12 @@ exports[`t-set > slots with an t-set with a component in body 2`] = `
 exports[`t-set > slots with an t-set with a component in body 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`Child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`Child\`);
+    return c1;
   }
 }"
 `;
@@ -153,23 +158,21 @@ exports[`t-set > slots with an t-set with a component in body 3`] = `
 exports[`t-set > slots with an unused t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, createComponent, withDefault, markRaw } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, true, false, []);
+  let { createBlock } = bdom;
+  let { lazy, component, tset, text, makeSlots } = helpers;
   
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
-    return text(\` in slot \`);
-  }
-  
-  function value1(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-  
-  return function template(ctx, node, key = "") {
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
+  return function template(ctx, node) {
+    const slots1 = makeSlots({'default': {__render: (ctx1, node) => {
+    const lazy1 = lazy(() => {
+      const c1 = component(this, ctx1, node, \`Child\`, () => ({}));
+      return c1;
+    });
+    const ctx2 = tset(ctx1, \`v\`, false, lazy1);
+    const c2 = text(\` in slot \`);
+    return c2;
+  }, __ctx: ctx}});
+    const c3 = component(this, ctx, node, \`Child\`, () => ({slots: slots1}));
+    return c3;
   }
 }"
 `;
@@ -177,13 +180,14 @@ exports[`t-set > slots with an unused t-set with a component in body 1`] = `
 exports[`t-set > slots with an unused t-set with a component in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callSlot } = helpers;
+  let { createBlock } = bdom;
+  let { text, callSlot, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`Child \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`Child \`);
+    const c2 = callSlot(ctx, node, 'default', null, null, null);
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -191,18 +195,21 @@ exports[`t-set > slots with an unused t-set with a component in body 2`] = `
 exports[`t-set > t-set can't alter component even if key in component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, tset } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><p><block-child-1/></p><p><block-child-2/></p></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const b2 = safeOutput(ctx['this'].iter);
-    ctx["iter"] = 5;
-    const b3 = safeOutput(ctx['this'].iter);
-    const b4 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].iter));
+    b1.insert(0, c1);
+    const ctx1 = tset(ctx, \`iter\`, true, () => (5));
+    const c2 = out(() => (ctx1['this'].iter));
+    b1.insert(1, c2);
+    const c3 = out(() => (ctx1['iter']));
+    b1.insert(2, c3);
+    return b1;
   }
 }"
 `;
@@ -210,18 +217,21 @@ exports[`t-set > t-set can't alter component even if key in component 1`] = `
 exports[`t-set > t-set can't alter component if key not in component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, tset } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><p><block-child-1/></p><p><block-child-2/></p></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const b2 = safeOutput(ctx['this'].iter);
-    ctx["iter"] = 5;
-    const b3 = safeOutput(ctx['this'].iter);
-    const b4 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].iter));
+    b1.insert(0, c1);
+    const ctx1 = tset(ctx, \`iter\`, true, () => (5));
+    const c2 = out(() => (ctx1['this'].iter));
+    b1.insert(1, c2);
+    const c3 = out(() => (ctx1['iter']));
+    b1.insert(2, c3);
+    return b1;
   }
 }"
 `;
@@ -229,24 +239,31 @@ exports[`t-set > t-set can't alter component if key not in component 1`] = `
 exports[`t-set > t-set in t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, text, toggle, out } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-child-0/></p></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p><block-child-1/></p></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    let b2;
-    ctx["flag"] = ctx['this'].state.flag;
-    if (ctx['flag']==='if') {
-      ctx["iter"] = 2;
-    } else if (ctx['flag']==='elif') {
-      ctx["iter"] = 3;
-    } else {
-      ctx["iter"] = 4;
-    }
-    b2 = safeOutput(ctx['iter']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`flag\`, true, () => (ctx['this'].state.flag));
+    const c4 = toggle(() => (ctx1['flag']==='if') ? 0 : (ctx1['flag']==='elif') ? 1 : 2, [() => {
+    const ctx2 = tset(ctx1, \`iter\`, true, () => (2));
+    const c1 = text("");
+    return c1;
+  }, () => {
+    const ctx3 = tset(ctx1, \`iter\`, true, () => (3));
+    const c2 = text("");
+    return c2;
+  }, () => {
+    const ctx4 = tset(ctx1, \`iter\`, true, () => (4));
+    const c3 = text("");
+    return c3;
+  }]);
+    b1.insert(0, c4);
+    const c5 = out(() => (ctx1['iter']));
+    b1.insert(1, c5);
+    return b1;
   }
 }"
 `;
@@ -254,19 +271,21 @@ exports[`t-set > t-set in t-if 1`] = `
 exports[`t-set > t-set not altered by child comp 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Childcomp\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { tset, out, component } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx["iter"] = 'source';
-    const b2 = safeOutput(ctx['iter']);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    const b4 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`iter\`, true, () => ('source'));
+    const c1 = out(() => (ctx1['iter']));
+    b1.insert(0, c1);
+    const c2 = component(this, ctx1, node, \`Childcomp\`, () => ({}));
+    b1.insert(1, c2);
+    const c3 = out(() => (ctx1['iter']));
+    b1.insert(2, c3);
+    return b1;
   }
 }"
 `;
@@ -274,18 +293,21 @@ exports[`t-set > t-set not altered by child comp 1`] = `
 exports[`t-set > t-set not altered by child comp 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, tset } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const b2 = safeOutput(ctx['this'].iter);
-    ctx["iter"] = 'called';
-    const b3 = safeOutput(ctx['this'].iter);
-    const b4 = safeOutput(ctx['iter']);
-    return block1([], [b2, b3, b4]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].iter));
+    b1.insert(0, c1);
+    const ctx1 = tset(ctx, \`iter\`, true, () => ('called'));
+    const c2 = out(() => (ctx1['this'].iter));
+    b1.insert(1, c2);
+    const c3 = out(() => (ctx1['iter']));
+    b1.insert(2, c3);
+    return b1;
   }
 }"
 `;
@@ -293,25 +315,32 @@ exports[`t-set > t-set not altered by child comp 2`] = `
 exports[`t-set > t-set outside modified in t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { tset, text, toggle, out } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-child-0/></p></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p><block-child-1/></p></div>\`);
   
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    let b2;
-    ctx["iter"] = 0;
-    ctx["flag"] = ctx['this'].state.flag;
-    if (ctx['flag']==='if') {
-      ctx["iter"] = 2;
-    } else if (ctx['flag']==='elif') {
-      ctx["iter"] = 3;
-    } else {
-      ctx["iter"] = 4;
-    }
-    b2 = safeOutput(ctx['iter']);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const ctx1 = tset(ctx, \`iter\`, true, () => (0));
+    const ctx2 = tset(ctx1, \`flag\`, true, () => (ctx1['this'].state.flag));
+    const c4 = toggle(() => (ctx2['flag']==='if') ? 0 : (ctx2['flag']==='elif') ? 1 : 2, [() => {
+    const ctx3 = tset(ctx2, \`iter\`, true, () => (2));
+    const c1 = text("");
+    return c1;
+  }, () => {
+    const ctx4 = tset(ctx2, \`iter\`, true, () => (3));
+    const c2 = text("");
+    return c2;
+  }, () => {
+    const ctx5 = tset(ctx2, \`iter\`, true, () => (4));
+    const c3 = text("");
+    return c3;
+  }]);
+    b1.insert(0, c4);
+    const c5 = out(() => (ctx2['iter']));
+    b1.insert(1, c5);
+    return b1;
   }
 }"
 `;
@@ -319,21 +348,21 @@ exports[`t-set > t-set outside modified in t-if 1`] = `
 exports[`t-set > t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, createComponent, withDefault, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { lazy, component, tset, out } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
-  function value1(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
-    const b3 = safeOutput(ctx['v']);
-    return block1([], [b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const lazy1 = lazy(() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  });
+    const ctx1 = tset(ctx, \`v\`, false, lazy1);
+    const c2 = out(() => (ctx1['v']));
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;
@@ -341,10 +370,12 @@ exports[`t-set > t-set with a component in body 1`] = `
 exports[`t-set > t-set with a component in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`Child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`Child\`);
+    return c1;
   }
 }"
 `;
@@ -352,21 +383,22 @@ exports[`t-set > t-set with a component in body 2`] = `
 exports[`t-set > t-set with something in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { LazyValue, withDefault, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { lazy, tset, out } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   let block2 = createBlock(\`<p>coucou</p>\`);
   
-  function value1(ctx, node, key = "") {
-    return block2();
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
-    const b3 = safeOutput(ctx['v']);
-    return block1([], [b3]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const lazy1 = lazy(() => {
+    const b2 = block2();
+    return b2;
+  });
+    const ctx1 = tset(ctx, \`v\`, false, lazy1);
+    const c1 = out(() => (ctx1['v']));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;

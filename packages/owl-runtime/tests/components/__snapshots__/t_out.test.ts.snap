@@ -3,25 +3,20 @@
 exports[`components in t-out > simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, LazyValue, createComponent, withDefault, safeOutput, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { lazy, component, tset, out, list } = helpers;
   
-  function value1(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`n\`] = k_block1[i1];
-      const key1 = ctx['n'];
-      ctx[\`blabla\`] = new LazyValue(value1, ctx, this, node, key1);
-      c_block1[i1] = withKey(safeOutput(ctx['blabla']), key1);
-    }
-    return list(c_block1);
+  return function template(ctx, node) {
+    const c3 = list(() => ([1,2]), ctx, \`n\`, (ctx1) => (ctx1['n']), 15, (ctx1) => {
+    const lazy1 = lazy(() => {
+      const c1 = component(this, ctx1, node, \`Child\`, () => ({}));
+      return c1;
+    });
+    const ctx2 = tset(ctx1, \`blabla\`, false, lazy1);
+    const c2 = out(() => (ctx2['blabla']));
+    return c2;
+  }, false);
+    return c3;
   }
 }"
 `;
@@ -29,10 +24,12 @@ exports[`components in t-out > simple list 1`] = `
 exports[`components in t-out > simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
+  return function template(ctx, node) {
+    const c1 = text(\`child\`);
+    return c1;
   }
 }"
 `;

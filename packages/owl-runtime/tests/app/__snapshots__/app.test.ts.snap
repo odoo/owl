@@ -3,17 +3,17 @@
 exports[`app > app: clear scheduler tasks on destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { text, component, toggle, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    b2 = text(\`A\`);
-    if (ctx['this'].state.value) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`A\`);
+    const c3 = toggle(() => (ctx['this'].state.value) ? 0 : -1, [() => {
+    const c2 = component(this, ctx, node, \`B\`, () => ({}));
+    return c2;
+  }]);
+    const c4 = multi([c1, c3]);
+    return c4;
   }
 }"
 `;
@@ -21,10 +21,12 @@ exports[`app > app: clear scheduler tasks on destroy 1`] = `
 exports[`app > app: clear scheduler tasks on destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`B\`);
+  return function template(ctx, node) {
+    const c1 = text(\`B\`);
+    return c1;
   }
 }"
 `;
@@ -32,15 +34,16 @@ exports[`app > app: clear scheduler tasks on destroy 3`] = `
 exports[`app > can add functions to the bdom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { __globals__ } = helpers;
   const hdlr_fn1 = (ctx)=>__globals__.plop('click');
   
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -48,14 +51,14 @@ exports[`app > can add functions to the bdom 1`] = `
 exports[`app > can call processTask twice in a row without crashing 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { text, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`parent\`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`parent\`);
+    const c2 = component(this, ctx, node, \`Child\`, () => ({}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -63,12 +66,13 @@ exports[`app > can call processTask twice in a row without crashing 1`] = `
 exports[`app > can call processTask twice in a row without crashing 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -76,14 +80,16 @@ exports[`app > can call processTask twice in a row without crashing 2`] = `
 exports[`app > can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.value));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -91,12 +97,13 @@ exports[`app > can configure an app with props 1`] = `
 exports[`app > can load templates from an object name-string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="hello">hello</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -104,12 +111,13 @@ exports[`app > can load templates from an object name-string 1`] = `
 exports[`app > can mix string and precompiled templates in the templates config 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="from-string">hi</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -117,12 +125,13 @@ exports[`app > can mix string and precompiled templates in the templates config 
 exports[`app > can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -130,12 +139,13 @@ exports[`app > can mount app in an iframe 1`] = `
 exports[`app > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -143,12 +153,13 @@ exports[`app > destroy remove the widget from the DOM 1`] = `
 exports[`app > destroying an app does not mount pending roots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>A</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -156,12 +167,13 @@ exports[`app > destroying an app does not mount pending roots 1`] = `
 exports[`app > destroying an app does not mount pending roots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>B</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -169,12 +181,13 @@ exports[`app > destroying an app does not mount pending roots 2`] = `
 exports[`app > destroying one root does not mount another pending root 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>A</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -182,12 +195,13 @@ exports[`app > destroying one root does not mount another pending root 1`] = `
 exports[`app > destroying one root does not mount another pending root 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>B</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -195,12 +209,13 @@ exports[`app > destroying one root does not mount another pending root 2`] = `
 exports[`useApp > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -208,12 +223,13 @@ exports[`useApp > destroy remove the widget from the DOM 1`] = `
 exports[`useApp > destroying app does not crash if root component crashed in setup 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;

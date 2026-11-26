@@ -133,22 +133,41 @@ function makeProps(type?: any): Props<{}> {
 
     let keys = getKeys(node.props);
     defineProps(keys);
+    // the set of keys is reactive too: nothing re-renders the component when
+    // a prop is added or removed, so reading the keys must subscribe to them
+    const keysVersion = signal(0);
     node.propsUpdated.push(() => {
       const nextKeys = getKeys(node.props);
       const nextKeySet = new Set(nextKeys);
+      let changed = false;
       for (const key of keys) {
         if (!nextKeySet.has(key)) {
           Reflect.deleteProperty(result, key);
           delete signals[key];
+          changed = true;
         }
       }
       for (const key of nextKeys) {
         if (!(key in signals)) {
           defineProp(key);
+          changed = true;
         }
       }
       updateSignals(nextKeys);
       keys = nextKeys;
+      if (changed) {
+        keysVersion.set(keysVersion() + 1);
+      }
+    });
+    return new Proxy(result, {
+      ownKeys(target) {
+        keysVersion();
+        return Reflect.ownKeys(target);
+      },
+      has(target, key) {
+        keysVersion();
+        return Reflect.has(target, key);
+      },
     });
   }
 

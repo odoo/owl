@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>owl list benchmark</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      // the owl build to load, given by run.mjs (?build=file:///.../owl.iife.js)
+      const build = new URLSearchParams(location.search).get("build");
+      document.write(`<script src="${build}"><\/script>`);
+    </script>
+    <script>
+      const { Component, mount, proxy, signal, xml } = owl;
+
+      let nextId = 1;
+      const adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome"];
+      const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie"];
+      function buildData(n) {
+        const data = [];
+        for (let i = 0; i < n; i++) {
+          data.push({
+            id: nextId++,
+            label: adjectives[i % adjectives.length] + " " + nouns[(i * 7) % nouns.length],
+          });
+        }
+        return data;
+      }
+
+      class Bench extends Component {
+        static template = xml`
+          <table><tbody>
+            <t t-foreach="this.rows" t-as="row" t-key="row.id">
+              <tr t-att-class="row.id === this.selected() ? 'danger' : ''">
+                <td t-out="row.id"/>
+                <td><a t-on-click="() => this.select(row.id)"><t t-out="row.label"/></a></td>
+              </tr>
+            </t>
+          </tbody></table>`;
+        rows = proxy([]);
+        selected = signal(0);
+        select(id) {
+          this.selected.set(id);
+        }
+      }
+
+      async function waitFor(cond) {
+        for (let i = 0; i < 100000 && !cond(); i++) {
+          await Promise.resolve();
+        }
+        if (!cond()) {
+          throw new Error("condition not met");
+        }
+      }
+
+      /**
+       * Measures each operation from the state change to the updated dom, and
+       * returns the median time (ms) of each operation.
+       */
+      async function runBenchmark({ warmup = 5, runs = 15 } = {}) {
+        const comp = await mount(Bench, document.getElementById("app"));
+        // A vdom build commits on animation frames: commit in a microtask
+        // instead, to compare the work done, not the time spent waiting for a
+        // frame.
+        const scheduler = comp.__owl__.app.scheduler;
+        if (scheduler) {
+          scheduler.requestAnimationFrame = (cb) => {
+            Promise.resolve().then(cb);
+            return 1;
+          };
+        }
+        const tbody = () => document.querySelector("tbody");
+        const rows = comp.rows;
+        const firstId = () => tbody().children[0].firstElementChild.textContent;
+        const ops = [
+          [
+            "create 1000 rows",
+            () => rows.push(...buildData(1000)),
+            () => tbody().children.length === 1000,
+          ],
+          [
+            "replace all rows",
+            () => rows.splice(0, rows.length, ...buildData(1000)),
+            () => firstId() === String(rows[0].id),
+          ],
+          [
+            "update every 10th row",
+            () => {
+              for (let i = 0; i < rows.length; i += 10) {
+                rows[i].label += " !!!";
+              }
+            },
+            () => tbody().children[990].textContent.endsWith("!!!"),
+          ],
+          [
+            "select row",
+            () => comp.select(rows[500].id),
+            () => tbody().children[500].className === "danger",
+          ],
+          [
+            "swap rows",
+            () => {
+              const a = rows[1];
+              rows[1] = rows[998];
+              rows[998] = a;
+            },
+            () => tbody().children[1].firstElementChild.textContent === String(rows[1].id),
+          ],
+          ["remove row", () => rows.splice(500, 1), () => tbody().children.length === 999],
+          ["clear rows", () => rows.splice(0), () => tbody().children.length === 0],
+        ];
+        const times = {};
+        for (let run = 0; run < warmup + runs; run++) {
+          for (const [name, op, done] of ops) {
+            const t0 = performance.now();
+            op();
+            await waitFor(done);
+            const t1 = performance.now();
+            if (run >= warmup) {
+              (times[name] ||= []).push(t1 - t0);
+            }
+          }
+        }
+        const result = {};
+        for (const name in times) {
+          const sorted = times[name].sort((a, b) => a - b);
+          result[name] = Math.round(sorted[Math.floor(sorted.length / 2)] * 100) / 100;
+        }
+        return result;
+      }
+    </script>
+  </body>
+</html>

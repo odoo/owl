@@ -3,10 +3,12 @@
 exports[`a global plugin can import the current app 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`coucou\`);
+  return function template(ctx, node) {
+    const c1 = text(\`coucou\`);
+    return c1;
   }
 }"
 `;
@@ -14,11 +16,12 @@ exports[`a global plugin can import the current app 1`] = `
 exports[`basic use (setup) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.value);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    return c1;
   }
 }"
 `;
@@ -26,11 +29,12 @@ exports[`basic use (setup) 1`] = `
 exports[`basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.value);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    return c1;
   }
 }"
 `;
@@ -38,11 +42,12 @@ exports[`basic use 1`] = `
 exports[`can be started with resource 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.value);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    return c1;
   }
 }"
 `;
@@ -50,14 +55,15 @@ exports[`can be started with resource 1`] = `
 exports[`components can give config to plugins 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, text, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].a.inputA);
-    const b3 = text(\`-\`);
-    const b4 = safeOutput(ctx['this'].b.inputB);
-    return multi([b2, b3, b4]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.inputA));
+    const c2 = text(\`-\`);
+    const c3 = out(() => (ctx['this'].b.inputB));
+    const c4 = multi([c1, c2, c3]);
+    return c4;
   }
 }"
 `;
@@ -65,14 +71,14 @@ exports[`components can give config to plugins 1`] = `
 exports[`components can register resources 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { text, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`1 | \`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`1 | \`);
+    const c2 = component(this, ctx, node, \`Level2\`, () => ({}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -80,14 +86,15 @@ exports[`components can register resources 1`] = `
 exports[`components can register resources 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`2: \`);
-    const b3 = safeOutput(ctx['this'].a.value());
-    const b4 = text(\` \`);
-    return multi([b2, b3, b4]);
+  return function template(ctx, node) {
+    const c1 = text(\`2: \`);
+    const c2 = out(() => (ctx['this'].a.value()));
+    const c3 = text(\` \`);
+    const c4 = multi([c1, c2, c3]);
+    return c4;
   }
 }"
 `;
@@ -95,14 +102,15 @@ exports[`components can register resources 2`] = `
 exports[`components can start plugins 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, text, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].a.value);
-    const b3 = text(\` - \`);
-    const b4 = safeOutput(ctx['this'].b.value);
-    return multi([b2, b3, b4]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    const c2 = text(\` - \`);
+    const c3 = out(() => (ctx['this'].b.value));
+    const c4 = multi([c1, c2, c3]);
+    return c4;
   }
 }"
 `;
@@ -110,11 +118,12 @@ exports[`components can start plugins 1`] = `
 exports[`components mounted by plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].p.value);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].p.value));
+    return c1;
   }
 }"
 `;
@@ -122,10 +131,12 @@ exports[`components mounted by plugin 1`] = `
 exports[`components mounted by plugin 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`abc\`);
+  return function template(ctx, node) {
+    const c1 = text(\`abc\`);
+    return c1;
   }
 }"
 `;
@@ -133,14 +144,14 @@ exports[`components mounted by plugin 2`] = `
 exports[`components start plugins at their level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { text, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`1 | \`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = text(\`1 | \`);
+    const c2 = component(this, ctx, node, \`Level2\`, () => ({}));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -148,16 +159,16 @@ exports[`components start plugins at their level 1`] = `
 exports[`components start plugins at their level 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Level3\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { text, out, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`2: \`);
-    const b3 = safeOutput(ctx['this'].a.value);
-    const b4 = text(\` | \`);
-    const b5 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3, b4, b5]);
+  return function template(ctx, node) {
+    const c1 = text(\`2: \`);
+    const c2 = out(() => (ctx['this'].a.value));
+    const c3 = text(\` | \`);
+    const c4 = component(this, ctx, node, \`Level3\`, () => ({}));
+    const c5 = multi([c1, c2, c3, c4]);
+    return c5;
   }
 }"
 `;
@@ -165,15 +176,16 @@ exports[`components start plugins at their level 2`] = `
 exports[`components start plugins at their level 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { text, out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`3: \`);
-    const b3 = safeOutput(ctx['this'].a.value);
-    const b4 = text(\` - \`);
-    const b5 = safeOutput(ctx['this'].b.value);
-    return multi([b2, b3, b4, b5]);
+  return function template(ctx, node) {
+    const c1 = text(\`3: \`);
+    const c2 = out(() => (ctx['this'].a.value));
+    const c3 = text(\` - \`);
+    const c4 = out(() => (ctx['this'].b.value));
+    const c5 = multi([c1, c2, c3, c4]);
+    return c5;
   }
 }"
 `;
@@ -181,13 +193,14 @@ exports[`components start plugins at their level 3`] = `
 exports[`components, plugins, useEffect 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].value());
-    const b3 = safeOutput(ctx['this'].derived());
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].value()));
+    const c2 = out(() => (ctx['this'].derived()));
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;
@@ -195,10 +208,12 @@ exports[`components, plugins, useEffect 1`] = `
 exports[`get plugin which is not started 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -206,11 +221,12 @@ exports[`get plugin which is not started 1`] = `
 exports[`optional plugin config work as expected (no config given) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.inputA);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.inputA));
+    return c1;
   }
 }"
 `;
@@ -218,11 +234,12 @@ exports[`optional plugin config work as expected (no config given) 1`] = `
 exports[`optional plugin config work as expected (no value given) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.inputA);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.inputA));
+    return c1;
   }
 }"
 `;
@@ -230,11 +247,12 @@ exports[`optional plugin config work as expected (no value given) 1`] = `
 exports[`optional plugin config work as expected (value given) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.inputA);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.inputA));
+    return c1;
   }
 }"
 `;
@@ -242,11 +260,12 @@ exports[`optional plugin config work as expected (value given) 1`] = `
 exports[`plugin config are validated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.inputA);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.inputA));
+    return c1;
   }
 }"
 `;
@@ -254,10 +273,12 @@ exports[`plugin config are validated 1`] = `
 exports[`plugins added to resource starts automatically 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -265,12 +286,12 @@ exports[`plugins added to resource starts automatically 1`] = `
 exports[`providePlugins respects plugin sequence 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -278,12 +299,13 @@ exports[`providePlugins respects plugin sequence 1`] = `
 exports[`providePlugins respects plugin sequence 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>child</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -291,10 +313,12 @@ exports[`providePlugins respects plugin sequence 2`] = `
 exports[`scoped plugin methods are guarded by the consumer's lifetime 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;
@@ -302,15 +326,15 @@ exports[`scoped plugin methods are guarded by the consumer's lifetime 1`] = `
 exports[`shadow plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { out, text, component, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].a.value);
-    const b3 = text(\` | \`);
-    const b4 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3, b4]);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    const c2 = text(\` | \`);
+    const c3 = component(this, ctx, node, \`Level2\`, () => ({}));
+    const c4 = multi([c1, c2, c3]);
+    return c4;
   }
 }"
 `;
@@ -318,12 +342,12 @@ exports[`shadow plugin 1`] = `
 exports[`shadow plugin 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Level3\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Level3\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -331,11 +355,12 @@ exports[`shadow plugin 2`] = `
 exports[`shadow plugin 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.value);
+  return function template(ctx, node) {
+    const c1 = out(() => (ctx['this'].a.value));
+    return c1;
   }
 }"
 `;
@@ -343,10 +368,12 @@ exports[`shadow plugin 3`] = `
 exports[`usePlugin returns the scoped view when the plugin defines one 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { text } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return text(\`\`);
+  return function template(ctx, node) {
+    const c1 = text(\`\`);
+    return c1;
   }
 }"
 `;

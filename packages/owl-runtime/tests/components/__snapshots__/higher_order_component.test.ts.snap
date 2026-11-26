@@ -3,12 +3,12 @@
 exports[`basics > basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["p"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({p: 1}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({p: 1}));
+    return c1;
   }
 }"
 `;
@@ -16,14 +16,16 @@ exports[`basics > basic use 1`] = `
 exports[`basics > basic use 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { out } = helpers;
   
   let block1 = createBlock(\`<span>child<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.p);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = out(() => (ctx['this'].props.p));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -31,20 +33,20 @@ exports[`basics > basic use 2`] = `
 exports[`basics > can select a sub widget  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`OtherChild\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].state.options.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    if (!ctx['this'].state.options.flag) {
-      b3 = comp2({}, key + \`__2\`, node, this, null);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].state.options.flag) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    const c4 = toggle(() => (!ctx['this'].state.options.flag) ? 0 : -1, [() => {
+    const c3 = component(this, ctx, node, \`OtherChild\`, () => ({}));
+    return c3;
+  }]);
+    const c5 = multi([c2, c4]);
+    return c5;
   }
 }"
 `;
@@ -52,25 +54,13 @@ exports[`basics > can select a sub widget  1`] = `
 exports[`basics > can select a sub widget  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`basics > can select a sub widget  3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  
-  let block1 = createBlock(\`<div>CHILD 2</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -78,20 +68,20 @@ exports[`basics > can select a sub widget  3`] = `
 exports[`basics > can select a sub widget, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`OtherChild\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component, toggle, multi } = helpers;
   
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['this'].state.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    if (!ctx['this'].state.flag) {
-      b3 = comp2({}, key + \`__2\`, node, this, null);
-    }
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c2 = toggle(() => (ctx['this'].state.flag) ? 0 : -1, [() => {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({}));
+    return c1;
+  }]);
+    const c4 = toggle(() => (!ctx['this'].state.flag) ? 0 : -1, [() => {
+    const c3 = component(this, ctx, node, \`OtherChild\`, () => ({}));
+    return c3;
+  }]);
+    const c5 = multi([c2, c4]);
+    return c5;
   }
 }"
 `;
@@ -99,12 +89,13 @@ exports[`basics > can select a sub widget, part 2 1`] = `
 exports[`basics > can select a sub widget, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -112,12 +103,13 @@ exports[`basics > can select a sub widget, part 2 2`] = `
 exports[`basics > can select a sub widget, part 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div>CHILD 2</div>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -125,12 +117,12 @@ exports[`basics > can select a sub widget, part 2 3`] = `
 exports[`basics > sub widget is interactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["p"]);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({p: 1}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`Child\`, () => ({p: 1}));
+    return c1;
   }
 }"
 `;
@@ -138,16 +130,18 @@ exports[`basics > sub widget is interactive 1`] = `
 exports[`basics > sub widget is interactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { callHandler, safeOutput } = helpers;
+  let { createBlock } = bdom;
+  let { callHandler, out } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
   
   let block1 = createBlock(\`<span><button block-handler-0="click">click</button>child<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    const b2 = safeOutput(ctx['this'].state.val);
-    return block1([hdlr1], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    const c1 = out(() => (ctx['this'].state.val));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -155,15 +149,16 @@ exports[`basics > sub widget is interactive 2`] = `
 exports[`basics > top level sub widget with a parent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c1 = component(this, ctx, node, \`ComponentB\`, () => ({}));
+    b1.insert(0, c1);
+    return b1;
   }
 }"
 `;
@@ -171,12 +166,12 @@ exports[`basics > top level sub widget with a parent 1`] = `
 exports[`basics > top level sub widget with a parent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, []);
+  let { createBlock } = bdom;
+  let { component } = helpers;
   
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
+  return function template(ctx, node) {
+    const c1 = component(this, ctx, node, \`ComponentC\`, () => ({}));
+    return c1;
   }
 }"
 `;
@@ -184,12 +179,13 @@ exports[`basics > top level sub widget with a parent 2`] = `
 exports[`basics > top level sub widget with a parent 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<span>Hello</span>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;

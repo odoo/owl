@@ -66,6 +66,16 @@ export enum ComputationFlags {
   // Effect disposed by its own dispose function or by its parent: a run still
   // in progress unsubscribes again when it ends.
   DISPOSED = 16,
+  // Render effect (owl-runtime): queued separately and flushed before user
+  // effects, in ascending `depth` order, so that a parent region runs (and
+  // possibly disposes its children) before the children's own render effects.
+  RENDER = 32,
+  // Render effect currently running. A write to one of its sources during the
+  // run (e.g. by a component it creates) marks it DIRTY, and it is queued
+  // again when the run ends: otherwise, the write would be lost, as only an
+  // executed computation is notified.
+  RUNNING = 64,
+  DIRTY = 128,
 }
 
 export interface Atom<T = any> {
@@ -78,11 +88,14 @@ export interface ComputationAtom<T = any> extends Atom<T> {
   sources: Set<Atom>;
   // a combination of ComputationFlags
   flags: number;
+  // render effects only: nesting depth of the region owning the effect
+  depth?: number;
 }
 
 export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
+let renderObservers: ComputationAtom[] = [];
 let immediateObservers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 // Derived computations that were notified of a write while nothing observed
@@ -119,12 +132,18 @@ export function onReadAtom(atom: Atom) {
 export function onWriteAtom(atom: Atom) {
   for (const ctx of atom.observers) {
     const flags = ctx.flags;
+    if (flags & ComputationFlags.RUNNING) {
+      ctx.flags = flags | ComputationFlags.DIRTY;
+      continue;
+    }
     if (!(flags & ComputationFlags.STATE_MASK)) {
       // EXECUTED
       if (flags & ComputationFlags.DERIVED) {
         markDownstream(ctx);
       } else if (flags & ComputationFlags.IMMEDIATE) {
         immediateObservers.push(ctx);
+      } else if (flags & ComputationFlags.RENDER) {
+        renderObservers.push(ctx);
       } else {
         observers.push(ctx);
       }
@@ -167,12 +186,34 @@ export function invalidateComputation(computation: ComputationAtom) {
   onWriteAtom({ value: undefined, observers: new Set([computation]) });
 }
 
+function byDepth(a: ComputationAtom, b: ComputationAtom) {
+  return a.depth! - b.depth!;
+}
+
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
-  const pending = observers;
-  observers = [];
   let hasError = false;
   let error: unknown;
+  // Render effects first, parents before children. Running one may queue
+  // others (e.g. a component's props effect notifies its child's render
+  // effects), hence the loop.
+  while (renderObservers.length) {
+    const queue = renderObservers;
+    renderObservers = [];
+    queue.sort(byDepth);
+    for (let i = 0; i < queue.length; i++) {
+      try {
+        updateComputation(queue[i]);
+      } catch (e) {
+        if (!hasError) {
+          hasError = true;
+          error = e;
+        }
+      }
+    }
+  }
+  const pending = observers;
+  observers = [];
   for (let i = 0; i < pending.length; i++) {
     try {
       updateComputation(pending[i]);
@@ -242,11 +283,24 @@ export function updateComputation(computation: ComputationAtom) {
   removeSources(computation);
   const previousComputation = currentComputation;
   currentComputation = computation;
+  const isRender = computation.flags & ComputationFlags.RENDER;
+  if (isRender) {
+    computation.flags |= ComputationFlags.RUNNING;
+  }
   try {
     computation.value = computation.compute();
   } finally {
     // mark executed even after a throw, as onWriteAtom only notifies an executed computation
     computation.flags &= ~ComputationFlags.STATE_MASK;
+    if (isRender) {
+      const isDirty = computation.flags & ComputationFlags.DIRTY;
+      computation.flags &= ~(ComputationFlags.RUNNING | ComputationFlags.DIRTY);
+      if (isDirty && !(computation.flags & ComputationFlags.DISPOSED)) {
+        computation.flags |= ComputationFlags.STALE;
+        renderObservers.push(computation);
+        batchProcessEffects();
+      }
+    }
     // Restore the previous tracking pointer even if compute() threw, so a
     // subsequent atom read does not silently attach itself as a source of
     // the failed computation.
@@ -295,6 +349,10 @@ function markDownstream(computation: ComputationAtom) {
       if (flags & ComputationFlags.DERIVED && observer.observers.size === 0) {
         pendingDisposals.add(observer);
       }
+      if (flags & ComputationFlags.RUNNING) {
+        observer.flags = flags | ComputationFlags.DIRTY;
+        continue;
+      }
       if (flags & ComputationFlags.STATE_MASK) {
         continue;
       }
@@ -304,6 +362,8 @@ function markDownstream(computation: ComputationAtom) {
         stack.push(observer);
       } else if (flags & ComputationFlags.IMMEDIATE) {
         immediateObservers.push(observer);
+      } else if (flags & ComputationFlags.RENDER) {
+        renderObservers.push(observer);
       } else {
         observers.push(observer);
       }

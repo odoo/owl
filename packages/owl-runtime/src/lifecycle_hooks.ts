@@ -24,16 +24,6 @@ export function onMounted(fn: (scope: ComponentNode) => void | any) {
   scope.mounted.push(scope.decorate(fn, "onMounted"));
 }
 
-export function onWillPatch(fn: (scope: ComponentNode) => any | void) {
-  const scope = getComponentScope();
-  scope.willPatch.unshift(scope.decorate(fn, "onWillPatch"));
-}
-
-export function onPatched(fn: (scope: ComponentNode) => void | any) {
-  const scope = getComponentScope();
-  scope.patched.push(scope.decorate(fn, "onPatched"));
-}
-
 export function onWillUnmount(fn: (scope: ComponentNode) => void | any) {
   const scope = getComponentScope();
   scope.willUnmount.unshift(scope.decorate(fn, "onWillUnmount"));

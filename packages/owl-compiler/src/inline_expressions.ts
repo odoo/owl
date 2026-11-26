@@ -265,6 +265,20 @@ interface ProcessedExpr {
   freeVariables: string[] | null;
 }
 
+// Name of the variable holding the rendering context in the generated code.
+// The code generator changes it when a t-set introduces a new context layer.
+let ctxName = "ctx";
+
+export function withCtxName<T>(name: string, fn: () => T): T {
+  const previous = ctxName;
+  ctxName = name;
+  try {
+    return fn();
+  } finally {
+    ctxName = previous;
+  }
+}
+
 /**
  * Processes a javascript expression: compiles variable lookups and detects
  * top-level arrow functions with their free variables, all in a single pass.
@@ -371,7 +385,7 @@ export function processExpr(expr: string, seededLocals?: Set<string>): Processed
       token.varName = token.value;
       if (!isLocal(token.value)) {
         token.originalValue = token.value;
-        token.value = `ctx['${token.value}']`;
+        token.value = `${ctxName}['${token.value}']`;
       } else {
         token.value = `_${token.value}`;
         token.isLocal = true;

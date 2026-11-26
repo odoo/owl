@@ -3,13 +3,17 @@
 exports[`qweb t-tag > can fallback if falsy tag 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 'fallback'}/>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['tag']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -17,13 +21,17 @@ exports[`qweb t-tag > can fallback if falsy tag 1`] = `
 exports[`qweb t-tag > can update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['tag']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -31,13 +39,17 @@ exports[`qweb t-tag > can update 1`] = `
 exports[`qweb t-tag > simple usecases 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = 'div';
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => ('div'), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -45,13 +57,17 @@ exports[`qweb t-tag > simple usecases 1`] = `
 exports[`qweb t-tag > simple usecases 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}>text</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['tag']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -59,13 +75,17 @@ exports[`qweb t-tag > simple usecases 2`] = `
 exports[`qweb t-tag > with multiple attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'} class="blueberry" taste="raspberry">gooseberry</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['tag']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -73,13 +93,17 @@ exports[`qweb t-tag > with multiple attributes 1`] = `
 exports[`qweb t-tag > with multiple child nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}> pear <span>apple</span> strawberry </\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['tag']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    return c1;
   }
 }"
 `;
@@ -87,16 +111,23 @@ exports[`qweb t-tag > with multiple child nodes 1`] = `
 exports[`qweb t-tag > with multiple t-tag in same template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}><block-child-0/></\${tag || 't'}>\`);
   let block2 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['outer'];
-    const tag2 = ctx['inner'];
-    const b2 = toggler(tag2, block2(tag2)());
-    return toggler(tag1, block1(tag1)([], [b2]));
+  return function template(ctx, node) {
+    const c2 = keyed(() => (ctx['outer']), (tag) => {
+    const b1 = block1(tag)();
+    const c1 = keyed(() => (ctx['inner']), (tag) => {
+      const b2 = block2(tag)();
+      return b2;
+    });
+    b1.insert(0, c1);
+    return b1;
+  });
+    return c2;
   }
 }"
 `;
@@ -104,17 +135,23 @@ exports[`qweb t-tag > with multiple t-tag in same template 1`] = `
 exports[`qweb t-tag > with multiple t-tag in same template, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
+  let { keyed, multi } = helpers;
   
-  let block2 = tag => createBlock(\`<\${tag || 't'}>bar</\${tag || 't'}>\`);
-  let block3 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
+  let block1 = tag => createBlock(\`<\${tag || 't'}>bar</\${tag || 't'}>\`);
+  let block2 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = "") {
-    const tag1 = ctx['brother'];
-    const b2 = toggler(tag1, block2(tag1)());
-    const tag2 = ctx['brother'];
-    const b3 = toggler(tag2, block3(tag2)());
-    return multi([b2, b3]);
+  return function template(ctx, node) {
+    const c1 = keyed(() => (ctx['brother']), (tag) => {
+    const b1 = block1(tag)();
+    return b1;
+  });
+    const c2 = keyed(() => (ctx['brother']), (tag) => {
+    const b2 = block2(tag)();
+    return b2;
+  });
+    const c3 = multi([c1, c2]);
+    return c3;
   }
 }"
 `;

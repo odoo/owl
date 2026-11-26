@@ -1,33 +1,43 @@
 import { OwlError } from "@odoo/owl-core";
-import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
+import { compileExpr, INTERP_REGEXP, interpolate, withCtxName } from "./inline_expressions";
 import {
   AST,
   ASTComponent,
-  ASTDebug,
   ASTDomNode,
-  ASTLog,
-  ASTMulti,
   ASTTCall,
-  ASTTCallBlock,
   ASTTCallSlot,
   ASTText,
   ASTTForEach,
-  ForEachNoFlag,
   ASTTif,
   ASTTKey,
   ASTTOut,
-  ASTTranslation,
-  ASTTranslationContext,
   ASTTSet,
   ASTType,
   Attrs,
   EventHandlers,
 } from "./parser";
 
-const zero = Symbol("zero");
-
-type BlockType = "block" | "text" | "multi" | "list" | "html";
-const whitespaceRE = /\s+/g;
+// -----------------------------------------------------------------------------
+// Render-once code generator
+// -----------------------------------------------------------------------------
+//
+// A compiled template runs once per instance (a component, a t-if branch, a
+// list row, a slot, ...) and returns a "content": a range of DOM nodes that the
+// runtime inserts, moves and removes. Nothing is re-rendered:
+//
+// - static DOM is cloned from block templates (createBlock);
+// - the dynamic values of a block (attributes, properties) are kept up to date
+//   by one render effect per block, which re-runs when a value it read
+//   changes, and only writes the values that changed;
+// - event handlers and refs are set once;
+// - structural nodes (t-if, t-foreach, t-out, components, slots, ...) are
+//   runtime helpers that own their sub-contents, and create or dispose them
+//   when what they depend on changes.
+//
+// Closures in the generated code (branches, rows, slots, effects) are created
+// once and run later, so the rendering context is never reassigned: a t-set
+// introduces a new context layer in a new constant (see withCtxName).
+// -----------------------------------------------------------------------------
 
 export interface Config {
   translateFn?: (s: string, translationCtx: string) => string;
@@ -39,6 +49,8 @@ interface CodeGenOptions extends Config {
   name?: string;
   hasGlobalValues: boolean;
 }
+
+const whitespaceRE = /\s+/g;
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
 // of HTML (as we will parse it as xml later)
@@ -88,6 +100,15 @@ function toStringExpression(str: string) {
   return `\`${str.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/, "\\${")}\``;
 }
 
+function propKey(name: string): string {
+  return /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
+}
+
+/** an arrow function returning `expr` (parenthesized, for object literals) */
+function thunk(expr: string, params: string = ""): string {
+  return `(${params}) => (${expr})`;
+}
+
 // -----------------------------------------------------------------------------
 // BlockDescription
 // -----------------------------------------------------------------------------
@@ -95,33 +116,23 @@ function toStringExpression(str: string) {
 class BlockDescription {
   static nextBlockId = 1;
 
+  id: number;
   varName: string;
   blockName: string;
-  dynamicTagName: string | null = null;
-  isRoot: boolean = false;
-  hasDynamicChildren: boolean = false;
-  children: BlockDescription[] = [];
-  data: string[] = [];
   dom?: Node;
   currentDom?: Element;
-  childNumber: number = 0;
-  target: CodeTarget;
-  type: BlockType;
-  parentVar: string = "";
-  id: number;
+  // next block-child-N index
+  childNumber = 0;
+  // next data location index (attributes, properties, handlers, refs)
+  dataNumber = 0;
+  // statements run by the render effect of the block
+  dynamic: string[] = [];
+  hasDynamicTag = false;
 
-  constructor(target: CodeTarget, type: BlockType) {
+  constructor() {
     this.id = BlockDescription.nextBlockId++;
     this.varName = "b" + this.id;
     this.blockName = "block" + this.id;
-    this.target = target;
-    this.type = type;
-  }
-
-  insertData(str: string, prefix: string = "d"): number {
-    const id = generateId(prefix);
-    this.target.addLine(`let ${id} = ${str};`);
-    return this.data.push(id) - 1;
   }
 
   insert(dom: Node) {
@@ -130,23 +141,6 @@ class BlockDescription {
     } else {
       this.dom = dom;
     }
-  }
-
-  generateExpr(expr: string): string {
-    if (this.type === "block") {
-      const hasChildren = this.children.length;
-      let params = this.data.length ? `[${this.data.join(", ")}]` : hasChildren ? "[]" : "";
-      if (hasChildren) {
-        params += ", [" + this.children.map((c) => c.varName).join(", ") + "]";
-      }
-      if (this.dynamicTagName) {
-        return `toggler(${this.dynamicTagName}, ${this.blockName}(${this.dynamicTagName})(${params}))`;
-      }
-      return `${this.blockName}(${params})`;
-    } else if (this.type === "list") {
-      return `list(c_block${this.id})`;
-    }
-    return expr;
   }
 
   asXmlString() {
@@ -162,83 +156,12 @@ class BlockDescription {
 // Compiler code
 // -----------------------------------------------------------------------------
 
-interface Context {
-  block: BlockDescription | null;
-  index: number | string;
-  forceNewBlock: boolean;
+interface State {
   translate: boolean;
   translationCtx: string;
-  tKeyExpr: string | null;
-  nameSpace?: string;
-  tModelSelectedExpr?: string;
-  inPreTag?: boolean;
-}
-
-function createContext(parentCtx: Context, params?: Partial<Context>): Context {
-  return Object.assign(
-    {
-      block: null,
-      index: 0,
-      forceNewBlock: true,
-      translate: parentCtx.translate,
-      translationCtx: parentCtx.translationCtx,
-      tKeyExpr: null,
-      nameSpace: parentCtx.nameSpace,
-      tModelSelectedExpr: parentCtx.tModelSelectedExpr,
-    },
-    params
-  );
-}
-
-class CodeTarget {
-  name: string;
-  indentLevel = 0;
-  loopLevel = 0;
-  loopCtxVars: string[] = [];
-  tSetVars: Map<string, number> = new Map();
-  code: string[] = [];
-  hasRoot = false;
-  deferReturn = false;
-  needsScopeProtection = false;
-  on: EventHandlers | null;
-
-  constructor(name: string, on?: EventHandlers | null) {
-    this.name = name;
-    this.on = on || null;
-  }
-
-  addLine(line: string, idx?: number) {
-    const prefix = new Array(this.indentLevel + 2).join("  ");
-    if (idx === undefined) {
-      this.code.push(prefix + line);
-    } else {
-      this.code.splice(idx, 0, prefix + line);
-    }
-  }
-
-  generateCode(): string {
-    let result: string[] = [];
-    result.push(`function ${this.name}(ctx, node, key = "") {`);
-    if (this.needsScopeProtection) {
-      result.push(`  ctx = Object.create(ctx);`);
-    }
-    for (let line of this.code) {
-      result.push(line);
-    }
-    if (!this.hasRoot) {
-      result.push(`return text('');`);
-    }
-    result.push(`}`);
-    return result.join("\n  ");
-  }
-
-  currentKey(ctx: Context) {
-    let key = this.loopLevel ? `key${this.loopLevel}` : "key";
-    if (ctx.tKeyExpr) {
-      key = `${ctx.tKeyExpr} + ${key}`;
-    }
-    return key;
-  }
+  inPreTag: boolean;
+  nameSpace: string | null;
+  tModelSelectedExpr: string | null;
 }
 
 const TRANSLATABLE_ATTRS = [
@@ -255,18 +178,28 @@ const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
 export class CodeGenerator {
   blocks: BlockDescription[] = [];
-  nextBlockId = 1;
   isDebug: boolean = false;
-  targets: CodeTarget[] = [];
-  target = new CodeTarget("template");
+  fnName = "template";
   templateName?: string;
   dev: boolean;
   translateFn: (s: string, translationCtx: string) => string;
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
-  slotNames: Set<String | Symbol> = new Set();
   helpers: Set<string> = new Set();
+
+  // generation state
+  lines: string[] = [];
+  indent = 0;
+  ctxVar = "ctx";
+  state: State = {
+    translate: true,
+    translationCtx: "",
+    inPreTag: false,
+    nameSpace: null,
+    tModelSelectedExpr: null,
+  };
+
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {
@@ -285,9 +218,9 @@ export class CodeGenerator {
     this.templateName = options.name;
     if (options.name) {
       if (options.name.startsWith("__")) {
-        this.target.name = options.name;
+        this.fnName = options.name;
       } else {
-        this.target.name = `template_${options.name.replace(/[^a-zA-Z0-9_$]/g, "_")}`;
+        this.fnName = `template_${options.name.replace(/[^a-zA-Z0-9_$]/g, "_")}`;
       }
     }
     if (options.hasGlobalValues) {
@@ -300,55 +233,39 @@ export class CodeGenerator {
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
     nextDataIds = {};
-    this.compileAST(ast, {
-      block: null,
-      index: 0,
-      forceNewBlock: false,
-      translate: true,
-      translationCtx: "",
-      tKeyExpr: null,
-    });
-    // define blocks and utility functions
-    let mainCode = [`  let { text, createBlock, list, multi, html, toggler } = bdom;`];
+    const result = this.genContent(ast);
+
+    let mainCode = [`  let { createBlock } = bdom;`];
     if (this.helpers.size) {
       mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
     }
     if (this.templateName) {
       mainCode.push(`// Template name: "${this.templateName}"`);
     }
-
     for (let { id, expr } of this.staticDefs) {
       mainCode.push(`const ${id} = ${expr};`);
     }
-
-    // define all blocks
     if (this.blocks.length) {
       mainCode.push(``);
       for (let block of this.blocks) {
-        if (block.dom) {
-          let xmlString = toStringExpression(block.asXmlString());
-          if (block.dynamicTagName) {
-            xmlString = xmlString.replace(/^`<\w+/, `\`<\${tag || '${block.dom.nodeName}'}`);
-            xmlString = xmlString.replace(/\w+>`$/, `\${tag || '${block.dom.nodeName}'}>\``);
-            mainCode.push(`let ${block.blockName} = tag => createBlock(${xmlString});`);
-          } else {
-            mainCode.push(`let ${block.blockName} = createBlock(${xmlString});`);
-          }
+        let xmlString = toStringExpression(block.asXmlString());
+        if (block.hasDynamicTag) {
+          const nodeName = block.dom!.nodeName;
+          xmlString = xmlString.replace(/^`<\w+/, `\`<\${tag || '${nodeName}'}`);
+          xmlString = xmlString.replace(/\w+>`$/, `\${tag || '${nodeName}'}>\``);
+          mainCode.push(`let ${block.blockName} = tag => createBlock(${xmlString});`);
+        } else {
+          mainCode.push(`let ${block.blockName} = createBlock(${xmlString});`);
         }
       }
     }
-
-    // define all slots/defaultcontent function
-    if (this.targets.length) {
-      for (let fn of this.targets) {
-        mainCode.push("");
-        mainCode = mainCode.concat(fn.generateCode());
-      }
-    }
-
-    // generate main code
     mainCode.push("");
-    mainCode = mainCode.concat("return " + this.target.generateCode());
+    mainCode.push(`return function ${this.fnName}(ctx, node) {`);
+    for (const line of this.lines) {
+      mainCode.push(line);
+    }
+    mainCode.push(`  return ${result};`);
+    mainCode.push(`}`);
     const code = mainCode.join("\n  ");
 
     if (this.isDebug) {
@@ -358,72 +275,66 @@ export class CodeGenerator {
     return code;
   }
 
-  compileInNewTarget(prefix: string, ast: AST, ctx: Context, on?: EventHandlers | null): string {
-    const name = generateId(prefix);
-    const initialTarget = this.target;
-    const target = new CodeTarget(name, on);
-    this.targets.push(target);
-    this.target = target;
-    this.compileAST(ast, createContext(ctx));
-    this.target = initialTarget;
-    return name;
+  // ---------------------------------------------------------------------------
+  // utilities
+  // ---------------------------------------------------------------------------
+
+  addLine(line: string) {
+    this.lines.push("  ".repeat(this.indent + 1) + line);
   }
 
-  addLine(line: string, idx?: number) {
-    this.target.addLine(line, idx);
+  define(prefix: string, expr: string): string {
+    const id = generateId(prefix);
+    this.addLine(`const ${id} = ${expr};`);
+    return id;
   }
 
-  define(varName: string, expr: string) {
-    this.addLine(`const ${varName} = ${expr};`);
+  expr(expr: string): string {
+    return withCtxName(this.ctxVar, () => compileExpr(expr));
   }
 
-  insertAnchor(block: BlockDescription, index: number = block.children.length) {
-    const tag = `block-child-${index}`;
-    const anchor = xmlDoc.createElement(tag);
-    block.insert(anchor);
+  interp(str: string): string {
+    return withCtxName(this.ctxVar, () => interpolate(str));
   }
 
-  createBlock(
-    parentBlock: BlockDescription | null,
-    type: BlockType,
-    ctx: Context
-  ): BlockDescription {
-    const hasRoot = this.target.hasRoot;
-    const block = new BlockDescription(this.target, type);
-    if (!hasRoot) {
-      this.target.hasRoot = true;
-      block.isRoot = true;
+  withState<T>(state: Partial<State>, fn: () => T): T {
+    const previous = this.state;
+    this.state = Object.assign({}, previous, state);
+    try {
+      return fn();
+    } finally {
+      this.state = previous;
     }
-    if (parentBlock) {
-      parentBlock.children.push(block);
-      if (parentBlock.type === "list") {
-        block.parentVar = `c_block${parentBlock.id}`;
-      }
-    }
-    return block;
   }
 
-  insertBlock(expression: string, block: BlockDescription, ctx: Context): void {
-    let blockExpr = block.generateExpr(expression);
-    if (block.parentVar) {
-      let key = this.target.currentKey(ctx);
-      this.helpers.add("withKey");
-      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${key});`);
-      return;
+  /**
+   * Generates an arrow function, whose body is produced by `build` (which
+   * returns the expression to return). The context variable and the state are
+   * restored afterwards, so a t-set inside the function stays local to it.
+   */
+  genFunction(params: string, build: () => string): string {
+    const lines = this.lines;
+    const ctxVar = this.ctxVar;
+    const state = this.state;
+    const indent = this.indent;
+    this.lines = [];
+    this.indent = indent + 1;
+    let result: string;
+    let inner: string[];
+    try {
+      result = build();
+    } finally {
+      inner = this.lines;
+      this.lines = lines;
+      this.ctxVar = ctxVar;
+      this.state = state;
+      this.indent = indent;
     }
-
-    if (ctx.tKeyExpr) {
-      blockExpr = `toggler(${ctx.tKeyExpr}, ${blockExpr})`;
+    if (!inner.length) {
+      return `(${params}) => ${result}`;
     }
-
-    if (block.isRoot && !this.target.deferReturn) {
-      if (this.target.on) {
-        blockExpr = this.wrapWithEventCatcher(blockExpr, this.target.on);
-      }
-      this.addLine(`return ${blockExpr};`);
-    } else {
-      this.define(block.varName, blockExpr);
-    }
+    const pad = "  ".repeat(indent + 2);
+    return `(${params}) => {\n${inner.join("\n")}\n${pad}return ${result};\n${"  ".repeat(indent + 1)}}`;
   }
 
   translate(str: string, translationCtx: string): string {
@@ -431,81 +342,122 @@ export class CodeGenerator {
     return match[1] + this.translateFn(match[2], translationCtx) + match[3];
   }
 
-  /**
-   * @returns the newly created block name, if any
-   */
-  compileAST(ast: AST, ctx: Context): string | null {
-    switch (ast.type) {
-      case ASTType.Text:
-        return this.compileText(ast, ctx);
-      case ASTType.DomNode:
-        return this.compileTDomNode(ast, ctx);
-      case ASTType.TOut:
-        return this.compileTOut(ast, ctx);
-      case ASTType.TIf:
-        return this.compileTIf(ast, ctx);
-      case ASTType.TForEach:
-        return this.compileTForeach(ast, ctx);
-      case ASTType.TKey:
-        return this.compileTKey(ast, ctx);
-      case ASTType.Multi:
-        return this.compileMulti(ast, ctx);
-      case ASTType.TCall:
-        return this.compileTCall(ast, ctx);
-      case ASTType.TCallBlock:
-        return this.compileTCallBlock(ast, ctx);
-      case ASTType.TSet:
-        return this.compileTSet(ast, ctx);
-      case ASTType.TComponent:
-        return this.compileComponent(ast, ctx);
-      case ASTType.TDebug:
-        return this.compileDebug(ast, ctx);
-      case ASTType.TLog:
-        return this.compileLog(ast, ctx);
-      case ASTType.TCallSlot:
-        return this.compileTCallSlot(ast, ctx);
-      case ASTType.TTranslation:
-        return this.compileTTranslation(ast, ctx);
-      case ASTType.TTranslationContext:
-        return this.compileTTranslationContext(ast, ctx);
-    }
-  }
-
-  compileDebug(ast: ASTDebug, ctx: Context): string | null {
-    this.addLine(`debugger;`);
-    if (ast.content) {
-      return this.compileAST(ast.content, ctx);
-    }
-    return null;
-  }
-
-  compileLog(ast: ASTLog, ctx: Context): string | null {
-    this.addLine(`console.log(${compileExpr(ast.expr)});`);
-    if (ast.content) {
-      return this.compileAST(ast.content, ctx);
-    }
-    return null;
-  }
-  compileText(ast: ASTText, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-
+  textValue(ast: ASTText): string {
     let value = ast.value;
-    if (value && ctx.translate !== false) {
-      value = this.translate(value, ctx.translationCtx);
+    if (value && this.state.translate !== false) {
+      value = this.translate(value, this.state.translationCtx);
     }
-    if (!ctx.inPreTag) {
+    if (!this.state.inPreTag) {
       value = value.replace(whitespaceRE, " ");
     }
+    return value;
+  }
 
-    if (!block || forceNewBlock) {
-      block = this.createBlock(block, "text", ctx);
-      this.insertBlock(`text(${toStringExpression(value)})`, block, {
-        ...ctx,
-        forceNewBlock: forceNewBlock && !block,
-      });
-    } else {
-      const createFn = ast.type === ASTType.Text ? xmlDoc.createTextNode : xmlDoc.createComment;
-      block.insert(createFn.call(xmlDoc, value));
+  emptyContent(): string {
+    this.helpers.add("text");
+    return this.define("c", `text("")`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // contents
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Generates the code creating the content of `ast`, and returns the
+   * expression (usually a variable) holding it.
+   */
+  genContent(ast: AST): string {
+    switch (ast.type) {
+      case ASTType.Text:
+        this.helpers.add("text");
+        return this.define("c", `text(${toStringExpression(this.textValue(ast))})`);
+      case ASTType.DomNode:
+        return this.genDomNodeContent(ast);
+      case ASTType.TOut:
+        return this.genTOut(ast);
+      case ASTType.TIf:
+        return this.genTIf(ast);
+      case ASTType.TForEach:
+        return this.genTForEach(ast);
+      case ASTType.TKey:
+        return this.genTKey(ast);
+      case ASTType.Multi:
+        return this.genMulti(ast.content);
+      case ASTType.TCall:
+        return this.genTCall(ast);
+      case ASTType.TCallBlock:
+        throw new OwlError("t-call-block is not supported");
+      case ASTType.TSet:
+        this.genTSet(ast);
+        return this.emptyContent();
+      case ASTType.TComponent:
+        return this.genComponent(ast);
+      case ASTType.TDebug:
+        this.addLine(`debugger;`);
+        return ast.content ? this.genContent(ast.content) : this.emptyContent();
+      case ASTType.TLog:
+        this.addLine(`console.log(${this.expr(ast.expr)});`);
+        return ast.content ? this.genContent(ast.content) : this.emptyContent();
+      case ASTType.TCallSlot:
+        return this.genTCallSlot(ast);
+      case ASTType.TTranslation:
+        return this.withState({ translate: false }, () =>
+          ast.content ? this.genContent(ast.content) : this.emptyContent()
+        );
+      case ASTType.TTranslationContext:
+        return this.withState({ translationCtx: ast.translationCtx }, () =>
+          ast.content ? this.genContent(ast.content) : this.emptyContent()
+        );
+    }
+  }
+
+  genMulti(children: AST[]): string {
+    const contents: string[] = [];
+    for (const child of children) {
+      if (child.type === ASTType.TSet) {
+        this.genTSet(child);
+      } else {
+        contents.push(this.genContent(child));
+      }
+    }
+    if (!contents.length) {
+      return this.emptyContent();
+    }
+    if (contents.length === 1) {
+      return contents[0];
+    }
+    this.helpers.add("multi");
+    return this.define("c", `multi([${contents.join(", ")}])`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // blocks
+  // ---------------------------------------------------------------------------
+
+  genDomNodeContent(ast: ASTDomNode): string {
+    if (ast.dynamicTag) {
+      this.helpers.add("keyed");
+      const tag = this.expr(ast.dynamicTag);
+      const build = this.genFunction("tag", () => this.genBlock(ast, "tag"));
+      return this.define("c", `keyed(${thunk(tag)}, ${build})`);
+    }
+    return this.genBlock(ast, null);
+  }
+
+  genBlock(ast: ASTDomNode, tagVar: string | null): string {
+    const block = new BlockDescription();
+    this.blocks.push(block);
+    block.hasDynamicTag = !!tagVar;
+    const factory = tagVar ? `${block.blockName}(${tagVar})` : block.blockName;
+    this.addLine(`const ${block.varName} = ${factory}();`);
+    this.genDomNode(ast, block);
+    if (block.dynamic.length) {
+      this.helpers.add("renderEffect");
+      this.addLine(`renderEffect(() => {`);
+      for (const statement of block.dynamic) {
+        this.addLine(`  ${statement}`);
+      }
+      this.addLine(`});`);
     }
     return block.varName;
   }
@@ -525,9 +477,10 @@ export class CodeGenerator {
       modifiersCode = `${modifiers.join(",")}, `;
     }
 
-    const compiled = compileExpr(handler);
+    // hoisted handlers receive the context as their `ctx` parameter
+    const compiled = withCtxName("ctx", () => compileExpr(handler));
     if (!compiled.trim()) {
-      return `[${modifiersCode}, ctx]`;
+      return `[${modifiersCode}, ${this.ctxVar}]`;
     }
 
     let hoistedExpr: string;
@@ -548,55 +501,55 @@ export class CodeGenerator {
 
     const id = generateId("hdlr_fn");
     this.staticDefs.push({ id, expr: hoistedExpr });
-    return `[${modifiersCode}${id}, ctx]`;
+    return `[${modifiersCode}${id}, ${this.ctxVar}]`;
   }
 
-  compileTDomNode(ast: ASTDomNode, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-    const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null || ast.ns;
-    let codeIdx = this.target.code.length;
-    if (isNewBlock) {
-      if ((ast.dynamicTag || ctx.tKeyExpr || ast.ns) && ctx.block) {
-        this.insertAnchor(ctx.block!);
-      }
-      block = this.createBlock(block, "block", ctx);
-      this.blocks.push(block);
-      if (ast.dynamicTag) {
-        const tagExpr = generateId("tag");
-        this.define(tagExpr, compileExpr(ast.dynamicTag));
-        block.dynamicTagName = tagExpr;
-      }
-    }
+  /**
+   * Adds the element of `ast` (and its static descendants) to the template of
+   * `block`, and generates the code setting its dynamic parts.
+   */
+  genDomNode(ast: ASTDomNode, block: BlockDescription) {
+    const bv = block.varName;
+    // a value kept up to date by the render effect of the block
+    const dynamic = (expr: string): number => {
+      const idx = block.dataNumber++;
+      block.dynamic.push(`${bv}.set(${idx}, ${expr});`);
+      return idx;
+    };
+    // a value set once
+    const once = (expr: string): number => {
+      const idx = block.dataNumber++;
+      this.addLine(`${bv}.set(${idx}, ${expr});`);
+      return idx;
+    };
+
     // attributes
     const attrs: Attrs = {};
-
     for (let key in ast.attrs) {
       let expr, attrName;
       if (key.startsWith("t-attf")) {
-        expr = interpolate(ast.attrs[key]);
-        const idx = block!.insertData(expr, "attr");
-
+        expr = this.interp(ast.attrs[key]);
+        const idx = dynamic(expr);
         attrName = key.slice(7);
         attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
         attrName = key === "t-att" ? null : key.slice(6);
-        expr = compileExpr(ast.attrs[key]);
+        expr = this.expr(ast.attrs[key]);
         if (attrName && isProp(ast.tag, attrName)) {
           if (attrName === "readonly") {
             // the property has a different name than the attribute
             attrName = "readOnly";
           }
-          // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
           if (attrName === "value") {
             // When the expression is falsy (except 0), fall back to an empty string
             expr = `new String((${expr}) === 0 ? 0 : ((${expr}) || ""))`;
           } else {
             expr = `new Boolean(${expr})`;
           }
-          const idx = block!.insertData(expr, "prop");
+          const idx = dynamic(expr);
           attrs[`block-property-${idx}`] = attrName!;
         } else {
-          const idx = block!.insertData(expr, "attr");
+          const idx = dynamic(expr);
           if (key === "t-att") {
             attrs[`block-attributes`] = String(idx);
           } else {
@@ -604,7 +557,7 @@ export class CodeGenerator {
           }
         }
       } else if (this.translatableAttributes.includes(key)) {
-        const attrTranslationCtx = ast.attrsTranslationCtx?.[key] || ctx.translationCtx;
+        const attrTranslationCtx = ast.attrsTranslationCtx?.[key] || this.state.translationCtx;
         attrs[key] = this.translateFn(ast.attrs[key], attrTranslationCtx);
       } else {
         expr = `"${ast.attrs[key]}"`;
@@ -612,14 +565,14 @@ export class CodeGenerator {
         attrs[key] = ast.attrs[key];
       }
 
-      if (attrName === "value" && ctx.tModelSelectedExpr) {
-        let selectedId = block!.insertData(`${ctx.tModelSelectedExpr} === ${expr}`, "attr");
-        attrs[`block-attribute-${selectedId}`] = "selected";
+      if (attrName === "value" && this.state.tModelSelectedExpr) {
+        const idx = dynamic(`${this.state.tModelSelectedExpr} === ${expr}`);
+        attrs[`block-attribute-${idx}`] = "selected";
       }
     }
 
     // t-model
-    let tModelSelectedExpr;
+    let tModelSelectedExpr: string | null = null;
     if (ast.model) {
       const {
         hasDynamicChildren,
@@ -635,36 +588,34 @@ export class CodeGenerator {
       let readExpr: string;
       let writeExpr: (value: string) => string;
       if (isProxy) {
-        const expression = compileExpr(expr);
+        const expression = this.expr(expr);
         readExpr = expression;
         writeExpr = (value) => `${expression} = ${value}`;
       } else {
-        const exprId = generateId("expr");
-        const expression = compileExpr(expr);
+        // evaluated where it is used: the expression may designate another
+        // signal later (e.g. `this.values[this.key()]`)
         this.helpers.add("modelExpr");
-        this.define(exprId, `modelExpr(${expression})`);
-        readExpr = `${exprId}()`;
-        writeExpr = (value) => `${exprId}.set(${value})`;
+        const expression = `modelExpr(${this.expr(expr)})`;
+        readExpr = `${expression}()`;
+        writeExpr = (value) => `${expression}.set(${value})`;
       }
 
-      let idx: number;
       if (specialInitTargetAttr) {
         let targetExpr = targetAttr in attrs && `'${attrs[targetAttr]}'`;
         if (!targetExpr && ast.attrs) {
           // look at the dynamic attribute counterpart
           const dynamicTgExpr = ast.attrs[`t-att-${targetAttr}`];
           if (dynamicTgExpr) {
-            targetExpr = compileExpr(dynamicTgExpr);
+            targetExpr = this.expr(dynamicTgExpr);
           }
         }
-        idx = block!.insertData(`${readExpr} === ${targetExpr}`, "prop");
+        const idx = dynamic(`${readExpr} === ${targetExpr}`);
         attrs[`block-property-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
-        const bValueId = generateId("bValue");
-        tModelSelectedExpr = `${bValueId}`;
-        this.define(tModelSelectedExpr, readExpr);
+        // evaluated by the render effect of each option
+        tModelSelectedExpr = readExpr;
       } else {
-        idx = block!.insertData(readExpr, "prop");
+        const idx = dynamic(readExpr);
         attrs[`block-property-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -672,32 +623,25 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ctx, ev) => { ${writeExpr(valueCode)}; }, ctx]`;
-      idx = block!.insertData(handler, "hdlr");
+      const idx = once(`[(_ctx, ev) => { ${writeExpr(valueCode)}; }, ${this.ctxVar}]`);
       attrs[`block-handler-${idx}`] = eventType;
     }
 
     // event handlers
     for (let ev in ast.on) {
-      const name = this.generateHandlerCode(ev, ast.on[ev]);
-      const idx = block!.insertData(name, "hdlr");
+      const idx = once(this.generateHandlerCode(ev, ast.on[ev]));
       attrs[`block-handler-${idx}`] = ev;
     }
 
     // t-ref
     if (ast.ref) {
-      const refExpr = compileExpr(ast.ref);
       this.helpers.add("createRef");
-      // `node` is the component that physically hosts this element (for slot
-      // content it is the innermost host, threaded through callSlot). createRef
-      // registers the ref there so it is cleared if the element is removed
-      // without this block's own remove() running (bulk removal).
-      const setRefStr = `createRef(${refExpr}, node)`;
-      const idx = block!.insertData(setRefStr, "ref");
+      const idx = block.dataNumber++;
+      this.addLine(`${bv}.ref(${idx}, createRef(${this.expr(ast.ref)}, node));`);
       attrs["block-ref"] = String(idx);
     }
 
-    const nameSpace = ast.ns || ctx.nameSpace;
+    const nameSpace = ast.ns || this.state.nameSpace;
     const dom = nameSpace
       ? xmlDoc.createElementNS(nameSpace, ast.tag)
       : xmlDoc.createElement(ast.tag);
@@ -706,419 +650,205 @@ export class CodeGenerator {
         dom.setAttribute(attr, val);
       }
     }
-    block!.insert(dom);
+    block.insert(dom);
     if (ast.content.length) {
-      const initialDom = block!.currentDom;
-      block!.currentDom = dom;
-      const children = ast.content;
-      for (let i = 0; i < children.length; i++) {
-        const child = ast.content[i];
-        const subCtx = createContext(ctx, {
-          block,
-          index: block!.childNumber,
-          forceNewBlock: false,
-          tKeyExpr: ctx.tKeyExpr,
+      const initialDom = block.currentDom;
+      block.currentDom = dom;
+      this.withState(
+        {
           nameSpace,
           tModelSelectedExpr,
-          inPreTag: ctx.inPreTag || ast.tag === "pre",
-        });
-        this.compileAST(child, subCtx);
-      }
-      block!.currentDom = initialDom;
-    }
-
-    if (isNewBlock) {
-      this.insertBlock(`${block!.blockName}(ddd)`, block!, ctx)!;
-      // may need to rewrite code!
-      if (block!.children.length && block!.hasDynamicChildren) {
-        const code = this.target.code;
-        const children = block!.children.slice();
-        let current = children.shift();
-        for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
-            if (!current) break;
+          inPreTag: this.state.inPreTag || ast.tag === "pre",
+        },
+        () => {
+          for (const child of ast.content) {
+            this.genChildInBlock(child, block);
           }
         }
-        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
-      }
-    }
-    return block!.varName;
-  }
-
-  compileZero() {
-    this.helpers.add("zero");
-    const isMultiple = this.slotNames.has(zero);
-    this.slotNames.add(zero);
-    let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
-    if (isMultiple) {
-      key = this.generateComponentKey(key);
-    }
-    return `ctx[zero]?.(node, ${key}) || text("")`;
-  }
-
-  compileTOut(ast: ASTTOut, ctx: Context): string {
-    let { block } = ctx;
-    if (block) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "html", ctx);
-    let blockStr;
-    if (ast.expr === "0") {
-      blockStr = this.compileZero();
-    } else if (ast.body) {
-      let bodyValue = null;
-      bodyValue = BlockDescription.nextBlockId;
-      const subCtx = createContext(ctx);
-      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      this.helpers.add("safeOutput");
-      blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
-    } else {
-      this.helpers.add("safeOutput");
-      blockStr = `safeOutput(${compileExpr(ast.expr)})`;
-    }
-    this.insertBlock(blockStr, block, ctx);
-    return block.varName;
-  }
-
-  compileTIfBranch(content: AST, block: BlockDescription, ctx: Context) {
-    this.target.indentLevel++;
-    let childN = block.children.length;
-    this.compileAST(content, createContext(ctx, { block, index: ctx.index }));
-    if (block.children.length > childN) {
-      // we have some content => need to insert an anchor at correct index
-      this.insertAnchor(block!, childN);
-    }
-    this.target.indentLevel--;
-  }
-
-  compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode): string {
-    let { block, forceNewBlock } = ctx;
-    const codeIdx = this.target.code.length;
-    const isNewBlock = !block || (block.type !== "multi" && forceNewBlock);
-    if (block) {
-      block.hasDynamicChildren = true;
-    }
-    if (!block || (block.type !== "multi" && forceNewBlock)) {
-      block = this.createBlock(block, "multi", ctx);
-    }
-    this.addLine(`if (${compileExpr(ast.condition)}) {`);
-    this.compileTIfBranch(ast.content, block, ctx);
-    if (ast.tElif) {
-      for (let clause of ast.tElif) {
-        this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
-        this.compileTIfBranch(clause.content, block, ctx);
-      }
-    }
-    if (ast.tElse) {
-      this.addLine(`} else {`);
-      this.compileTIfBranch(ast.tElse, block, ctx);
-    }
-    this.addLine("}");
-    if (isNewBlock) {
-      // note: this part is duplicated from end of compiledomnode:
-      if (block!.children.length) {
-        const code = this.target.code;
-        const children = block!.children.slice();
-        let current = children.shift();
-        for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
-            if (!current) break;
-          }
-        }
-        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
-      }
-
-      // note: this part is duplicated from end of compilemulti:
-      const args = block!.children.map((c) => c.varName).join(", ");
-      this.insertBlock(`multi([${args}])`, block!, ctx)!;
-    }
-    return block.varName;
-  }
-
-  compileTForeach(ast: ASTTForEach, ctx: Context): string {
-    let { block } = ctx;
-    if (block) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "list", ctx);
-    this.target.loopLevel++;
-    const loopVar = `i${this.target.loopLevel}`;
-    const ctxVar = generateId("ctx");
-    this.addLine(`const ${ctxVar} = ctx;`);
-    this.target.loopCtxVars.push(ctxVar);
-    const vals = `v_block${block.id}`;
-    const keys = `k_block${block.id}`;
-    const l = `l_block${block.id}`;
-    const c = `c_block${block.id}`;
-    this.helpers.add("prepareList");
-    this.define(`[${keys}, ${vals}, ${l}, ${c}]`, `prepareList(${compileExpr(ast.collection)});`);
-    // Throw errors on duplicate keys in dev mode
-    if (this.dev) {
-      this.define(`keys${block.id}`, `new Set()`);
-    }
-    this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
-    this.target.indentLevel++;
-    this.addLine(`let ctx = Object.create(${ctxVar});`);
-    this.addLine(`ctx[\`${ast.elem}\`] = ${keys}[${loopVar}];`);
-    if (!(ast.noFlags & ForEachNoFlag.First)) {
-      this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
-    }
-    if (!(ast.noFlags & ForEachNoFlag.Last)) {
-      this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${keys}.length - 1;`);
-    }
-    if (!(ast.noFlags & ForEachNoFlag.Index)) {
-      this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
-    }
-    if (!(ast.noFlags & ForEachNoFlag.Value)) {
-      this.addLine(`ctx[\`${ast.elem}_value\`] = ${vals}[${loopVar}];`);
-    }
-    this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);
-    if (this.dev) {
-      // Throw error on duplicate keys in dev mode
-      this.helpers.add("OwlError");
-      this.addLine(
-        `if (keys${block.id}.has(String(key${this.target.loopLevel}))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
       );
-      this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
+      block.currentDom = initialDom;
     }
-
-    const subCtx = createContext(ctx, { block, index: loopVar });
-    this.compileAST(ast.body, subCtx);
-    this.target.indentLevel--;
-    this.target.loopLevel--;
-    this.target.loopCtxVars.pop();
-    this.addLine(`}`);
-    this.insertBlock("l", block, ctx);
-    return block.varName;
   }
 
-  compileTKey(ast: ASTTKey, ctx: Context): string | null {
-    const tKeyExpr = generateId("tKey_");
-    this.define(tKeyExpr, compileExpr(ast.expr));
-    ctx = createContext(ctx, {
-      tKeyExpr,
-      block: ctx.block,
-      index: ctx.index,
-    });
-    return this.compileAST(ast.content, ctx);
+  genChildInBlock(child: AST, block: BlockDescription) {
+    switch (child.type) {
+      case ASTType.DomNode:
+        if (!child.dynamicTag && !child.ns) {
+          this.genDomNode(child, block);
+          return;
+        }
+        break;
+      case ASTType.Text:
+        block.insert(xmlDoc.createTextNode(this.textValue(child)));
+        return;
+      case ASTType.TSet:
+        this.genTSet(child);
+        return;
+      case ASTType.Multi:
+        for (const c of child.content) {
+          this.genChildInBlock(c, block);
+        }
+        return;
+      case ASTType.TDebug:
+        this.addLine(`debugger;`);
+        if (child.content) {
+          this.genChildInBlock(child.content, block);
+        }
+        return;
+      case ASTType.TLog:
+        this.addLine(`console.log(${this.expr(child.expr)});`);
+        if (child.content) {
+          this.genChildInBlock(child.content, block);
+        }
+        return;
+      case ASTType.TTranslation:
+        if (child.content) {
+          const content = child.content;
+          this.withState({ translate: false }, () => this.genChildInBlock(content, block));
+        }
+        return;
+      case ASTType.TTranslationContext:
+        if (child.content) {
+          const content = child.content;
+          this.withState({ translationCtx: child.translationCtx }, () =>
+            this.genChildInBlock(content, block)
+          );
+        }
+        return;
+    }
+    // a structural child: inserted at an anchor in the template
+    const index = block.childNumber++;
+    block.insert(xmlDoc.createElement(`block-child-${index}`));
+    const content = this.genContent(child);
+    this.addLine(`${block.varName}.insert(${index}, ${content});`);
   }
 
-  compileMulti(ast: ASTMulti, ctx: Context): string | null {
-    let { block, forceNewBlock } = ctx;
-    const isNewBlock = !block || forceNewBlock;
-    let codeIdx = this.target.code.length;
-    if (isNewBlock) {
-      const n = ast.content.filter((c) => !c.hasNoRepresentation).length;
-      let result: string | null = null;
-      if (n <= 1) {
-        // Check if there are non-DOM directives (like t-set) after the DOM child.
-        // If so, defer the return so those directives are compiled before it.
-        const shouldDefer =
-          !this.target.hasRoot && ast.content[ast.content.length - 1].hasNoRepresentation;
-        if (shouldDefer) {
-          this.target.deferReturn = true;
-        }
-        for (let child of ast.content) {
-          const blockName = this.compileAST(child, ctx);
-          result = result || blockName;
-        }
-        if (shouldDefer) {
-          this.target.deferReturn = false;
-          this.addLine(`return ${result};`);
-        }
-        return result;
-      }
-      block = this.createBlock(block, "multi", ctx);
-    }
-    let index = 0;
-    for (let i = 0, l = ast.content.length; i < l; i++) {
-      const child = ast.content[i];
-      const forceNewBlock = !child.hasNoRepresentation;
-      const subCtx = createContext(ctx, {
-        block,
-        index,
-        forceNewBlock,
-      });
-      this.compileAST(child, subCtx);
-      if (forceNewBlock) {
-        index++;
-      }
-    }
-    if (isNewBlock) {
-      if (block!.hasDynamicChildren && block!.children.length) {
-        const code = this.target.code;
-        const children = block!.children.slice();
-        let current = children.shift();
-        for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-            current = children.shift();
-            if (!current) break;
-          }
-        }
-        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
-      }
+  // ---------------------------------------------------------------------------
+  // structural nodes
+  // ---------------------------------------------------------------------------
 
-      const args = block!.children.map((c) => c.varName).join(", ");
-      this.insertBlock(`multi([${args}])`, block!, ctx)!;
+  genTOut(ast: ASTTOut): string {
+    if (ast.expr === "0") {
+      this.helpers.add("callZero");
+      return this.define("c", `callZero(${this.ctxVar})`);
     }
-    return block!.varName;
-  }
-
-  compileTCall(ast: ASTTCall, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-
-    const attrs: string[] = ast.attrs
-      ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
-      : [];
-    const isDynamic = INTERP_REGEXP.test(ast.name);
-    const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
-    if (block && !forceNewBlock) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "multi", ctx);
+    this.helpers.add("out");
+    const value = this.expr(ast.expr);
+    let defaultContent = "";
     if (ast.body) {
-      const name = this.compileInNewTarget("callBody", ast.body, ctx);
-      const zeroStr = generateId("lazyBlock");
-      this.define(zeroStr, `${name}.bind(this, ctx)`);
-      this.helpers.add("zero");
-      attrs.push(`[zero]: ${zeroStr}`);
+      const body = ast.body;
+      defaultContent = ", " + this.genFunction("", () => this.genMulti(body));
     }
+    return this.define("c", `out(${thunk(value)}${defaultContent})`);
+  }
 
-    let ctxExpr: string;
-    const ctxString = `{${attrs.join(", ")}}`;
-    if (ast.context) {
-      const dynCtxVar = generateId("ctx");
-      this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
-      if (attrs.length) {
-        ctxExpr = `Object.assign({this: ${dynCtxVar}}, ${ctxString})`;
+  genTIf(ast: ASTTif): string {
+    const conditions = [ast.condition];
+    const branches = [ast.content];
+    for (const clause of ast.tElif || []) {
+      conditions.push(clause.condition);
+      branches.push(clause.content);
+    }
+    let select = conditions.map((c, i) => `(${this.expr(c)}) ? ${i} : `).join("");
+    select += ast.tElse ? String(conditions.length) : "-1";
+    if (ast.tElse) {
+      branches.push(ast.tElse);
+    }
+    const fns = branches.map((branch) => this.genFunction("", () => this.genContent(branch)));
+    this.helpers.add("toggle");
+    return this.define("c", `toggle(() => ${select}, [${fns.join(", ")}])`);
+  }
+
+  genTForEach(ast: ASTTForEach): string {
+    const rowCtx = generateId("ctx");
+    const collection = this.expr(ast.collection);
+    const keyFn = ast.key
+      ? thunk(
+          withCtxName(rowCtx, () => compileExpr(ast.key!)),
+          rowCtx
+        )
+      : "null";
+    const rowFn = this.genFunction(rowCtx, () => {
+      this.ctxVar = rowCtx;
+      return this.genContent(ast.body);
+    });
+    this.helpers.add("list");
+    return this.define(
+      "c",
+      `list(${thunk(collection)}, ${this.ctxVar}, \`${ast.elem}\`, ${keyFn}, ${ast.noFlags}, ${rowFn}, ${this.dev})`
+    );
+  }
+
+  genTKey(ast: ASTTKey): string {
+    this.helpers.add("keyed");
+    const key = this.expr(ast.expr);
+    const build = this.genFunction("", () => this.genContent(ast.content));
+    return this.define("c", `keyed(${thunk(key)}, ${build})`);
+  }
+
+  genTSet(ast: ASTTSet) {
+    let value: string;
+    let isGetter: boolean;
+    if (ast.body) {
+      this.helpers.add("lazy");
+      const body = ast.body;
+      const bodyFn = this.genFunction("", () => this.genMulti(body));
+      const lazyValue = this.define("lazy", `lazy(${bodyFn})`);
+      if (ast.value) {
+        this.helpers.add("withDefault");
+        value = thunk(`withDefault(${this.expr(ast.value)}, ${lazyValue})`);
+        isGetter = true;
       } else {
-        ctxExpr = `{this: ${dynCtxVar}}`;
+        value = lazyValue;
+        isGetter = false;
+      }
+    } else if (ast.defaultValue) {
+      const defaultValue = toStringExpression(
+        this.state.translate
+          ? this.translate(ast.defaultValue, this.state.translationCtx)
+          : ast.defaultValue
+      );
+      if (ast.value) {
+        this.helpers.add("withDefault");
+        value = thunk(`withDefault(${this.expr(ast.value)}, ${defaultValue})`);
+        isGetter = true;
+      } else {
+        value = defaultValue;
+        isGetter = false;
       }
     } else {
-      if (attrs.length === 0) {
-        ctxExpr = "ctx";
-      } else {
-        ctxExpr = `Object.assign(Object.create(ctx), ${ctxString})`;
-      }
+      value = thunk(ast.value ? this.expr(ast.value) : "null");
+      isGetter = true;
     }
-    const key = this.generateComponentKey();
-    this.helpers.add("callTemplate");
-    this.insertBlock(`callTemplate(${subTemplate}, this, app, ${ctxExpr}, node, ${key})`, block!, {
-      ...ctx,
-      forceNewBlock: !block,
-    });
-    return block.varName;
-  }
-
-  compileTCallBlock(ast: ASTTCallBlock, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-    if (block) {
-      if (!forceNewBlock) {
-        this.insertAnchor(block);
-      }
-    }
-    block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(compileExpr(ast.name), block, { ...ctx, forceNewBlock: !block });
-    return block.varName;
-  }
-
-  compileTSet(ast: ASTTSet, ctx: Context): null {
-    const expr = ast.value ? compileExpr(ast.value || "") : "null";
-    const isOuterScope = this.target.loopLevel === 0;
-    const defLevel = this.target.tSetVars.get(ast.name);
-    const isReassignment = defLevel !== undefined && this.target.loopLevel > defLevel;
-    if (ast.body) {
-      this.helpers.add("LazyValue");
-      const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
-      const name = this.compileInNewTarget("value", bodyAst, ctx);
-      let key = this.target.currentKey(ctx);
-      let value = `new LazyValue(${name}, ctx, this, node, ${key})`;
-      value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
-      this.helpers.add("withDefault");
-      if (isReassignment) {
-        const ctxVar = this.target.loopCtxVars[defLevel];
-        this.addLine(`${ctxVar}[\`${ast.name}\`] = ${value};`);
-      } else if (isOuterScope) {
-        this.target.needsScopeProtection = true;
-        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
-        this.target.tSetVars.set(ast.name, 0);
-      } else {
-        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
-        this.target.tSetVars.set(ast.name, this.target.loopLevel);
-      }
-    } else {
-      let value: string;
-      if (ast.defaultValue) {
-        const defaultValue = toStringExpression(
-          ctx.translate ? this.translate(ast.defaultValue, ctx.translationCtx) : ast.defaultValue
-        );
-        if (ast.value) {
-          this.helpers.add("withDefault");
-          value = `withDefault(${expr}, ${defaultValue})`;
-        } else {
-          value = defaultValue;
-        }
-      } else {
-        value = expr;
-      }
-      if (isReassignment) {
-        const ctxVar = this.target.loopCtxVars[defLevel];
-        this.addLine(`${ctxVar}["${ast.name}"] = ${value};`);
-      } else if (isOuterScope) {
-        this.target.needsScopeProtection = true;
-        this.addLine(`ctx["${ast.name}"] = ${value};`);
-        this.target.tSetVars.set(ast.name, 0);
-      } else {
-        this.addLine(`ctx["${ast.name}"] = ${value};`);
-        this.target.tSetVars.set(ast.name, this.target.loopLevel);
-      }
-    }
-    return null;
-  }
-
-  generateComponentKey(currentKey: string = "key") {
-    const parts = [generateId("__")];
-    for (let i = 0; i < this.target.loopLevel; i++) {
-      parts.push(`\${key${i + 1}}`);
-    }
-    return `${currentKey} + \`${parts.join("__")}\``;
-  }
-
-  generateSignalCacheKey() {
-    const parts = [generateId("__sig_")];
-    for (let i = 0; i < this.target.loopLevel; i++) {
-      parts.push(`\${key${i + 1}}`);
-    }
-    return `\`${parts.join("__")}\``;
+    this.helpers.add("tset");
+    // the value is computed in the previous layer, so that a t-set can refer to
+    // the value it shadows
+    this.ctxVar = this.define(
+      "ctx",
+      `tset(${this.ctxVar}, \`${ast.name}\`, ${isGetter}, ${value})`
+    );
   }
 
   /**
-   * Formats a prop name and value into a string suitable to be inserted in the
-   * generated code. For example:
+   * Formats a prop name and value, as a `key: value` entry
    *
    * Name              Value            Result
    * ---------------------------------------------------------
    * "number"          "state"          "number: ctx['state']"
    * "something"       ""               "something: undefined"
    * "some-prop"       "state"          "'some-prop': ctx['state']"
-   * "onClick.bind"    "onClick"        "onClick: bind(ctx, ctx['onClick'])"
+   * "onClick.bind"    "onClick"        "onClick: (ctx['onClick']).bind(this)"
    */
   formatProp(
     name: string,
     value: string,
-    attrsTranslationCtx: { [name: string]: string } | null,
-    translationCtx: string
-  ): string {
+    attrsTranslationCtx: { [name: string]: string } | null
+  ): [string, string] {
     if (name.endsWith(".translate")) {
-      const attrTranslationCtx = attrsTranslationCtx?.[name] || translationCtx;
+      const attrTranslationCtx = attrsTranslationCtx?.[name] || this.state.translationCtx;
       value = toStringExpression(this.translateFn(value, attrTranslationCtx));
     } else {
-      value = compileExpr(value);
+      value = this.expr(value);
     }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
@@ -1134,251 +864,163 @@ export class CodeGenerator {
           throw new OwlError(`Invalid prop suffix: ${suffix}`);
       }
     }
-    name = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
-    return `${name}: ${value || undefined}`;
+    return [propKey(name), value || "undefined"];
   }
 
-  formatPropObject(
-    obj: { [prop: string]: any },
-    attrsTranslationCtx: { [name: string]: string } | null,
-    translationCtx: string
-  ): string[] {
-    return Object.entries(obj).map(([k, v]) =>
-      this.formatProp(k, v, attrsTranslationCtx, translationCtx)
+  /** `{ key: () => value, ... }`: values evaluated when read */
+  getterFns(attrs: Attrs, attrsTranslationCtx: Attrs | null): string[] {
+    return Object.entries(attrs).map(([name, value]) => {
+      const [key, expr] = this.formatProp(name, value, attrsTranslationCtx);
+      return `${key}: ${thunk(expr)}`;
+    });
+  }
+
+  genTCall(ast: ASTTCall): string {
+    const getters = ast.attrs ? this.getterFns(ast.attrs, ast.attrsTranslationCtx) : [];
+    let zeroFn = "null";
+    if (ast.body) {
+      const body = ast.body;
+      zeroFn = this.genFunction("", () => this.genContent(body));
+    }
+    let base = this.ctxVar;
+    if (ast.context) {
+      base = "null";
+      getters.push(`this: ${thunk(this.expr(ast.context))}`);
+    }
+    let subCtx = base;
+    if (getters.length || zeroFn !== "null") {
+      this.helpers.add("callCtx");
+      subCtx = this.define("ctx", `callCtx(${base}, {${getters.join(", ")}}, ${zeroFn})`);
+    }
+    this.helpers.add("callTemplate");
+    if (ast.name.match(INTERP_REGEXP)) {
+      this.helpers.add("keyed");
+      const name = this.interp(ast.name);
+      return this.define(
+        "c",
+        `keyed(() => ${name}, (name) => callTemplate(name, this, app, ${subCtx}, node))`
+      );
+    }
+    return this.define("c", `callTemplate(\`${ast.name}\`, this, app, ${subCtx}, node)`);
+  }
+
+  genCatcher(content: string, on: EventHandlers): string {
+    this.helpers.add("catcher");
+    const handlers = Object.entries(on).map(
+      ([ev, handler]) => `'${ev}': ${this.generateHandlerCode(ev, handler)}`
     );
+    return this.define("c", `catcher(${content}, {${handlers.join(", ")}})`);
   }
 
-  getPropString(props: string[], dynProps: string | null): string {
-    let propString = `{${props.join(",")}}`;
-    if (dynProps) {
-      propString = `Object.assign({}, ${compileExpr(dynProps)}${
-        props.length ? ", " + propString : ""
+  genComponent(ast: ASTComponent): string {
+    const props: string[] = [];
+    for (const p in ast.props || {}) {
+      const [name, suffix] = p.split(".");
+      if (suffix === "signal") {
+        // a signal created once per component site, set by the props effect
+        this.helpers.add("propSignal");
+        const sig = this.define("sig", "propSignal()");
+        props.push(`${propKey(name)}: ${sig}(${this.expr(ast.props![p])})`);
+        continue;
+      }
+      const [key, value] = this.formatProp(p, ast.props![p], ast.propsTranslationCtx);
+      props.push(`${key}: ${value}`);
+    }
+
+    // slots: created once
+    let slots: string | null = null;
+    if (ast.slots) {
+      const entries: string[] = [];
+      for (const slotName in ast.slots) {
+        const slot = ast.slots[slotName];
+        const params: string[] = [];
+        if (slot.content) {
+          const slotCtx = generateId("ctx");
+          const content = slot.content;
+          const fn = this.genFunction(`${slotCtx}, node`, () => {
+            this.ctxVar = slotCtx;
+            const result = this.genContent(content);
+            return slot.on ? this.genCatcher(result, slot.on) : result;
+          });
+          params.push(`__render: ${fn}`, `__ctx: ${this.ctxVar}`);
+        }
+        if (slot.scope) {
+          params.push(`__scope: "${slot.scope}"`);
+        }
+        if (slot.attrs) {
+          // getters on the slot object (arrow functions, for `this`)
+          const getters = this.getterFns(slot.attrs, slot.attrsTranslationCtx);
+          params.push(`__attrs: {${getters.join(", ")}}`);
+        }
+        entries.push(`'${slotName}': {${params.join(", ")}}`);
+      }
+      this.helpers.add("makeSlots");
+      slots = this.define("slots", `makeSlots({${entries.join(", ")}})`);
+    }
+
+    const hasSlotsProp = "slots" in (ast.props || {});
+    if (slots && !(ast.dynamicProps || hasSlotsProp)) {
+      props.push(`slots: ${slots}`);
+    }
+    let propsExpr = `{${props.join(", ")}}`;
+    if (ast.dynamicProps) {
+      propsExpr = `Object.assign({}, ${this.expr(ast.dynamicProps)}${
+        props.length ? ", " + propsExpr : ""
       })`;
     }
-    return propString;
-  }
-
-  compileComponent(ast: ASTComponent, ctx: Context): string {
-    let { block } = ctx;
-    // props
-    const hasSlotsProp = "slots" in (ast.props || {});
-    const props: string[] = [];
-    const propList: string[] = [];
-
-    for (let p in ast.props || {}) {
-      let [name, suffix] = p.split(".");
-
-      if (suffix === "signal") {
-        const compiledValue = compileExpr(ast.props![p]);
-        const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
-        this.helpers.add("toSignal");
-        const cacheKey = this.generateSignalCacheKey();
-        props.push(`${propName}: toSignal(node, ${cacheKey}, ${compiledValue})`);
-        continue;
-      }
-
-      if (suffix) {
-        // .alike, .bind, .translate — delegate to formatProp, no propList entry
-        props.push(this.formatProp(p, ast.props![p], ast.propsTranslationCtx, ctx.translationCtx));
-        continue;
-      }
-
-      const { expr: compiledValue, freeVariables } = processExpr(ast.props![p]);
-
-      const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
-      props.push(`${propName}: ${compiledValue || undefined}`);
-
-      if (freeVariables) {
-        for (const varName of freeVariables) {
-          const syntheticKey = `\x01${name}.${varName}`;
-          propList.push(`"${syntheticKey}"`);
-          props.push(`"${syntheticKey}": ctx['${varName}']`);
-        }
-      } else {
-        propList.push(`"${name}"`);
-      }
-    }
-
-    // slots
-    let slotDef: string = "";
-    if (ast.slots) {
-      let slotStr: string[] = [];
-      for (let slotName in ast.slots) {
-        const slotAst = ast.slots[slotName];
-        const params = [];
-        if (slotAst.content) {
-          const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}.bind(this), __ctx: ctx`);
-        }
-        const scope = ast.slots[slotName].scope;
-        if (scope) {
-          params.push(`__scope: "${scope}"`);
-        }
-        if (ast.slots[slotName].attrs) {
-          params.push(
-            ...this.formatPropObject(
-              ast.slots[slotName].attrs!,
-              ast.slots[slotName].attrsTranslationCtx,
-              ctx.translationCtx
-            )
-          );
-        }
-        const slotInfo = `{${params.join(", ")}}`;
-        slotStr.push(`'${slotName}': ${slotInfo}`);
-      }
-      slotDef = `{${slotStr.join(", ")}}`;
-    }
-
-    if (slotDef && !(ast.dynamicProps || hasSlotsProp)) {
+    let propsFn: string;
+    if (slots && (ast.dynamicProps || hasSlotsProp)) {
       this.helpers.add("markRaw");
-      props.push(`slots: markRaw(${slotDef})`);
-    }
-
-    let propString = this.getPropString(props, ast.dynamicProps);
-
-    let propVar: string;
-    if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
-      propVar = generateId("props");
-      this.define(propVar!, propString);
-      propString = propVar!;
-    }
-
-    if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
-      this.helpers.add("markRaw");
-      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotDef}, ${propVar!}.slots))`);
-    }
-
-    // cmap key
-    let expr: string;
-    if (ast.isDynamic) {
-      expr = generateId("Comp");
-      this.define(expr, compileExpr(ast.name));
+      propsFn = `() => { const p = ${propsExpr}; p.slots = markRaw(Object.assign({}, ${slots}, p.slots)); return p; }`;
     } else {
-      expr = `\`${ast.name}\``;
+      propsFn = `() => (${propsExpr})`;
     }
 
-    if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {
-      // todo: check the forcenewblock condition
-      this.insertAnchor(block);
-    }
-
-    let keyArg = this.generateComponentKey();
-    if (ctx.tKeyExpr) {
-      keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
-    }
-    let id = generateId("comp");
-    this.helpers.add("createComponent");
-    this.staticDefs.push({
-      id,
-      expr: `createComponent(app, ${
-        ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
-    });
-
+    let content: string;
     if (ast.isDynamic) {
-      // If the component class changes, this can cause delayed renders to go
-      // through if the key doesn't change. Use the component name for now.
-      // This means that two component classes with the same name isn't supported
-      // in t-component. We can generate a unique id per class later if needed.
-      keyArg = `(${expr}).name + ${keyArg}`;
+      this.helpers.add("dynamicComponent");
+      const C = this.expr(ast.name);
+      content = this.define(
+        "c",
+        `dynamicComponent(this, ${this.ctxVar}, node, ${thunk(C)}, ${propsFn})`
+      );
+    } else {
+      this.helpers.add("component");
+      content = this.define(
+        "c",
+        `component(this, ${this.ctxVar}, node, \`${ast.name}\`, ${propsFn})`
+      );
     }
-    let blockExpr = `${id}(${propString}, ${keyArg}, node, this, ${ast.isDynamic ? expr : null})`;
-    if (ast.isDynamic) {
-      blockExpr = `toggler(${expr}, ${blockExpr})`;
-    }
-
-    // event handling
-    if (ast.on) {
-      blockExpr = this.wrapWithEventCatcher(blockExpr, ast.on);
-    }
-
-    block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(blockExpr, block, ctx);
-    return block.varName;
+    return ast.on ? this.genCatcher(content, ast.on) : content;
   }
 
-  wrapWithEventCatcher(expr: string, on: EventHandlers): string {
-    this.helpers.add("createCatcher");
-    let name = generateId("catcher");
-    let spec: any = {};
-    let handlers: any[] = [];
-    for (let ev in on) {
-      let handlerId = generateId("hdlr");
-      let idx = handlers.push(handlerId) - 1;
-      spec[ev] = idx;
-      const handler = this.generateHandlerCode(ev, on[ev]);
-      this.define(handlerId, handler);
-    }
-    this.staticDefs.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
-    return `${name}(${expr}, [${handlers.join(",")}])`;
-  }
-
-  compileTCallSlot(ast: ASTTCallSlot, ctx: Context): string {
-    this.helpers.add("callSlot");
-    let { block } = ctx;
-    let blockString: string;
-    let slotName;
-    let dynamic = false;
-    let isMultiple = false;
-    if (ast.name.match(INTERP_REGEXP)) {
-      dynamic = true;
-      isMultiple = true;
-      slotName = interpolate(ast.name);
-    } else {
-      slotName = "'" + ast.name + "'";
-      isMultiple = isMultiple || this.slotNames.has(ast.name);
-      this.slotNames.add(ast.name);
-    }
+  genTCallSlot(ast: ASTTCallSlot): string {
     const attrs = { ...ast.attrs };
     const dynProps = attrs["t-props"];
     delete attrs["t-props"];
-    let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
-    if (isMultiple) {
-      key = this.generateComponentKey(key);
-    }
-
-    const props = ast.attrs
-      ? this.formatPropObject(attrs, ast.attrsTranslationCtx, ctx.translationCtx)
-      : [];
-    const scope = this.getPropString(props, dynProps);
+    const getters = this.getterFns(attrs, ast.attrsTranslationCtx);
+    const scope = getters.length ? `{${getters.join(", ")}}` : "null";
+    const dynScope = dynProps ? thunk(this.expr(dynProps)) : "null";
+    let defaultContent = "null";
     if (ast.defaultContent) {
-      const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
-      blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name}.bind(this))`;
+      const content = ast.defaultContent;
+      defaultContent = this.genFunction("", () => this.genContent(content));
+    }
+    this.helpers.add("callSlot");
+    let result: string;
+    if (ast.name.match(INTERP_REGEXP)) {
+      this.helpers.add("keyed");
+      const name = this.interp(ast.name);
+      result = this.define(
+        "c",
+        `keyed(() => ${name}, (name) => callSlot(${this.ctxVar}, node, name, ${scope}, ${dynScope}, ${defaultContent}))`
+      );
     } else {
-      if (dynamic) {
-        let name = generateId("slot");
-        this.define(name, slotName);
-        blockString = `toggler(${name}, callSlot(ctx, node, ${key}, ${name}, ${dynamic}, ${scope}))`;
-      } else {
-        blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope})`;
-      }
-    }
-    // event handling
-    if (ast.on) {
-      blockString = this.wrapWithEventCatcher(blockString, ast.on);
-    }
-
-    if (block) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
-    return block.varName;
-  }
-
-  compileTTranslation(ast: ASTTranslation, ctx: Context): string | null {
-    if (ast.content) {
-      return this.compileAST(ast.content, Object.assign({}, ctx, { translate: false }));
-    }
-    return null;
-  }
-  compileTTranslationContext(ast: ASTTranslationContext, ctx: Context): string | null {
-    if (ast.content) {
-      return this.compileAST(
-        ast.content,
-        Object.assign({}, ctx, { translationCtx: ast.translationCtx })
+      result = this.define(
+        "c",
+        `callSlot(${this.ctxVar}, node, '${ast.name}', ${scope}, ${dynScope}, ${defaultContent})`
       );
     }
-    return null;
+    return ast.on ? this.genCatcher(result, ast.on) : result;
   }
 }

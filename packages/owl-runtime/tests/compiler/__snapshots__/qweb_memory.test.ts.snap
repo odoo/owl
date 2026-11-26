@@ -3,23 +3,19 @@
 exports[`memory > t-foreach does not leak stuff in global scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { createBlock } = bdom;
+  let { out, list } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = "") {
-    const ctx1 = ctx;
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      let ctx = Object.create(ctx1);
-      ctx[\`item\`] = k_block2[i1];
-      ctx[\`item_index\`] = i1;
-      const key1 = ctx['item_index'];
-      c_block2[i1] = withKey(safeOutput(ctx['item']), key1);
-    }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    const c2 = list(() => ([3,2,1]), ctx, \`item\`, (ctx1) => (ctx1['item_index']), 11, (ctx1) => {
+    const c1 = out(() => (ctx1['item']));
+    return c1;
+  }, false);
+    b1.insert(0, c2);
+    return b1;
   }
 }"
 `;

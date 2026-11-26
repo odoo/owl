@@ -3,15 +3,16 @@
 exports[`shadow_dom > can bind event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { callHandler } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].add, ctx, ev);
   
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [hdlr_fn1, ctx];
-    return block1([hdlr1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.set(0, [hdlr_fn1, ctx]);
+    return b1;
   }
 }"
 `;
@@ -19,12 +20,13 @@ exports[`shadow_dom > can bind event handler 1`] = `
 exports[`shadow_dom > can mount app 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -32,12 +34,13 @@ exports[`shadow_dom > can mount app 1`] = `
 exports[`shadow_dom > can mount app in closed shadow dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -45,12 +48,13 @@ exports[`shadow_dom > can mount app in closed shadow dom 1`] = `
 exports[`shadow_dom > can mount app inside a separate HTML document 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -58,12 +62,13 @@ exports[`shadow_dom > can mount app inside a separate HTML document 1`] = `
 exports[`shadow_dom > can mount app inside a shadow child element 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -71,12 +76,13 @@ exports[`shadow_dom > can mount app inside a shadow child element 1`] = `
 exports[`shadow_dom > can mount app inside an element in a shadow root inside an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
   
-  return function template(ctx, node, key = "") {
-    return block1();
+  return function template(ctx, node) {
+    const b1 = block1();
+    return b1;
   }
 }"
 `;
@@ -84,14 +90,15 @@ exports[`shadow_dom > can mount app inside an element in a shadow root inside an
 exports[`shadow_dom > ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { createBlock } = bdom;
   let { createRef } = helpers;
   
   let block1 = createBlock(\`<div class="my-div" block-ref="0"/>\`);
   
-  return function template(ctx, node, key = "") {
-    let ref1 = createRef(ctx['this'].div, node);
-    return block1([ref1]);
+  return function template(ctx, node) {
+    const b1 = block1();
+    b1.ref(0, createRef(ctx['this'].div, node));
+    return b1;
   }
 }"
 `;

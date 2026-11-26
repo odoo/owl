@@ -128,7 +128,7 @@ describe("basic features", () => {
       static id = "plugin";
     }
     expect(() => new PluginManager(new App()).startPlugins([A, B])).toThrow(
-      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
+      `Trying to start a plugin with the same id as another plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
     );
   });
 
@@ -152,7 +152,7 @@ describe("basic features", () => {
       static id = "plugin";
     }
     expect(() => new PluginManager(new App()).startPlugins([A, B])).toThrow(
-      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
+      `Trying to start a plugin with the same id as another plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
     );
   });
 
@@ -165,7 +165,7 @@ describe("basic features", () => {
       static id = "plugin";
     }
     expect(() => new PluginManager(new App()).startPlugins([B, A])).toThrow(
-      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'B', starting plugin: 'A')`
+      `Trying to start a plugin with the same id as another plugin (id: 'plugin', existing plugin: 'B', starting plugin: 'A')`
     );
   });
 

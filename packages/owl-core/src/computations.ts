@@ -4,7 +4,7 @@ export interface ReactiveValue<TRead, TWrite = TRead> {
   (): TRead;
   /**
    * Update the value of the reactive with a new value. If the new value is different
-   * from the previous values, all computations that depends on this reactive will
+   * from the previous value, all computations that depend on this reactive will
    * be invalidated, and effects will rerun.
    */
   set(nextValue: TWrite): void;

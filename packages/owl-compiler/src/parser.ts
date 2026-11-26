@@ -229,6 +229,7 @@ function _parse(xml: Element, ctx: ParsingContext): AST {
 
 // Owl 2 directives that no longer exist: the error tells what to use instead.
 const REMOVED_DIRECTIVES: Record<string, string> = {
+  "t-esc": "use 't-out'",
   "t-raw": "use 't-out' with a value marked as safe with the 'markup' function",
   "t-slot": "use 't-call-slot' to render a slot",
   "t-portal": "use the 'Portal' component",
@@ -239,7 +240,6 @@ const REMOVED_DIRECTIVES: Record<string, string> = {
 const KNOWN_DIRECTIVES = new Set([
   "t-name",
   "t-out",
-  "t-esc",
   "t-if",
   "t-elif",
   "t-else",
@@ -581,17 +581,11 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseTOutNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-esc")) {
+  if (!node.hasAttribute("t-out")) {
     return null;
   }
-  if (node.hasAttribute("t-esc")) {
-    console.warn(
-      `t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
-    );
-  }
-  const expr = (node.getAttribute("t-out") || node.getAttribute("t-esc"))!;
+  const expr = node.getAttribute("t-out")!;
   node.removeAttribute("t-out");
-  node.removeAttribute("t-esc");
   if (node.hasAttribute("t-set")) {
     // t-set would be ignored: the node outputs the value, it has no body
     throw directiveError("t-set", node, "t-out");

@@ -22,7 +22,7 @@ several Owl 2 habits fail _silently_. Read section 1 first.
 | `this.env`, `useEnv`, `useSubEnv`, services | plugins: `usePlugin(P)`, `providePlugins([P])`, `mount(..., { plugins: [P] })` | not exported; `this.env` is `undefined`; the `env` app option is ignored |
 | `useRef("x")` + `t-ref="x"` | `x = signal.ref()` + `t-ref="this.x"`, read with `this.x()` | `useRef` not exported |
 | `t-model="state.x"` (proxy property) | `t-model="this.sig"` (a signal) or `t-model.proxy="this.state.x"` | throws "Invalid t-model expression" |
-| `t-esc="expr"` | `t-out="expr"` | works, but logs a deprecation warning |
+| `t-esc="expr"` | `t-out="expr"` | throws "Unknown QWeb directive" |
 | `t-raw="expr"` | `t-out="expr"` where the value was wrapped with `markup()` in JS | throws "Unknown QWeb directive" |
 | `t-slot="name"` | `t-call-slot="name"` | throws "Unknown QWeb directive" |
 | `t-portal="selector"` | `<Portal target="'selector'">...</Portal>` | throws "Unknown QWeb directive" |

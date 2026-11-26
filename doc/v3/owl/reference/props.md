@@ -25,9 +25,10 @@ context of the parent. So, `this.props.message` is equal to `'hello'`.
 
 The `useProps` function must be called at the top level of the component class body
 (or inside `setup`). It returns an object with getters for each declared prop.
-Reading one of these getters is reactive: templates, computed values, and
-effects that read `this.props.someProp` subscribe to that prop and are notified
-when the parent applies a new value.
+When the parent re-renders the component with new props, its template reads the
+new values. A prop that the component must react to in other ways (in a computed
+value or an effect) should be given as a [signal](signals.md): see
+[Reactive props](#reactive-props).
 
 ## Definition
 
@@ -117,31 +118,47 @@ useProps({ items: t.array(t.string()).optional(() => []) });
 Note that the array form of the schema cannot express defaults or optional
 keys: use the typed form when a prop needs either.
 
-### Reactive reads
+### Reactive props
 
-The object returned by `useProps()` exposes signal-backed getters. This means that
-any reactive context that reads a prop will update when that prop changes:
+A prop is either a plain value or a [signal](signals.md), and the two are not
+used for the same purpose:
+
+- a **plain prop** (`t.number()`, `t.string()`, ...) is a value for the
+  template: when the parent re-renders the component with a different value,
+  the template reads the new one. Do not derive state from it in a
+  [`computed`](computed_values.md) value, an [effect](effects.md) or
+  [`useOnChange`](hooks.md#useonchange).
+- a **signal prop** ([`t.signal(...)`](types_validation.md#tsignaltype)) is a
+  value the component reacts to. The component reads it with
+  `this.props.value()`, and everything that reads it (templates, computed
+  values, effects) is notified when it changes, without re-rendering the
+  parent.
 
 ```js
-import { Component, computed, useProps, t, xml } from "@odoo/owl";
+import { Component, computed, signal, useProps, t, xml } from "@odoo/owl";
 
 class Total extends Component {
   static template = xml`<span t-out="this.double()"/>`;
 
-  props = useProps({ value: t.number() });
-  double = computed(() => this.props.value * 2);
+  props = useProps({ value: t.signal(t.number()) });
+  double = computed(() => this.props.value() * 2);
+}
+
+class Parent extends Component {
+  static template = xml`<Total value="this.count"/>`;
+  static components = { Total };
+
+  count = signal(1);
 }
 ```
 
-When the parent re-renders with a different `value`, `this.props.value` is
-updated and the `double` computed value is invalidated. The same applies to
-[`effect`](effects.md) and [`useEffect`](effects.md#useeffect):
-reading `this.props.value` inside the effect subscribes the effect to future
-updates of that prop.
+When the parent writes `count`, the `double` computed value is invalidated and
+only `Total` re-renders. If the parent only has a plain value, the
+[`.signal` suffix](#promoting-values-to-signals) wraps it in a signal.
 
-This only applies to props accessed through `useProps()`. The singular
-[`useProps.static()`](#the-usepropsstatic-method) helper keeps its static, reference-stable
-semantics.
+> **Note:** currently, reading a plain prop in a computed value or an effect
+> subscribes to it. This is not part of the API and may change: use a signal
+> prop instead.
 
 ## The `useProps.static` method
 
@@ -195,10 +212,10 @@ entirely.
 
 ### When to use `useProps.static()` vs `useProps()`
 
-Use `useProps()` when the child needs to observe prop changes (the parent
-re-renders with a new value and the child must reflect it), when computed values
-or effects should react to prop changes, or when the child declares several
-props at once.
+Use `useProps()` when the parent may give a new value on a later render (the
+child template must reflect it), or when the child declares several props at
+once. A prop that computed values or effects react to is declared as a signal
+(`t.signal(...)`), with either function.
 
 Use `useProps.static()` when:
 
@@ -419,7 +436,8 @@ renderings.
 
 ## Promoting values to signals
 
-Generic components often declare their props as [signals](signals.md):
+A prop that the component reacts to is declared as a [signal](signals.md) (see
+[Reactive props](#reactive-props)):
 
 ```js
 class Counter extends Component {

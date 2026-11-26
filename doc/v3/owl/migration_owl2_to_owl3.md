@@ -33,7 +33,7 @@ Additional info is the result of grepping in odoo code base (community/enterpris
 | 5   | static `props` / `defaultprops` ignored (use the props function)  | 281 default props  | [Note](#5-static-props-defaultprops-ignored)                            |
 | 6   | `this.env` removed                                                | 161 `useSubEnv`    | [Note](#6-thisenv-removed)                                              |
 | 7   | rendering context changes (reading from component through `this`) |                    | [Note](#7-rendering-context-changes)                                    |
-| 8   | `onWillUpdateProps` removed                                       | 183 calls          | [Note](#8-onwillupdateprops-removed)                                    |
+| 8   | `onWillUpdateProps` deprecated                                    | 183 calls          | [Note](#8-onwillupdateprops-deprecated)                                 |
 | 9   | `t-esc` removed                                                   |                    | [Note](#9-t-esc-removed)                                                |
 | 10  | `t-ref` changes: takes a signal (or resource)                     | 1022 calls         | [Note](#10-t-ref-changes-takes-a-signal-or-resource)                    |
 | 11  | `t-model` changes: takes a signal                                 | 197 calls          | [Note](#11-t-model-changes-takes-a-signal)                              |
@@ -341,7 +341,10 @@ Manually, it is quite easy:
 The good thing is that the owl 3 syntax is compatible with owl 2, so it is
 possible to do it before switching to owl 3.
 
-### 8. `onWillUpdateProps` removed
+### 8. `onWillUpdateProps` deprecated
+
+`onWillUpdateProps` still works in Owl 3, but it is deprecated and will be
+removed: do not use it in new code.
 
 In theory, `onWillUpdateProps` was used to provide a way for a component to
 react to a change in its props. In practice, it often mean that we actually
@@ -372,7 +375,9 @@ class C extends Component {
 ```
 
 Note that the prop `counter` had to be changed to a signal! This is actually
-quite important, so the computed value properly subscribe to the signal value.
+quite important, so the computed value properly subscribe to the signal value:
+a prop that the component reacts to should always be a signal (see
+[Reactive props](reference/props.md#reactive-props)).
 
 Sometimes, we only want to react "once", for example, to reset a value. In that
 case, a `useEffect` is more appropriate

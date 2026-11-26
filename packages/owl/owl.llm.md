@@ -29,7 +29,7 @@ several Owl 2 habits fail _silently_. Read section 1 first.
 | `<div t-call="tpl"/>` | `<div><t t-call="tpl"/></div>` | throws |
 | `<t t-call="tpl"><t t-set="a" t-value="1"/></t>` | `<t t-call="tpl" a="1"/>` | silently: the body is now lazy, `t-set` in it does not reach the called template |
 | `useEffect(fn, () => [deps])` | `useEffect(fn)` | second argument ignored; dependencies are tracked automatically |
-| `onWillUpdateProps(fn)` | read `this.props.x` inside `computed` / `useEffect` / `useOnChange` | still exported in this build, but do not use it in new code |
+| `onWillUpdateProps(fn)` | pass the prop as a signal (`t.signal(...)`) and read it in `computed` / `useEffect` / `useOnChange` | deprecated, will be removed: do not use it |
 | `onWillRender`, `onRendered` | `computed` for derived values, `onMounted` / `onPatched` for DOM work | not exported |
 | `this.render()` | keep state in signals/proxies; `signal.trigger(sig)` after an in-place mutation | `this.render` is `undefined` |
 | `useComponent()` | make the hook return what it creates; call `useProps` / `usePlugin` inside it | not exported |
@@ -53,7 +53,8 @@ several Owl 2 habits fail _silently_. Read section 1 first.
 - Shared state and services are **plugins** (no `env`). Provide them at the
   app level or for a subtree; consume them with `usePlugin`.
 - Props are explicit: a component declares what it reads with `useProps`.
-  The returned getters are reactive.
+  A plain prop is a value for the template. A prop the component reacts to
+  (in `computed`, effects) is passed as a **signal**.
 - Hooks (`use*`, `on*`, `providePlugins`) must run while the component or
   plugin is being set up: in a class field initializer or in `setup()`.
   Elsewhere they throw "No active scope".
@@ -130,12 +131,19 @@ props = useProps({
   size: t.selection(["sm", "lg"]).optional("sm"), // optional with default
   items: t.array(t.string()).optional(() => []), // mutable default: use a factory
   onSelect: t.function([t.number()]).optional(),
-  value: t.signal(t.number()), // the parent passes a signal
+  value: t.signal(t.number()), // reactive prop: the parent passes a signal
 });
 ```
 
-- Read with `this.props.title`. The getters are reactive: `computed`,
-  `useEffect` and the template update when the parent passes a new value.
+- **Plain props** (`this.props.title`) are values for the template: when the
+  parent re-renders with new values, the template shows them. Do not derive
+  state from them in `computed`, `useEffect` or `useOnChange`. That happens to
+  work today, but it is not part of the API and may stop working.
+- **Signal props** are for values the component reacts to: declare
+  `t.signal(type)`, read `this.props.value()` (in the template, `computed`,
+  effects), and the parent passes the signal itself (`value="this.count"`, not
+  `value="this.count()"`). Only the components reading it re-render. A parent
+  that has a plain value can pass `value.signal="expr"`.
 - Props are read-only. Assigning `this.props.x = ...` throws. Ask the parent
   to change them (callback prop, or a signal prop the child may `.set()`).
 - Validation (against the schema) only runs in dev mode. Extra props not in
@@ -163,8 +171,6 @@ expression evaluated in the parent:
   string: quote literals, `title="'hello'"`.
 - Arrow-function props are compared by their captured variables, so they do
   not re-render the child needlessly. `.alike` is rarely needed.
-- Passing a **signal** (`value="this.count"`) instead of its value
-  (`value="this.count()"`) means only the child re-renders when it changes.
 - Slots arrive as the `slots` prop. Declare it only if the component reads
   `this.props.slots`. `t-call-slot` works without it.
 

@@ -35,6 +35,8 @@ Here is a list of everything exported by the Owl library.
 - [`onWillUnmount`](component.md#willunmount): before removing component from DOM
 - [`onWillDestroy`](component.md#willdestroy): before component is destroyed
 - [`onError`](component.md#onerror): catch and handle errors
+- `onWillUpdateProps`: **deprecated**, will be removed. Give the props the
+  component reacts to as [signals](props.md#reactive-props)
 
 ## Other Hooks
 

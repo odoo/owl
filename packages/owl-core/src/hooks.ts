@@ -66,10 +66,10 @@ type Args<T extends unknown[]> = { [K in keyof T]: T[K] };
  * By default the callback also runs on the initial execution. Pass
  * `{ initialRun: false }` to only react to subsequent changes.
  *
- * Example — refetch a record whenever its id changes, without subscribing to
- * everything `loadRecord` happens to read:
+ * Example — refetch a record whenever its id (a signal prop) changes, without
+ * subscribing to everything `loadRecord` happens to read:
  *   useOnChange(
- *     () => [this.props.recordId],
+ *     () => [this.props.recordId()],
  *     (recordId) => {
  *       this.loadRecord(recordId);
  *     }

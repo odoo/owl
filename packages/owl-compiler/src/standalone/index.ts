@@ -10,6 +10,9 @@ import "./setup_jsdom";
 // Compiler imports must be made after setting up jsdom in the global namespace
 import { compile } from "..";
 
+// the compiler itself, usable in node since jsdom is set up above
+export { compile };
+
 // -----------------------------------------------------------------------------
 // helpers
 // -----------------------------------------------------------------------------

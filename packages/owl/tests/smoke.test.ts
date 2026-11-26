@@ -1,4 +1,4 @@
-import { App, Component, mount, xml } from "../src";
+import { App, compile, Component, mount, xml } from "../src";
 
 function makeFixture() {
   const fixture = document.createElement("div");
@@ -32,4 +32,16 @@ test("umbrella wiring: addTemplates parses XML strings", async () => {
   await root.mount(fixture);
   expect(fixture.innerHTML).toBe("<span>ok</span>");
   app.destroy();
+});
+
+test("umbrella wiring: compile is exported, and its result can be used as a template", async () => {
+  // e.g. a precompiled template
+  const hello = compile(`<div>Hello <t t-out="this.name"/></div>`);
+  class Hello extends Component {
+    static template = "hello";
+    name = "owl";
+  }
+  const fixture = makeFixture();
+  await mount(Hello, fixture, { templates: { hello } });
+  expect(fixture.innerHTML).toBe("<div>Hello owl</div>");
 });

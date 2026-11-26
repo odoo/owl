@@ -737,9 +737,9 @@ function useMouse() {
 function useMouse() {
   const mouseX = signal(0);
   const mouseY = signal(0);
-  useListener(window, (ev) => {
-    mouseX.set(ev.mouseX);
-    mouseY.set(ev.mouseY);
+  useListener(window, "mousemove", (ev) => {
+    mouseX.set(ev.clientX);
+    mouseY.set(ev.clientY);
   });
   return { mouseX, mouseY };
 }

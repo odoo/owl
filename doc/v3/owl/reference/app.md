@@ -30,6 +30,11 @@ const root = app.createRoot(MyComponent, { props: { user } });
 await root.mount(document.body);
 ```
 
+If the app has [plugins](plugins.md) with an asynchronous `onWillStart`, wait
+for `app.pluginManager.ready` before calling `createRoot` (the `mount` helper
+does it): plugins of a later [sequence](plugins.md#startup-order) only start
+once the earlier ones are ready, and the root component may use them.
+
 ## API
 
 - **`new App(config?)`**: creates an application. The argument is an optional

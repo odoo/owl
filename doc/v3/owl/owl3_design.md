@@ -908,11 +908,13 @@ class Child extends Component {
 
 class Parent extends Component {
   static template = xml`<Child count="this.count"/>`;
+  static components = { Child };
 
   count = signal(1);
 
   setup() {
-    useInterval(() => this.count.set(this.count() + 1), 1000);
+    const interval = setInterval(() => this.count.set(this.count() + 1), 1000);
+    onWillDestroy(() => clearInterval(interval));
   }
 }
 ```

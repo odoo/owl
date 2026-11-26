@@ -145,10 +145,11 @@ all slot information given to the component. It looks like this:
 { slotName_1: slotInfo_1, ..., slotName_m: slotInfo_m }
 ```
 
-So, a component can pass its slots to a subcomponent like this:
+So, a component can pass its slots to a subcomponent like this (the component
+must then declare the `slots` prop, with `props = useProps(["slots"])`):
 
 ```xml
-<Child slots="props.slots"/>
+<Child slots="this.props.slots"/>
 ```
 
 ## Slot params
@@ -178,6 +179,8 @@ class Notebook extends Component {
         <t t-call-slot="{{this.currentSlot}}"/>
       </div>
     </div>`;
+
+  props = useProps(["slots"]);
 
   setup() {
     this.state = proxy({ activeTab: 0 });
@@ -233,13 +236,13 @@ everything given by the child component:
 And the child component that includes the slot can provide values like this:
 
 ```xml
-<t t-call-slot="foo" bool="other_var" num="5">
+<t t-call-slot="foo" bool="this.otherValue" num="5"/>
 ```
 
 or this:
 
 ```xml
-<t t-call-slot="foo" t-props="someObject">
+<t t-call-slot="foo" t-props="this.someObject"/>
 ```
 
 In the case of the default slot, you may declare the slot scope directly on the

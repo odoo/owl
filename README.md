@@ -45,7 +45,7 @@ class TodoList extends Component {
     <input placeholder="Add todo..." t-on-keydown="this.onKeydown"/>
     <ul>
       <t t-foreach="this.todos()" t-as="todo" t-key="todo.id">
-        <li t-att-class="{ done: todo.done }">
+        <li t-att-class="{ done: todo.done() }">
           <input type="checkbox" t-model="todo.done"/>
           <t t-out="todo.text"/>
         </li>
@@ -56,18 +56,18 @@ class TodoList extends Component {
     </p>`;
 
   todos = signal.Array([
-    { id: 1, text: "Learn Owl", done: false },
-    { id: 2, text: "Build something", done: false },
+    { id: 1, text: "Learn Owl", done: signal(false) },
+    { id: 2, text: "Build something", done: signal(false) },
   ]);
 
-  remaining = computed(() => this.todos().filter((t) => !t.done).length);
+  remaining = computed(() => this.todos().filter((t) => !t.done()).length);
 
   onKeydown(ev) {
     if (ev.key === "Enter" && ev.target.value) {
-      this.todos.push({
+      this.todos().push({
         id: Date.now(),
         text: ev.target.value,
-        done: false,
+        done: signal(false),
       });
       ev.target.value = "";
     }
@@ -77,8 +77,9 @@ class TodoList extends Component {
 mount(TodoList, document.body);
 ```
 
-This example demonstrates Owl's reactivity: `todos` is a signal, `remaining`
-is a computed value that updates automatically, and the UI reacts to changes
+This example demonstrates Owl's reactivity: `todos` is a signal holding an
+array, each todo has a `done` signal bound to its checkbox, `remaining` is a
+computed value that updates automatically, and the UI reacts to changes
 without manual subscription management.
 
 ## Documentation

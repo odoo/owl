@@ -23,9 +23,9 @@ several Owl 2 habits fail _silently_. Read section 1 first.
 | `useRef("x")` + `t-ref="x"` | `x = signal.ref()` + `t-ref="this.x"`, read with `this.x()` | `useRef` not exported |
 | `t-model="state.x"` (proxy property) | `t-model="this.sig"` (a signal) or `t-model.proxy="this.state.x"` | throws "Invalid t-model expression" |
 | `t-esc="expr"` | `t-out="expr"` | works, but logs a deprecation warning |
-| `t-raw="expr"` | `t-out="expr"` where the value was wrapped with `markup()` in JS | on `<t>`: silently renders nothing |
-| `t-slot="name"` | `t-call-slot="name"` | on `<t>`: silently renders nothing |
-| `t-portal="selector"` | `<Portal target="'selector'">...</Portal>` | throws "Unknown QWeb directive" (on `<t>`: silently ignored) |
+| `t-raw="expr"` | `t-out="expr"` where the value was wrapped with `markup()` in JS | throws "Unknown QWeb directive" |
+| `t-slot="name"` | `t-call-slot="name"` | throws "Unknown QWeb directive" |
+| `t-portal="selector"` | `<Portal target="'selector'">...</Portal>` | throws "Unknown QWeb directive" |
 | `<div t-call="tpl"/>` | `<div><t t-call="tpl"/></div>` | throws |
 | `<t t-call="tpl"><t t-set="a" t-value="1"/></t>` | `<t t-call="tpl" a="1"/>` | silently: the body is now lazy, `t-set` in it does not reach the called template |
 | `useEffect(fn, () => [deps])` | `useEffect(fn)` | second argument ignored; dependencies are tracked automatically |
@@ -265,8 +265,9 @@ escapes.
 - forgetting `this.`: the name resolves to an undefined local variable.
 - forgetting `()` on a signal or computed: `t-out="this.count"` prints the
   function's source, and `t-if="this.isOpen"` is always true.
-- unknown `t-*` directives on a `<t>` node are ignored (on DOM elements they
-  throw).
+
+Any `t-*` attribute that is not a directive supported on its node throws
+when the template is compiled.
 
 Whitespace: runs of whitespace collapse to one space, and whitespace-only
 text containing a newline is dropped (except inside `<pre>`). Templates may

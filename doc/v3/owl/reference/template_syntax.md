@@ -730,6 +730,16 @@ templates (included with `t-call`) should have one of these tag as root tag.
 
 ## Restrictions
 
+
+Also, every attribute starting with `t-` must be a directive that Owl knows and
+supports on that node: otherwise, compiling the template throws an error. This
+applies to `<t>` nodes as well, so a misspelled directive (or one that does not
+exist in Owl, such as the Owl 2 `t-slot` and `t-raw`) is never silently ignored.
+
+```xml
+<t t-slot="default"/> <!-- error: Unknown QWeb directive: 't-slot' (use 't-call-slot' to render a slot) -->
+<t t-on-click="this.onClick">...</t> <!-- error: Directive 't-on-click' is not supported on <t> nodes -->
+```
 Note that Owl templates forbid the use of tag and or attributes starting with
 the `block-` string. This restriction prevents name collision with the internal
 code of Owl.

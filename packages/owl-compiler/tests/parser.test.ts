@@ -2145,4 +2145,169 @@ describe("qweb parser", () => {
       ns: null,
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // unknown directives
+  // ---------------------------------------------------------------------------
+
+  test("unknown directive on a t node", async () => {
+    expect(() => parse(`<t t-best-beer="rochefort 10">test</t>`)).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+    expect(() => parse(`<div><t t-best-beer="rochefort 10"/></div>`)).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+  });
+
+  test("t-name is allowed on a t node", async () => {
+    expect(parse(`<t t-name="some.template">test</t>`)).toEqual({
+      type: ASTType.Text,
+      value: "test",
+    });
+  });
+
+  test("removed Owl 2 directives suggest their replacement", async () => {
+    for (const tag of ["t", "div"]) {
+      expect(() => parse(`<${tag} t-slot="default"/>`)).toThrow(
+        "Unknown QWeb directive: 't-slot' (use 't-call-slot' to render a slot)"
+      );
+      expect(() => parse(`<${tag} t-raw="value"/>`)).toThrow(
+        "Unknown QWeb directive: 't-raw' (use 't-out' with a value marked as safe with the 'markup' function)"
+      );
+      expect(() => parse(`<${tag} t-portal="body">x</${tag}>`)).toThrow(
+        "Unknown QWeb directive: 't-portal' (use the 'Portal' component)"
+      );
+    }
+  });
+
+  test("directives for DOM elements are not supported on t nodes", async () => {
+    expect(() => parse(`<t t-on-click="this.onClick">x</t>`)).toThrow(
+      "Directive 't-on-click' is not supported on <t> nodes"
+    );
+    expect(() => parse(`<t t-att-class="this.cls">x</t>`)).toThrow(
+      "Directive 't-att-class' is not supported on <t> nodes"
+    );
+    expect(() => parse(`<t t-ref="this.ref">x</t>`)).toThrow(
+      "Directive 't-ref' is not supported on <t> nodes"
+    );
+  });
+
+  test("unknown directive with t-set", async () => {
+    expect(() => parse(`<t t-set="a" t-value="1" t-best-beer="2"/>`)).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+  });
+
+  test("unknown directive with t-call", async () => {
+    expect(() => parse(`<t t-call="sub" t-best-beer="2"/>`)).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+  });
+
+  test("unknown directive with t-call-slot", async () => {
+    expect(() => parse(`<t t-call-slot="default" t-best-beer="2"/>`)).toThrow(
+      "Unknown QWeb directive: 't-best-beer'"
+    );
+  });
+
+  test("unknown directive with t-set-slot", async () => {
+    expect(() =>
+      parse(`<MyComponent><t t-set-slot="name" t-best-beer="2">foo</t></MyComponent>`)
+    ).toThrow("Unknown QWeb directive: 't-best-beer'");
+  });
+
+  test("misspelled attribute directives", async () => {
+    for (const attr of ["t-attclass", "t-attr-class", "t-atts", "t-attf"]) {
+      expect(() => parse(`<div ${attr}="'a'"/>`)).toThrow(`Unknown QWeb directive: '${attr}'`);
+    }
+  });
+
+  test("known directives used where they are not supported", async () => {
+    expect(() => parse(`<t t-call="sub" t-key="k"/>`)).toThrow(
+      "Directive 't-key' cannot be used with 't-call'"
+    );
+    expect(() => parse(`<t t-set="a" t-value="1" t-out="x"/>`)).toThrow(
+      "Directive 't-set' cannot be used with 't-out'"
+    );
+    expect(() => parse(`<t t-out="x" t-ref="this.ref"/>`)).toThrow(
+      "Directive 't-ref' is not supported on <t> nodes"
+    );
+    expect(() => parse(`<div t-else="">x</div>`)).toThrow(
+      "t-elif and t-else directives must be preceded by a t-if or t-elif directive"
+    );
+    expect(() =>
+      parse(`<C><t t-set-slot="a" t-if="c">x</t><t t-set-slot="b" t-else="">y</t></C>`)
+    ).toThrow("t-elif and t-else directives must be preceded by a t-if or t-elif directive");
+    expect(() => parse(`<t t-translation="on">x</t>`)).toThrow(
+      `Directive 't-translation' only accepts the value "off"`
+    );
+    expect(() => parse(`<div t-call-block="b"/>`)).toThrow(
+      "Directive 't-call-block' can only be used on <t> nodes (used on a <div>)"
+    );
+    expect(() => parse(`<div t-call-slot="default"/>`)).toThrow(
+      "Directive 't-call-slot' can only be used on <t> nodes (used on a <div>)"
+    );
+  });
+
+  test("an empty t-translation-context is ignored", async () => {
+    expect(parse(`<t t-translation-context="">x</t>`)).toEqual({ type: ASTType.Text, value: "x" });
+  });
+
+  test("attributes of a t-set-slot node are given to both the slot and its content", async () => {
+    const withCall = parse(`<C><t t-set-slot="s" t-call="sub" foo="1"/></C>`) as any;
+    expect(withCall.slots.s.attrs).toEqual({ foo: "1" });
+    expect(withCall.slots.s.content).toMatchObject({ type: ASTType.TCall, attrs: { foo: "1" } });
+
+    const withTag = parse(
+      `<C><t t-set-slot="s" t-tag="'div'" class="x" t-on-click="this.h" t-slot-scope="sc"/></C>`
+    ) as any;
+    expect(withTag.slots.s).toMatchObject({ attrs: { class: "x" }, on: { click: "this.h" } });
+    expect(withTag.slots.s.scope).toBe("sc");
+    expect(withTag.slots.s.content).toMatchObject({
+      type: ASTType.DomNode,
+      dynamicTag: "'div'",
+      attrs: { class: "x" },
+      on: { click: "this.h" },
+    });
+
+    const withComponent = parse(
+      `<C><t t-set-slot="s" t-component="this.X" record="this.record" t-on-click="this.h"/></C>`
+    ) as any;
+    expect(withComponent.slots.s.content).toMatchObject({
+      type: ASTType.TComponent,
+      props: { record: "this.record" },
+      on: { click: "this.h" },
+    });
+  });
+
+  test("directives on a t-set-slot node apply to its content", async () => {
+    expect(
+      parse(
+        `<MyComponent><t t-set-slot="name" t-slot-scope="s" param="1" t-if="this.cond">foo</t></MyComponent>`
+      )
+    ).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      isDynamic: false,
+      dynamicProps: null,
+      props: null,
+      propsTranslationCtx: null,
+      on: null,
+      slots: {
+        name: {
+          content: {
+            type: ASTType.TIf,
+            condition: "this.cond",
+            content: { type: ASTType.Text, value: "foo" },
+            tElif: null,
+            tElse: null,
+          },
+          on: null,
+          attrs: { param: "1" },
+          attrsTranslationCtx: null,
+          scope: "s",
+        },
+      },
+    });
+  });
 });

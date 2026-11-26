@@ -223,6 +223,121 @@ function _parse(xml: Element, ctx: ParsingContext): AST {
   return parseNode(xml, ctx) || { type: ASTType.Text, value: "" };
 }
 
+// -----------------------------------------------------------------------------
+// Unknown directives
+// -----------------------------------------------------------------------------
+
+// Owl 2 directives that no longer exist: the error tells what to use instead.
+const REMOVED_DIRECTIVES: Record<string, string> = {
+  "t-raw": "use 't-out' with a value marked as safe with the 'markup' function",
+  "t-slot": "use 't-call-slot' to render a slot",
+  "t-portal": "use the 'Portal' component",
+};
+
+// Directives handled by the parser (somewhere), to tell an unknown directive
+// apart from a known one used where it is not supported.
+const KNOWN_DIRECTIVES = new Set([
+  "t-name",
+  "t-out",
+  "t-esc",
+  "t-if",
+  "t-elif",
+  "t-else",
+  "t-foreach",
+  "t-as",
+  "t-key",
+  "t-set",
+  "t-value",
+  "t-call",
+  "t-call-context",
+  "t-call-block",
+  "t-call-slot",
+  "t-set-slot",
+  "t-slot-scope",
+  "t-props",
+  "t-component",
+  "t-tag",
+  "t-ref",
+  "t-model",
+  "t-translation",
+  "t-translation-context",
+  "t-debug",
+  "t-log",
+]);
+const KNOWN_DIRECTIVE_PREFIXES = ["t-on-", "t-model.", "t-translation-context-", "t-custom-"];
+
+function isAttributeDirective(attr: string): boolean {
+  return attr === "t-att" || attr.startsWith("t-att-") || attr.startsWith("t-attf-");
+}
+
+function isKnownDirective(attr: string): boolean {
+  return (
+    KNOWN_DIRECTIVES.has(attr) ||
+    isAttributeDirective(attr) ||
+    KNOWN_DIRECTIVE_PREFIXES.some((prefix) => attr.startsWith(prefix))
+  );
+}
+
+/**
+ * Error for a directive that is left on a node once the parse functions took
+ * the ones they handle: it is either unknown, or a known directive that is not
+ * supported on this node (or together with the directive `usedWith`).
+ */
+function directiveError(attr: string, node: Element, usedWith?: string): OwlError {
+  if (!isKnownDirective(attr)) {
+    const hint = REMOVED_DIRECTIVES[attr];
+    return new OwlError(`Unknown QWeb directive: '${attr}'${hint ? ` (${hint})` : ""}`);
+  }
+  if (attr === "t-elif" || attr === "t-else") {
+    return new OwlError(
+      "t-elif and t-else directives must be preceded by a t-if or t-elif directive"
+    );
+  }
+  if (attr === "t-translation") {
+    return new OwlError(`Directive 't-translation' only accepts the value "off"`);
+  }
+  if (usedWith) {
+    return new OwlError(`Directive '${attr}' cannot be used with '${usedWith}'`);
+  }
+  return new OwlError(`Directive '${attr}' is not supported on <${node.tagName}> nodes`);
+}
+
+// Nodes with a t-set-slot directive. Their slot attributes (scope, handlers,
+// translation contexts) are read after their content is parsed, so the
+// directives of the content must not report them.
+const slotDefinitionNodes: WeakSet<Element> = new WeakSet();
+
+function isSlotAttribute(node: Element, attr: string): boolean {
+  return (
+    slotDefinitionNodes.has(node) &&
+    (attr === "t-slot-scope" ||
+      attr.startsWith("t-on-") ||
+      attr.startsWith("t-translation-context-"))
+  );
+}
+
+/**
+ * Throws if the node still has a directive (a t-* attribute) once the parse
+ * functions took the ones they handle: otherwise, it would be silently
+ * ignored.
+ */
+function checkNoUnknownDirective(
+  node: Element,
+  isHandled?: (attr: string) => boolean,
+  usedWith?: string
+) {
+  for (const attr of node.getAttributeNames()) {
+    if (
+      attr.startsWith("t-") &&
+      attr !== "t-name" &&
+      !isHandled?.(attr) &&
+      !isSlotAttribute(node, attr)
+    ) {
+      throw directiveError(attr, node, usedWith);
+    }
+  }
+}
+
 interface ParsingContext {
   tModelInfo?: TModelInfo | null;
   nameSpace?: string;
@@ -261,6 +376,7 @@ function parseTNode(node: Element, ctx: ParsingContext): AST | null {
   if (node.tagName !== "t") {
     return null;
   }
+  checkNoUnknownDirective(node);
   return parseChildNodes(node, ctx);
 }
 
@@ -426,8 +542,12 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       attrsTranslationCtx = attrsTranslationCtx || {};
       attrsTranslationCtx[attrName] = value;
     } else if (attr !== "t-name") {
-      if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
-        throw new OwlError(`Unknown QWeb directive: '${attr}'`);
+      if (isSlotAttribute(node, attr)) {
+        // read by the slot definition (see parseComponent)
+        continue;
+      }
+      if (attr.startsWith("t-") && !isAttributeDirective(attr)) {
+        throw directiveError(attr, node);
       }
       const tModel = ctx.tModelInfo;
       if (tModel && ["t-att-value", "t-attf-value"].includes(attr)) {
@@ -472,11 +592,18 @@ function parseTOutNode(node: Element, ctx: ParsingContext): AST | null {
   const expr = (node.getAttribute("t-out") || node.getAttribute("t-esc"))!;
   node.removeAttribute("t-out");
   node.removeAttribute("t-esc");
+  if (node.hasAttribute("t-set")) {
+    // t-set would be ignored: the node outputs the value, it has no body
+    throw directiveError("t-set", node, "t-out");
+  }
 
   const tOut: AST = { type: ASTType.TOut, expr, body: null };
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
   const ast = parseNode(node, ctx);
+  if (ref && ast?.type !== ASTType.DomNode) {
+    throw directiveError("t-ref", node);
+  }
   if (!ast) {
     return tOut;
   }
@@ -573,6 +700,7 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   const context = node.getAttribute("t-call-context");
   node.removeAttribute("t-call");
   node.removeAttribute("t-call-context");
+  checkNoUnknownDirective(node, (attr) => attr.startsWith("t-translation-context-"), "t-call");
 
   let attrs: Attrs | null = null;
   let attrsTranslationCtx: Attrs | null = null;
@@ -607,7 +735,13 @@ function parseTCallBlock(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-call-block")) {
     return null;
   }
+  if (node.tagName !== "t") {
+    throw new OwlError(
+      `Directive 't-call-block' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
   const name = node.getAttribute("t-call-block")!;
+  checkNoUnknownDirective(node, (attr) => attr === "t-call-block", "t-call-block");
   return {
     type: ASTType.TCallBlock,
     name,
@@ -666,6 +800,7 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-set")) {
     return null;
   }
+  checkNoUnknownDirective(node, (attr) => attr === "t-set" || attr === "t-value", "t-set");
   const name = node.getAttribute("t-set")!;
   const value = node.getAttribute("t-value") || null;
   const defaultValue = node.innerHTML === node.textContent ? node.textContent || null : null;
@@ -772,6 +907,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 
       slotNode.removeAttribute("t-set-slot");
       slotNode.remove();
+      // the content is parsed first: a directive on the slot node (t-call,
+      // t-tag, t-component, ...) may use the same attributes as the slot
+      slotDefinitionNodes.add(slotNode);
       const slotAst = parseNode(slotNode, ctx);
       let on: SlotDefinition["on"] = null;
       let attrs: Attrs | null = null;
@@ -781,7 +919,6 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
         const value = slotNode.getAttribute(attributeName)!;
         if (attributeName === "t-slot-scope") {
           scope = value;
-          continue;
         } else if (attributeName.startsWith("t-translation-context-")) {
           const attrName = attributeName.slice(22);
           attrsTranslationCtx = attrsTranslationCtx || {};
@@ -789,7 +926,8 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
         } else if (attributeName.startsWith("t-on-")) {
           on = on || {};
           on[attributeName.slice(5)] = value;
-        } else {
+        } else if (!attributeName.startsWith("t-")) {
+          // other directives were used by the content of the slot
           attrs = attrs || {};
           attrs[attributeName] = value;
         }
@@ -832,8 +970,19 @@ function parseTCallSlot(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-call-slot")) {
     return null;
   }
+  if (node.tagName !== "t") {
+    throw new OwlError(
+      `Directive 't-call-slot' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
   const name = node.getAttribute("t-call-slot")!;
   node.removeAttribute("t-call-slot");
+  checkNoUnknownDirective(
+    node,
+    (attr) =>
+      attr === "t-props" || attr.startsWith("t-on-") || attr.startsWith("t-translation-context-"),
+    "t-call-slot"
+  );
   let attrs: Attrs | null = null;
   let attrsTranslationCtx: Attrs | null = null;
   let on: ASTComponent["on"] = null;
@@ -904,10 +1053,14 @@ function wrapInTTranslationContextAST(r: AST | null, translationCtx: string) {
 
 function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | null {
   const translationCtx = node.getAttribute("t-translation-context");
-  if (!translationCtx) {
+  if (translationCtx === null) {
     return null;
   }
   node.removeAttribute("t-translation-context");
+  if (!translationCtx) {
+    // an empty context is the same as no context
+    return parseNode(node, ctx);
+  }
   const result = parseNode(node, ctx);
   if (result?.type === ASTType.Multi) {
     const children = result.content.map((c) => wrapInTTranslationContextAST(c, translationCtx));

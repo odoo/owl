@@ -35,6 +35,8 @@ import { handleError } from "./error_handling";
 // disposes all of it. Owners have a depth, which orders the flush of render
 // effects: a region runs before what it contains, so a child never updates
 // from a state its parent is about to discard.
+//
+// See README.md (in this folder) for the whole design.
 // -----------------------------------------------------------------------------
 
 export interface Content {

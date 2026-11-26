@@ -55,11 +55,11 @@ To access props inside a component, call the `useProps` function. It returns an
 object with getters for each prop.
 
 ```js
-import { Component, useProps, xml } from "@odoo/owl";
+import { Component, useProps, t, xml } from "@odoo/owl";
 
 class MyComponent extends Component {
   static template = xml`<span t-out="this.props.name"/>`;
-  props = useProps();
+  props = useProps({ name: t.string() });
 }
 ```
 
@@ -69,19 +69,22 @@ The `useProps` function accepts one optional argument:
 
 A schema describing the expected props. It can be:
 
+- **an object** (the recommended form): maps keys to
+  [type validators](types_validation.md#validators) for full type checking. A
+  prop is made optional with [`.optional()`](types_validation.md#optionalvalue)
+  on its type, which can also give it a default value. It documents the props
+  of the component, validates them, and lets TypeScript infer their types.
+- **an array of strings**: declares expected keys, all required, without types
+  or defaults.
 - **nothing**: accepts any props, no validation.
-- **an array of strings**: declares expected keys, all required.
-- **an object**: maps keys to [type validators](types_validation.md#validators)
-  for full type checking. A prop is made optional with
-  [`.optional()`](types_validation.md#optionalvalue) on its type.
 
 Props are validated in [dev mode](app.md#configuration) whenever the component
 is created or updated. See [Props validation](#props-validation) for details.
 
 ```js
-useProps(); // no schema
+useProps({ name: t.string(), age: t.number().optional() }); // typed form (recommended)
 useProps(["name", "age"]); // array form
-useProps({ name: t.string(), age: t.number().optional() }); // typed form
+useProps(); // no schema
 ```
 
 To reuse a schema defined elsewhere (for instance one also passed to
@@ -327,15 +330,6 @@ complete list of validators and their exact runtime behaviour.
 If a component that uses [slots](slots.md) also validates its props, the
 `slots` prop must be explicitly included in the schema, since slots are
 provided to a component [as props](slots.md#slots-and-props).
-
-```js
-class MyComponent extends Component {
-  static template = xml`...`;
-  props = useProps(["someProp", "slots"]);
-}
-```
-
-Or with type validation:
 
 ```js
 class MyComponent extends Component {

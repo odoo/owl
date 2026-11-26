@@ -34,12 +34,21 @@ several Owl 2 habits fail _silently_. Read section 1 first.
 | `this.render()` | keep state in signals/proxies; `signal.trigger(sig)` after an in-place mutation | `this.render` is `undefined` |
 | `useComponent()` | make the hook return what it creates; call `useProps` / `usePlugin` inside it | not exported |
 | `useExternalListener(target, "ev", fn)` | `useListener(target, "ev", fn)` | not exported |
-| `new App(Root, config); app.mount(el)` | `mount(Root, el, config)` (or `createRoot`, see section 10) | the `App` constructor no longer takes a component |
+| `new App(Root, config); app.mount(el)` | `mount(Root, el, config)` (or `createRoot`, see section 11) | the `App` constructor no longer takes a component |
 | `t-ref` on a component | pass a callback or a signal as a prop | throws |
 | `loadFile(url)` | `fetch(url).then((r) => r.text())` | not exported |
 
 ## 2. Mental model
 
+- **Plugins are the architectural units**: they hold the application's state,
+  data and logic (a session, an ORM, the model of a view, a notification
+  center...), and depend on each other with `usePlugin`. There is no `env` and
+  no services: plugins replace them. Provide them at the app level or for a
+  subtree.
+- **Components are the presentation of these units**: they read plugin state,
+  call plugin methods, and keep only UI state of their own (an open dropdown,
+  an input draft). Put business state and logic in a plugin, not in a
+  component.
 - A component is a class extending `Component`, with a `static template` and
   state stored in reactive fields (`signal`, `computed`, `proxy`).
 - Templates are QWeb (XML). Inside them, the component is `this`. Bare names
@@ -47,19 +56,75 @@ several Owl 2 habits fail _silently_. Read section 1 first.
   slot scopes).
 - Reactivity is fine-grained and global, not tied to components. A
   component re-renders when a reactive value it **read during its last
-  render** changes. Plain fields (`count = 0`) are not reactive.
+  render** changes (in a plugin or in itself). Plain fields (`count = 0`) are
+  not reactive.
 - Updates are batched: writes schedule work in a microtask; rendering is
   asynchronous.
-- Shared state and services are **plugins** (no `env`). Provide them at the
-  app level or for a subtree; consume them with `usePlugin`.
-- Props are explicit: a component declares what it reads with `useProps`.
-  A plain prop is a value for the template. A prop the component reacts to
-  (in `computed`, effects) is passed as a **signal**.
+- Props are explicit: a component declares what it reads with `useProps` and a
+  schema. A plain prop is a value for the template. A prop the component
+  reacts to (in `computed`, effects) is passed as a **signal**.
 - Hooks (`use*`, `on*`, `providePlugins`) must run while the component or
   plugin is being set up: in a class field initializer or in `setup()`.
   Elsewhere they throw "No active scope".
 
-## 3. A component
+## 3. Plugins: the architecture
+
+Design an Owl application as plugins first: each plugin owns a piece of
+state and the logic that changes it, and exposes them (signals, computed
+values, methods). Components then present that state and forward user
+actions to plugin methods.
+
+```js
+import { Plugin, computed, mount, onWillDestroy, onWillStart, signal, t, useConfig, usePlugin } from "@odoo/owl";
+
+class ApiPlugin extends Plugin {
+  baseUrl = useConfig("apiBaseUrl", t.string());
+  timeout = useConfig("apiTimeout", t.number().optional(5000));
+
+  async get(path) {
+    return (await fetch(this.baseUrl + path)).json();
+  }
+}
+
+class SessionPlugin extends Plugin {
+  static sequence = 10; // started before default (50) plugins
+  api = usePlugin(ApiPlugin); // dependency: auto-started
+  user = signal(null);
+  isAdmin = computed(() => this.user()?.admin ?? false);
+
+  setup() {
+    onWillStart(async () => this.user.set(await this.api.get("/session"))); // delays mount
+    const id = setInterval(() => this.ping(), 60_000);
+    onWillDestroy(() => clearInterval(id));
+  }
+  ping() {}
+}
+
+// app level
+await mount(Root, document.body, {
+  plugins: [ApiPlugin, SessionPlugin],
+  config: { apiBaseUrl: "/api" },
+});
+
+// in any component (class field or setup)
+session = usePlugin(SessionPlugin); // template: this.session.user()?.name
+```
+
+- `providePlugins([P1, P2], config?)` in a component's `setup()` provides
+  plugins to that component and its descendants. They are destroyed with
+  it. A provided plugin with the same `static id` (defaults to the class
+  name) shadows the ancestor's one for the subtree.
+- `usePlugin(P)` throws `Unknown plugin "P"` if no ancestor provides it.
+- Hooks allowed in plugins: `usePlugin`, `useConfig`, `onWillStart`,
+  `onWillDestroy`, `useEffect`, `useImmediateEffect`, `useOnChange`,
+  `useListener`, `useScope`. There is no mounted/patched lifecycle.
+- `static scoped(plugin, scope)` can return a per-consumer view, for example
+  to wrap async methods with `scope.run` so that calls reject with
+  `AbortError` when the calling component is destroyed.
+- A `Resource` field lets components contribute items:
+  `this.plugin.items.use(item)` (removed automatically on destroy).
+
+## 4. A component
 
 ```js
 import { Component, computed, signal, t, useProps, xml } from "@odoo/owl";
@@ -120,11 +185,9 @@ re-renders. A signal read inside a child, or inside slot content, re-renders
 that child or the slot owner, not the parent. To react to a value change,
 use `useEffect`, not `onPatched`.
 
-## 4. Props
+## 5. Props
 
 ```js
-props = useProps(); // all props, no validation
-props = useProps(["title", "slots"]); // listed keys, all required
 props = useProps({
   title: t.string(),
   count: t.number().optional(), // optional
@@ -134,6 +197,10 @@ props = useProps({
   value: t.signal(t.number()), // reactive prop: the parent passes a signal
 });
 ```
+
+- Always give a schema (section 6): it documents the props, validates them in
+  dev mode and types them. `useProps(["title"])` (keys only) and `useProps()`
+  (anything, no validation) exist, but the schema is the preferred form.
 
 - **Plain props** (`this.props.title`) are values for the template: when the
   parent re-renders with new values, the template shows them. Do not derive
@@ -174,7 +241,65 @@ expression evaluated in the parent:
 - Slots arrive as the `slots` prop. Declare it only if the component reads
   `this.props.slots`. `t-call-slot` works without it.
 
-## 5. Reactivity
+## 6. Schemas and types
+
+A schema is built with the validators of `t` (alias of `types`). The same
+schemas are used by `useProps`, `useConfig`, the `validation` option of
+`Resource` and `Registry`, and `validateType` / `assertType`.
+
+```ts
+import { t } from "@odoo/owl";
+
+const userType = t.object({
+  id: t.number(),
+  name: t.string(),
+  email: t.string().optional(), // may be missing (undefined, not null)
+  role: t.selection(["admin", "user"]).optional("user"), // default value
+  tags: t.array(t.string()).optional(() => []), // mutable default: a factory
+  manager: t.or([t.instanceOf(Employee), t.literal(null)]), // Employee | null
+});
+type User = typeof userType.type; // the TypeScript type of the values (type position only)
+```
+
+| Validator | Accepts |
+| --- | --- |
+| `t.any()` | anything |
+| `t.boolean()`, `t.number()`, `t.string()` | that primitive (`NaN` is a number) |
+| `t.literal(value)` | exactly `value` (`===`), e.g. `t.literal(null)` |
+| `t.selection([a, b])` | one of the given literals |
+| `t.array(type?)` | an array (of `type`) |
+| `t.tuple([typeA, typeB])` | an array of that exact length and types |
+| `t.object(shape?)` | an object; with a shape (`{ key: type }` or `["key"]`), the keys must be present, extra keys allowed |
+| `t.strictObject(shape)` | same, and unknown keys are rejected |
+| `t.record(type?)` | an object whose values are all `type` |
+| `t.set(type?)`, `t.map(keyType, valueType)` | a `Set` / a `Map` |
+| `t.instanceOf(Class)` | an instance of `Class` |
+| `t.constructor(Class)`, `t.component()` | `Class` itself or a subclass / a component class |
+| `t.ref(ElementClass?)` | `null` or an `HTMLElement` (of that class) |
+| `t.signal(type?)` | a signal or computed value |
+| `t.function(params?, returnType?)` | a function |
+| `t.promise(type?)` | a `Promise` |
+| `t.or([typeA, typeB])` | any of the types (there is no `t.union`) |
+| `t.and([typeA, typeB])` | all of the types (e.g. merging object schemas) |
+| `t.customValidator(type, (v) => boolean, message?)` | `type`, then the predicate |
+
+- `type.optional()` lets the value be `undefined` (or the key be missing), not
+  `null`: use `t.or([type, t.literal(null)])` for that. `.optional(value)` also
+  gives a default, which `useProps` and `useConfig` apply. Use a factory
+  (`() => []`) for mutable values and for functions.
+- **Only checked for TypeScript**, not at runtime: the parameters and return
+  type of `t.function`, the value type of `t.signal` and `t.promise`, and the
+  `type` option of `signal(value, { type })`. `t.signal(t.number())` accepts a
+  signal holding a string.
+- `schema.toShape()` (on `t.object`, `t.strictObject` and `t.and` of them)
+  returns the `{ key: type }` map, to reuse a schema as props:
+  `useProps(userType.toShape())`.
+- `validateType(value, type)` returns a list of issues (empty if valid).
+  `assertType(value, type, message?)` throws an `OwlError` instead.
+  `applyDefaults(value, type)` returns a copy with the nested defaults filled
+  (`useProps` and `useConfig` only fill the top level).
+
+## 7. Reactivity
 
 ```js
 import { signal, computed, proxy, effect, untrack, asyncComputed } from "@odoo/owl";
@@ -222,7 +347,7 @@ stop();
   `computed`. Hold the first render with
   `onWillStart(() => this.x.currentPromise())`. The API is experimental.
 
-## 6. Templates
+## 8. Templates
 
 Expressions are JavaScript expressions (not statements). `this` is the
 component. XML-friendly operators: `and`, `or`, `gt`, `gte`, `lt`, `lte`.
@@ -240,7 +365,7 @@ component. XML-friendly operators: `and`, `or`, `gt`, `gte`, `lt`, `lte`.
 | `t-ref="this.refSignal"` | element reference (a `signal.ref()`, or a `Resource` to collect elements in a loop); DOM elements only |
 | `t-component="this.Cls"` | dynamic component |
 | `t-call="tpl" a="expr"` | render a sub-template with parameters, on `<t>` only; its body is available as `t-out="0"` |
-| `t-call-slot="name"` / `t-set-slot="name"` | render / fill a slot (section 7) |
+| `t-call-slot="name"` / `t-set-slot="name"` | render / fill a slot (section 9) |
 | `t-tag="expr"` | dynamic tag name |
 | `t-translation="off"`, `t-translation-context="ctx"` | translation control |
 | `t-log="expr"`, `t-debug=""` | debugging |
@@ -280,7 +405,7 @@ text containing a newline is dropped (except inside `<pre>`). Templates may
 have several root nodes. Tags and attributes starting with `block-` are
 reserved.
 
-## 7. Slots
+## 9. Slots
 
 ```xml
 <!-- Dialog template -->
@@ -303,63 +428,11 @@ reserved.
 - Content outside a `t-set-slot` goes into the `default` slot.
 - `t-set-slot` is only allowed on `<t>`. Extra attributes on it are slot
   params, readable by the child in `this.props.slots[name]` (requires
-  `useProps([..., "slots"])`).
+  `slots: t.object()` in its `useProps` schema).
 - `t-call-slot="{{expr}}"` selects the slot dynamically. Forward slots to a
   child with `slots="this.props.slots"`.
 
-## 8. Plugins (shared state and services)
-
-```js
-import { Plugin, computed, mount, onWillDestroy, onWillStart, signal, t, useConfig, usePlugin } from "@odoo/owl";
-
-class ApiPlugin extends Plugin {
-  baseUrl = useConfig("apiBaseUrl", t.string());
-  timeout = useConfig("apiTimeout", t.number().optional(5000));
-
-  async get(path) {
-    return (await fetch(this.baseUrl + path)).json();
-  }
-}
-
-class SessionPlugin extends Plugin {
-  static sequence = 10; // started before default (50) plugins
-  api = usePlugin(ApiPlugin); // dependency: auto-started
-  user = signal(null);
-  isAdmin = computed(() => this.user()?.admin ?? false);
-
-  setup() {
-    onWillStart(async () => this.user.set(await this.api.get("/session"))); // delays mount
-    const id = setInterval(() => this.ping(), 60_000);
-    onWillDestroy(() => clearInterval(id));
-  }
-  ping() {}
-}
-
-// app level
-await mount(Root, document.body, {
-  plugins: [ApiPlugin, SessionPlugin],
-  config: { apiBaseUrl: "/api" },
-});
-
-// in any component (class field or setup)
-session = usePlugin(SessionPlugin); // template: this.session.user()?.name
-```
-
-- `providePlugins([P1, P2], config?)` in a component's `setup()` provides
-  plugins to that component and its descendants. They are destroyed with
-  it. A provided plugin with the same `static id` (defaults to the class
-  name) shadows the ancestor's one for the subtree.
-- `usePlugin(P)` throws `Unknown plugin "P"` if no ancestor provides it.
-- Hooks allowed in plugins: `usePlugin`, `useConfig`, `onWillStart`,
-  `onWillDestroy`, `useEffect`, `useImmediateEffect`, `useOnChange`,
-  `useListener`, `useScope`. There is no mounted/patched lifecycle.
-- `static scoped(plugin, scope)` can return a per-consumer view, for example
-  to wrap async methods with `scope.run` so that calls reject with
-  `AbortError` when the calling component is destroyed.
-- A `Resource` field lets components contribute items:
-  `this.plugin.items.use(item)` (removed automatically on destroy).
-
-## 9. Other hooks and utilities
+## 10. Other hooks and utilities
 
 | API | Notes |
 | --- | --- |
@@ -371,8 +444,7 @@ session = usePlugin(SessionPlugin); // template: this.session.user()?.name
 | `new EventBus()` | `EventTarget` with `bus.trigger("name", detail)` (listeners receive a `CustomEvent`, payload in `ev.detail`) |
 | `new Registry({ name?, validation? })` | ordered reactive key/value map: `add(key, value, { sequence, force })`, `use(...)` (scoped), `get(key, default?)`, `items()`, `entries()` |
 | `new Resource({ name?, validation? })` | ordered reactive list: `add(item, { sequence })`, `use(item)` (scoped), `delete`, `has`, `items()` |
-| `types` / `t` | validators: `any boolean number string array object strictObject record set map tuple function promise literal selection instanceOf constructor component signal ref or and customValidator`, plus `.optional(default?)` |
-| `validateType(v, type)` / `assertType(v, type, msg?)` | standalone validation (returns issues / throws `OwlError`); `applyDefaults(v, type)` fills nested defaults; `typeof schema.type` gives the TS type |
+| `types` / `t`, `validateType`, `assertType`, `applyDefaults` | schemas and validation: see section 6 |
 | `batched(fn)` | coalesce calls into one per microtask |
 | `shallowEqual(a, b)` | one-level comparison, for `equals` options |
 | `whenReady(fn?)` | promise resolved when the DOM is ready |
@@ -394,7 +466,7 @@ app. `onError` handlers can rethrow to delegate to an outer handler. Errors
 thrown in **event handlers** are not caught by `onError` or `ErrorBoundary`:
 handle them in the handler.
 
-## 10. Mounting an app
+## 11. Mounting an app
 
 ```js
 import { mount, App } from "@odoo/owl";
@@ -418,7 +490,10 @@ await r.mount(target); // r.prepare() renders off-DOM first; r.destroy() is your
 Other `App` options: `getTemplate`, `translatableAttributes`,
 `customDirectives`, `globalValues`, `name`, `test`.
 
-## 11. Complete example
+## 12. Complete example
+
+The todo list lives in a plugin, which owns the data and the operations on
+it. The components only display it and forward user actions to the plugin.
 
 ```js
 import { Component, Plugin, computed, mount, onMounted, signal, t, useProps, usePlugin, xml } from "@odoo/owl";

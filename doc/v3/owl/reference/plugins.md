@@ -9,6 +9,14 @@ A plugin can hold reactive state (signals, computed values), perform side effect
 depend on other plugins, and be shared across a component subtree or the entire
 application. Plugins have a simple lifecycle: `setup` then `destroy`.
 
+In Owl 3, plugins are the architectural units of an application: the state,
+the data and the logic that changes them belong to plugins (a session, an ORM,
+the model of a view, a notification center, ...). Components are the
+presentation of these units: they display the state of the plugins they use,
+forward user actions to plugin methods, and only keep their own UI state (an
+open dropdown, the draft of an input). So designing an Owl application starts
+with its plugins.
+
 ```js
 class Clock extends Plugin {
   value = signal(0);

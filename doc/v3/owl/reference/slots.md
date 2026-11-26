@@ -146,7 +146,7 @@ all slot information given to the component. It looks like this:
 ```
 
 So, a component can pass its slots to a subcomponent like this (the component
-must then declare the `slots` prop, with `props = useProps(["slots"])`):
+must then declare the `slots` prop, with `props = useProps({ slots: t.object() })`):
 
 ```xml
 <Child slots="this.props.slots"/>
@@ -180,7 +180,7 @@ class Notebook extends Component {
       </div>
     </div>`;
 
-  props = useProps(["slots"]);
+  props = useProps({ slots: t.object() });
 
   setup() {
     this.state = proxy({ activeTab: 0 });

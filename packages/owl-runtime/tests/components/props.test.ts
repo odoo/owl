@@ -9,14 +9,7 @@ import {
   useProps,
   xml,
 } from "../../src";
-import {
-  getConsoleOutput,
-  makeTestFixture,
-  nextTick,
-  snapshotEverything,
-  steps,
-  useLogLifecycle,
-} from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -167,7 +160,7 @@ describe("basics", () => {
   test("arrow function props do not leak synthetic keys into useProps()", async () => {
     let childProps: any;
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.onClick"/></span>`;
+      static template = xml`<span><t t-out="this.props.onClick"/></span>`;
       props = useProps();
       setup() {
         childProps = this.props;
@@ -186,9 +179,6 @@ describe("basics", () => {
     }
     await mount(Parent, fixture);
     expect(Object.keys(childProps)).toEqual(["onClick"]);
-    expect(getConsoleOutput()).toEqual([
-      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
-    ]);
   });
 
   test("support prop names that aren't valid bare object property names", async () => {

@@ -4,7 +4,6 @@ import {
   snapshotEverything,
   TestContext,
   makeTestFixture,
-  getConsoleOutput,
 } from "../helpers";
 import { mount, patch } from "../../src/blockdom";
 import { createBlock } from "../../src/blockdom/index";
@@ -255,27 +254,5 @@ describe("t-out", () => {
     const node = renderToBdom(template, { var: ["someValue"] });
     mount(node, fixture);
     expect(fixture.innerHTML).toBe(`<div>someValue</div>`);
-  });
-});
-
-describe("t-esc is deprecated", () => {
-  test("should warn", () => {
-    const template = `<div t-esc="var" />`;
-    expect(renderToString(template, { var: "<div>escaped</div>" })).toBe(
-      "<div>&lt;div&gt;escaped&lt;/div&gt;</div>"
-    );
-    expect(getConsoleOutput()).toEqual([
-      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
-    ]);
-  });
-
-  test("t-out is actually called in t-esc's place", () => {
-    const template = `<div t-esc="var" />`;
-    expect(renderToString(template, { var: markup("<div>esc</div>") })).toBe(
-      "<div><div>esc</div></div>"
-    );
-    expect(getConsoleOutput()).toEqual([
-      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
-    ]);
   });
 });

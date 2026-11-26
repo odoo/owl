@@ -1,5 +1,4 @@
 import { ASTType, ForEachNoFlag, parse } from "../src/parser";
-import { getConsoleOutput } from "./helpers";
 
 describe("qweb parser", () => {
   // ---------------------------------------------------------------------------
@@ -391,17 +390,6 @@ describe("qweb parser", () => {
   // ---------------------------------------------------------------------------
   // t-out
   // ---------------------------------------------------------------------------
-
-  test("t-esc node (deprecated)", async () => {
-    expect(parse(`<t t-esc="text"/>`)).toEqual({
-      type: ASTType.TOut,
-      expr: "text",
-      body: null,
-    });
-    expect(getConsoleOutput()).toEqual([
-      'warn:t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
-    ]);
-  });
 
   test("t-out node", async () => {
     expect(parse(`<t t-out="text"/>`)).toEqual({
@@ -2168,6 +2156,9 @@ describe("qweb parser", () => {
 
   test("removed Owl 2 directives suggest their replacement", async () => {
     for (const tag of ["t", "div"]) {
+      expect(() => parse(`<${tag} t-esc="value"/>`)).toThrow(
+        "Unknown QWeb directive: 't-esc' (use 't-out')"
+      );
       expect(() => parse(`<${tag} t-slot="default"/>`)).toThrow(
         "Unknown QWeb directive: 't-slot' (use 't-call-slot' to render a slot)"
       );

@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
 import { execSync } from "child_process";
-import { readFileSync, mkdirSync } from "fs";
+import { readFileSync, mkdirSync, writeFileSync } from "fs";
 
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 
@@ -61,6 +61,15 @@ async function buildVariant(entry, suffix) {
   ]);
 }
 
+// The reference for coding agents ships next to the bundles (npm package and
+// GitHub release), so that it travels with the owl.js it describes. It is
+// stamped with the version, so a reader can tell which build it matches.
+function buildAgentReference() {
+  const content = readFileSync("owl.llm.md", "utf-8").replaceAll("__VERSION__", pkg.version);
+  mkdirSync("dist", { recursive: true });
+  writeFileSync("dist/owl.llm.md", content);
+}
+
 function buildTypes() {
   mkdirSync("dist/types", { recursive: true });
   execSync(
@@ -77,4 +86,5 @@ switch (target) {
     break;
   default:
     await buildVariant("src/index.ts");
+    buildAgentReference();
 }

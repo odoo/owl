@@ -221,7 +221,7 @@ async function startRelease() {
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: Creating the release...`);
   const prerelease = isPrerelease ? "--prerelease" : "";
-  const relaseResult = await execCommand(`gh release create v${next} packages/owl/dist/*.js dist/*.zip ${draft} ${prerelease} -F ${REL_NOTES_FILE}`);
+  const relaseResult = await execCommand(`gh release create v${next} packages/owl/dist/*.js packages/owl/dist/owl.llm.md packages/owl/dist/types/owl.d.ts dist/*.zip ${draft} ${prerelease} -F ${REL_NOTES_FILE}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
     return;

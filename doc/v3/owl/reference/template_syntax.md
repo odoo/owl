@@ -691,7 +691,7 @@ class Node extends Component {
     `;
   static components = { Node };
 
-  props = useProps(["x", "y", "node", "height"]);
+  props = useProps({ x: t.number(), y: t.number(), node: t.object(), height: t.number() });
 }
 
 class RootNode extends Component {

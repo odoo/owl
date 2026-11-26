@@ -28,6 +28,12 @@ class Counter extends Component {
 In this example, we use the `xml` helper to define inline templates, and a
 `signal` to hold reactive state (see the page on [reactivity](reactivity.md)).
 
+Components are the presentation layer of an application. The state, data and
+logic that are not specific to the user interface belong to
+[plugins](plugins.md): a component uses the plugins it needs, displays their
+state, and calls their methods. Its own state is limited to UI concerns (is a
+dropdown open, the draft of an input, ...).
+
 ## Properties and methods
 
 The `Component` base class has a very small API. It does not define any

@@ -52,8 +52,9 @@ used purely as a type descriptor (it is never run), and Owl performs no runtime
 validation on the signal's value.
 
 Signals can also be **validated** when received as component props: the
-[`t.signal`](types_validation.md#tsignaltype) validator checks that a prop is a
-signal, with an optional inner type for inference.
+[`t.signal`](types_validation.md#tsignaltype-options) validator checks that a prop is a
+signal, or a plain value of its inner type, which props promote to a
+signal.
 
 ```js
 import { useProps, types as t } from "@odoo/owl";

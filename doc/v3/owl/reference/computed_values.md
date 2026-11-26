@@ -21,8 +21,8 @@ Dependency tracking is dynamic: only the values read during the **last**
 evaluation are tracked. If a branch is not taken, the values it would have
 read are not subscribed to.
 
-A computed value is read-only by default: calling `.set()` throws an
-`OwlError`. To make it writable, provide a `set` option (see below).
+A computed value is read-only by default: it has no `.set()`. To make it
+writable, provide a `set` option (see below).
 
 Computed values build on [signals](signals.md) and other reactive reads. See
 [Reactivity](reactivity.md) for the bigger picture.

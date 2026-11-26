@@ -44,6 +44,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     root.locked = false;
     current.children = [];
     current.childrenMap = {};
+    current.reachedComputedKeys = null;
     current.bdom = null;
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
@@ -153,6 +154,7 @@ export class Fiber {
   renderState = 0;
   deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
+  reachedComputedKeys: Set<string> | null = null;
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
@@ -402,6 +404,8 @@ export class MountFiber extends RootFiber {
 
       node.status = STATUS.MOUNTED;
       this.renderState |= APPLIED_TO_DOM;
+      node.sweepComputedCache(this);
+      node.triggerRerunOnPatch();
       let mountedFibers = this.mounted;
       while ((current = mountedFibers.pop())) {
         if (current.renderState & APPLIED_TO_DOM) {

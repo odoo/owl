@@ -42,7 +42,7 @@ export { Portal } from "./portal";
 export { Suspense } from "./suspense";
 export { useProps } from "./props";
 // `isProps` is a phantom (declare const) brand symbol referenced by the public
-// `Props`/`PropsWithDefaults`/`GetProps` types. It must be exported from the
+// `Props`/`GetProps` types. It must be exported from the
 // package's type surface so downstream projects can name it when emitting their
 // own declaration files (see owl#1958). Type-only export: it has no runtime
 // value, so this adds nothing to the JS bundle.
@@ -63,6 +63,7 @@ export {
   type Equals,
   type ReactiveValue,
   type Signal,
+  type WritableReactiveValue,
 } from "@odoo/owl-core";
 export { useEffect, useImmediateEffect, useListener, useOnChange, useApp } from "./hooks";
 export { batched, EventBus, htmlEscape, shallowEqual, whenReady, markup } from "./utils";

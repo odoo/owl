@@ -1,9 +1,10 @@
 # ErrorBoundary
 
 `<ErrorBoundary>` is a built-in component that catches errors thrown by
-its descendants during render, lifecycle hooks (including `onWillStart`),
-or event handlers, and renders a `fallback` slot in their place. It's the
-declarative counterpart of the [`onError`](error_handling.md) hook.
+its descendants during render or in lifecycle hooks (including
+`onWillStart`), and renders a `fallback` slot in their place. It's the
+declarative counterpart of the [`onError`](error_handling.md) hook. Like
+`onError`, it does not catch errors thrown in event handlers.
 
 ## Basic usage
 
@@ -29,7 +30,8 @@ from inside the fallback, react to changes with an `effect`, or clear
 the error to retry:
 
 ```js
-import { ErrorBoundary, signal, effect } from "@odoo/owl";
+import { Component, ErrorBoundary, signal, useEffect, xml } from "@odoo/owl";
+import { UnstableWidget } from "./unstable_widget";
 
 class Parent extends Component {
   static template = xml`
@@ -40,13 +42,13 @@ class Parent extends Component {
       </t>
       <UnstableWidget/>
     </ErrorBoundary>`;
-  static components = { ErrorBoundary };
+  static components = { ErrorBoundary, UnstableWidget };
 
   error = signal(null);
 
   setup() {
     // React to errors without coupling the fallback template to it.
-    effect(() => {
+    useEffect(() => {
       const e = this.error();
       if (e) console.error("widget failed:", e);
     });

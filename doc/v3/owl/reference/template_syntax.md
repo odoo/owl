@@ -200,7 +200,8 @@ This is done via the `t-set` directive, which takes the name of the variable to 
    <t t-out="foo"/>
    ```
 
-   will generate `&lt;li&gt;ok&lt;/li&gt;` (the content is escaped by default)
+   will generate `<li>ok</li>`: the body is rendered as template content, it
+   is not escaped.
 
 The `t-set` directive acts like a regular variable in most programming language.
 It is lexically scoped (inner nodes are sub scopes), can be shadowed, ...
@@ -266,7 +267,9 @@ For example, if we have `id` set to 32 in the rendering context,
 <div t-att-data-action-id="id"/> <!-- result: <div data-action-id="32"></div> -->
 ```
 
-If an expression evaluates to a falsy value, it will not be set at all:
+If an expression evaluates to `false`, `null` or `undefined`, it will not be set
+at all (`true` sets it with an empty value, and other values, including `0` and
+`""`, are set):
 
 ```xml
 <div t-att-foo="false"/>  <!-- result: <div></div> -->
@@ -390,9 +393,10 @@ An important difference should be made with the usual `QWeb` behaviour: Owl
 requires the presence of a `t-key` directive, to be able to properly reconcile
 renderings.
 
-`t-foreach` can iterate on any iterable, and also has special support for objects
-and maps, it will expose the key of the current iteration as the contents of the
-`t-as`, and the corresponding value with the same name and the suffix `_value`.
+`t-foreach` can iterate on arrays and any other iterable (such as a `Set`), and
+also has special support for objects and maps: it will expose the key of the
+current iteration as the contents of the `t-as`, and the corresponding value with
+the same name and the suffix `_value`.
 
 In addition to the name passed via t-as, `t-foreach` provides a few other useful
 variables (note: `$as` will be replaced with the name passed to `t-as`):
@@ -484,17 +488,6 @@ variations are equivalent:
 `t-key` must be set on the same element as `t-foreach`, not on one of its
 children. If it is missing, Owl throws `"Directive t-foreach should always
 be used with a t-key!"` — there is no fallback to the index.
-
-Note: the `t-foreach` directive only accepts arrays (lists) or objects. It does
-not work with other iterables, such as `Set`. However, it is only a matter of
-using the `...` javascript operator. For example:
-
-```xml
-<t t-foreach="[...items]" t-as="item">...</t>
-```
-
-The `...` operator will convert the `Set` (or any other iterables) into a list,
-which will work with Owl QWeb.
 
 ### Sub Templates
 
@@ -685,24 +678,26 @@ Owl components can be used to generate dynamic SVG graphs:
 class Node extends Component {
   static template = xml`
         <g>
-            <circle t-att-cx="props.x" t-att-cy="props.y" r="4" fill="black"/>
-            <text t-att-x="props.x - 5" t-att-y="props.y + 18"><t t-out="props.node.label"/></text>
-            <t t-set="childx" t-value="props.x + 100"/>
-            <t t-set="height" t-value="props.height/(props.node.children || []).length"/>
-            <t t-foreach="props.node.children || []" t-as="child" t-key="child_index">
-                <t t-set="childy" t-value="props.y + child_index*height"/>
-                <line t-att-x1="props.x" t-att-y1="props.y" t-att-x2="childx" t-att-y2="childy" stroke="black" />
+            <circle t-att-cx="this.props.x" t-att-cy="this.props.y" r="4" fill="black"/>
+            <text t-att-x="this.props.x - 5" t-att-y="this.props.y + 18"><t t-out="this.props.node.label"/></text>
+            <t t-set="childx" t-value="this.props.x + 100"/>
+            <t t-set="height" t-value="this.props.height/(this.props.node.children || []).length"/>
+            <t t-foreach="this.props.node.children || []" t-as="child" t-key="child_index">
+                <t t-set="childy" t-value="this.props.y + child_index*height"/>
+                <line t-att-x1="this.props.x" t-att-y1="this.props.y" t-att-x2="childx" t-att-y2="childy" stroke="black" />
                 <Node x="childx" y="childy" node="child" height="height"/>
             </t>
         </g>
     `;
   static components = { Node };
+
+  props = useProps(["x", "y", "node", "height"]);
 }
 
 class RootNode extends Component {
   static template = xml`
         <svg height="180">
-            <Node node="graph" x="10" y="20" height="180"/>
+            <Node node="this.graph" x="10" y="20" height="180"/>
         </svg>
     `;
   static components = { Node };
@@ -730,6 +725,13 @@ templates (included with `t-call`) should have one of these tag as root tag.
 
 ## Restrictions
 
+Note that Owl templates forbid the use of tag and or attributes starting with
+the `block-` string. This restriction prevents name collision with the internal
+code of Owl.
+
+```xml
+<div><block-1>this will not be accepted by Owl</block-1></div>
+```
 
 Also, every attribute starting with `t-` must be a directive that Owl knows and
 supports on that node: otherwise, compiling the template throws an error. This
@@ -739,11 +741,4 @@ exist in Owl, such as the Owl 2 `t-slot` and `t-raw`) is never silently ignored.
 ```xml
 <t t-slot="default"/> <!-- error: Unknown QWeb directive: 't-slot' (use 't-call-slot' to render a slot) -->
 <t t-on-click="this.onClick">...</t> <!-- error: Directive 't-on-click' is not supported on <t> nodes -->
-```
-Note that Owl templates forbid the use of tag and or attributes starting with
-the `block-` string. This restriction prevents name collision with the internal
-code of Owl.
-
-```xml
-<div><block-1>this will not be accepted by Owl</block-1></div>
 ```

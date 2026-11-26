@@ -163,7 +163,15 @@ class RecordViewer extends Component {
       (recordId) => {
         // reading/writing this.record here does not make it a dependency
         this.record.set(null);
-        loadRecord(recordId).then((record) => this.record.set(record));
+        let cancelled = false;
+        loadRecord(recordId).then((record) => {
+          if (!cancelled) {
+            this.record.set(record);
+          }
+        });
+        // called before the next run, and when the component is destroyed:
+        // the response for a previous id is then ignored
+        return () => (cancelled = true);
       }
     );
   }

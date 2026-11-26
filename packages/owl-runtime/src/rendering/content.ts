@@ -353,65 +353,75 @@ export class LazyValue {
 // -----------------------------------------------------------------------------
 
 /**
- * A region holds at most one sub-content, inserted before its anchor, and
- * owned by a dedicated owner (so that it can be disposed independently).
+ * A region holds one sub-content (an empty text when there is nothing to
+ * show), owned by a dedicated owner so that it can be disposed independently.
+ * It has no anchor: a new sub-content is inserted before the current one.
  */
 abstract class Region implements Content {
-  anchor: Text = document.createTextNode("");
   owner: Owner;
-  content: Content | null = null;
+  content: Content = null as any;
   contentOwner: Owner | null = null;
 
   constructor() {
     this.owner = getCurrentOwner();
   }
 
+  /** Runs the render effect of the region (which sets its content). */
+  init(fn: () => void) {
+    renderEffect(fn);
+    // the first run failed (and the error was handled): show nothing
+    this.content ||= new TextContent("");
+  }
+
   mount(parent: Node, ref: Node | null) {
-    if (this.content) {
-      this.content.mount(parent, ref);
-    }
-    parent.insertBefore(this.anchor, ref);
+    this.content.mount(parent, ref);
   }
 
   remove() {
-    if (this.content) {
-      this.content.remove();
-    }
-    this.anchor.remove();
+    this.content.remove();
   }
 
   firstNode(): Node {
-    return this.content ? this.content.firstNode() : this.anchor;
+    return this.content.firstNode();
   }
 
   lastNode(): Node {
-    return this.anchor;
+    return this.content.lastNode();
   }
 
   /**
-   * Replaces the current sub-content by the one `build` creates, if any. The
-   * new content is created first, then the current one is removed.
+   * Replaces the current sub-content by the one `build` creates (in a new
+   * owner, unless `withOwner` is false: for a content that owns nothing).
+   * The new content is created first, then the current one is removed.
    */
-  replace(build: (() => Content) | null) {
+  replace(build: (() => Content) | null, withOwner = true) {
     untracked(() => {
       let owner: Owner | null = null;
-      let content: Content | null = null;
-      if (build) {
+      let content: Content;
+      if (!build) {
+        content = new TextContent("");
+      } else if (withOwner) {
         owner = new Owner(this.owner.node, this.owner);
         content = create(owner, build);
+      } else {
+        content = build();
       }
-      if (this.content) {
-        const previousOwner = this.contentOwner!;
-        previousOwner.unmount();
-        this.content.remove();
-        previousOwner.dispose();
-      }
+      const previous = this.content;
+      const previousOwner = this.contentOwner;
       this.content = content;
       this.contentOwner = owner;
-      const parent = this.anchor.parentNode;
-      if (content && parent) {
-        content.mount(parent, this.anchor);
-        mountOwner(owner!);
+      if (previous) {
+        const first = previous.firstNode();
+        const parent = first.parentNode;
+        previousOwner?.unmount();
+        if (parent) {
+          content.mount(parent, first);
+        }
+        previous.remove();
+        previousOwner?.dispose();
+        if (parent && owner) {
+          mountOwner(owner);
+        }
       }
     });
   }
@@ -419,11 +429,12 @@ abstract class Region implements Content {
 
 /** t-if/t-elif/t-else: `select` returns the index of the branch to show. */
 class Toggle extends Region {
-  index = -1;
+  // -1 means no branch: the first run always sets the content
+  index = -2;
 
   constructor(select: () => number, branches: (() => Content)[]) {
     super();
-    renderEffect(() => {
+    this.init(() => {
       const index = select();
       if (index !== this.index) {
         this.index = index;
@@ -445,7 +456,7 @@ class Keyed extends Region {
 
   constructor(keyFn: () => any, build: (key: any) => Content) {
     super();
-    renderEffect(() => {
+    this.init(() => {
       const key = keyFn();
       if (key !== this.key) {
         this.key = key;
@@ -471,7 +482,7 @@ class Out extends Region {
 
   constructor(valueFn: () => any, defaultContent?: () => Content) {
     super();
-    renderEffect(() => {
+    this.init(() => {
       const value = valueFn();
       if (value === undefined || value === null) {
         if (this.kind !== OUT_EMPTY) {
@@ -484,7 +495,7 @@ class Out extends Region {
         if (this.kind !== OUT_MARKUP || this.value !== html) {
           this.kind = OUT_MARKUP;
           this.value = html;
-          this.replace(() => new HtmlContent(html));
+          this.replace(() => new HtmlContent(html), false);
         }
       } else if (value instanceof LazyValue) {
         if (this.kind !== OUT_LAZY || this.value !== value) {
@@ -502,7 +513,7 @@ class Out extends Region {
         } else {
           this.kind = OUT_TEXT;
           this.value = str;
-          this.replace(() => new TextContent(str));
+          this.replace(() => new TextContent(str), false);
         }
       }
     });
@@ -544,9 +555,10 @@ interface Row {
   owner: Owner;
   content: Content;
   item: Signal<any>;
-  value: Signal<any>;
-  index: Signal<number>;
-  last: Signal<boolean>;
+  // only for the loop variables that the body uses
+  value: Signal<any> | null;
+  index: Signal<number> | null;
+  last: Signal<boolean> | null;
   isNew: boolean;
 }
 
@@ -588,28 +600,38 @@ class List implements Content {
     // context used to evaluate the keys, before the rows exist. Its variables
     // are own writable properties: they may shadow getters of an outer row
     // with the same loop variable name.
+    const indexName = `${elem}_index`;
+    const valueName = `${elem}_value`;
+    const firstName = `${elem}_first`;
+    const lastName = `${elem}_last`;
     const keyCtx = keyFn ? Object.create(ctx) : null;
     if (keyCtx) {
-      for (const name of [
-        elem,
-        `${elem}_index`,
-        `${elem}_value`,
-        `${elem}_first`,
-        `${elem}_last`,
-      ]) {
+      for (const name of [elem, indexName, valueName, firstName, lastName]) {
         Object.defineProperty(keyCtx, name, { value: undefined, writable: true });
       }
     }
     renderEffect(() => {
-      const [keys, values, n] = prepareList(collectionFn());
+      const [collectionKeys, collectionValues, n] = prepareList(collectionFn());
+      // read the collection once (subscribing to it), into plain arrays
+      const keys = new Array(n);
+      for (let i = 0; i < n; i++) {
+        keys[i] = collectionKeys[i];
+      }
+      let values = keys;
+      if (collectionValues !== collectionKeys) {
+        values = new Array(n);
+        for (let i = 0; i < n; i++) {
+          values[i] = collectionValues[i];
+        }
+      }
       const rowKeys = new Array(n);
       if (keyFn) {
         for (let i = 0; i < n; i++) {
           keyCtx[elem] = keys[i];
-          keyCtx[`${elem}_index`] = i;
-          keyCtx[`${elem}_value`] = values[i];
-          keyCtx[`${elem}_first`] = i === 0;
-          keyCtx[`${elem}_last`] = i === n - 1;
+          keyCtx[indexName] = i;
+          keyCtx[valueName] = values[i];
+          keyCtx[firstName] = i === 0;
+          keyCtx[lastName] = i === n - 1;
           rowKeys[i] = keyFn(keyCtx);
         }
         if (dev) {
@@ -632,33 +654,33 @@ class List implements Content {
 
   createRow(item: any, value: any, index: number, n: number, key: any): Row {
     const owner = new Owner(this.owner.node, this.owner);
+    const noFlags = this.noFlags;
     const row: Row = {
       key,
       owner,
       content: null as any,
       item: signal(item),
-      value: signal(value),
-      index: signal(index),
-      last: signal(index === n - 1),
+      value: noFlags & NO_VALUE ? null : signal(value),
+      index: noFlags & NO_INDEX && noFlags & NO_FIRST ? null : signal(index),
+      last: noFlags & NO_LAST ? null : signal(index === n - 1),
       isNew: true,
     };
     const elem = this.elem;
-    const noFlags = this.noFlags;
     const ctx = Object.create(this.ctx);
     Object.defineProperty(ctx, elem, { get: row.item, enumerable: true });
-    if (!(noFlags & NO_VALUE)) {
+    if (row.value) {
       Object.defineProperty(ctx, `${elem}_value`, { get: row.value, enumerable: true });
     }
     if (!(noFlags & NO_INDEX)) {
-      Object.defineProperty(ctx, `${elem}_index`, { get: row.index, enumerable: true });
+      Object.defineProperty(ctx, `${elem}_index`, { get: row.index!, enumerable: true });
     }
     if (!(noFlags & NO_FIRST)) {
       Object.defineProperty(ctx, `${elem}_first`, {
-        get: () => row.index() === 0,
+        get: () => row.index!() === 0,
         enumerable: true,
       });
     }
-    if (!(noFlags & NO_LAST)) {
+    if (row.last) {
       Object.defineProperty(ctx, `${elem}_last`, { get: row.last, enumerable: true });
     }
     row.content = create(owner, () => this.rowFn(ctx));
@@ -677,9 +699,9 @@ class List implements Content {
         oldMap.delete(key);
         row.isNew = false;
         row.item.set(keys[i]);
-        row.value.set(values[i]);
-        row.index.set(i);
-        row.last.set(i === n - 1);
+        row.value?.set(values[i]);
+        row.index?.set(i);
+        row.last?.set(i === n - 1);
       } else {
         row = this.createRow(keys[i], values[i], i, n, key);
         (created ||= []).push(row);
@@ -687,15 +709,27 @@ class List implements Content {
       map.set(key, row);
       rows[i] = row;
     }
-    for (const row of oldMap.values()) {
-      row.owner.unmount();
-      row.content.remove();
-      row.owner.dispose();
+    const parent = this.anchor.parentNode;
+    if (oldMap.size) {
+      for (const row of oldMap.values()) {
+        row.owner.unmount();
+      }
+      if (n === 0 && parent && this.isAlone(parent)) {
+        // the list is all its parent contains: clear it at once
+        parent.textContent = "";
+        parent.appendChild(this.anchor);
+      } else {
+        for (const row of oldMap.values()) {
+          row.content.remove();
+        }
+      }
+      for (const row of oldMap.values()) {
+        row.owner.dispose();
+      }
     }
     this.map = map;
     this.rows = rows;
 
-    const parent = this.anchor.parentNode;
     if (parent) {
       // place the rows from the end: a kept row only moves if it is not
       // already right before the next one
@@ -713,6 +747,14 @@ class List implements Content {
         }
       }
     }
+  }
+
+  /** whether the (current) rows and the anchor are all that `parent` contains */
+  isAlone(parent: Node): boolean {
+    return (
+      parent.lastChild === this.anchor &&
+      parent.firstChild === (this.rows.length ? this.rows[0].content.firstNode() : this.anchor)
+    );
   }
 
   mount(parent: Node, ref: Node | null) {

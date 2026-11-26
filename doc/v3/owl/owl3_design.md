@@ -38,7 +38,7 @@ guide for more details: [Migration Guide to Owl 3](migration_owl2_to_owl3.md)
   - [Rendering Context](#rendering-context)
   - [Scoping changes](#scoping-changes)
   - [Type Validation](#type-validation)
-  - [onWillUpdateProps is removed](#onwillupdateprops-is-removed)
+  - [onWillUpdateProps is deprecated](#onwillupdateprops-is-deprecated)
   - [useComponent is removed](#usecomponent-is-removed)
   - [t-esc is removed](#t-esc-is-removed)
   - [t-slot is renamed t-call-slot](#t-slot-is-renamed-t-call-slot)
@@ -879,7 +879,9 @@ props = useProps({
 assertType(myObj, t.object({ id: t.number(), text: t.string()}));
 ```
 
-### onWillUpdateProps is removed
+### onWillUpdateProps is deprecated
+
+`onWillUpdateProps` still works, but it is deprecated and will be removed.
 
 The goal of `onWillUpdateProps` was to allow a component to react properly to
 props change. However, I believe that it is not the best solution for a
@@ -890,9 +892,10 @@ actually have such a tool now in owl 3: the reactivity system, and in particular
 computed functions.
 
 Now, it is possible to declare the relation between a component internal state
-and its props using computed functions. Also, a component can take a signal value
-as a prop, or the value of the signal. Note that it is usually better to give
-the signal from a performance standpoint.
+and its props using computed functions. For that, the prop is given as a signal:
+a plain prop is a value for the template, while a signal prop is a value that the
+component reacts to. It is also better from a performance standpoint, since only
+the components reading the signal are updated.
 
 ```js
 class Child extends Component {

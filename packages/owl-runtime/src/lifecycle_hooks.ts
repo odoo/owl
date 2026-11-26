@@ -7,6 +7,12 @@ import { nodeErrorHandlers } from "./rendering/error_handling";
 
 export { onWillDestroy, onWillStart } from "@odoo/owl-core";
 
+/**
+ * @deprecated will be removed in a future version. A prop that the component
+ * must react to should be given as a signal (validated with `t.signal(...)`):
+ * derive state from it with `computed`, or run code when it changes with
+ * `useEffect` or `useOnChange`.
+ */
 export function onWillUpdateProps(
   fn: (nextProps: any, scope: ComponentNode) => Promise<void> | void | any
 ) {

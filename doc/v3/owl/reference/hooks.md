@@ -152,14 +152,14 @@ useOnChange(dependencies, callback, options);
 
 ```js
 class RecordViewer extends Component {
-  static template = xml`<div t-out="this.record().name"/>`;
+  static template = xml`<div t-out="this.record()?.name"/>`;
 
-  props = useProps({ recordId: t.number() });
+  props = useProps({ recordId: t.signal(t.number()) });
   record = signal(null);
 
   setup() {
     useOnChange(
-      () => [this.props.recordId],
+      () => [this.props.recordId()],
       (recordId) => {
         // reading/writing this.record here does not make it a dependency
         this.record.set(null);

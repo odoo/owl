@@ -7,6 +7,8 @@ import {
   onWillStart,
   proxy,
   STATUS,
+  globalTemplates,
+  TemplateSet,
   useProps,
   xml,
 } from "../../src";
@@ -198,6 +200,31 @@ describe("app", () => {
     target.remove();
   });
 
+  test("deprecated template methods forward to the app's template set", async () => {
+    class SomeComponent extends Component {
+      static template = "hello";
+    }
+    const app = new App();
+    expect(app.templates).toBeInstanceOf(TemplateSet);
+    app.addTemplate("hello", `<div>hello</div>`);
+    app.addTemplates(`<templates><div t-name="world">world</div></templates>`);
+    expect(Object.keys(app.templates.rawTemplates)).toEqual(["hello", "world"]);
+    expect(app.getTemplate("hello")).toBe(app.templates.getTemplate("hello"));
+    await app.createRoot(SomeComponent).mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>hello</div>");
+  });
+
+  test("deprecated App.registerTemplate registers a global template", async () => {
+    class SomeComponent extends Component {
+      static template = "__app_register_template__";
+    }
+    App.registerTemplate("__app_register_template__", compile(`<div>global</div>`));
+    expect(globalTemplates["__app_register_template__"]).toBeDefined();
+    await new App().createRoot(SomeComponent).mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>global</div>");
+    delete globalTemplates["__app_register_template__"];
+  });
+
   test("can load templates from an object name-string", async () => {
     const templates = {
       hello: `<div class="hello">hello</div>`,
@@ -211,8 +238,8 @@ describe("app", () => {
     await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.querySelector(".hello")).toBeDefined();
     // Only the "hello" template is used, so the "world" template is not yet loaded
-    expect(Object.keys(app.templates)).toEqual(["hello"]);
-    expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+    expect(Object.keys(app.templates.templates)).toEqual(["hello"]);
+    expect(Object.keys(app.templates.rawTemplates)).toEqual(["hello", "world"]);
   });
 
   test("can load precompiled templates from an object name-fn", async () => {
@@ -229,7 +256,7 @@ describe("app", () => {
     const app = new App({ templates });
     await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="hello">hello</div>`);
-    expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+    expect(Object.keys(app.templates.rawTemplates)).toEqual(["hello", "world"]);
   });
 
   test("can mix string and precompiled templates in the templates config", async () => {

@@ -1,5 +1,6 @@
 import { OwlError } from "@odoo/owl-core";
 import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
+import type { ComponentHelpers, TemplateBlockDom, TemplateHelpers } from "./template_contract";
 import {
   AST,
   ASTComponent,
@@ -253,6 +254,16 @@ const TRANSLATABLE_ATTRS = [
 ];
 const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
+// The blockdom functions every compiled template destructures from `bdom`
+const BDOM_FUNCTIONS = Object.keys({
+  text: true,
+  createBlock: true,
+  list: true,
+  multi: true,
+  html: true,
+  toggler: true,
+} satisfies Record<keyof TemplateBlockDom, true>);
+
 export class CodeGenerator {
   blocks: BlockDescription[] = [];
   nextBlockId = 1;
@@ -266,7 +277,7 @@ export class CodeGenerator {
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
   slotNames: Set<String | Symbol> = new Set();
-  helpers: Set<string> = new Set();
+  helpers: Set<keyof (TemplateHelpers & ComponentHelpers)> = new Set();
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {
@@ -309,7 +320,7 @@ export class CodeGenerator {
       tKeyExpr: null,
     });
     // define blocks and utility functions
-    let mainCode = [`  let { text, createBlock, list, multi, html, toggler } = bdom;`];
+    let mainCode = [`  let { ${BDOM_FUNCTIONS.join(", ")} } = bdom;`];
     if (this.helpers.size) {
       mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
     }
@@ -1236,16 +1247,12 @@ export class CodeGenerator {
 
     let propString = this.getPropString(props, ast.dynamicProps);
 
-    let propVar: string;
-    if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
-      propVar = generateId("props");
-      this.define(propVar!, propString);
-      propString = propVar!;
-    }
-
     if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
+      const propVar = generateId("props");
+      this.define(propVar, propString);
+      propString = propVar;
       this.helpers.add("markRaw");
-      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotDef}, ${propVar!}.slots))`);
+      this.addLine(`${propVar}.slots = markRaw(Object.assign(${slotDef}, ${propVar}.slots))`);
     }
 
     // cmap key
@@ -1270,7 +1277,7 @@ export class CodeGenerator {
     this.helpers.add("createComponent");
     this.staticDefs.push({
       id,
-      expr: `createComponent(app, ${
+      expr: `createComponent(${
         ast.isDynamic ? null : expr
       }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });

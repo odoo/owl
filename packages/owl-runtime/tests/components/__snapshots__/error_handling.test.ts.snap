@@ -5,7 +5,7 @@ exports[`basics > a sync re-render error deep in the tree is only wrapped once 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Parent\`, true, false, false, ["flag"]);
+  const comp1 = createComponent(\`Parent\`, true, false, false, ["flag"]);
   
   return function template(ctx, node, key = "") {
     return comp1({flag: ctx['this'].state.flag}, key + \`__1\`, node, this, null);
@@ -18,7 +18,7 @@ exports[`basics > a sync re-render error deep in the tree is only wrapped once 2
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["flag"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["flag"]);
   
   return function template(ctx, node, key = "") {
     return comp1({flag: ctx['this'].props.flag}, key + \`__1\`, node, this, null);
@@ -46,7 +46,7 @@ exports[`basics > currentComputation does not leak when a willStart promise reje
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -72,7 +72,7 @@ exports[`basics > currentComputation does not leak when an uncaught render error
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["flag"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["flag"]);
   
   return function template(ctx, node, key = "") {
     return comp1({flag: ctx['this'].state.flag}, key + \`__1\`, node, this, null);
@@ -100,7 +100,7 @@ exports[`basics > display a nice error if a component is not a component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SomeComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`SomeComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -113,7 +113,7 @@ exports[`basics > display a nice error if a non-root component template fails to
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -126,11 +126,10 @@ exports[`basics > display a nice error if it cannot find component (in dev mode)
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SomeMispelledComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`SomeMispelledComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -140,7 +139,7 @@ exports[`basics > display a nice error if it cannot find component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SomeMispelledComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`SomeMispelledComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -153,7 +152,7 @@ exports[`basics > display a nice error if the components key is missing with sub
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`MissingChild\`, true, false, false, []);
+  const comp1 = createComponent(\`MissingChild\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -169,7 +168,7 @@ exports[`basics > no component catching error lead to full app destruction 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, ["flag"]);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, ["flag"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -200,7 +199,7 @@ exports[`basics > render from above on error -- handler is not a Root or MountFi
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Parent\`, true, false, false, []);
+  const comp1 = createComponent(\`Parent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -213,7 +212,7 @@ exports[`basics > render from above on error -- handler is not a Root or MountFi
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -249,7 +248,7 @@ exports[`basics > simple catchError 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -357,7 +356,7 @@ exports[`can catch errors > an error in onWillDestroy 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -388,7 +387,7 @@ exports[`can catch errors > an error in onWillDestroy, variation 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -431,8 +430,8 @@ exports[`can catch errors > can catch an error in a component render function 1`
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, ["flag"]);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, ["flag"]);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -487,7 +486,7 @@ exports[`can catch errors > can catch an error in onmounted 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, []);
+  const comp1 = createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -532,8 +531,8 @@ exports[`can catch errors > can catch an error in the constructor call of a comp
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -573,9 +572,9 @@ exports[`can catch errors > can catch an error in the constructor call of a comp
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ClassicCompoent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp3 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ClassicCompoent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp3 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -656,8 +655,8 @@ exports[`can catch errors > can catch an error in the initial call of a componen
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -712,8 +711,8 @@ exports[`can catch errors > can catch an error in the initial call of a componen
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -771,7 +770,7 @@ exports[`can catch errors > can catch an error in the mounted call (in child of 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  const comp1 = createComponent(\`B\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -784,7 +783,7 @@ exports[`can catch errors > can catch an error in the mounted call (in child of 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, []);
+  const comp1 = createComponent(\`C\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -800,7 +799,7 @@ exports[`can catch errors > can catch an error in the mounted call (in child of 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -834,7 +833,7 @@ exports[`can catch errors > can catch an error in the mounted call (in root comp
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -868,8 +867,8 @@ exports[`can catch errors > can catch an error in the mounted call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -922,8 +921,8 @@ exports[`can catch errors > can catch an error in the willPatch call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, ["message"]);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, ["message"]);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span><block-child-0/></span><block-child-1/></div>\`);
   
@@ -979,8 +978,8 @@ exports[`can catch errors > can catch an error in the willStart call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1033,9 +1032,9 @@ exports[`can catch errors > can catch an error origination from a child's willSt
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`ClassicCompoent\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp3 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`ClassicCompoent\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp3 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1103,7 +1102,7 @@ exports[`can catch errors > catchError in catchError 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1124,7 +1123,7 @@ exports[`can catch errors > catchError in catchError 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1155,8 +1154,8 @@ exports[`can catch errors > catching error, rethrow, render parent  -- a main co
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, markRaw, withKey } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, []);
-  const comp2 = createComponent(app, \`ErrorHandler\`, true, true, false, ["onError.cp"]);
+  const comp1 = createComponent(null, false, false, false, []);
+  const comp2 = createComponent(\`ErrorHandler\`, true, true, false, ["onError.cp"]);
   
   function slot1(ctx, node, key = "") {
     const Comp1 = ctx['cp'].Comp;
@@ -1194,7 +1193,7 @@ exports[`can catch errors > catching error, rethrow, render parent  -- a main co
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`ErrorComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -1233,8 +1232,8 @@ exports[`can catch errors > catching in child makes parent render 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, markRaw, withKey } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, ["id"]);
-  const comp2 = createComponent(app, \`Catch\`, true, true, false, ["onError.elem"]);
+  const comp1 = createComponent(null, false, false, false, ["id"]);
+  const comp2 = createComponent(\`Catch\`, true, true, false, ["onError.elem"]);
   
   function slot1(ctx, node, key = "") {
     const Comp1 = ctx['elem'][1];
@@ -1300,9 +1299,9 @@ exports[`can catch errors > error in mounted on a component with a sibling (prop
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`OK\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ErrorComponent\`, true, false, false, []);
-  const comp3 = createComponent(app, \`ErrorBoundary\`, true, true, false, []);
+  const comp1 = createComponent(\`OK\`, true, false, false, []);
+  const comp2 = createComponent(\`ErrorComponent\`, true, false, false, []);
+  const comp3 = createComponent(\`ErrorBoundary\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1367,7 +1366,7 @@ exports[`can catch errors > error in onMounted, graceful recovery 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, []);
+  const comp1 = createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
     const Comp1 = ctx['this'].component;
@@ -1381,8 +1380,8 @@ exports[`can catch errors > error in onMounted, graceful recovery 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Boom\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
@@ -1431,7 +1430,7 @@ exports[`can catch errors > error in onMounted, graceful recovery, variation 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, []);
+  const comp1 = createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -1450,8 +1449,8 @@ exports[`can catch errors > error in onMounted, graceful recovery, variation 3`]
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Boom\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Boom\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
@@ -1500,7 +1499,7 @@ exports[`can catch errors > onError in class inheritance is called if rethrown 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Concrete\`, true, false, false, []);
+  const comp1 = createComponent(\`Concrete\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -1533,7 +1532,7 @@ exports[`can catch errors > onError in class inheritance is not called if no ret
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Concrete\`, true, false, false, []);
+  const comp1 = createComponent(\`Concrete\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -1566,7 +1565,7 @@ exports[`errors and promises > a rendering error in a sub component will reject 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1612,7 +1611,7 @@ exports[`errors and promises > a rendering error will reject the render promise 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1757,11 +1756,10 @@ exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caugh
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {val: ctx['this'].state.val};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1784,11 +1782,10 @@ exports[`errors in onWillUpdateProps > async error in onWillUpdateProps is caugh
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {val: ctx['this'].state.val};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1811,11 +1808,10 @@ exports[`errors in onWillUpdateProps > sync error in onWillUpdateProps is caught
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {val: ctx['this'].state.val};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
 }"
 `;

@@ -490,6 +490,24 @@ await r.mount(target); // r.prepare() renders off-DOM first; r.destroy() is your
 Other `App` options: `getTemplate`, `translatableAttributes`,
 `customDirectives`, `globalValues`, `name`, `test`.
 
+**Templates.** An app's templates are in `app.templates`, a `TemplateSet`.
+Add more after creation with `app.templates.addTemplate(name, xmlOrFn)` or
+`app.templates.addTemplates(xml)`. `app.addTemplate`, `app.addTemplates` and
+`app.getTemplate` are deprecated aliases.
+
+To render a template outside any component (e.g. to a string), use a
+standalone `TemplateSet`. It renders templates but not components: rendering
+a component, a slot or a `.signal` prop throws. Components need an `App`.
+
+```js
+import { blockDom, TemplateSet } from "@odoo/owl";
+
+const templates = new TemplateSet({ templates: xml, translateFn });
+const bdom = templates.getTemplate("my.template")({ name: "Bob" }, {});
+const div = document.createElement("div");
+blockDom.mount(bdom, div); // div.innerHTML is the rendered template
+```
+
 ## 12. Complete example
 
 The todo list lives in a plugin, which owns the data and the operations on

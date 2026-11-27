@@ -5,7 +5,7 @@ exports[`Reactivity: proxy > destroyed component before being mounted is inactiv
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -41,7 +41,7 @@ exports[`Reactivity: proxy > destroyed component is inactive 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -93,7 +93,7 @@ exports[`Reactivity: proxy > parent and children subscribed to same context 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -129,8 +129,8 @@ exports[`Reactivity: proxy > two components are updated in parallel 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -162,8 +162,8 @@ exports[`Reactivity: proxy > two components can subscribe to same context 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -195,8 +195,8 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Parent\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Parent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -228,7 +228,7 @@ exports[`Reactivity: proxy > two independent components on different levels are 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -259,7 +259,7 @@ exports[`Reactivity: proxy > useless atoms should be deleted 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Quantity\`, true, false, false, ["id"]);
+  const comp1 = createComponent(\`Quantity\`, true, false, false, ["id"]);
   
   let block1 = createBlock(\`<div><block-child-0/> Total: <block-child-1/> Count: <block-child-2/></div>\`);
   

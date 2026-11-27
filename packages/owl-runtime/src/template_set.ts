@@ -1,10 +1,40 @@
-import { getScope, OwlError } from "@odoo/owl-core";
-import { compile, CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
+import { OwlError } from "@odoo/owl-core";
+import type {
+  compile,
+  ComponentHelpers,
+  CustomDirectives,
+  Template,
+  TemplateBlockDom,
+  TemplateFunction,
+  TemplateHelpers,
+} from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "@odoo/owl-blockdom";
-import { helpers } from "./rendering/template_helpers";
-import { ComponentNode } from "./component_node";
+import { templateHelpers } from "./rendering/template_helpers";
 
-const bdom = { text, createBlock, list, multi, html, toggler };
+const bdom = { text, createBlock, list, multi, html, toggler } satisfies TemplateBlockDom;
+
+// Component helpers of a template set that has none: rendering a component,
+// a slot or a prop for a component throws. Templates can still contain
+// components, as long as these parts are not rendered.
+const NO_COMPONENT_HELPERS: ComponentHelpers = {
+  createComponent(name) {
+    return (props, key, node, parent, C) => {
+      throw new OwlError(
+        `Cannot render component "${C?.name ?? name}": components can only be rendered by an App`
+      );
+    };
+  },
+  callSlot(ctx, parent, key, name) {
+    throw new OwlError(
+      `Cannot render slot "${name}": components and their slots can only be rendered by an App`
+    );
+  },
+  toSignal() {
+    throw new OwlError(
+      `Cannot render the props of a component: components can only be rendered by an App`
+    );
+  },
+};
 
 export interface TemplateSetConfig {
   dev?: boolean;
@@ -14,6 +44,9 @@ export interface TemplateSetConfig {
   getTemplate?: (s: string) => Element | Function | string | void;
   customDirectives?: CustomDirectives;
   globalValues?: object;
+  // the helpers rendering components (given by an App). Without them, the
+  // template set renders templates, but no components.
+  componentHelpers?: ComponentHelpers;
 }
 
 export class TemplateSet {
@@ -27,7 +60,7 @@ export class TemplateSet {
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   customDirectives: CustomDirectives;
-  runtimeUtils: object;
+  runtimeUtils: TemplateHelpers & ComponentHelpers;
   hasGlobalValues: boolean;
 
   constructor(config: TemplateSetConfig = {}) {
@@ -45,7 +78,11 @@ export class TemplateSet {
     }
     this.getRawTemplate = config.getTemplate;
     this.customDirectives = config.customDirectives || {};
-    this.runtimeUtils = { ...helpers, __globals__: config.globalValues || {} };
+    this.runtimeUtils = {
+      ...templateHelpers,
+      ...(config.componentHelpers || NO_COMPONENT_HELPERS),
+      __globals__: config.globalValues || {},
+    };
     this.hasGlobalValues = Boolean(config.globalValues && Object.keys(config.globalValues).length);
   }
 
@@ -81,12 +118,7 @@ export class TemplateSet {
     if (!(cacheKey in this.templates)) {
       const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
-        let extraInfo = "";
-        const scope = getScope();
-        if (scope instanceof ComponentNode) {
-          extraInfo = ` (for component "${scope.componentName}")`;
-        }
-        throw new OwlError(`Missing template: "${name}"${extraInfo}`);
+        throw new OwlError(missingTemplateMessage(name));
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
       const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
@@ -111,6 +143,10 @@ export class TemplateSet {
       `Unable to parse XML templates. Please use owl full build instead, or pass a Document instance.`
     );
   }
+}
+
+export function missingTemplateMessage(name: string): string {
+  return `Missing template: "${name}"`;
 }
 
 // -----------------------------------------------------------------------------

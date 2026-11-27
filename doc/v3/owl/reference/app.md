@@ -50,6 +50,12 @@ once the earlier ones are ready, and the root component may use them.
 - **`app.destroy()`**: destroys every root, the plugin manager, and the
   application itself.
 
+- **`app.templates`**: the `TemplateSet` holding the application's templates:
+  the ones given in the configuration, compiled the first time they are used.
+  More templates can be added with `app.templates.addTemplate(name, template)`
+  and `app.templates.addTemplates(xml)`. The `app.addTemplate`,
+  `app.addTemplates` and `app.getTemplate` methods are deprecated aliases.
+
 ### `mount` helper
 
 `mount(Component, target, config?)` creates an `App`, calls `createRoot`,

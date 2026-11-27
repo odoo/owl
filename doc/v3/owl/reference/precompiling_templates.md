@@ -41,6 +41,6 @@ import { templates } from "./templates.js";
 mount(Root, document.body, { templates });
 ```
 
-The same object shape is accepted by `app.addTemplate(name, fn)` and the
-static `App.registerTemplate(name, fn)` helper, which registers a template
-globally for every subsequently created `App`.
+The same object shape is accepted by `app.templates.addTemplate(name, fn)` and
+the static `TemplateSet.registerTemplate(name, fn)` helper, which registers a
+template globally, for every `App`.

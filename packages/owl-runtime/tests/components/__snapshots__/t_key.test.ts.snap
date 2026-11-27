@@ -5,7 +5,7 @@ exports[`t-key > t-foreach with t-key switch component position 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -45,7 +45,7 @@ exports[`t-key > t-key change on a component rendering an empty list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`List\`, true, false, false, ["items"]);
+  const comp1 = createComponent(\`List\`, true, false, false, ["items"]);
   
   let block2 = createBlock(\`<button>b</button>\`);
   let block4 = createBlock(\`<span>end</span>\`);
@@ -86,7 +86,7 @@ exports[`t-key > t-key on Component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   return function template(ctx, node, key = "") {
     const tKey_1 = ctx['this'].key;
@@ -115,7 +115,7 @@ exports[`t-key > t-key on Component as a function 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -147,8 +147,8 @@ exports[`t-key > t-key on multiple Components 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
+  const comp2 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
@@ -198,7 +198,7 @@ exports[`t-key > t-key on multiple Components with t-call 1 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   return function template(ctx, node, key = "") {
     const tKey_1 = ctx['key'];
@@ -242,8 +242,8 @@ exports[`t-key > t-key on multiple Components with t-call 2 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
+  const comp2 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   return function template(ctx, node, key = "") {
     const tKey_1 = ctx['key1'];

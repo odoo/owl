@@ -40,7 +40,7 @@ exports[`hooks > can use onWillStart, onWillUpdateProps 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`MyComponent\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
@@ -83,11 +83,10 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {value: ctx['this'].value()};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].value()}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -112,7 +111,7 @@ exports[`hooks > onWillUpdateProps receives nextProps 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     return comp1({value: ctx['this'].value()}, key + \`__1\`, node, this, null);
@@ -243,7 +242,7 @@ exports[`hooks > useListener 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`MyComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -276,7 +275,7 @@ exports[`hooks > useListener ignores the event that created its component 1`] = 
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
   
@@ -310,7 +309,7 @@ exports[`hooks > useListener ignores the event that created its component, from 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -354,7 +353,7 @@ exports[`hooks > useListener still receives an event dispatched while it is bein
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].show.set(true);
-  const comp1 = createComponent(app, \`MyComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`MyComponent\`, true, false, false, []);
   
   let block2 = createBlock(\`<button block-handler-0="click">open</button>\`);
   

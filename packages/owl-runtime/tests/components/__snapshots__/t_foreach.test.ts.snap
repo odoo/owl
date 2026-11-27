@@ -5,7 +5,7 @@ exports[`list of components > components in a node in a t-foreach  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["item"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["item"]);
   
   let block1 = createBlock(\`<div><ul><block-child-0/></ul></div>\`);
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
@@ -46,7 +46,7 @@ exports[`list of components > crash on duplicate key in dev mode 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, OwlError, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -58,8 +58,7 @@ exports[`list of components > crash on duplicate key in dev mode 1`] = `
       const key1 = 'child';
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
-      const props1 = {};
-      c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -82,7 +81,7 @@ exports[`list of components > crash when using object as keys that serialize to 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, OwlError, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -94,8 +93,7 @@ exports[`list of components > crash when using object as keys that serialize to 
       const key1 = ctx['item'];
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
-      const props1 = {};
-      c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -118,7 +116,7 @@ exports[`list of components > list of sub components inside other nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`SubComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComponent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/></div>\`);
@@ -157,7 +155,7 @@ exports[`list of components > order is correct when slots are not of same type 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div>A</div>\`);
   
@@ -213,7 +211,7 @@ exports[`list of components > reconciliation alg works for t-foreach in t-foreac
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["blip"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["blip"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -262,7 +260,7 @@ exports[`list of components > reconciliation alg works for t-foreach in t-foreac
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["row","col"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["row","col"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p><block-child-0/></p>\`);
@@ -313,7 +311,7 @@ exports[`list of components > simple list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -349,7 +347,7 @@ exports[`list of components > sub components rendered in a loop 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["n"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["n"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -388,7 +386,7 @@ exports[`list of components > sub components with some state rendered in a loop 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -427,7 +425,7 @@ exports[`list of components > switch component position 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["key"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["key"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -466,7 +464,7 @@ exports[`list of components > t-foreach with t-component, and update 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

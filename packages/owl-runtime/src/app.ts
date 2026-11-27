@@ -13,7 +13,9 @@ import {
 } from "@odoo/owl-core";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountFiber, MountOptions, RootFiber, subRootHosts } from "./rendering/fibers";
+import { componentHelpers } from "./rendering/component_helpers";
 import { Scheduler } from "./rendering/scheduler";
+import type { Template, TemplateFunction } from "@odoo/owl-compiler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 
@@ -42,11 +44,19 @@ interface SubRootConfig<P> extends RootConfig<P> {
   host?: ComponentNode;
 }
 
-export interface AppConfig extends TemplateSetConfig {
+export interface AppConfig {
   name?: string;
+  dev?: boolean;
+  test?: boolean;
   plugins?: PluginConstructor[] | Resource<PluginConstructor>;
   config?: Record<string, any>;
-  test?: boolean;
+  // options of the app's template set (see TemplateSetConfig)
+  templates?: TemplateSetConfig["templates"];
+  getTemplate?: TemplateSetConfig["getTemplate"];
+  translateFn?: TemplateSetConfig["translateFn"];
+  translatableAttributes?: TemplateSetConfig["translatableAttributes"];
+  customDirectives?: TemplateSetConfig["customDirectives"];
+  globalValues?: TemplateSetConfig["globalValues"];
 }
 
 let hasBeenLogged = false;
@@ -94,20 +104,39 @@ if (typeof window !== "undefined") {
   window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 }
 
-export class App extends TemplateSet {
+export class App {
   static validateTarget = validateTarget;
   static apps = apps;
   static version = version;
 
+  /**
+   * @deprecated use `TemplateSet.registerTemplate`
+   */
+  static registerTemplate(name: string, fn: TemplateFunction) {
+    TemplateSet.registerTemplate(name, fn);
+  }
+
   name: string;
+  dev: boolean;
+  templates: TemplateSet;
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
   destroyed = false;
 
   constructor(config: AppConfig = {}) {
-    super(config);
     this.name = config.name || "";
+    this.dev = Boolean(config.dev || config.test);
+    this.templates = new TemplateSet({
+      dev: this.dev,
+      templates: config.templates,
+      getTemplate: config.getTemplate,
+      translateFn: config.translateFn,
+      translatableAttributes: config.translatableAttributes,
+      customDirectives: config.customDirectives,
+      globalValues: config.globalValues,
+      componentHelpers,
+    });
     apps.add(this);
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
@@ -117,13 +146,31 @@ export class App extends TemplateSet {
       // takes the sync fast path.
       this.pluginManager.status = STATUS.MOUNTED;
     }
-    if (config.test) {
-      this.dev = true;
-    }
     if (this.dev && !config.test && !hasBeenLogged) {
       console.info(`Owl is running in 'dev' mode.`);
       hasBeenLogged = true;
     }
+  }
+
+  /**
+   * @deprecated use `app.templates.getTemplate`
+   */
+  getTemplate(name: string): Template {
+    return this.templates.getTemplate(name);
+  }
+
+  /**
+   * @deprecated use `app.templates.addTemplate`
+   */
+  addTemplate(name: string, template: string | Element | TemplateFunction) {
+    this.templates.addTemplate(name, template);
+  }
+
+  /**
+   * @deprecated use `app.templates.addTemplates`
+   */
+  addTemplates(xml: string | Document) {
+    this.templates.addTemplates(xml);
   }
 
   createRoot<T extends ComponentConstructor>(

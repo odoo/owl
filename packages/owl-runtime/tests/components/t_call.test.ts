@@ -49,7 +49,7 @@ describe("t-call", () => {
       state = proxy({ val: 1 });
     }
     const app = new App();
-    app.addTemplate("sub", `<Child val="this.state.val"/>`);
+    app.templates.addTemplate("sub", `<Child val="this.state.val"/>`);
 
     const parent = await app.createRoot(Parent).mount(fixture);
     expect(fixture.innerHTML).toBe("<span>1</span>");
@@ -228,7 +228,7 @@ describe("t-call", () => {
     }
 
     const app = new App();
-    app.addTemplate(
+    app.templates.addTemplate(
       "recursive",
       `
         <t t-if="level &lt; 2" >

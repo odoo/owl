@@ -55,7 +55,7 @@ exports[`refs > ref in slot is unset across a t-if nested inside the slot conten
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Wrapper\`, true, true, false, []);
   
   let block3 = createBlock(\`<span block-ref="0">hi</span>\`);
   
@@ -98,7 +98,7 @@ exports[`refs > ref in slot is unset when an intermediate host is removed in pla
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Inner\`, true, true, false, []);
+  const comp1 = createComponent(\`Inner\`, true, true, false, []);
   
   let block2 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span block-ref="0">x</span>\`);
@@ -139,7 +139,7 @@ exports[`refs > ref in slot is unset when forwarded through a nested component 1
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Wrapper\`, true, true, false, []);
   
   let block2 = createBlock(\`<b block-ref="0">x</b>\`);
   
@@ -163,7 +163,7 @@ exports[`refs > ref in slot is unset when forwarded through a nested component 2
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callSlot, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Inner\`, true, true, false, []);
+  const comp1 = createComponent(\`Inner\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -198,7 +198,7 @@ exports[`refs > ref in slot is unset when the host removes it in place (host sur
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Wrapper\`, true, true, false, []);
   
   let block1 = createBlock(\`<span class="slotted" block-ref="0">hi</span>\`);
   
@@ -237,7 +237,7 @@ exports[`refs > ref in slot is unset when the slot host is removed 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Wrapper\`, true, true, false, []);
   
   let block2 = createBlock(\`<div class="slotted" block-ref="0">Coucou</div>\`);
   
@@ -276,7 +276,7 @@ exports[`refs > ref is set by child component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["ref"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["ref"]);
   
   return function template(ctx, node, key = "") {
     return comp1({ref: ctx['this'].ref}, key + \`__1\`, node, this, null);
@@ -317,7 +317,7 @@ exports[`refs > ref is unset even when a sub-root is destroyed re-entrantly mid-
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Wrapper\`, true, true, false, []);
   
   let block2 = createBlock(\`<span block-ref="0">hi</span>\`);
   
@@ -419,7 +419,7 @@ exports[`refs > ref shared between t-if and t-else, t-else has a slotted compone
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, markRaw, createComponent } = helpers;
-  const comp1 = createComponent(app, \`SlotCp\`, true, true, false, []);
+  const comp1 = createComponent(\`SlotCp\`, true, true, false, []);
   
   let block2 = createBlock(\`<div class="ifbranch" block-ref="0"/>\`);
   let block3 = createBlock(\`<div class="elsebranch" block-ref="0"/>\`);
@@ -459,7 +459,7 @@ exports[`refs > refs and recursive templates 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createRef, safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Test\`, true, false, false, ["tree"]);
+  const comp1 = createComponent(\`Test\`, true, false, false, ["tree"]);
   
   let block1 = createBlock(\`<p block-ref="0"><block-child-0/><block-child-1/></p>\`);
   
@@ -502,7 +502,7 @@ exports[`refs > refs are properly bound in slots 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, callHandler, createRef, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].doSomething, ctx, ev);
-  const comp1 = createComponent(app, \`Dialog\`, true, true, false, []);
+  const comp1 = createComponent(\`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
   let block3 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);

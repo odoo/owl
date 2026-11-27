@@ -20,7 +20,7 @@ test("umbrella wiring: addTemplates parses XML strings", async () => {
     static template = "root_template";
   }
   const app = new App();
-  app.addTemplates(`
+  app.templates.addTemplates(`
     <templates>
       <t t-name="root_template">
         <span>ok</span>

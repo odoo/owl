@@ -38,7 +38,7 @@ exports[`event handling > handler receive the event as argument 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { callHandler, createComponent, safeOutput } = helpers;
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-child-1/></span>\`);
   
@@ -85,7 +85,7 @@ exports[`event handling > input blur event is not called if component is destroy
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><textarea/></div>\`);
   
@@ -189,7 +189,7 @@ exports[`event handling > unnamed slot should call the event only once 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { markRaw, createComponent, createCatcher, callHandler } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
+  const comp1 = createComponent(\`Child\`, true, true, false, []);
   const hdlr_fn1 = (ctx, ev) => callHandler(ctx['this'].inc, ctx, ev);
   const catcher1 = createCatcher({"click":0});
   

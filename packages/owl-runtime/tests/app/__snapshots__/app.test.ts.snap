@@ -5,7 +5,7 @@ exports[`app > app: clear scheduler tasks on destroy 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  const comp1 = createComponent(\`B\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -50,7 +50,7 @@ exports[`app > can call processTask twice in a row without crashing 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
@@ -120,6 +120,19 @@ exports[`app > can mount app in an iframe 1`] = `
   let { text, createBlock, list, multi, html, toggler } = bdom;
   
   let block1 = createBlock(\`<div class="my-div"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`app > deprecated template methods forward to the app's template set 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div>hello</div>\`);
   
   return function template(ctx, node, key = "") {
     return block1();

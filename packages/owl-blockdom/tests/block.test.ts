@@ -1,4 +1,4 @@
-import { createBlock, mount, patch, remove, text } from "../../src/blockdom";
+import { createBlock, mount, patch, remove, text } from "../src";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -260,4 +260,10 @@ describe("misc", () => {
       "http://www.w3.org/1999/xhtml",
     ]);
   });
+});
+
+test("unsupported nodes in a block template throw a clear error", () => {
+  expect(() => createBlock("<div><!-- comment --></div>")).toThrow(
+    'Unsupported node in block template: "#comment" (only elements and text nodes are allowed)'
+  );
 });

@@ -1,5 +1,5 @@
 import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
-import { mount } from "../../src/blockdom";
+import { mount } from "@odoo/owl-blockdom";
 import { mount as mountComponent, Component, xml } from "../../src";
 
 // NB: check the snapshots to see where the SVG namespaces are added

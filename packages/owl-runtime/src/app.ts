@@ -65,7 +65,7 @@ declare global {
   }
 }
 
-import type { MountTarget } from "./blockdom";
+import type { MountTarget } from "@odoo/owl-blockdom";
 
 interface Root<T extends ComponentConstructor> {
   promise: Promise<ComponentInstance<T>>;

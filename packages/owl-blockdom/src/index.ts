@@ -1,4 +1,4 @@
-export { config } from "./config";
+export { config, filterOutModifiersFromData } from "./config";
 
 export { toggler } from "./toggler";
 export { createBlock } from "./block_compiler";

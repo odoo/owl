@@ -1,5 +1,5 @@
 import { TemplateSet } from "../../src/template_set";
-import { mount } from "../../src/blockdom";
+import { mount } from "@odoo/owl-blockdom";
 import { renderToBdom, snapshotEverything } from "../helpers";
 import { computed, signal } from "../../src";
 

@@ -12,6 +12,7 @@
     "baseUrl": ".",
     "paths": {
       "@odoo/owl-core": ["../owl-core/src/index.ts"],
+      "@odoo/owl-blockdom": ["../owl-blockdom/src/index.ts"],
       "@odoo/owl-compiler": ["../owl-compiler/src/index.ts"],
       "@odoo/owl-runtime": ["../owl-runtime/src/index.ts"]
     }

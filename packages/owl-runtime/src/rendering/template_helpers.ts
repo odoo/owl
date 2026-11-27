@@ -10,8 +10,7 @@ import {
   Signal,
 } from "@odoo/owl-core";
 import { App } from "../app";
-import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
-import { html } from "../blockdom/index";
+import { BDom, createCatcher, html, multi, text, toggler } from "@odoo/owl-blockdom";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
 import { Markup } from "../utils";

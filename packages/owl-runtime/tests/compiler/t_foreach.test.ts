@@ -5,7 +5,7 @@ import {
   TestContext,
   makeTestFixture,
 } from "../helpers";
-import { mount, patch } from "../../src/blockdom";
+import { mount, patch } from "@odoo/owl-blockdom";
 
 snapshotEverything();
 

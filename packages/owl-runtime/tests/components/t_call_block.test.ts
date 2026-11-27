@@ -1,4 +1,4 @@
-import { text } from "../../src/blockdom";
+import { text } from "@odoo/owl-blockdom";
 import { Component, mount, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 

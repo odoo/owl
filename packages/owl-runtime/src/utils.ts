@@ -3,21 +3,6 @@ import { OwlError } from "@odoo/owl-core";
 export { batched, EventBus, htmlEscape, Markup, markup, shallowEqual } from "@odoo/owl-core";
 
 /**
- * Determine whether the given element is contained in its ownerDocument:
- * either directly or with a shadow root in between.
- */
-export function inOwnerDocument(el?: HTMLElement) {
-  if (!el) {
-    return false;
-  }
-  if (el.ownerDocument.contains(el)) {
-    return true;
-  }
-  const rootNode = el.getRootNode();
-  return rootNode instanceof ShadowRoot && el.ownerDocument.contains(rootNode.host);
-}
-
-/**
  * Determine whether the given element is contained in a specific root documnet:
  * either directly or with a shadow root in between or in an iframe.
  */

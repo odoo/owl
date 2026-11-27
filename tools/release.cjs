@@ -1,5 +1,6 @@
 const package = require("../packages/owl/package.json");
 const corePackage = require("../packages/owl-core/package.json");
+const blockdomPackage = require("../packages/owl-blockdom/package.json");
 const compilerPackage = require("../packages/owl-compiler/package.json");
 const runtimePackage = require("../packages/owl-runtime/package.json");
 const packageLock = require("../package-lock.json");
@@ -17,6 +18,7 @@ const RELEASE_TYPES = ["alpha", "beta", "stable"];
 // internal: their code is bundled into @odoo/owl by esbuild.
 const SIBLING_PACKAGES = [
   { name: "@odoo/owl-core", path: "packages/owl-core/package.json", pkg: corePackage },
+  { name: "@odoo/owl-blockdom", path: "packages/owl-blockdom/package.json", pkg: blockdomPackage },
   { name: "@odoo/owl-compiler", path: "packages/owl-compiler/package.json", pkg: compilerPackage },
   { name: "@odoo/owl-runtime", path: "packages/owl-runtime/package.json", pkg: runtimePackage },
 ];
@@ -139,7 +141,7 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: updating package.json files...`);
-  // All four workspaces are bumped in lockstep so versions stay coherent, even
+  // All workspaces are bumped in lockstep so versions stay coherent, even
   // though only @odoo/owl is published right now.
   for (const sibling of SIBLING_PACKAGES) {
     await writeFile(sibling.path, JSON.stringify({ ...sibling.pkg, version: next }, null, 2) + "\n");
@@ -169,7 +171,7 @@ async function startRelease() {
 
   // ---------------------------------------------------------------------------
   log(`Step ${step++}/${STEPS}: building owl...`);
-  await execCommand("rm -rf packages/owl-core/dist packages/owl-compiler/dist packages/owl-runtime/dist packages/owl/dist");
+  await execCommand("rm -rf packages/owl-core/dist packages/owl-blockdom/dist packages/owl-compiler/dist packages/owl-runtime/dist packages/owl/dist");
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
     logError("Build failed. Aborting.");

@@ -11,7 +11,7 @@ import {
   remove,
   text,
   toggler,
-} from "./blockdom";
+} from "@odoo/owl-blockdom";
 import { mainEventHandler } from "./event_handling";
 export { Resource, Registry } from "@odoo/owl-core";
 

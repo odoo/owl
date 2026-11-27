@@ -19,7 +19,7 @@ import {
 } from "../src";
 import { helpers } from "../src/rendering/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/template_set";
-import { BDom } from "../src/blockdom";
+import { BDom } from "@odoo/owl-blockdom";
 import { compile } from "@odoo/owl-compiler";
 import { OwlError, useScope } from "@odoo/owl-core";
 

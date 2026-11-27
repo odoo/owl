@@ -6,7 +6,7 @@ import {
   setComputation,
   STATUS,
 } from "@odoo/owl-core";
-import { BDom, mount, type MountTarget } from "../blockdom";
+import { BDom, mount, type MountTarget } from "@odoo/owl-blockdom";
 import type { ComponentNode } from "../component_node";
 import { fibersInError, handleError } from "./error_handling";
 

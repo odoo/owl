@@ -5,8 +5,7 @@ import {
   TestContext,
   makeTestFixture,
 } from "../helpers";
-import { mount, patch } from "../../src/blockdom";
-import { createBlock } from "../../src/blockdom/index";
+import { createBlock, mount, patch } from "@odoo/owl-blockdom";
 import { markup } from "../../src/utils";
 
 snapshotEverything();

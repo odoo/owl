@@ -1,4 +1,4 @@
-import { filterOutModifiersFromData } from "./blockdom/config";
+import { filterOutModifiersFromData } from "@odoo/owl-blockdom";
 import { OwlError, setCurrentEvent, STATUS } from "@odoo/owl-core";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {

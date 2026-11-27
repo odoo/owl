@@ -14,7 +14,7 @@ import {
   useScope,
 } from "@odoo/owl-core";
 import type { App } from "./app";
-import { BDom, VNode } from "./blockdom";
+import { BDom, VNode } from "@odoo/owl-blockdom";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";

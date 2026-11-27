@@ -17,7 +17,8 @@ import {
   xml,
   effect,
 } from "../src";
-import { helpers } from "../src/rendering/template_helpers";
+import { componentHelpers } from "../src/rendering/component_helpers";
+import { templateHelpers } from "../src/rendering/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/template_set";
 import { BDom } from "@odoo/owl-blockdom";
 import { compile } from "@odoo/owl-compiler";
@@ -107,6 +108,7 @@ export function renderToBdom(template: string, context: any = {}, node?: any): B
     createComponent() {},
     createDynamicComponent() {},
   };
+  const helpers = { ...templateHelpers, ...componentHelpers, __globals__: {} };
   return fn(app as any, blockDom, helpers).call(context, context, node);
 }
 

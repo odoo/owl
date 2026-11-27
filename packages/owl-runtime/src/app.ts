@@ -13,6 +13,7 @@ import {
 } from "@odoo/owl-core";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountFiber, MountOptions, RootFiber, subRootHosts } from "./rendering/fibers";
+import { componentHelpers } from "./rendering/component_helpers";
 import { Scheduler } from "./rendering/scheduler";
 import type { Template, TemplateFunction } from "@odoo/owl-compiler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
@@ -134,6 +135,7 @@ export class App {
       translatableAttributes: config.translatableAttributes,
       customDirectives: config.customDirectives,
       globalValues: config.globalValues,
+      componentHelpers,
     });
     apps.add(this);
     this.pluginManager = new PluginManager(this, { config: config.config });

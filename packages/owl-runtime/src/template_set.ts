@@ -9,9 +9,32 @@ import type {
   TemplateHelpers,
 } from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "@odoo/owl-blockdom";
-import { helpers } from "./rendering/template_helpers";
+import { templateHelpers } from "./rendering/template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler } satisfies TemplateBlockDom;
+
+// Component helpers of a template set that has none: rendering a component,
+// a slot or a prop for a component throws. Templates can still contain
+// components, as long as these parts are not rendered.
+const NO_COMPONENT_HELPERS: ComponentHelpers = {
+  createComponent(name) {
+    return (props, key, node, parent, C) => {
+      throw new OwlError(
+        `Cannot render component "${C?.name ?? name}": components can only be rendered by an App`
+      );
+    };
+  },
+  callSlot(ctx, parent, key, name) {
+    throw new OwlError(
+      `Cannot render slot "${name}": components and their slots can only be rendered by an App`
+    );
+  },
+  toSignal() {
+    throw new OwlError(
+      `Cannot render the props of a component: components can only be rendered by an App`
+    );
+  },
+};
 
 export interface TemplateSetConfig {
   dev?: boolean;
@@ -21,6 +44,9 @@ export interface TemplateSetConfig {
   getTemplate?: (s: string) => Element | Function | string | void;
   customDirectives?: CustomDirectives;
   globalValues?: object;
+  // the helpers rendering components (given by an App). Without them, the
+  // template set renders templates, but no components.
+  componentHelpers?: ComponentHelpers;
 }
 
 export class TemplateSet {
@@ -52,7 +78,11 @@ export class TemplateSet {
     }
     this.getRawTemplate = config.getTemplate;
     this.customDirectives = config.customDirectives || {};
-    this.runtimeUtils = { ...helpers, __globals__: config.globalValues || {} };
+    this.runtimeUtils = {
+      ...templateHelpers,
+      ...(config.componentHelpers || NO_COMPONENT_HELPERS),
+      __globals__: config.globalValues || {},
+    };
     this.hasGlobalValues = Boolean(config.globalValues && Object.keys(config.globalValues).length);
   }
 

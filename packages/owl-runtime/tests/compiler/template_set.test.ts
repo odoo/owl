@@ -137,3 +137,35 @@ describe("loading templates", () => {
     expect(result).toBe("<div>Hello World!</div>");
   });
 });
+
+describe("template set without components", () => {
+  test("renders a template whose components are not rendered", () => {
+    const context = new TestContext();
+    context.addTemplate("main", `<div><Child t-if="false"/>ok</div>`);
+    expect(context.renderToString("main")).toBe("<div>ok</div>");
+  });
+
+  test("throws a clear error when rendering a component", () => {
+    const context = new TestContext();
+    context.addTemplate("main", `<div><Child/></div>`);
+    expect(() => context.renderToString("main")).toThrow(
+      'Cannot render component "Child": components can only be rendered by an App'
+    );
+  });
+
+  test("throws a clear error when rendering a signal prop", () => {
+    const context = new TestContext();
+    context.addTemplate("main", `<div><Child value.signal="1"/></div>`);
+    expect(() => context.renderToString("main")).toThrow(
+      "Cannot render the props of a component: components can only be rendered by an App"
+    );
+  });
+
+  test("throws a clear error when rendering a slot", () => {
+    const context = new TestContext();
+    context.addTemplate("main", `<div><t t-call-slot="default"/></div>`);
+    expect(() => context.renderToString("main")).toThrow(
+      'Cannot render slot "default": components and their slots can only be rendered by an App'
+    );
+  });
+});

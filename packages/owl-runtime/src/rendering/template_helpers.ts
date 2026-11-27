@@ -9,6 +9,7 @@ import {
   signal,
   Signal,
 } from "@odoo/owl-core";
+import type { TemplateHelpers } from "@odoo/owl-compiler";
 import { App } from "../app";
 import { BDom, createCatcher, html, multi, text, toggler } from "@odoo/owl-blockdom";
 import { Component } from "../component";
@@ -380,12 +381,15 @@ function callTemplate(
   return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
 }
 
+// Implements the contract that compiled templates rely on. `__globals__` is
+// added by each template set.
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
   callSlot,
   withKey,
   prepareList,
+  // not emitted by the compiler since t-memo was removed (Owl 3)
   shallowEqual,
   toNumber,
   LazyValue,
@@ -399,4 +403,4 @@ export const helpers = {
   callTemplate,
   callHandler,
   toSignal,
-};
+} satisfies Omit<TemplateHelpers, "__globals__"> & { shallowEqual: typeof shallowEqual };

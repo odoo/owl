@@ -1,10 +1,17 @@
 import { getScope, OwlError } from "@odoo/owl-core";
-import { compile, CustomDirectives, Template, TemplateFunction } from "@odoo/owl-compiler";
+import type {
+  compile,
+  CustomDirectives,
+  Template,
+  TemplateBlockDom,
+  TemplateFunction,
+  TemplateHelpers,
+} from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "@odoo/owl-blockdom";
 import { helpers } from "./rendering/template_helpers";
 import { ComponentNode } from "./component_node";
 
-const bdom = { text, createBlock, list, multi, html, toggler };
+const bdom = { text, createBlock, list, multi, html, toggler } satisfies TemplateBlockDom;
 
 export interface TemplateSetConfig {
   dev?: boolean;
@@ -27,7 +34,7 @@ export class TemplateSet {
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   customDirectives: CustomDirectives;
-  runtimeUtils: object;
+  runtimeUtils: TemplateHelpers;
   hasGlobalValues: boolean;
 
   constructor(config: TemplateSetConfig = {}) {

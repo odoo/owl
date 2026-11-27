@@ -43,11 +43,19 @@ interface SubRootConfig<P> extends RootConfig<P> {
   host?: ComponentNode;
 }
 
-export interface AppConfig extends TemplateSetConfig {
+export interface AppConfig {
   name?: string;
+  dev?: boolean;
+  test?: boolean;
   plugins?: PluginConstructor[] | Resource<PluginConstructor>;
   config?: Record<string, any>;
-  test?: boolean;
+  // options of the app's template set (see TemplateSetConfig)
+  templates?: TemplateSetConfig["templates"];
+  getTemplate?: TemplateSetConfig["getTemplate"];
+  translateFn?: TemplateSetConfig["translateFn"];
+  translatableAttributes?: TemplateSetConfig["translatableAttributes"];
+  customDirectives?: TemplateSetConfig["customDirectives"];
+  globalValues?: TemplateSetConfig["globalValues"];
 }
 
 let hasBeenLogged = false;
@@ -118,7 +126,15 @@ export class App {
   constructor(config: AppConfig = {}) {
     this.name = config.name || "";
     this.dev = Boolean(config.dev || config.test);
-    this.templates = new TemplateSet({ ...config, dev: this.dev });
+    this.templates = new TemplateSet({
+      dev: this.dev,
+      templates: config.templates,
+      getTemplate: config.getTemplate,
+      translateFn: config.translateFn,
+      translatableAttributes: config.translatableAttributes,
+      customDirectives: config.customDirectives,
+      globalValues: config.globalValues,
+    });
     apps.add(this);
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {

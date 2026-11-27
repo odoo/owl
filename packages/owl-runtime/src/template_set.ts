@@ -1,6 +1,7 @@
 import { OwlError } from "@odoo/owl-core";
 import type {
   compile,
+  ComponentHelpers,
   CustomDirectives,
   Template,
   TemplateBlockDom,
@@ -33,7 +34,7 @@ export class TemplateSet {
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   customDirectives: CustomDirectives;
-  runtimeUtils: TemplateHelpers;
+  runtimeUtils: TemplateHelpers & ComponentHelpers;
   hasGlobalValues: boolean;
 
   constructor(config: TemplateSetConfig = {}) {

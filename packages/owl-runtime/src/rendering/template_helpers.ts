@@ -9,7 +9,7 @@ import {
   signal,
   Signal,
 } from "@odoo/owl-core";
-import type { TemplateHelpers } from "@odoo/owl-compiler";
+import type { ComponentHelpers, TemplateHelpers } from "@odoo/owl-compiler";
 import type { TemplateSet } from "../template_set";
 import { BDom, createCatcher, html, multi, text, toggler } from "@odoo/owl-blockdom";
 import { Component } from "../component";
@@ -391,4 +391,4 @@ export const helpers = {
   callTemplate,
   callHandler,
   toSignal,
-} satisfies Omit<TemplateHelpers, "__globals__">;
+} satisfies Omit<TemplateHelpers & ComponentHelpers, "__globals__">;

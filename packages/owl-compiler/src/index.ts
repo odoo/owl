@@ -1,9 +1,9 @@
 import { OwlError } from "@odoo/owl-core";
 import { CodeGenerator, Config } from "./code_generator";
 import { parse } from "./parser";
-import type { TemplateBlockDom, TemplateHelpers } from "./template_contract";
+import type { ComponentHelpers, TemplateBlockDom, TemplateHelpers } from "./template_contract";
 
-export type { TemplateBlockDom, TemplateHelpers } from "./template_contract";
+export type { ComponentHelpers, TemplateBlockDom, TemplateHelpers } from "./template_contract";
 
 export type CustomDirectives = Record<
   string,
@@ -21,7 +21,7 @@ export type Template = (context: any, vnode: any, key?: string) => any;
 export type TemplateFunction = (
   app: any,
   bdom: TemplateBlockDom,
-  helpers: TemplateHelpers
+  helpers: TemplateHelpers & ComponentHelpers
 ) => Template;
 
 interface CompileOptions extends Config {

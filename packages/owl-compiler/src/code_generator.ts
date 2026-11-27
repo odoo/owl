@@ -1,6 +1,6 @@
 import { OwlError } from "@odoo/owl-core";
 import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
-import type { TemplateBlockDom, TemplateHelpers } from "./template_contract";
+import type { ComponentHelpers, TemplateBlockDom, TemplateHelpers } from "./template_contract";
 import {
   AST,
   ASTComponent,
@@ -277,7 +277,7 @@ export class CodeGenerator {
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
   slotNames: Set<String | Symbol> = new Set();
-  helpers: Set<keyof TemplateHelpers> = new Set();
+  helpers: Set<keyof (TemplateHelpers & ComponentHelpers)> = new Set();
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {

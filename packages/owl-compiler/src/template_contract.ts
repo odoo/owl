@@ -27,7 +27,8 @@ export interface TemplateBlockDom {
 }
 
 /**
- * The helpers a compiled template calls at render time.
+ * The helpers a compiled template calls at render time, for everything but
+ * components.
  */
 export interface TemplateHelpers {
   // values of the `globalValues` option of the template set
@@ -45,8 +46,14 @@ export interface TemplateHelpers {
   callHandler(fn: any, ctx: any, ev: Event): void;
   modelExpr(value: any): any;
   createRef(ref: any, node: any): (el: any, previousEl: any) => void;
-  toSignal(node: any, cacheKey: string, value: any): any;
   callTemplate(name: string, owner: any, templates: any, ctx: any, parent: any, key: string): any;
+}
+
+/**
+ * The helpers a compiled template calls to render components and their slots.
+ */
+export interface ComponentHelpers {
+  toSignal(node: any, cacheKey: string, value: any): any;
   callSlot(
     ctx: any,
     parent: any,

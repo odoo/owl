@@ -31,7 +31,7 @@ type LifecycleHook = Function;
  */
 function getComponentTemplate(app: App, C: ComponentConstructor): Function {
   try {
-    return app.getTemplate(C.template);
+    return app.templates.getTemplate(C.template);
   } catch (e) {
     if (e instanceof OwlError && e.message === missingTemplateMessage(C.template)) {
       throw new OwlError(`${e.message} (for component "${C.name}")`);

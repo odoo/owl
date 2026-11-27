@@ -999,7 +999,7 @@ describe("slots", () => {
             </t>
         </Wrapper>`;
     const app = new App();
-    app.addTemplate("_test_recursive_template", recursiveTemplate);
+    app.templates.addTemplate("_test_recursive_template", recursiveTemplate);
 
     await app.createRoot(Parent).mount(fixture);
 

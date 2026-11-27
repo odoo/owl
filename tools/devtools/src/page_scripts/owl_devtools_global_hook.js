@@ -2091,18 +2091,24 @@
     inspectComponentCompiledTemplate(path) {
       const componentNode = this.getComponentNode(path);
       const template = componentNode.component.constructor.template;
+      const compiledTemplate = this.getTemplateSet(componentNode.app).templates[template];
       if (IS_FIREFOX) {
-        window.$temp = componentNode.app.templates[template];
+        window.$temp = compiledTemplate;
       } else {
-        inspect(componentNode.app.templates[template]);
+        inspect(compiledTemplate);
       }
     }
     // Inspect source code of the component (corresponds to inspecting its constructor)
     inspectComponentRawTemplate(path) {
       const componentNode = this.getComponentNode(path);
       const template = componentNode.component.constructor.template;
-      const templateNode = componentNode.app.rawTemplates[template];
+      const templateNode = this.getTemplateSet(componentNode.app).rawTemplates[template];
       console.log(templateNode);
+    }
+    // Returns the template set of an app: its `templates` field in recent
+    // versions, the app itself in older ones (where App extends TemplateSet)
+    getTemplateSet(app) {
+      return typeof app.templates?.getTemplate === "function" ? app.templates : app;
     }
     // Inspect source code of the function given by its path
     inspectFunctionSource(path) {

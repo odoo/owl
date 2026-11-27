@@ -14,6 +14,7 @@ import {
 import { nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountFiber, MountOptions, RootFiber, subRootHosts } from "./rendering/fibers";
 import { Scheduler } from "./rendering/scheduler";
+import type { Template, TemplateFunction } from "@odoo/owl-compiler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 
@@ -94,20 +95,30 @@ if (typeof window !== "undefined") {
   window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 }
 
-export class App extends TemplateSet {
+export class App {
   static validateTarget = validateTarget;
   static apps = apps;
   static version = version;
 
+  /**
+   * @deprecated use `TemplateSet.registerTemplate`
+   */
+  static registerTemplate(name: string, fn: TemplateFunction) {
+    TemplateSet.registerTemplate(name, fn);
+  }
+
   name: string;
+  dev: boolean;
+  templates: TemplateSet;
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
   destroyed = false;
 
   constructor(config: AppConfig = {}) {
-    super(config);
     this.name = config.name || "";
+    this.dev = Boolean(config.dev || config.test);
+    this.templates = new TemplateSet({ ...config, dev: this.dev });
     apps.add(this);
     this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
@@ -117,13 +128,31 @@ export class App extends TemplateSet {
       // takes the sync fast path.
       this.pluginManager.status = STATUS.MOUNTED;
     }
-    if (config.test) {
-      this.dev = true;
-    }
     if (this.dev && !config.test && !hasBeenLogged) {
       console.info(`Owl is running in 'dev' mode.`);
       hasBeenLogged = true;
     }
+  }
+
+  /**
+   * @deprecated use `app.templates.getTemplate`
+   */
+  getTemplate(name: string): Template {
+    return this.templates.getTemplate(name);
+  }
+
+  /**
+   * @deprecated use `app.templates.addTemplate`
+   */
+  addTemplate(name: string, template: string | Element | TemplateFunction) {
+    this.templates.addTemplate(name, template);
+  }
+
+  /**
+   * @deprecated use `app.templates.addTemplates`
+   */
+  addTemplates(xml: string | Document) {
+    this.templates.addTemplates(xml);
   }
 
   createRoot<T extends ComponentConstructor>(

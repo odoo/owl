@@ -127,6 +127,19 @@ exports[`app > can mount app in an iframe 1`] = `
 }"
 `;
 
+exports[`app > deprecated template methods forward to the app's template set 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler } = bdom;
+  
+  let block1 = createBlock(\`<div>hello</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`app > destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

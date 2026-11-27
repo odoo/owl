@@ -46,7 +46,7 @@ export interface TemplateHelpers {
   modelExpr(value: any): any;
   createRef(ref: any, node: any): (el: any, previousEl: any) => void;
   toSignal(node: any, cacheKey: string, value: any): any;
-  callTemplate(name: string, owner: any, app: any, ctx: any, parent: any, key: string): any;
+  callTemplate(name: string, owner: any, templates: any, ctx: any, parent: any, key: string): any;
   callSlot(
     ctx: any,
     parent: any,

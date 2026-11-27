@@ -10,7 +10,7 @@ import {
   Signal,
 } from "@odoo/owl-core";
 import type { TemplateHelpers } from "@odoo/owl-compiler";
-import { App } from "../app";
+import type { TemplateSet } from "../template_set";
 import { BDom, createCatcher, html, multi, text, toggler } from "@odoo/owl-blockdom";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
@@ -362,12 +362,12 @@ function createComponent<P extends Record<string, any>>(
 function callTemplate(
   subTemplate: string,
   owner: any,
-  app: App,
+  templates: TemplateSet,
   ctx: any,
   parent: any,
   key: any
 ): any {
-  const template = app.getTemplate(subTemplate);
+  const template = templates.getTemplate(subTemplate);
   return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
 }
 

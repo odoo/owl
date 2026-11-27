@@ -18,12 +18,27 @@ import { BDom, VNode } from "@odoo/owl-blockdom";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./rendering/error_handling";
 import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fibers";
+import { missingTemplateMessage } from "./template_set";
 
 // -----------------------------------------------------------------------------
 //  Component VNode class
 // -----------------------------------------------------------------------------
 
 type LifecycleHook = Function;
+
+/**
+ * Gets the template of a component, naming the component if it is missing.
+ */
+function getComponentTemplate(app: App, C: ComponentConstructor): Function {
+  try {
+    return app.getTemplate(C.template);
+  } catch (e) {
+    if (e instanceof OwlError && e.message === missingTemplateMessage(C.template)) {
+      throw new OwlError(`${e.message} (for component "${C.name}")`);
+    }
+    throw e;
+  }
+}
 
 export class ComponentNode extends Scope implements VNode<ComponentNode> {
   declare app: App;
@@ -76,7 +91,7 @@ export class ComponentNode extends Scope implements VNode<ComponentNode> {
     try {
       this.component = new C(this);
       const ctx = { this: this.component, __owl__: this };
-      this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
+      this.renderFn = getComponentTemplate(app, C).bind(this.component, ctx, this);
       this.component.setup();
     } finally {
       scopeStack.pop();

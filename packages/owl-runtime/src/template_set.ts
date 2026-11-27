@@ -1,4 +1,4 @@
-import { getScope, OwlError } from "@odoo/owl-core";
+import { OwlError } from "@odoo/owl-core";
 import type {
   compile,
   CustomDirectives,
@@ -9,7 +9,6 @@ import type {
 } from "@odoo/owl-compiler";
 import { createBlock, html, list, multi, text, toggler } from "@odoo/owl-blockdom";
 import { helpers } from "./rendering/template_helpers";
-import { ComponentNode } from "./component_node";
 
 const bdom = { text, createBlock, list, multi, html, toggler } satisfies TemplateBlockDom;
 
@@ -88,12 +87,7 @@ export class TemplateSet {
     if (!(cacheKey in this.templates)) {
       const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
-        let extraInfo = "";
-        const scope = getScope();
-        if (scope instanceof ComponentNode) {
-          extraInfo = ` (for component "${scope.componentName}")`;
-        }
-        throw new OwlError(`Missing template: "${name}"${extraInfo}`);
+        throw new OwlError(missingTemplateMessage(name));
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
       const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
@@ -118,6 +112,10 @@ export class TemplateSet {
       `Unable to parse XML templates. Please use owl full build instead, or pass a Document instance.`
     );
   }
+}
+
+export function missingTemplateMessage(name: string): string {
+  return `Missing template: "${name}"`;
 }
 
 // -----------------------------------------------------------------------------

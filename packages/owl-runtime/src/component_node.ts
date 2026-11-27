@@ -26,6 +26,7 @@ import { APPLIED_TO_DOM, Fiber, makeRootFiber, MountFiber } from "./rendering/fi
 type LifecycleHook = Function;
 
 export class ComponentNode extends Scope implements VNode<ComponentNode> {
+  declare app: App;
   fiber: Fiber | null = null;
   component!: Component;
   bdom: BDom | null = null;

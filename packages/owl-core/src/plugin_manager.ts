@@ -1,7 +1,7 @@
 import { effect } from "./effect";
 import { OwlError } from "./owl_error";
 import { Resource } from "./resource";
-import { Scope, scopeStack } from "./scope";
+import { Scope, ScopeApp, scopeStack } from "./scope";
 import { STATUS } from "./status";
 import { untrack } from "./computations";
 
@@ -73,7 +73,7 @@ export class PluginManager extends Scope {
   ready: Promise<void> = Promise.resolve();
   private hasPendingReady = false;
 
-  constructor(app: any, options: PluginManagerOptions = {}) {
+  constructor(app: ScopeApp, options: PluginManagerOptions = {}) {
     super(app);
     this.config = options.config ?? {};
     this.pluginManager = this;

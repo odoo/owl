@@ -1247,16 +1247,12 @@ export class CodeGenerator {
 
     let propString = this.getPropString(props, ast.dynamicProps);
 
-    let propVar: string;
-    if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
-      propVar = generateId("props");
-      this.define(propVar!, propString);
-      propString = propVar!;
-    }
-
     if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
+      const propVar = generateId("props");
+      this.define(propVar, propString);
+      propString = propVar;
       this.helpers.add("markRaw");
-      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotDef}, ${propVar!}.slots))`);
+      this.addLine(`${propVar}.slots = markRaw(Object.assign(${slotDef}, ${propVar}.slots))`);
     }
 
     // cmap key

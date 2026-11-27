@@ -77,8 +77,7 @@ exports[`.signal suffix accepts a signal-typed prop without validation error 1`]
   const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -103,8 +102,7 @@ exports[`.signal suffix promotes a plain value to a signal 1`] = `
   const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const props1 = {count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({count: toSignal(node, \`__sig_1\`, ctx['this'].state.val)}, key + \`__1\`, node, this, null);
   }
 }"
 `;

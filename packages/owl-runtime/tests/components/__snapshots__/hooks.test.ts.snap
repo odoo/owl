@@ -86,8 +86,7 @@ exports[`hooks > onWillUpdateProps receives nextProps (dev mode) 1`] = `
   const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {value: ctx['this'].value()};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].value()}, key + \`__1\`, node, this, null);
   }
 }"
 `;

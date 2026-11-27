@@ -73,8 +73,7 @@ exports[`render loop detection > a render loop going through async code is still
   const comp1 = createComponent(\`Child\`, true, false, false, ["value","inc"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].value(),inc: ctx['this'].inc}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -99,8 +98,7 @@ exports[`render loop detection > throws a clear error instead of freezing on a r
   const comp1 = createComponent(\`Child\`, true, false, false, ["value","inc"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].value(),inc: ctx['this'].inc}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -147,12 +145,10 @@ exports[`render loop detection > wide re-render under an uncommitted root is not
       const key1 = ctx['i'];
       if (keys2.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys2.add(String(key1));
-      const props1 = {};
-      c_block2[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block2[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     const b2 = list(c_block2);
-    const props2 = {};
-    const b4 = comp2(props2, key + \`__2\`, node, this, null);
+    const b4 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b2, b4]);
   }
 }"

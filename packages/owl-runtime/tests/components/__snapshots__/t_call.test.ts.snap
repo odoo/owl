@@ -567,10 +567,8 @@ exports[`t-call > t-call with t-call-context and subcomponent, in dev mode 2`] =
   const comp2 = createComponent(\`Child\`, true, false, false, ["name"]);
   
   return function template(ctx, node, key = "") {
-    const props1 = {name: ctx['this'].aab};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    const props2 = {name: ctx['this'].lpe};
-    const b3 = comp2(props2, key + \`__2\`, node, this, null);
+    const b2 = comp1({name: ctx['this'].aab}, key + \`__1\`, node, this, null);
+    const b3 = comp2({name: ctx['this'].lpe}, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -699,8 +697,7 @@ exports[`t-call > t-call-context: slots don't make component available again whe
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx["dummy"] = 0;
-    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
-    return comp1(props1, key + \`__1\`, node, this, null);
+    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;

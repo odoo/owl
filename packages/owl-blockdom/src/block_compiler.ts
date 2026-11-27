@@ -1,4 +1,3 @@
-import { OwlError } from "@odoo/owl-core";
 import {
   attrsSetter,
   attrsUpdater,
@@ -265,7 +264,9 @@ function buildTree(
       };
     }
   }
-  throw new OwlError("boom");
+  throw new Error(
+    `Unsupported node in block template: "${node.nodeName}" (only elements and text nodes are allowed)`
+  );
 }
 
 function addRef(tree: IntermediateTree) {

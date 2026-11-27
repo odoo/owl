@@ -1,5 +1,5 @@
 // import { mountBlock } from "../../src/blockdom/block";
-import { mount } from "../../src/blockdom";
+import { mount } from "@odoo/owl-blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();

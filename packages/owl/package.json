@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/odoo/owl#readme",
   "devDependencies": {
+    "@odoo/owl-blockdom": "3.0.0-beta.1",
     "@odoo/owl-compiler": "3.0.0-beta.1",
     "@odoo/owl-core": "3.0.0-beta.1",
     "@odoo/owl-runtime": "3.0.0-beta.1",

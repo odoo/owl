@@ -11,6 +11,9 @@ export default defineConfig({
       "@odoo/owl-core": fileURLToPath(
         new URL("../owl-core/src/index.ts", import.meta.url)
       ),
+      "@odoo/owl-blockdom": fileURLToPath(
+        new URL("../owl-blockdom/src/index.ts", import.meta.url)
+      ),
       "@odoo/owl-compiler/src/parser": fileURLToPath(
         new URL("../owl-compiler/src/parser.ts", import.meta.url)
       ),

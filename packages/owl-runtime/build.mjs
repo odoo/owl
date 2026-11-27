@@ -24,7 +24,7 @@ async function buildBundle() {
     bundle: true,
     define,
     target: "es2022",
-    external: ["@odoo/owl-core", "@odoo/owl-compiler"],
+    external: ["@odoo/owl-core", "@odoo/owl-blockdom", "@odoo/owl-compiler"],
   };
   await Promise.all([
     esbuild.build({ ...common, outfile: ES_FILENAME, format: "esm" }),
@@ -38,7 +38,7 @@ function buildTypes() {
   // owl-compiler exports opaque `TemplateSet = any` and `BDom = any` that
   // would otherwise collide with owl-runtime's own `TemplateSet` class.
   execSync(
-    "npx dts-bundle-generator --project tsconfig.json -o dist/types/index.d.ts src/index.ts --no-banner --external-imports @odoo/owl-core --external-imports @odoo/owl-compiler",
+    "npx dts-bundle-generator --project tsconfig.json -o dist/types/index.d.ts src/index.ts --no-banner --external-imports @odoo/owl-core --external-imports @odoo/owl-blockdom --external-imports @odoo/owl-compiler",
     { stdio: "inherit" }
   );
 }

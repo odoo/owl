@@ -1,0 +1,40 @@
+{
+  "name": "@odoo/owl-blockdom",
+  "version": "3.0.0-beta.1",
+  "description": "Virtual DOM (blockdom) for Odoo Web Library (OWL)",
+  "main": "dist/owl-blockdom.cjs.js",
+  "module": "dist/owl-blockdom.es.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/owl-blockdom.es.js",
+      "require": "./dist/owl-blockdom.cjs.js",
+      "default": "./dist/owl-blockdom.es.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "build:types": "node build.mjs types",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odoo/owl.git"
+  },
+  "author": "Odoo",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/odoo/owl/issues"
+  },
+  "homepage": "https://github.com/odoo/owl#readme"
+}

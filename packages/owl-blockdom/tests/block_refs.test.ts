@@ -1,5 +1,4 @@
-import { createBlock, mount, patch, remove } from "../../src/blockdom";
-import { logStep } from "../helpers";
+import { createBlock, mount, patch, remove } from "../src";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
@@ -59,12 +58,13 @@ test("is in dom when callback is called", async () => {
 
 test("callback ref in callback ref with same block", async () => {
   const block = createBlock('<p block-ref="0"><block-text-1/><block-child-0/></p>');
-  let refFn = (el: HTMLParagraphElement) => logStep(el.outerHTML);
+  const steps: string[] = [];
+  let refFn = (el: HTMLParagraphElement) => steps.push(el.outerHTML);
 
   const child = block([refFn, "child"], []);
   const parent = block([refFn, "parent"], [child]);
   mount(parent, fixture);
 
   expect(fixture.innerHTML).toBe("<p>parent<p>child</p></p>");
-  expect(["<p>child</p>", "<p>parent<p>child</p></p>"]).toBeLogged();
+  expect(steps).toEqual(["<p>child</p>", "<p>parent<p>child</p></p>"]);
 });

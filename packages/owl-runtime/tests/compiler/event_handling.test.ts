@@ -1,5 +1,5 @@
 import { STATUS } from "@odoo/owl-core";
-import { mount } from "../../src/blockdom";
+import { mount } from "@odoo/owl-blockdom";
 import { TemplateSet } from "../../src/template_set";
 import { markup } from "../../src/utils";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";

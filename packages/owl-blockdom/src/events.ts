@@ -1,5 +1,19 @@
-import { inOwnerDocument } from "../utils";
 import { config } from "./config";
+
+/**
+ * Determine whether the given element is contained in its ownerDocument:
+ * either directly or with a shadow root in between.
+ */
+function inOwnerDocument(el?: HTMLElement) {
+  if (!el) {
+    return false;
+  }
+  if (el.ownerDocument.contains(el)) {
+    return true;
+  }
+  const rootNode = el.getRootNode();
+  return rootNode instanceof ShadowRoot && el.ownerDocument.contains(rootNode.host);
+}
 
 type EventHandlerSetter = (this: HTMLElement, data: any) => void;
 

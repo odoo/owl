@@ -57,7 +57,6 @@ export interface TemplateHelpers {
     defaultContent?: (ctx: any, node: any, key: string) => any
   ): any;
   createComponent(
-    app: any,
     name: string | null,
     isStatic: boolean,
     hasSlotsProp: boolean,

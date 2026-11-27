@@ -5,7 +5,7 @@ exports[`children, default props and renderings 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.value);
@@ -31,7 +31,7 @@ exports[`force render in case of existing render 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`B\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
     return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
@@ -44,7 +44,7 @@ exports[`force render in case of existing render 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, []);
+  const comp1 = createComponent(\`C\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -70,7 +70,7 @@ exports[`render loop detection > a render loop going through async code is still
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value","inc"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value","inc"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
@@ -96,7 +96,7 @@ exports[`render loop detection > throws a clear error instead of freezing on a r
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value","inc"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value","inc"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {value: ctx['this'].value(),inc: ctx['this'].inc};
@@ -134,8 +134,8 @@ exports[`render loop detection > wide re-render under an uncommitted root is not
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, OwlError, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`AsyncChild\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`AsyncChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -186,7 +186,7 @@ exports[`rendering semantics > can force a render to update sub tree 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -216,7 +216,7 @@ exports[`rendering semantics > can render a parent without rendering child 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.value);
@@ -242,7 +242,7 @@ exports[`rendering semantics > props are proxy (nested prop) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["a"]);
   
   return function template(ctx, node, key = "") {
     return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
@@ -267,7 +267,7 @@ exports[`rendering semantics > props are proxy 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["a"]);
   
   return function template(ctx, node, key = "") {
     return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
@@ -292,7 +292,7 @@ exports[`rendering semantics > render with deep=true followed by render with dee
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
@@ -322,7 +322,7 @@ exports[`rendering semantics > rendering is atomic (for one subtree) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { safeOutput, createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, ["obj"]);
+  const comp1 = createComponent(\`B\`, true, false, false, ["obj"]);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.obj.val);
@@ -337,7 +337,7 @@ exports[`rendering semantics > rendering is atomic (for one subtree) 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`C\`, true, false, false, ["obj"]);
+  const comp1 = createComponent(\`C\`, true, false, false, ["obj"]);
   
   return function template(ctx, node, key = "") {
     return comp1({obj: ctx['this'].props.obj}, key + \`__1\`, node, this, null);
@@ -362,7 +362,7 @@ exports[`rendering semantics > works as expected for dynamic number of props 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
+  const comp1 = createComponent(\`Child\`, true, false, true, []);
   
   return function template(ctx, node, key = "") {
     return comp1(Object.assign({}, ctx['this'].state), key + \`__1\`, node, this, null);

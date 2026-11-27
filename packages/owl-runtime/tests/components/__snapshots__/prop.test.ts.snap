@@ -5,7 +5,7 @@ exports[`basics > can be mixed with useProps() 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["main","extra"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["main","extra"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -37,7 +37,7 @@ exports[`basics > default value when prop is absent 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -68,7 +68,7 @@ exports[`basics > multiple prop fields in same component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a","b"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["a","b"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -100,7 +100,7 @@ exports[`basics > prop accepts instanceOf type 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["todo"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["todo"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -131,7 +131,7 @@ exports[`basics > provided value takes precedence over default 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["label"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["label"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -162,7 +162,7 @@ exports[`basics > reads the named prop 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -193,7 +193,7 @@ exports[`basics > type argument is optional (accepts any value) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -240,7 +240,7 @@ exports[`dev mode > does not throw if signal reference is stable across re-rende
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["todo"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["todo"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {todo: ctx['this'].todoSig};
@@ -267,7 +267,7 @@ exports[`dev mode > omitted prop with default does not trigger static-prop error
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const props1 = {};
@@ -296,7 +296,7 @@ exports[`dev mode > skips immutability check in non-dev mode 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["todo"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["todo"]);
   
   return function template(ctx, node, key = "") {
     return comp1({todo: ctx['this'].state.todo}, key + \`__1\`, node, this, null);
@@ -335,7 +335,7 @@ exports[`dev mode > throws if prop reference changes on re-render 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["todo"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["todo"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {todo: ctx['this'].state.todo};
@@ -362,7 +362,7 @@ exports[`dev mode > validates initial type on mount (child component) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {value: 'not-a-number'};

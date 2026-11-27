@@ -5,7 +5,7 @@ exports[`app > app: clear scheduler tasks on destroy 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  const comp1 = createComponent(\`B\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -50,7 +50,7 @@ exports[`app > can call processTask twice in a row without crashing 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);

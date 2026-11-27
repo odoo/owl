@@ -226,7 +226,6 @@ function modelExpr(value: any) {
 }
 
 function createComponent<P extends Record<string, any>>(
-  app: App,
   name: string | null,
   isStatic: boolean,
   hasSlotsProp: boolean,
@@ -342,7 +341,7 @@ function createComponent<P extends Record<string, any>>(
           );
         }
       }
-      node = new ComponentNode(C, props, app, ctx.pluginManager, ctx, key);
+      node = new ComponentNode(C, props, ctx.app, ctx.pluginManager, ctx, key);
       children[key] = node;
       const fiber = new Fiber(node, parentFiber);
       if (node.willStart.length) {

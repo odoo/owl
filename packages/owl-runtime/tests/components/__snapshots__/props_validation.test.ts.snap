@@ -51,7 +51,7 @@ exports[`props validation > additional props are allowed (array) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message","otherProp"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["message","otherProp"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'm',otherProp: 'o'};
@@ -78,7 +78,7 @@ exports[`props validation > additional props are allowed (object) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message","otherProp"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["message","otherProp"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'm',otherProp: 'o'};
@@ -105,7 +105,7 @@ exports[`props validation > can use custom class as type 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["customObj"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["customObj"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {customObj: ctx['this'].customObj};
@@ -131,7 +131,7 @@ exports[`props validation > can use custom class as type: validation failure 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["customObj"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["customObj"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {customObj: ctx['this'].customObj};
@@ -145,7 +145,7 @@ exports[`props validation > can validate a prop with multiple types 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -175,7 +175,7 @@ exports[`props validation > can validate a prop with multiple types 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -205,7 +205,7 @@ exports[`props validation > can validate a prop with multiple types 5`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -222,7 +222,7 @@ exports[`props validation > can validate an array with given primitive type 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -252,7 +252,7 @@ exports[`props validation > can validate an array with given primitive type 3`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -282,7 +282,7 @@ exports[`props validation > can validate an array with given primitive type 5`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -299,7 +299,7 @@ exports[`props validation > can validate an array with given primitive type 6`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -316,7 +316,7 @@ exports[`props validation > can validate an array with multiple sub element type
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -346,7 +346,7 @@ exports[`props validation > can validate an array with multiple sub element type
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -376,7 +376,7 @@ exports[`props validation > can validate an array with multiple sub element type
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -406,7 +406,7 @@ exports[`props validation > can validate an array with multiple sub element type
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -423,7 +423,7 @@ exports[`props validation > can validate an object with simple shape 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -453,7 +453,7 @@ exports[`props validation > can validate an object with simple shape 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -483,7 +483,7 @@ exports[`props validation > can validate an object with simple shape 5`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -500,7 +500,7 @@ exports[`props validation > can validate an object with simple shape 6`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -517,7 +517,7 @@ exports[`props validation > can validate an optional props 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -547,7 +547,7 @@ exports[`props validation > can validate an optional props 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -577,7 +577,7 @@ exports[`props validation > can validate an optional props 5`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -616,7 +616,7 @@ exports[`props validation > can validate recursively complicated prop def 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -646,7 +646,7 @@ exports[`props validation > can validate recursively complicated prop def 3`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -676,7 +676,7 @@ exports[`props validation > can validate recursively complicated prop def 5`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -693,8 +693,8 @@ exports[`props validation > can validate through slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, markRaw } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Wrapper\`, true, true, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Wrapper\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
     const props1 = {};
@@ -747,7 +747,7 @@ exports[`props validation > default values are applied before validating props a
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -779,7 +779,7 @@ exports[`props validation > missing required boolean prop causes an error 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -796,7 +796,7 @@ exports[`props validation > mix of optional and mandatory 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -824,7 +824,7 @@ exports[`props validation > props are validated in dev mode (code snapshot) 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["message"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -878,7 +878,7 @@ exports[`props validation > props: list of strings 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -928,7 +928,7 @@ exports[`props validation > validate simple types 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -945,7 +945,7 @@ exports[`props validation > validate simple types 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -975,7 +975,7 @@ exports[`props validation > validate simple types 4`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -992,7 +992,7 @@ exports[`props validation > validate simple types 5`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1009,7 +1009,7 @@ exports[`props validation > validate simple types 6`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1039,7 +1039,7 @@ exports[`props validation > validate simple types 8`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1056,7 +1056,7 @@ exports[`props validation > validate simple types 9`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1073,7 +1073,7 @@ exports[`props validation > validate simple types 10`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1103,7 +1103,7 @@ exports[`props validation > validate simple types 12`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1120,7 +1120,7 @@ exports[`props validation > validate simple types 13`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1137,7 +1137,7 @@ exports[`props validation > validate simple types 14`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1167,7 +1167,7 @@ exports[`props validation > validate simple types 16`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1184,7 +1184,7 @@ exports[`props validation > validate simple types 17`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1201,7 +1201,7 @@ exports[`props validation > validate simple types 18`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1231,7 +1231,7 @@ exports[`props validation > validate simple types 20`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1248,7 +1248,7 @@ exports[`props validation > validate simple types 21`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1265,7 +1265,7 @@ exports[`props validation > validate simple types 22`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1295,7 +1295,7 @@ exports[`props validation > validate simple types 24`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1312,7 +1312,7 @@ exports[`props validation > validation is only done in dev mode 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1329,7 +1329,7 @@ exports[`props validation > validation is only done in dev mode 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1373,8 +1373,8 @@ exports[`schema defaults > a plain default value is shared between component ins
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
-  const comp2 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
+  const comp2 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1408,7 +1408,7 @@ exports[`schema defaults > default values can be declared in the schema 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1440,8 +1440,8 @@ exports[`schema defaults > factory defaults are resolved once per component inst
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
-  const comp2 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
+  const comp2 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1475,7 +1475,7 @@ exports[`schema defaults > falsy default values are applied 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1512,7 +1512,7 @@ exports[`schema defaults > schema defaults are applied whenever component is upd
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1590,7 +1590,7 @@ exports[`schema.toShape() > a composed (t.and) schema drives props via toShape()
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Notification\`, true, false, false, ["message","title"]);
+  const comp1 = createComponent(\`Notification\`, true, false, false, ["message","title"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'hello',title: 'DEBUG'};
@@ -1617,7 +1617,7 @@ exports[`schema.toShape() > a schema's props reports genuinely missing required 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["a"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["a"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1634,7 +1634,7 @@ exports[`schema.toShape() > a schema's props still rejects invalid values 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["count"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["count"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1651,7 +1651,7 @@ exports[`schema.toShape() > an object schema drives props via toShape() 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["title"]);
+  const comp1 = createComponent(\`SubComp\`, true, false, false, ["title"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1683,7 +1683,7 @@ exports[`schema.toShape() > applyDefaults completes nested defaults from the sam
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Notification\`, true, false, false, ["message","buttons"]);
+  const comp1 = createComponent(\`Notification\`, true, false, false, ["message","buttons"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'hi',buttons: [{name:'ok'}]};

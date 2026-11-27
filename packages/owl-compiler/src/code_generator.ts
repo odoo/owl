@@ -1281,7 +1281,7 @@ export class CodeGenerator {
     this.helpers.add("createComponent");
     this.staticDefs.push({
       id,
-      expr: `createComponent(app, ${
+      expr: `createComponent(${
         ast.isDynamic ? null : expr
       }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });

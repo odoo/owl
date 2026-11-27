@@ -5,7 +5,7 @@ exports[`basics > GrandChild display is controlled by its GrandParent 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, null, false, false, false, ["displayGrandChild"]);
+  const comp1 = createComponent(null, false, false, false, ["displayGrandChild"]);
   
   return function template(ctx, node, key = "") {
     const Comp1 = ctx['this'].myComp;
@@ -19,7 +19,7 @@ exports[`basics > GrandChild display is controlled by its GrandParent 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`GrandChild\`, true, false, false, []);
+  const comp1 = createComponent(\`GrandChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -66,7 +66,7 @@ exports[`basics > a class component inside a class component, no external dom 1`
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -118,7 +118,7 @@ exports[`basics > a component inside a component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -164,7 +164,7 @@ exports[`basics > can handle empty props 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -301,7 +301,7 @@ exports[`basics > child can be updated 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     return comp1({value: ctx['this'].state.counter}, key + \`__1\`, node, this, null);
@@ -341,7 +341,7 @@ exports[`basics > class parent, class child component with props 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     return comp1({value: 42}, key + \`__1\`, node, this, null);
@@ -369,7 +369,7 @@ exports[`basics > component children doesn't leak (if case) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -399,7 +399,7 @@ exports[`basics > component children doesn't leak (t-key case) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const tKey_1 = ctx['this'].keyVar;
@@ -469,7 +469,7 @@ exports[`basics > higher order components parent and child 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["child"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["child"]);
   
   return function template(ctx, node, key = "") {
     return comp1({child: ctx['this'].state.child}, key + \`__1\`, node, this, null);
@@ -482,8 +482,8 @@ exports[`basics > higher order components parent and child 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`ChildA\`, true, false, false, []);
-  const comp2 = createComponent(app, \`ChildB\`, true, false, false, []);
+  const comp1 = createComponent(\`ChildA\`, true, false, false, []);
+  const comp2 = createComponent(\`ChildB\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -528,8 +528,8 @@ exports[`basics > list of two sub components inside other nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, createComponent, withKey } = helpers;
-  const comp1 = createComponent(app, \`SubWidget\`, true, false, false, []);
-  const comp2 = createComponent(app, \`SubWidget\`, true, false, false, []);
+  const comp1 = createComponent(\`SubWidget\`, true, false, false, []);
+  const comp2 = createComponent(\`SubWidget\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -569,7 +569,7 @@ exports[`basics > parent, child and grandchild 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -582,7 +582,7 @@ exports[`basics > parent, child and grandchild 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`GrandChild\`, true, false, false, []);
+  const comp1 = createComponent(\`GrandChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -647,7 +647,7 @@ exports[`basics > providePlugins in a root with a custom plugin manager extends 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -675,8 +675,8 @@ exports[`basics > reconciliation alg is not confused in some specific situation 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -707,7 +707,7 @@ exports[`basics > rerendering a widget with a sub widget 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Counter\`, true, false, false, []);
+  const comp1 = createComponent(\`Counter\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -737,8 +737,8 @@ exports[`basics > same t-keys in two different places 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["blip"]);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, ["blip"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["blip"]);
+  const comp2 = createComponent(\`Child\`, true, false, false, ["blip"]);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
   
@@ -815,7 +815,7 @@ exports[`basics > sub components between t-ifs 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><span><block-child-2/></span><block-child-3/></div>\`);
   let block2 = createBlock(\`<h1>hey</h1>\`);
@@ -856,7 +856,7 @@ exports[`basics > t-elif works with t-component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
@@ -891,7 +891,7 @@ exports[`basics > t-else with empty string works with t-component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
@@ -926,7 +926,7 @@ exports[`basics > t-else works with t-component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
@@ -961,7 +961,7 @@ exports[`basics > t-if works with t-component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -993,8 +993,8 @@ exports[`basics > t-key on a component with t-if, and a sibling component 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/></div>\`);
   
@@ -1028,7 +1028,7 @@ exports[`basics > text after a conditional component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent, safeOutput } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><span><block-child-1/></span></div>\`);
   
@@ -1061,7 +1061,7 @@ exports[`basics > three level of components with collapsing root nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -1074,7 +1074,7 @@ exports[`basics > three level of components with collapsing root nodes 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`GrandChild\`, true, false, false, []);
+  const comp1 = createComponent(\`GrandChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -1113,8 +1113,8 @@ exports[`basics > two child components 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
-  const comp2 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
+  const comp2 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -1142,7 +1142,7 @@ exports[`basics > update props of component without concrete own node 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
+  const comp1 = createComponent(\`Child\`, true, false, true, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1159,7 +1159,7 @@ exports[`basics > update props of component without concrete own node 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Custom\`, true, false, false, ["key","subKey"]);
+  const comp1 = createComponent(\`Custom\`, true, false, false, ["key","subKey"]);
   
   return function template(ctx, node, key = "") {
     const tKey_1 = ctx['this'].props.subKey;
@@ -1209,7 +1209,7 @@ exports[`basics > updating widget immediately 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, ["flag"]);
+  const comp1 = createComponent(\`Child\`, true, false, false, ["flag"]);
   
   return function template(ctx, node, key = "") {
     return comp1({flag: ctx['this'].state.flag}, key + \`__1\`, node, this, null);
@@ -1239,7 +1239,7 @@ exports[`basics > widget after a t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { prepareList, withKey, createComponent } = helpers;
-  const comp1 = createComponent(app, \`SomeComponent\`, true, false, false, []);
+  const comp1 = createComponent(\`SomeComponent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1278,7 +1278,7 @@ exports[`basics > zero or one child components 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp1 = createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -1360,7 +1360,7 @@ exports[`support svg components > add proper namespace to svg 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler } = bdom;
   let { createComponent } = helpers;
-  const comp1 = createComponent(app, \`GComp\`, true, false, false, []);
+  const comp1 = createComponent(\`GComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<svg xmlns="http://www.w3.org/2000/svg"><block-child-0 xmlns=""/></svg>\`);
   

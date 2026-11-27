@@ -33,6 +33,22 @@ describe("adding/patching text", () => {
     expect(fixture.innerHTML).toBe("bar");
   });
 
+  test("patching with an equal String object leaves the node alone", () => {
+    const tree = text(new String("foo"));
+    mount(tree, fixture);
+    const observer = new MutationObserver(() => {});
+    observer.observe(fixture, { characterData: true, subtree: true });
+
+    patch(tree, text(new String("foo")));
+    expect(observer.takeRecords()).toHaveLength(0);
+    expect(fixture.innerHTML).toBe("foo");
+
+    patch(tree, text(new String("bar")));
+    expect(observer.takeRecords()).toHaveLength(1);
+    expect(fixture.innerHTML).toBe("bar");
+    observer.disconnect();
+  });
+
   test("falsy values in text nodes", () => {
     const cases = [
       [false, "false"],

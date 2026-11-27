@@ -29,6 +29,19 @@ describe("html block", () => {
     expect(fixture.innerHTML).toBe("<div>coucou</div>");
   });
 
+  test("patching with an equal String object keeps the content nodes", () => {
+    const tree = html(new String("<b>foo</b>") as any);
+    mount(tree, fixture);
+    const b = fixture.querySelector("b");
+
+    patch(tree, html(new String("<b>foo</b>") as any));
+    expect(fixture.querySelector("b")).toBe(b);
+
+    patch(tree, html(new String("<b>bar</b>") as any));
+    expect(fixture.querySelector("b")).not.toBe(b);
+    expect(fixture.innerHTML).toBe("<b>bar</b>");
+  });
+
   test("html vnode can be used as text", () => {
     mount(text(html("<p>a</p>") as any), fixture);
     expect(fixture.textContent).toBe("<p>a</p>");

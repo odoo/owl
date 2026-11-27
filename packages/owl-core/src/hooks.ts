@@ -2,7 +2,7 @@ import { computed } from "./computed";
 import { untrack } from "./computations";
 import { effect, immediateEffect } from "./effect";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { useScope } from "./scope";
+import { ScopeApp, useScope } from "./scope";
 import { Signal } from "./signal";
 import { shallowEqual } from "./utils";
 
@@ -187,6 +187,6 @@ function makeListener(handler: EventListener): EventListener {
 // useApp
 // -----------------------------------------------------------------------------
 
-export function useApp(): any {
+export function useApp(): ScopeApp {
   return useScope().app;
 }

@@ -18,8 +18,10 @@ import type { PluginManager } from "./plugin_manager";
 // `ComponentNode` and `PluginManager`, each of which extends Scope directly
 // (rather than composing a separate scope object).
 //
-// `app` is typed as `any` because the concrete App type lives in owl-runtime;
-// subclasses in owl-runtime narrow the field to their App type.
+// `app` is the application the scope belongs to. Its concrete type lives in
+// owl-runtime: core only carries it (so that plugins and components can reach
+// it, e.g. to create new roots) and reads what `ScopeApp` describes. Subclasses
+// in owl-runtime narrow the field to their App type.
 //
 // The AbortController/signal and destroy-callback list are created lazily so
 // that scopes which never use them pay nothing beyond a null pointer.
@@ -39,8 +41,18 @@ export function useScope(): Scope {
   return scope;
 }
 
+/**
+ * What core needs from the application a scope belongs to.
+ */
+export interface ScopeApp {
+  // undefined while the app creates its own plugin manager, which then
+  // becomes its own `pluginManager` (see PluginManager)
+  readonly pluginManager?: PluginManager;
+  readonly dev?: boolean;
+}
+
 export abstract class Scope {
-  app: any;
+  app: ScopeApp;
   pluginManager: PluginManager;
   status: StatusValue = STATUS.NEW;
   computations: ComputationAtom[] = [];
@@ -48,9 +60,9 @@ export abstract class Scope {
   private _controller: AbortController | null = null;
   private _destroyCbs: Array<() => void> | null = null;
 
-  constructor(app: any) {
+  constructor(app: ScopeApp) {
     this.app = app;
-    this.pluginManager = app.pluginManager;
+    this.pluginManager = app.pluginManager!;
   }
 
   /**
